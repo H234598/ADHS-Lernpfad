@@ -28,7 +28,7 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file build/validation-report.txt
+        run: gh pr comment "${{ github.event.pull_request.number }}" --repo H234598/ADHS-Lernpfad --body-file build/validation-report.txt
       - name: Fail on validation errors
         if: steps.compendium_validation.outcome == 'failure'
         run: |
