@@ -1,6 +1,9 @@
 name: Validate compendium
 on: [push, pull_request]
-permissions: {contents: read}
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -11,7 +14,30 @@ jobs:
       - run: pip install -r requirements-docs.txt -r requirements-export.txt
       - run: python3 scripts/build_literature.py
       - run: python3 scripts/build_graph.py
-      - run: python3 scripts/validate_compendium.py
+      - id: compendium_validation
+        run: python3 scripts/validate_compendium.py
+      - name: "Validation ${{ steps.compendium_validation.outputs.summary }}"
+        if: always()
+        run: echo "${{ steps.compendium_validation.outputs.summary }}"
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: build/validation-report.txt
+      - name: Comment validation report
+        if: always() && github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          jq -Rs '{body: .}' build/validation-report.txt > /tmp/comment.json
+          gh api --method POST repos/H234598/ADHS-Lernpfad/issues/${{ github.event.pull_request.number }}/comments --input /tmp/comment.json
+      - name: Fail on validation errors
+        if: steps.compendium_validation.outputs.failed == 'true'
+        run: |
+          cat build/validation-report.txt
+          exit 1
       - run: python3 scripts/build_combined.py
       - run: python3 scripts/build_anki.py
       - run: python3 scripts/build_docs.py
