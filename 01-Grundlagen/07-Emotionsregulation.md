@@ -115,7 +115,7 @@ Emotionale Dysregulation kann durch viele Faktoren verstärkt werden:
 - sensorische Überlastung,
 - zwischenmenschliche Konflikte.
 
-Deshalb sollte sie nicht automatisch vollständig ADHS zugeschrieben werden. Klinisch ist eine differenzierte Betrachtung nötig.
+Deshalb sollte sie nicht automatisch vollständig ADHS zugeschrieben werden. Klinisch ist eine differenzierte Betrachtung nötig. Auch körperliche Faktoren wie Schmerz, Infekte, Unterzuckerung oder Medikamentennebenwirkungen können die Regulationsfähigkeit vorübergehend verschlechtern und sollten bei auffälligen Veränderungen mitbedacht werden.
 
 ## 7. Verbindung zu Autismus
 
