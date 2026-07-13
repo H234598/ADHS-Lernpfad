@@ -7,7 +7,8 @@ Arbeite im Repository `H234598/ADHS-Lernpfad` und ergänze **genau eine** neue f
 Eine Einheit ist eine echte **10- bis 20-minütige Lerneinheit**, nicht nur eine Kurznotiz mit entsprechendem YAML-Etikett.
 
 - Zielbereich: ungefähr **800–1.600 Wörter** didaktischer Haupttext.
-- Harte Untergrenze für Grundlagenkapitel: **700 Wörter** nach Abzug von YAML, Navigation und Codeblöcken.
+- Harte Untergrenze für Grundlagenkapitel: **600 Wörter** nach Abzug von YAML, Navigation und Diagrammcode.
+- Kapitel zwischen 600 und 799 Wörtern erzeugen eine CI-Warnung und sollten nur dann so kurz bleiben, wenn Diagramm, Übung und Review den Lernumfang sinnvoll ergänzen.
 - Komplexe Themen dürfen mehr Raum erhalten, wenn die zusätzliche Länge fachlich nötig und klar gegliedert ist.
 - Niemals künstlich durch Wiederholung, Füllsätze oder erzwungene Autismus-/Parkinson-Bezüge verlängern.
 - Lieber ein komplexes Thema in zwei aufeinanderfolgende Einheiten teilen, als eine unstrukturierte Textwand zu erzeugen.
