@@ -24,9 +24,10 @@ required_sections = [
 ]
 
 def prose_word_count(text: str) -> int:
+    """Count didactic prose, including review answers, but excluding metadata, diagrams and navigation."""
     text = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S)
     text = re.sub(r"```.*?```", "", text, flags=re.S)
-    text = re.sub(r"<details>.*?</details>", "", text, flags=re.S)
+    text = re.sub(r"</?(?:details|summary)>", "", text)
     text = re.sub(r"## Navigation.*\Z", "", text, flags=re.S)
     text = re.sub(r"\[\[([^\]|]+)(?:\|([^\]]+))?\]\]", lambda m: m.group(2) or m.group(1), text)
     return len(re.findall(r"\b[\wÄÖÜäöüß]+(?:[-’'][\wÄÖÜäöüß]+)*\b", text))
