@@ -2,6 +2,7 @@ name: Validate compendium
 on: [push, pull_request]
 permissions:
   contents: read
+  issues: write
   pull-requests: write
 jobs:
   validate:
