@@ -28,7 +28,7 @@ Die Texte unterscheiden konsequent zwischen:
 
 ## Umfang der Einheiten
 
-Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Die CI prüft eine Mindestlänge von 700 Fließtextwörtern sowie didaktische Pflichtabschnitte. Komplexe Themen dürfen mehr Raum erhalten oder auf mehrere Einheiten verteilt werden; künstliche Fülltexte sind ausdrücklich unerwünscht.
+Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Der Zielbereich liegt bei ungefähr 800–1.600 Wörtern. Die CI erzwingt mindestens 600 Fließtextwörter und warnt unterhalb von 800 Wörtern; Diagramm, Übung und Review gehören ausdrücklich zum Lernumfang. Komplexe Themen dürfen mehr Raum erhalten oder auf mehrere Einheiten verteilt werden. Künstliche Fülltexte sind unerwünscht.
 
 ## Lernpfad
 
