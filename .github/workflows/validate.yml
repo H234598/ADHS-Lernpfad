@@ -1,6 +1,8 @@
 name: Validate compendium
 on: [push, pull_request]
-permissions: {contents: read}
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -20,6 +22,11 @@ jobs:
         with:
           name: validation-report
           path: build/validation-report.txt
+      - name: Comment validation report
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file build/validation-report.txt
       - name: Fail on validation errors
         if: steps.compendium_validation.outcome == 'failure'
         run: |
