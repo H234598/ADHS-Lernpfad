@@ -79,7 +79,32 @@ Langweilige, vorhersehbare oder sehr lang laufende Aufgaben stellen andere Anfor
 
 Ein sehr stimulierender Kontext kann die Aufmerksamkeit vorübergehend stabilisieren. Ein reizarmes Umfeld kann helfen, wenn Ablenkung das Hauptproblem ist. Bei manchen Aufgaben ist aber nicht weniger Reiz, sondern ein klareres und stärkeres Signal nötig.
 
-## 6. Mini-Experiment: Stabilität messen
+## 6. Nicht jeder Aufmerksamkeitsfehler ist derselbe
+
+Im Alltag wird vieles unter „unkonzentriert“ zusammengefasst, obwohl unterschiedliche Fehlerarten dahinterstehen können:
+
+- Eine wichtige Information wurde gar nicht ausgewählt.
+- Der Fokus war zunächst korrekt, brach aber später ab.
+- Eine konkurrierende Information erhielt zu viel Gewicht.
+- Die Person bemerkte das Abschweifen, fand aber nicht zurück.
+- Die Aufgabe war verstanden, doch der Start blieb aus.
+- Eine schnelle Reaktion führte zu einem Flüchtigkeitsfehler.
+
+Diese Unterschiede verändern, welche Hilfe sinnvoll ist. Mehr Ruhe kann Ablenkung reduzieren, aber bei zu niedrigem Aktivierungsniveau sogar nachteilig sein. Ein Timer kann an den Fokus erinnern, hilft jedoch wenig, wenn der nächste Schritt unklar ist. Eine Checkliste verhindert Auslassungen, löst aber nicht automatisch Probleme beim Wechseln oder Beginnen.
+
+## 7. Meta-Aufmerksamkeit: das Abschweifen bemerken
+
+Aufmerksamkeit umfasst nicht nur den Fokus selbst, sondern auch das Bemerken, dass er verloren gegangen ist. Dieser metakognitive Schritt ist praktisch entscheidend. Wer eine Abweichung früh erkennt, kann mit geringem Aufwand zurückkehren. Wird sie erst nach zwanzig Minuten bemerkt, ist der ursprüngliche Aufgabenzustand möglicherweise vollständig verloren.
+
+Daraus folgt ein realistischerer Trainingsgedanke: Das Ziel muss nicht „niemals abschweifen“ lauten. Sinnvoller sind drei getrennte Fähigkeiten:
+
+1. Abschweifen möglichst früh bemerken.
+2. Ohne lange Selbstkritik zum Ziel zurückkehren.
+3. Einen sichtbaren Wiedereinstiegspunkt nutzen.
+
+Selbstvorwürfe können den Rückweg verlängern, weil sie zusätzliche Gedanken und Emotionen aktivieren. Eine neutrale Markierung wie „abgewichen – zurück“ ist daher oft funktionaler als eine moralische Bewertung. Das macht Abschweifen nicht bedeutungslos; es behandelt es als regulierbaren Prozess statt als Charakterurteil.
+
+## 8. Mini-Experiment: Stabilität messen
 
 Wähle eine Aufgabe von fünf bis zehn Minuten. Notiere vorher genau ein Ziel. Mache jedes Mal einen kleinen Strich, wenn du merkst, dass dein Fokus abgewichen ist. Kehre dann ohne Bewertung zurück.
 
@@ -93,13 +118,13 @@ Am Ende fragst du:
 
 Der Erfolg besteht nicht darin, nie abzuschweifen. Der Erfolg besteht darin, den Prozess sichtbar zu machen und das Zurückkehren zu erleichtern.
 
-## 7. Verbindung zu Autismus
+## 9. Verbindung zu Autismus
 
 Bei Autismus können Orientierung, Wechsel und Priorisierung von Reizen ebenfalls verändert sein. Gleichzeitig können bestimmte Interessen sehr stabilen Fokus erzeugen. Bei gemeinsamem ADHS und Autismus können leichte Ablenkbarkeit, sensorische Überlastung und starkes Festhalten an einem Fokus nebeneinander auftreten.
 
 Ein einzelner Aufmerksamkeitstest kann diese komplexen Profile nicht ausreichend abbilden.
 
-## 8. Verbindung zu Parkinson
+## 10. Verbindung zu Parkinson
 
 Parkinson kann neben motorischen Symptomen Aufmerksamkeit und exekutive Kontrolle beeinflussen. Frontostriatale und dopaminerge Systeme spielen dabei eine Rolle. Die Ursachen und der Krankheitsverlauf unterscheiden sich jedoch grundlegend von ADHS.
 
