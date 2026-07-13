@@ -7,6 +7,9 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "build" / "validation-report.txt"
+MIN_WORDS = 800
+WARNING_WORDS = 1000
+MAX_WORDS = 2500
 errors = []
 warnings = []
 counts = []
@@ -59,10 +62,12 @@ for item in index["chapters"]:
         errors.append(f"{path}: Lernzeit muss 10–20 Minuten sein")
     words = prose_word_count(text)
     counts.append((item["number"], item["path"], words))
-    if words < 600:
-        errors.append(f"{path}: nur {words} Fließtextwörter; mindestens 600 erforderlich")
-    elif words < 800:
-        warnings.append(f"{path}: {words} Wörter; unter dem Zielbereich von 800 Wörtern")
+    if words < MIN_WORDS:
+        errors.append(f"{path}: nur {words} Fließtextwörter; mindestens {MIN_WORDS} erforderlich")
+    elif words < WARNING_WORDS:
+        warnings.append(f"{path}: {words} Wörter; unter dem Zielbereich von {WARNING_WORDS} Wörtern")
+    if words > MAX_WORDS:
+        errors.append(f"{path}: {words} Fließtextwörter; Maximum sind {MAX_WORDS}")
     for section in required_sections:
         if section not in text:
             errors.append(f"{path}: Pflichtabschnitt fehlt: {section}")
@@ -86,7 +91,13 @@ if not cname.exists() or cname.read_text(encoding="utf-8").strip() != "ADHS.tela
     errors.append("CNAME fehlt oder enthält nicht ADHS.telacore.org")
 
 REPORT.parent.mkdir(parents=True, exist_ok=True)
-report_lines = ["ADHS-Lernpfad Validierungsbericht", "", "Wortzahlen:"]
+report_lines = [
+    "ADHS-Lernpfad Validierungsbericht",
+    "",
+    f"Grenzen: Minimum {MIN_WORDS}, Warnung unter {WARNING_WORDS}, Maximum {MAX_WORDS} Fließtextwörter",
+    "",
+    "Wortzahlen:",
+]
 report_lines.extend(f"- Einheit {number}: {words} Wörter — {path}" for number, path, words in counts)
 report_lines.extend(["", "Warnungen:"])
 report_lines.extend([f"- {warning}" for warning in warnings] or ["- keine"])
