@@ -6,7 +6,9 @@ import sys
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+REPORT = ROOT / "build" / "validation-report.txt"
 errors = []
+counts = []
 index = json.loads((ROOT / "index.json").read_text(encoding="utf-8"))
 numbers = [item["number"] for item in index["chapters"]]
 if numbers != list(range(1, len(numbers) + 1)):
@@ -24,7 +26,7 @@ required_sections = [
 ]
 
 def prose_word_count(text: str) -> int:
-    """Count didactic prose, including review answers, but excluding metadata, diagrams and navigation."""
+    """Count didactic prose, including review answers, excluding metadata, diagrams and navigation."""
     text = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S)
     text = re.sub(r"```.*?```", "", text, flags=re.S)
     text = re.sub(r"</?(?:details|summary)>", "", text)
@@ -49,6 +51,7 @@ for item in index["chapters"]:
     if meta.get("minimum_reading_minutes") != 10 or meta.get("maximum_reading_minutes") != 20:
         errors.append(f"{path}: Lernzeit muss 10–20 Minuten sein")
     words = prose_word_count(text)
+    counts.append((item["number"], item["path"], words))
     if words < 700:
         errors.append(f"{path}: nur {words} Fließtextwörter; mindestens 700 erforderlich")
     for section in required_sections:
@@ -73,9 +76,14 @@ cname = ROOT / "CNAME"
 if not cname.exists() or cname.read_text(encoding="utf-8").strip() != "ADHS.telacore.org":
     errors.append("CNAME fehlt oder enthält nicht ADHS.telacore.org")
 
+REPORT.parent.mkdir(parents=True, exist_ok=True)
+report_lines = ["ADHS-Lernpfad Validierungsbericht", "", "Wortzahlen:"]
+report_lines.extend(f"- Einheit {number}: {words} Wörter — {path}" for number, path, words in counts)
+report_lines.extend(["", "Fehler:"])
+report_lines.extend([f"- {error}" for error in errors] or ["- keine"])
+REPORT.write_text("\n".join(report_lines) + "\n", encoding="utf-8")
+print(REPORT.read_text(encoding="utf-8"))
+
 if errors:
-    print("Validierung fehlgeschlagen:", file=sys.stderr)
-    for error in errors:
-        print(f"- {error}", file=sys.stderr)
     raise SystemExit(1)
 print(f"Validierung grün: {len(index['chapters'])} Kapitel, {len(reference_ids)} Quellen; alle Kapitel >= 700 Wörter")
