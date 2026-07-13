@@ -12,6 +12,8 @@ tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 
 Ein quelloffenes, Obsidian-taugliches Lernkompendium zu ADHS. Es beginnt bei den Grundlagen und wächst schrittweise bis zum Lesen, Bewerten und Einordnen aktueller Forschung.
 
+**Webfassung:** https://h234598.github.io/ADHS-Lernpfad/
+
 ## Wissenschaftlicher Rahmen
 
 Die Texte unterscheiden konsequent zwischen:
