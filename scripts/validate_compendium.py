@@ -44,7 +44,14 @@ for item in index["chapters"]:
     if not match:
         errors.append(f"Kein Frontmatter: {path}")
         continue
-    meta = yaml.safe_load(match.group(1))
+    try:
+        meta = yaml.safe_load(match.group(1))
+    except yaml.YAMLError as exc:
+        errors.append(f"{path}: ungültiges YAML-Frontmatter: {str(exc).splitlines()[0]}")
+        meta = {}
+    if not isinstance(meta, dict):
+        errors.append(f"{path}: Frontmatter ist kein Mapping")
+        meta = {}
     missing = required - set(meta)
     if missing:
         errors.append(f"{path}: fehlend {sorted(missing)}")
