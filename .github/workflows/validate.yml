@@ -11,7 +11,20 @@ jobs:
       - run: pip install -r requirements-docs.txt -r requirements-export.txt
       - run: python3 scripts/build_literature.py
       - run: python3 scripts/build_graph.py
-      - run: python3 scripts/validate_compendium.py
+      - id: compendium_validation
+        continue-on-error: true
+        run: python3 scripts/validate_compendium.py
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: build/validation-report.txt
+      - name: Fail on validation errors
+        if: steps.compendium_validation.outcome == 'failure'
+        run: |
+          cat build/validation-report.txt
+          exit 1
       - run: python3 scripts/build_combined.py
       - run: python3 scripts/build_anki.py
       - run: python3 scripts/build_docs.py
