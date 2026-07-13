@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">Regulationsmodell des ADHS-Lernpfads</title>
+<desc id="desc">Aufmerksamkeit, Arbeitsgedächtnis, Inhibition, Motivation, Zeit und Emotion beeinflussen zielgerichtetes Verhalten.</desc>
+<style>text{font-family:sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:3}.arrow{stroke:#111;stroke-width:3;fill:none;marker-end:url(#a)}.h{font-size:32px;font-weight:bold}.t{font-size:24px}</style>
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#111"/></marker></defs>
+<text x="600" y="55" text-anchor="middle" class="h">ADHS: verteilte Regulationssysteme</text>
+<rect class="box" x="70" y="130" width="280" height="90" rx="18"/><text class="t" x="210" y="185" text-anchor="middle">Aufmerksamkeit</text>
+<rect class="box" x="460" y="130" width="280" height="90" rx="18"/><text class="t" x="600" y="185" text-anchor="middle">Arbeitsgedächtnis</text>
+<rect class="box" x="850" y="130" width="280" height="90" rx="18"/><text class="t" x="990" y="185" text-anchor="middle">Inhibition</text>
+<rect class="box" x="70" y="360" width="280" height="90" rx="18"/><text class="t" x="210" y="415" text-anchor="middle">Motivation</text>
+<rect class="box" x="460" y="360" width="280" height="90" rx="18"/><text class="t" x="600" y="415" text-anchor="middle">Zeitverarbeitung</text>
+<rect class="box" x="850" y="360" width="280" height="90" rx="18"/><text class="t" x="990" y="415" text-anchor="middle">Emotionsregulation</text>
+<rect class="box" x="410" y="570" width="380" height="90" rx="18"/><text class="t" x="600" y="625" text-anchor="middle">zielgerichtetes Verhalten</text>
+<path class="arrow" d="M210 220 C210 500 470 500 520 570"/><path class="arrow" d="M600 220 L600 570"/><path class="arrow" d="M990 220 C990 500 730 500 680 570"/>
+<path class="arrow" d="M210 450 C260 520 430 520 500 570"/><path class="arrow" d="M600 450 L600 570"/><path class="arrow" d="M990 450 C930 520 760 520 700 570"/>
+</svg>
