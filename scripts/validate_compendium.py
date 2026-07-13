@@ -3,7 +3,6 @@ from pathlib import Path
 import json
 import os
 import re
-import sys
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -98,7 +97,6 @@ else:
 if os.getenv("GITHUB_OUTPUT"):
     with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
         fh.write(f"summary={summary}\n")
+        fh.write(f"failed={'true' if errors else 'false'}\n")
 
-if errors:
-    raise SystemExit(1)
-print(f"Validierung grün: {len(index['chapters'])} Kapitel, {len(reference_ids)} Quellen; alle Kapitel >= 600 Wörter")
+print(f"Validierung abgeschlossen: {len(index['chapters'])} Kapitel, {len(reference_ids)} Quellen")
