@@ -3,7 +3,7 @@ title: Inhibition und Handlungssteuerung
 level: Grundlagen
 estimated_time: 10–20 min
 difficulty: 1
-prerequisites: [Was ist ADHS?]
+prerequisites: ["Was ist ADHS?"]
 tags: [ADHS, Inhibition, Exekutive-Funktionen]
 last_reviewed: 2026-07-13
 evidence: high
