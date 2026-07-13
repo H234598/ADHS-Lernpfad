@@ -3,7 +3,7 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.4.0
+version: 0.4.1
 last_reviewed: 2026-07-13
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
@@ -28,7 +28,14 @@ Die Texte unterscheiden konsequent zwischen:
 
 ## Umfang der Einheiten
 
-Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Der Zielbereich liegt bei ungefähr 800–1.600 Wörtern. Die CI erzwingt mindestens 600 Fließtextwörter und warnt unterhalb von 800 Wörtern; Diagramm, Übung und Review gehören ausdrücklich zum Lernumfang. Komplexe Themen dürfen mehr Raum erhalten oder auf mehrere Einheiten verteilt werden. Künstliche Fülltexte sind unerwünscht.
+Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt.
+
+- mindestens **800 Fließtextwörter**,
+- CI-Warnung unter **1.000 Fließtextwörtern**,
+- Zielbereich ungefähr **1.000–2.000 Wörter**,
+- maximal **2.500 Fließtextwörter**.
+
+Diagramm, Übung und Review gehören zusätzlich zum Lernumfang. Komplexe Themen dürfen den oberen Zielbereich ausschöpfen; würden mehr als 2.500 Wörter benötigt, wird das Thema in mehrere Einheiten geteilt. Künstliche Fülltexte sind ausdrücklich unerwünscht.
 
 ## Lernpfad
 
@@ -59,4 +66,4 @@ Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. De
 
 ## Automatische Ausgaben
 
-GitHub Actions prüfen Struktur, Mindestumfang und Links, bauen die MkDocs-Webseite und erzeugen Markdown-, HTML-, EPUB- und APKG-Artefakte.
+GitHub Actions prüfen Struktur, Mindest- und Maximallänge sowie Links, bauen die MkDocs-Webseite und erzeugen Markdown-, HTML-, EPUB- und APKG-Artefakte.

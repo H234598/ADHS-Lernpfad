@@ -84,7 +84,38 @@ Eine Emotion kann wichtige Information liefern:
 
 Aber eine Emotion ist keine vollständig geprüfte Tatsachenanalyse. Sie sagt eher „Bitte untersuchen“ als „Das Urteil ist rechtskräftig“.
 
-## 5. Mini-Werkzeug: Gefühl, Impuls und Handlung trennen
+## 5. Regulation beginnt vor dem Höhepunkt
+
+Viele Regulationsversuche setzen erst ein, wenn die emotionale Aktivierung bereits sehr hoch ist. Dann sind Arbeitsgedächtnis, Perspektivwechsel und Inhibition oft besonders belastet. Es ist deshalb hilfreich, frühere Signale zu erkennen.
+
+Mögliche Vorzeichen sind:
+
+- beschleunigtes Sprechen,
+- Muskelanspannung,
+- enger werdender Aufmerksamkeitsfokus,
+- wiederholtes Lesen derselben Nachricht,
+- der Drang, sofort Klarheit oder Entlastung herzustellen,
+- zunehmende Schwarz-Weiß-Bewertungen.
+
+Keines dieser Zeichen ist spezifisch für ADHS. Sie können aber persönliche Marker dafür sein, dass der Handlungsspielraum kleiner wird.
+
+Frühe Regulation bedeutet nicht, Gefühle zu unterdrücken. Sie kann darin bestehen, Zeit zu gewinnen, Reizlast zu senken, den Zustand zu benennen oder eine irreversible Handlung zu verschieben. Ein gespeicherter Entwurf, ein Ortswechsel oder eine vereinbarte Gesprächspause kann wirksamer sein als der Versuch, im Höhepunkt besonders vernünftig zu argumentieren.
+
+## 6. Strategien wirken an unterschiedlichen Stellen
+
+Regulationsstrategien sind nicht austauschbar. Sie greifen an verschiedenen Punkten des Prozesses an:
+
+- **Situationswahl:** eine unnötig eskalierende Situation vermeiden,
+- **Situationsveränderung:** Lärm reduzieren oder Gesprächsregeln vereinbaren,
+- **Aufmerksamkeitslenkung:** den Fokus kurz auf Atmung oder Körperkontakt richten,
+- **Neubewertung:** eine erste Interpretation als Hypothese statt Tatsache behandeln,
+- **Reaktionsmodulation:** Senden, Schreien oder impulsives Handeln verzögern.
+
+Nicht jede Strategie passt zu jeder Situation. Neubewertung ist wenig hilfreich, wenn eine reale Grenze verletzt wird. Rückzug kann sinnvoll sein, aber auch Probleme verlängern, wenn er jede notwendige Klärung verhindert. Regulation bedeutet daher nicht maximale Ruhe um jeden Preis, sondern flexibles Handeln passend zu Ziel, Sicherheit und Kontext.
+
+Auch die zeitliche Reihenfolge ist wichtig. Zuerst kann körperliche Entlastung nötig sein, später erst eine kognitive Analyse. Die Forderung „Denk doch rational“ überspringt häufig diesen Zwischenschritt.
+
+## 7. Mini-Werkzeug: Gefühl, Impuls und Handlung trennen
 
 Notiere vier Zeilen:
 
@@ -102,7 +133,7 @@ Beispiel:
 
 Der Trick ist nicht, das Gefühl wegzudiskutieren. Der Impuls wird beobachtbar, ohne sofort ausgeführt zu werden.
 
-## 6. Andere mögliche Ursachen mitdenken
+## 8. Andere mögliche Ursachen mitdenken
 
 Emotionale Dysregulation kann durch viele Faktoren verstärkt werden:
 
@@ -117,7 +148,7 @@ Emotionale Dysregulation kann durch viele Faktoren verstärkt werden:
 
 Deshalb sollte sie nicht automatisch vollständig ADHS zugeschrieben werden. Klinisch ist eine differenzierte Betrachtung nötig. Auch körperliche Faktoren wie Schmerz, Infekte, Unterzuckerung oder Medikamentennebenwirkungen können die Regulationsfähigkeit vorübergehend verschlechtern und sollten bei auffälligen Veränderungen mitbedacht werden.
 
-## 7. Verbindung zu Autismus
+## 9. Verbindung zu Autismus
 
 Bei Autismus können sensorische Überlastung, unerwartete Veränderungen, kommunikative Missverständnisse und Schwierigkeiten beim frühen Erkennen des eigenen Zustands zur Dysregulation beitragen.
 
@@ -126,7 +157,7 @@ Bei gemeinsamem ADHS und Autismus sollte deshalb gefragt werden:
 - Ist das Gefühl selbst das Hauptproblem?
 - Oder zuerst Lärm, Hunger, Erschöpfung, Unklarheit oder ein unerwarteter Wechsel?
 
-## 8. Verbindung zu Parkinson
+## 10. Verbindung zu Parkinson
 
 Parkinson kann mit nichtmotorischen Symptomen wie Depression, Apathie, Impulskontrollstörungen und veränderter Emotionsverarbeitung einhergehen. Dopaminerge Medikamente können einige dieser Bereiche beeinflussen. Das verdeutlicht die Verbindung zwischen Motivation, Emotion und frontostriatalen Systemen, ohne Parkinson und ADHS gleichzusetzen.
 

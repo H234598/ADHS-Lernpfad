@@ -6,10 +6,11 @@ Arbeite im Repository `H234598/ADHS-Lernpfad` und ergänze **genau eine** neue f
 
 Eine Einheit ist eine echte **10- bis 20-minütige Lerneinheit**, nicht nur eine Kurznotiz mit entsprechendem YAML-Etikett.
 
-- Zielbereich: ungefähr **800–1.600 Wörter** didaktischer Haupttext.
-- Harte Untergrenze für Grundlagenkapitel: **600 Wörter** nach Abzug von YAML, Navigation und Diagrammcode.
-- Kapitel zwischen 600 und 799 Wörtern erzeugen eine CI-Warnung und sollten nur dann so kurz bleiben, wenn Diagramm, Übung und Review den Lernumfang sinnvoll ergänzen.
-- Komplexe Themen dürfen mehr Raum erhalten, wenn die zusätzliche Länge fachlich nötig und klar gegliedert ist.
+- Harte Untergrenze: **800 Fließtextwörter** nach Abzug von YAML, Navigation und Diagrammcode.
+- Zielbereich: **1.000–2.000 Fließtextwörter**.
+- Kapitel zwischen 800 und 999 Wörtern erzeugen eine CI-Warnung und sollten nur dann so kurz bleiben, wenn Diagramm, Übung und Review den Lernumfang sinnvoll ergänzen.
+- Harte Obergrenze: **2.500 Fließtextwörter**. Wird mehr Platz benötigt, teile das Thema in mehrere logisch aufeinanderfolgende Einheiten.
+- Komplexe Themen dürfen den oberen Zielbereich ausschöpfen, wenn die zusätzliche Länge fachlich nötig und klar gegliedert ist.
 - Niemals künstlich durch Wiederholung, Füllsätze oder erzwungene Autismus-/Parkinson-Bezüge verlängern.
 - Lieber ein komplexes Thema in zwei aufeinanderfolgende Einheiten teilen, als eine unstrukturierte Textwand zu erzeugen.
 
@@ -70,7 +71,7 @@ python3 scripts/build_docs.py
 mkdocs build --strict
 ```
 
-Die Validierung muss insbesondere Mindestlänge, Pflichtabschnitte, Quellen, Wikilinks und fortlaufende Nummerierung prüfen.
+Die Validierung muss insbesondere Mindest- und Maximallänge, Pflichtabschnitte, Quellen, Wikilinks und fortlaufende Nummerierung prüfen.
 
 ## Git-Arbeitsweise
 

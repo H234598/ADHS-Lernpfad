@@ -85,7 +85,30 @@ Ein Termin muss während anderer Tätigkeiten aktiv bleiben. Wird er aus dem Arb
 
 Das erklärt, warum ein Kalendertermin allein nicht immer genügt. Ein Alarm kurz vor dem Termin kann die Information wieder aktivieren, aber wenn der Übergang mehrere Schritte benötigt, muss das Signal früh genug kommen.
 
-## 6. Mini-Experiment: kalibrieren statt urteilen
+## 6. Übergänge sind eigene Aufgaben
+
+Menschen planen häufig nur die sichtbare Haupttätigkeit ein: duschen, fahren, telefonieren oder einen Bericht schreiben. Übersehen werden die Übergänge davor und danach. Doch „das Haus verlassen“ besteht beispielsweise aus Tätigkeit beenden, Material sichern, Kleidung wechseln, Dinge suchen, Weg prüfen und tatsächlich losgehen.
+
+Wenn jeder Teilschritt nur wenige Minuten benötigt, kann die Summe trotzdem erheblich sein. Besonders problematisch ist ein Schritt mit unsicherer Dauer, etwa einen Schlüssel suchen oder eine interessante Tätigkeit sauber beenden. Die Verzögerung entsteht dann nicht zwingend durch eine falsche Schätzung des Weges, sondern durch nicht eingeplante Übergangsarbeit.
+
+Ein hilfreiches Modell unterscheidet:
+
+- **Arbeitszeit:** die eigentliche Tätigkeit,
+- **Rüstzeit:** alles, was zum Start benötigt wird,
+- **Wechselzeit:** das Beenden und mentale Umschalten,
+- **Pufferzeit:** unvorhersehbare kleine Störungen.
+
+Diese Kategorien machen Planung realistischer. Sie erklären auch, warum zwei scheinbar gleich lange Termine unterschiedlich belastend sein können. Ein Onlinegespräch benötigt vielleicht wenig Wegzeit, aber Vorbereitung, Technikprüfung und Erholung danach.
+
+## 7. Schätzfehler werden durch Erinnerung verzerrt
+
+Bei der Planung erinnern Menschen oft den idealen oder schnellsten Ablauf: „Wenn alles bereitliegt, dauert es fünf Minuten.“ Vergessen werden Unterbrechungen, Suchzeiten und die Tatsache, dass die Aufgabe selten unter Idealbedingungen startet.
+
+Deshalb sollte die persönliche Referenz nicht aus dem besten Durchlauf stammen, sondern aus mehreren gemessenen Wiederholungen. Sinnvoll sind Median oder typischer Bereich statt einer einzigen Zahl. So entsteht aus einer moralischen Bewertung ein kalibrierbares Modell.
+
+Ein weiterer Unterschied ist wichtig: **Dauer schätzen** und **rechtzeitig beginnen** sind getrennte Leistungen. Selbst eine korrekte Schätzung hilft nicht, wenn das Startsignal zu spät Einfluss erhält. Umgekehrt kann ein früher externer Startpunkt ungenaue Schätzungen teilweise abfangen.
+
+## 8. Mini-Experiment: kalibrieren statt urteilen
 
 Wähle eine kleine Alltagshandlung:
 
@@ -105,11 +128,11 @@ Aus „Ich bin schlecht mit Zeit“ wird so eine konkrete persönliche Datenbasi
 
 > „Diese Aufgabe fühlt sich nach fünf Minuten an, dauert bei mir meistens zwölf.“
 
-## 7. Verbindung zu Autismus
+## 9. Verbindung zu Autismus
 
 Bei Autismus sind Befunde zur Zeitverarbeitung gemischt. Unterschiede zeigen sich teils stärker in komplexen oder multisensorischen Aufgaben. Bei gemeinsamem ADHS und Autismus können Zeitverlust, Schwierigkeiten beim Wechsel und Belastung durch unerwartete Übergänge zusammenkommen.
 
-## 8. Verbindung zu Parkinson
+## 10. Verbindung zu Parkinson
 
 Basalganglien und Dopamin sind an motorischem und wahrnehmungsbezogenem Timing beteiligt. Bei Parkinson können bestimmte Timing-Aufgaben beeinträchtigt sein. Medikamenteneffekte sind jedoch nicht einheitlich und hängen von Aufgabe und Ausgangszustand ab.
 

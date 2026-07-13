@@ -82,17 +82,33 @@ Ein Mensch mit ADHS kann an einem Tag sehr leistungsfähig und am nächsten bei 
 
 Daraus folgt nicht, dass jede Schwierigkeit automatisch ADHS ist. Es erklärt aber, weshalb „Du konntest es gestern doch auch“ wissenschaftlich kein gutes Gegenargument ist. Die maximale Fähigkeit und ihre zuverlässige Verfügbarkeit sind zwei verschiedene Dinge.
 
-## 5. Verbindung zu Autismus
+## 5. Diagnose bedeutet mehr als eine Merkmalsliste
+
+Viele einzelne ADHS-Merkmale kommen auch in der Allgemeinbevölkerung vor. Fast jeder Mensch verlegt gelegentlich Dinge, schweift ab, unterbricht andere oder schiebt unangenehme Aufgaben auf. Klinisch bedeutsam wird ein Muster nicht allein dadurch, **dass** ein Verhalten vorkommt, sondern durch Häufigkeit, Dauer, Entwicklungsverlauf, Kontext und Folgen.
+
+Für eine sorgfältige Einordnung wird deshalb gefragt:
+
+- Bestand das Muster bereits früh in der Entwicklung, auch wenn es damals anders aussah?
+- Zeigt es sich in mehr als nur einer sehr speziellen Situation?
+- Verursacht es relevante Beeinträchtigungen in Alltag, Bildung, Arbeit, Beziehungen oder Selbstorganisation?
+- Lassen sich die Schwierigkeiten besser durch Schlafmangel, Depression, Angst, Substanzen, Medikamente oder körperliche Erkrankungen erklären?
+- Welche Kompensationsstrategien verdecken Schwierigkeiten möglicherweise nach außen?
+
+Eine stark strukturierte Umgebung kann Symptome zeitweise abfangen. Umgekehrt können hohe Anforderungen Probleme sichtbar machen, die zuvor durch Unterstützung, Intelligenz, Interesse oder familiäre Organisation kompensiert wurden. Deshalb ist eine unauffällige Schulnote oder berufliche Leistung kein automatischer Gegenbeweis. Entscheidend ist nicht nur das Ergebnis, sondern auch der Aufwand, die Stabilität und der Preis, mit dem es erreicht wird.
+
+Diese Perspektive schützt vor zwei Fehlern: normale Schwankungen vorschnell zu pathologisieren und relevante Beeinträchtigungen wegen einzelner guter Leistungen zu übersehen.
+
+## 6. Verbindung zu Autismus
 
 ADHS und Autismus können gemeinsam auftreten. Überschneidungen bestehen unter anderem bei exekutiven Funktionen, Reizverarbeitung, Alltagsorganisation und emotionaler Regulation. Gleichzeitig bleiben die diagnostischen Kernbereiche verschieden.
 
 Bei gemeinsamem Auftreten kann eine Person beispielsweise gleichzeitig Neuheit suchen und starke Vorhersagbarkeit benötigen. Das ist kein logischer Widerspruch, sondern kann aus mehreren Bedürfnissen entstehen, die je nach Situation unterschiedlich dominieren. Ein einzelnes neuropsychologisches Profil kann ADHS und Autismus nicht zuverlässig trennen.
 
-## 6. Verbindung zu Parkinson
+## 7. Verbindung zu Parkinson
 
 Parkinson ist eine neurodegenerative Erkrankung, ADHS eine Neuroentwicklungsstörung. Beide betreffen teilweise Systeme, in denen Dopamin, Basalganglien und Handlungssteuerung eine Rolle spielen. Der Vergleich kann Mechanismen verständlicher machen, darf aber nicht zu einer Gleichsetzung führen. Aus gemeinsamen beteiligten Botenstoffen folgt weder eine gemeinsame Ursache noch ein direkter Krankheitsverlauf.
 
-## 7. Mini-Übung: Fähigkeit oder Regulation?
+## 8. Mini-Übung: Fähigkeit oder Regulation?
 
 Wähle eine Aufgabe, die manchmal gut und manchmal schlecht funktioniert. Notiere zwei konkrete Situationen:
 

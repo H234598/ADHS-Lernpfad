@@ -92,15 +92,30 @@ Beispiele:
 
 Die Pause schafft keine perfekte Kontrolle. Sie erhöht lediglich die Chance, dass das aktuelle Ziel wieder Einfluss erhält.
 
-## 6. Verbindung zu Autismus
+## 6. Warum Labortests und Alltag auseinandergehen können
+
+Inhibitionsaufgaben im Labor sind meist kurz, klar erklärt und stark strukturiert. Die Versuchsperson weiß, welche Reaktion erlaubt ist, erhält eindeutige Reize und muss für begrenzte Zeit eine eng definierte Regel anwenden. Der Alltag ist wesentlich unordentlicher: Ziele konkurrieren, Rückmeldungen fehlen, Emotionen sind beteiligt und niemand markiert zuverlässig den Moment, in dem gebremst werden sollte.
+
+Darum kann eine Person in einem Stoppsignaltest unauffällig sein und trotzdem im Alltag häufig zu früh antworten, Tätigkeiten impulsiv wechseln oder Nachrichten vorschnell senden. Umgekehrt kann ein schwacher Testwert nicht erklären, welche konkrete Alltagssituation problematisch ist.
+
+Hilfreich ist die Unterscheidung zwischen **reaktiver** und **vorausschauender** Kontrolle:
+
+- Reaktive Kontrolle versucht, einen bereits starken Impuls noch zu stoppen.
+- Vorausschauende Kontrolle verändert die Situation, bevor der Impuls maximal wird.
+
+Beispiele vorausschauender Kontrolle sind: Benachrichtigungen deaktivieren, eine Antwort als Entwurf beginnen, störende Apps ausloggen, Regeln sichtbar machen oder vor einem Gespräch eine kurze Pause vereinbaren. Solche Maßnahmen reduzieren nicht die Bedeutung innerer Steuerung. Sie verschieben den schwierigen Entscheidungspunkt in einen Moment, in dem mehr Handlungsspielraum vorhanden ist.
+
+Das erklärt, weshalb wirksame Selbstregulation häufig weniger spektakulär aussieht als „Willenskraft“: Gute Kontrolle verhindert, dass eine maximale Bremsleistung überhaupt nötig wird.
+
+## 7. Verbindung zu Autismus
 
 Auch bei Autismus werden exekutive Funktionen untersucht. Die Profile sind jedoch nicht sauber genug getrennt, um aus einem Inhibitionstest eine Diagnose abzuleiten. Bei gemeinsamem ADHS und Autismus können impulsiver Wechsel, starkes Festhalten an einem Fokus, Überlastung bei unerwarteten Veränderungen und Schwierigkeiten beim Filtern konkurrierender Reize zusammenwirken.
 
-## 7. Verbindung zu Parkinson
+## 8. Verbindung zu Parkinson
 
 Basalganglien sind an Handlungswahl, Initiierung und Hemmung beteiligt. Parkinson zeigt deutlich, dass diese Systeme nicht nur Bewegung, sondern auch kognitive Kontrolle beeinflussen. Die Ursache ist jedoch neurodegenerativ und damit grundsätzlich anders als bei ADHS.
 
-## 8. Beobachtungsaufgabe
+## 9. Beobachtungsaufgabe
 
 Beobachte heute einen einzigen Impuls, ohne ihn moralisch zu bewerten. Notiere:
 

@@ -55,7 +55,25 @@ Motivation ist kein fester Charaktervorrat. Sie entsteht aus dem Zusammenspiel v
 
 Auch Hyperfokus ist kein offizielles diagnostisches Kernkriterium und kein einheitlich definierter Mechanismus. Der Begriff beschreibt im Alltag häufig eine schwer unterbrechbare, stark gebundene Aufmerksamkeit. Wissenschaftlich sollte man vorsichtig bleiben und nicht jede intensive Beschäftigung als „Dopamin-Hyperfokus“ erklären.
 
-## 5. Mini-Werkzeug: unmittelbare Rückmeldung
+## 5. Belohnungsvorhersage, Aufwand und Lernen
+
+Motivation hängt nicht nur davon ab, **ob** eine Belohnung existiert. Entscheidend ist auch, wie sicher sie erwartet wird, wie viel Aufwand zwischen Handlung und Ergebnis liegt und ob der Fortschritt erkennbar ist. Eine Aufgabe mit unklarem Ausgang kann deshalb weniger attraktiv sein als eine kleinere Tätigkeit mit sofort sichtbarem Erfolg.
+
+Beim Lernen reagiert das Gehirn besonders auf Abweichungen zwischen Erwartung und tatsächlichem Ergebnis. Fällt ein Ergebnis besser aus als erwartet, kann das die zugehörige Handlung stärken. Bleibt eine erwartete Rückmeldung aus, verliert die Handlung möglicherweise an Gewicht. Dopamin ist an solchen Lernprozessen beteiligt, aber nicht als einzelner „Belohnungssaft“, sondern als Teil verteilter Schaltkreise.
+
+Für den Alltag lassen sich daraus mehrere vorsichtige Schlussfolgerungen ableiten:
+
+- Große Aufgaben sollten erkennbare Zwischenzustände besitzen.
+- Rückmeldung sollte möglichst nah an der Handlung liegen.
+- Unklarheit über den ersten Schritt erhöht den wahrgenommenen Aufwand.
+- Eine zu große Belohnung kann die eigentliche Aufgabe überlagern oder unpraktisch werden.
+- Wiederholte Misserfolge verändern Erwartungen und können den Start zusätzlich erschweren.
+
+Der letzte Punkt ist besonders wichtig. Wenn eine Person häufig erlebt, dass Aufgaben länger dauern, in Kritik enden oder trotz großer Anstrengung unvollständig bleiben, kann die geringe Startbereitschaft teilweise gelernt sein. Das ist nicht dasselbe wie Faulheit. Zugleich erklärt es nicht jedes Aufschieben und ersetzt keine differenzierte Betrachtung von Depression, Angst, Perfektionismus oder Überforderung.
+
+Motivation lässt sich deshalb oft besser beeinflussen, wenn man nicht fragt „Wie zwinge ich mich?“, sondern „Welche Information fehlt meinem System, damit der nächste Schritt jetzt lohnend, machbar und überprüfbar erscheint?“
+
+## 6. Mini-Werkzeug: unmittelbare Rückmeldung
 
 Verkürze die Schleife zwischen Handlung und Rückmeldung:
 
@@ -68,17 +86,17 @@ Verkürze die Schleife zwischen Handlung und Rückmeldung:
 
 Die Rückmeldung muss nicht groß sein. Sie soll dem Gehirn zeigen, dass die Handlung **jetzt** Bedeutung besitzt. Das ist keine Bestechung, sondern eine Veränderung der Informationsstruktur der Aufgabe.
 
-## 6. Verbindung zu Autismus
+## 7. Verbindung zu Autismus
 
 Bei Autismus wird ebenfalls Belohnungsverarbeitung untersucht. Die Befunde hängen stark davon ab, ob soziale, materielle, sensorische oder interessenbezogene Belohnungen verwendet werden. Bei gemeinsamem ADHS und Autismus können Neuheitssuche und ein starkes Bedürfnis nach Vorhersagbarkeit gleichzeitig auftreten. Ein einziges Motivationsmodell reicht deshalb selten aus.
 
-## 7. Verbindung zu Parkinson
+## 8. Verbindung zu Parkinson
 
 Bei Parkinson gehen dopaminproduzierende Nervenzellen vor allem in nigrostriatalen Bahnen verloren. Neben Bewegung können auch Motivation, Lernen und Impulskontrolle betroffen sein. Dopaminerge Medikamente können bestimmte Verhaltensweisen verbessern, aber auch Impulskontrollstörungen begünstigen.
 
 Der Vergleich zeigt: Dopamin ist an Auswahl und Gewichtung von Handlungen beteiligt. Er zeigt nicht, dass ADHS eine frühe Parkinsonform wäre.
 
-## 8. Beobachtungsaufgabe
+## 9. Beobachtungsaufgabe
 
 Wähle eine aufgeschobene Aufgabe und notiere:
 
