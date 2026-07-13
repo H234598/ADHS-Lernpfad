@@ -1,0 +1,21 @@
+name: Build exports
+on:
+  workflow_dispatch:
+  push: {branches: [main]}
+permissions: {contents: read}
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -r requirements-export.txt
+      - run: python3 scripts/build_literature.py && python3 scripts/build_graph.py && python3 scripts/build_combined.py && python3 scripts/build_anki.py
+      - run: sudo apt-get update && sudo apt-get install -y pandoc
+      - run: pandoc build/ADHS-Lernpfad-Gesamtdokument.md -o build/ADHS-Lernpfad.epub --toc --metadata title='ADHS-Lernpfad'
+      - run: pandoc build/ADHS-Lernpfad-Gesamtdokument.md -o build/ADHS-Lernpfad.html --standalone --toc --metadata title='ADHS-Lernpfad'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: adhs-lernpfad-exports
+          path: build/

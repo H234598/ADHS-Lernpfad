@@ -1,0 +1,68 @@
+deck: ADHS-Lernpfad
+cards:
+- id: 1001
+  unit: 1
+  front: Warum ist „Menschen mit ADHS können sich nicht konzentrieren“ ungenau?
+  back: Weil Konzentration möglich sein kann, ihre zuverlässige Steuerung aber stark
+    von Aufgabe, Motivation, Reizlage und Kontext abhängt.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_01
+- id: 1002
+  unit: 2
+  front: Warum kann eine Person eine Regel kennen und sie trotzdem nicht rechtzeitig
+    umsetzen?
+  back: Weil Wissen nur dann Verhalten steuert, wenn es im Moment aktiv bleibt und
+    konkurrierende Reaktionen gehemmt werden.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_02
+- id: 1003
+  unit: 3
+  front: Warum reicht die langfristige Wichtigkeit einer Aufgabe oft nicht zum Start?
+  back: Weil Wissen über spätere Folgen nicht automatisch ein starkes gegenwärtiges
+    Handlungssignal erzeugt.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_03
+- id: 1004
+  unit: 4
+  front: Warum kann eine bekannte Aufgabe nach einer Unterbrechung plötzlich schwer
+    fortzusetzen sein?
+  back: Weil Ziel und Zwischenschritt aus dem aktiven Arbeitsgedächtnis verschwunden
+    sein können.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_04
+- id: 1005
+  unit: 5
+  front: Wie kann eine Person zeitweise ausgezeichnete Leistung und dennoch relevante
+    Aufmerksamkeitsprobleme haben?
+  back: Weil die Schwierigkeit in Stabilität und Koordination liegen kann, nicht in
+    einer konstanten Unfähigkeit.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_05
+- id: 1006
+  unit: 6
+  front: Warum ist „schlechte innere Uhr“ als Erklärung unzureichend?
+  back: Weil zeitgerechtes Verhalten aus mehreren kognitiven und motivationalen Systemen
+    entsteht.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_06
+- id: 1007
+  unit: 7
+  front: Warum ist emotionale Dysregulation nicht dasselbe wie starke Gefühle?
+  back: Weil auch Geschwindigkeit, Dauer, Erholung und zielgerechtes Handeln unter
+    Belastung zählen.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_07
