@@ -74,7 +74,36 @@ Wenn eine Information nicht aktiv bleibt, kann es von außen wie fehlende Aufmer
 
 Im Alltag treten diese Prozesse häufig gemeinsam auf. Eine einzige Erklärung reicht selten. Deshalb sollte man bei Fehlern nicht vorschnell unterstellen, jemand habe „nicht zugehört“.
 
-## 5. Externes Arbeitsgedächtnis
+## 5. Kapazität ist nicht der einzige begrenzende Faktor
+
+Arbeitsgedächtnis wird häufig wie ein Behälter beschrieben, der bei manchen Menschen kleiner sei. Diese Vorstellung ist nur teilweise hilfreich. Leistung hängt nicht allein von einer festen Kapazität ab, sondern auch davon, wie gut Information strukturiert, geschützt und aktualisiert wird.
+
+Drei Aufgaben mit derselben Wortzahl können sehr unterschiedlich schwer sein:
+
+- Eine bekannte Reihenfolge lässt sich zu größeren Einheiten bündeln.
+- Unverbundene Informationen müssen einzeln aktiv gehalten werden.
+- Ähnliche Elemente können sich gegenseitig stärker stören.
+- Emotionale Belastung oder parallele Gedanken beanspruchen zusätzliche Ressourcen.
+- Unklare Anweisungen zwingen dazu, gleichzeitig die Aufgabe und ihre Bedeutung zu rekonstruieren.
+
+Fachwissen entlastet das Arbeitsgedächtnis, weil einzelne Details zu sinnvollen „Paketen“ zusammengefasst werden können. Ein erfahrener Schachspieler erinnert keine zufälligen Figuren besser als andere Menschen, erkennt aber in realistischen Stellungen vertraute Muster. Im Alltag bedeutet das: Eine komplizierte Aufgabe wird nicht nur durch mehr Konzentration leichter, sondern auch durch bessere Struktur und Übung.
+
+## 6. Zwischen Speicherung, Aktualisierung und Schutz unterscheiden
+
+Ein Fehler kann entstehen, obwohl genügend Information aufgenommen wurde. Vielleicht wurde sie nicht rechtzeitig aktualisiert. Vielleicht blieb eine alte Regel aktiv, obwohl sich die Situation geändert hatte. Oder ein irrelevanter Gedanke verdrängte das aktuelle Ziel.
+
+Diese Unterschiede sind praktisch relevant:
+
+- Bei Aufnahmeproblemen hilft eine klarere oder langsamere Information.
+- Bei Aktualisierungsproblemen helfen sichtbare Zwischenstände.
+- Bei Interferenz helfen Reizreduktion und weniger parallele Aufgaben.
+- Bei Wiedereinstiegsproblemen hilft ein konkreter Checkpoint.
+
+Darum ist „Gedächtnis verbessern“ als Ziel zu unspezifisch. Besser ist die Frage: **An welcher Stelle verliert die Information ihre Funktion?**
+
+Auch Arbeitsgedächtnistraining sollte vorsichtig bewertet werden. Menschen können in geübten Aufgaben besser werden, doch Verbesserungen übertragen sich nicht automatisch breit auf Schule, Beruf oder Alltag. Externe Hilfen und veränderte Aufgabenstrukturen sind deshalb keine zweitklassige Lösung, sondern häufig die direktere Intervention für das reale Problem.
+
+## 7. Externes Arbeitsgedächtnis
 
 Notizen, Checklisten, sichtbare Zwischenstände und vorbereitete Wiedereinstiege entlasten das Arbeitsgedächtnis. Das ist kein Zeichen kognitiver Schwäche. Komplexe technische Systeme verwenden ebenfalls Logs, Zustandsanzeigen und Checkpoints.
 
@@ -88,15 +117,15 @@ Beispiel:
 
 Nicht die gesamte Aufgabenplanung. Nur der exakte Wiedereinstieg. Eine lange Liste kann den Schreibtisch erneut überladen.
 
-## 6. Verbindung zu Autismus
+## 8. Verbindung zu Autismus
 
 Auch bei Autismus können Arbeitsgedächtnis und andere exekutive Funktionen belastet sein. Die Ergebnisse hängen unter anderem von Sprache, Aufgabenart, Alter, Begleiterkrankungen und Messmethode ab. Bei gemeinsamem ADHS und Autismus können Ablenkbarkeit, Reizüberlastung und Schwierigkeiten beim Aufgabenwechsel zusammenwirken.
 
-## 7. Verbindung zu Parkinson
+## 9. Verbindung zu Parkinson
 
 Parkinson kann frontostriatale Funktionen und damit Arbeitsgedächtnis und kognitive Flexibilität beeinflussen. Die Beziehung zwischen Dopamin und Arbeitsgedächtnis ist wahrscheinlich nicht linear. „Mehr Dopamin“ bedeutet daher nicht automatisch „mehr Arbeitsgedächtnis“.
 
-## 8. Mini-Experiment
+## 10. Mini-Experiment
 
 Bevor du eine Aufgabe für fünf Minuten verlässt:
 
