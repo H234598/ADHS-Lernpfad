@@ -1,12 +1,5 @@
 // SyncUp Obsidian preset
-.obsidian/workspace
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.obsidian/cache
-.obsidian/.metadata.json
-.obsidian/plugins/*/data.json
-.obsidian/plugins/*/.cache/
-.obsidian/community-plugins.json
+.obsidian/
 .trash/
 .DS_Store
 Thumbs.db
