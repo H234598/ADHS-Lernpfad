@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import json
+import os
 import re
 import sys
 import yaml
@@ -27,7 +28,6 @@ required_sections = [
 ]
 
 def prose_word_count(text: str) -> int:
-    """Count didactic prose, including review answers, excluding metadata, diagrams and navigation."""
     text = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S)
     text = re.sub(r"```.*?```", "", text, flags=re.S)
     text = re.sub(r"</?(?:details|summary)>", "", text)
@@ -88,6 +88,16 @@ report_lines.extend(["", "Fehler:"])
 report_lines.extend([f"- {error}" for error in errors] or ["- keine"])
 REPORT.write_text("\n".join(report_lines) + "\n", encoding="utf-8")
 print(REPORT.read_text(encoding="utf-8"))
+
+summary = "counts=" + ",".join(f"{n}:{w}" for n, _, w in counts)
+if errors:
+    compact_errors = " | ".join(error.replace("\n", " ") for error in errors)
+    summary += "; errors=" + compact_errors[:700]
+else:
+    summary += "; errors=none"
+if os.getenv("GITHUB_OUTPUT"):
+    with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+        fh.write(f"summary={summary}\n")
 
 if errors:
     raise SystemExit(1)
