@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "references/Castellanos2006.md",
-                "mode": "preview",
+                "file": "prompts/DEEP-RESEARCH-PROMPT.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Castellanos2006"
+              "title": "DEEP-RESEARCH-PROMPT"
             }
           }
         ]
@@ -112,7 +112,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "references/Castellanos2006.md",
+            "file": "prompts/DEEP-RESEARCH-PROMPT.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -131,7 +131,7 @@
         "state": {
           "type": "outgoing-link",
           "state": {
-            "file": "references/Castellanos2006.md",
+            "file": "prompts/DEEP-RESEARCH-PROMPT.md",
             "linksCollapsed": false,
             "unlinkedCollapsed": true
           },
@@ -145,7 +145,7 @@
         "state": {
           "type": "outline",
           "state": {
-            "file": "references/Castellanos2006.md",
+            "file": "prompts/DEEP-RESEARCH-PROMPT.md",
             "followCursor": false,
             "showSearch": false,
             "searchQuery": ""
@@ -170,6 +170,7 @@
   },
   "active": "b0678b4ad13582f1",
   "lastOpenFiles": [
+    "references/Castellanos2006.md",
     "prompts/DEEP-RESEARCH-PROMPT.md",
     "references/Beheshti2020.md",
     "knowledge-graph/README.md",
