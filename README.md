@@ -3,7 +3,7 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.3.0
+version: 0.4.0
 last_reviewed: 2026-07-13
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
@@ -12,7 +12,7 @@ tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 
 Ein quelloffenes, Obsidian-taugliches Lernkompendium zu ADHS. Es beginnt bei den Grundlagen und wächst schrittweise bis zum Lesen, Bewerten und Einordnen aktueller Forschung.
 
-**Webfassung:** https://h234598.github.io/ADHS-Lernpfad/
+**Webfassung:** https://ADHS.telacore.org/
 
 ## Wissenschaftlicher Rahmen
 
@@ -25,6 +25,10 @@ Die Texte unterscheiden konsequent zwischen:
 
 > [!important]
 > Das Kompendium ersetzt keine ärztliche oder psychotherapeutische Diagnostik oder Behandlung.
+
+## Umfang der Einheiten
+
+Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Die CI prüft eine Mindestlänge von 700 Fließtextwörtern sowie didaktische Pflichtabschnitte. Komplexe Themen dürfen mehr Raum erhalten oder auf mehrere Einheiten verteilt werden; künstliche Fülltexte sind ausdrücklich unerwünscht.
 
 ## Lernpfad
 
@@ -55,4 +59,4 @@ Die Texte unterscheiden konsequent zwischen:
 
 ## Automatische Ausgaben
 
-GitHub Actions prüfen Struktur und Links, bauen die MkDocs-Webseite und erzeugen Markdown-, HTML-, EPUB- und APKG-Artefakte.
+GitHub Actions prüfen Struktur, Mindestumfang und Links, bauen die MkDocs-Webseite und erzeugen Markdown-, HTML-, EPUB- und APKG-Artefakte.

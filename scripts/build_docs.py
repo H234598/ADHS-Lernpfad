@@ -19,4 +19,5 @@ for rel in files:
     dst.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(src, dst)
 shutil.copytree(ROOT / "figures", DOCS / "figures", dirs_exist_ok=True)
-print(f"MkDocs-Quellen: {len(files)} Markdown-Dateien")
+shutil.copy2(ROOT / "CNAME", DOCS / "CNAME")
+print(f"MkDocs-Quellen: {len(files)} Markdown-Dateien plus CNAME")

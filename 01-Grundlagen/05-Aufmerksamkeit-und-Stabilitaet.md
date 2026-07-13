@@ -1,31 +1,42 @@
 ---
 title: Aufmerksamkeit und Stabilität
 level: Grundlagen
-estimated_time: 10 min
+estimated_time: 10–20 min
 difficulty: 2
-prerequisites: []
-tags: [ADHS, Grundlagen]
+prerequisites: [Arbeitsgedächtnis]
+tags: [ADHS, Aufmerksamkeit, Default-Mode-Network, Reaktionszeitvariabilität]
 last_reviewed: 2026-07-13
-evidence: high
-status: consensus
+evidence: moderate
+status: probable
 references: [Castellanos2006]
+minimum_reading_minutes: 10
+maximum_reading_minutes: 20
 ---
 
 # Einheit 5 – Aufmerksamkeit und Stabilität
 
 ## Lernziel
 
-Du kannst mehrere Aufmerksamkeitsfunktionen und die Bedeutung von Leistungsschwankungen unterscheiden.
+Du kannst verschiedene Aufmerksamkeitsfunktionen unterscheiden und erklären, weshalb Schwankungen häufig wichtiger sind als ein einfacher Leistungsdurchschnitt. Außerdem verstehst du die Rolle des Default Mode Network, ohne es fälschlich als bloßes Störnetzwerk zu behandeln.
 
-## Erklärung
+## 1. Aufmerksamkeit besteht aus mehreren Funktionen
 
-Aufmerksamkeit umfasst unter anderem Aktivierung, Orientierung und exekutive Kontrolle. ADHS erzeugt kein einheitliches Defizitprofil.
+Aufmerksamkeit ist kein einzelner Scheinwerfer. Ein verbreitetes Modell unterscheidet:
 
-Häufig ist nicht nur die mittlere Leistung auffällig, sondern die **Reaktionszeitvariabilität**: gute Phasen und kurze Aussetzer liegen nebeneinander.
+- **Alerting:** Wachheit und Bereitschaft,
+- **Orienting:** Ausrichtung auf einen relevanten Reiz,
+- **exekutive Kontrolle:** Durchsetzen wichtiger Information gegen Konflikt und Ablenkung.
 
-Das Default Mode Network ist kein Störnetzwerk; relevant ist seine zeitgerechte Koordination mit aufgabenbezogenen Netzwerken.
+ADHS kann diese Funktionen unterschiedlich beeinflussen. Es gibt kein einheitliches neuropsychologisches Profil, das bei allen Betroffenen auftritt.
 
-## Modell
+> [!evidence] Evidenz: gut gestützt, aber stark heterogen
+> Schwierigkeiten anhaltender und exekutiver Aufmerksamkeit werden bei ADHS häufig gefunden. Einzelne Aufmerksamkeitstests können ADHS jedoch weder beweisen noch ausschließen.
+
+## 2. Schwankung statt dauerhafter Ausfall
+
+Ein häufig berichteter Forschungsbefund ist eine erhöhte **intraindividuelle Reaktionszeitvariabilität**. Das bedeutet: Eine Person reagiert mehrfach normal oder schnell, dann tritt eine deutlich langsamere Reaktion oder ein kurzer Aussetzer auf.
+
+Der Durchschnitt kann diese Dynamik verstecken. Zwei Personen können dieselbe mittlere Reaktionszeit besitzen, obwohl eine sehr gleichmäßig und die andere stark schwankend reagiert.
 
 ```mermaid
 flowchart LR
@@ -33,33 +44,86 @@ flowchart LR
   O[Orienting] --> T
   E[exekutive Kontrolle] --> T
   D[Default Mode Network] <-->|Koordination| T
+  R[Reiz und Motivation] --> A
 ```
 
-## Verbindung zu Autismus und Parkinson
+Das erklärt das scheinbare Paradox:
 
-Querverbindungen werden nur dort gezogen, wo gemeinsame Funktionen oder Netzwerke das Verständnis verbessern. ADHS und Autismus sind Neuroentwicklungsstörungen; Parkinson ist neurodegenerativ. Ähnliche beteiligte Systeme bedeuten keine Gleichsetzung.
+> „Ich konnte mich gestern zwei Stunden konzentrieren. Warum heute keine zehn Minuten?“
+
+Weil die entscheidende Größe nicht nur Fähigkeit, sondern Stabilität unter den aktuellen Bedingungen ist.
+
+## 3. Das Default Mode Network
+
+Das Default Mode Network, kurz DMN, ist unter anderem beteiligt an innerlich gerichteten Gedanken, autobiografischer Verarbeitung, Zukunftsvorstellung und spontanem Gedankenschweifen.
+
+Es ist kein schlechtes Netzwerk. Ohne inneres Denken wären Planung, Kreativität und Selbstreflexion kaum möglich. Problematisch kann lediglich das Timing seiner Aktivität in einer äußeren Aufgabe sein. Forschung untersucht, ob die Koordination zwischen DMN und aufgabenbezogenen Netzwerken bei ADHS verändert ist.
+
+Bildgebungsbefunde sind Gruppenbefunde. Sie sind nicht präzise genug, um aus einem Scan eine individuelle Diagnose abzuleiten.
+
+## 4. Aufmerksamkeit und Arbeitsgedächtnis
+
+Eine kurze Aufmerksamkeitslücke kann genügen, damit das aktuelle Ziel aus dem Arbeitsgedächtnis fällt. Danach entsteht eine Kette:
+
+1. Der Fokus schwankt.
+2. Das Ziel verliert Aktivierung.
+3. Ein anderer Reiz übernimmt.
+4. Beim Zurückkehren fehlt der Einstiegspunkt.
+5. Die ursprüngliche Aufgabe fühlt sich plötzlich unklar an.
+
+Deshalb wirken Aufmerksamkeits- und Arbeitsgedächtnisprobleme im Alltag oft ähnlich. Die Ursachen sind dennoch nicht identisch.
+
+## 5. Aufmerksamkeit und Motivation
+
+Langweilige, vorhersehbare oder sehr lang laufende Aufgaben stellen andere Anforderungen als interessante, neue oder zeitkritische Tätigkeiten. Das bedeutet nicht, dass Aufmerksamkeit beliebig oder vollständig willentlich steuerbar ist. Es zeigt, dass Aktivierungsniveau, Reizwert und Rückmeldung die Leistung beeinflussen.
+
+Ein sehr stimulierender Kontext kann die Aufmerksamkeit vorübergehend stabilisieren. Ein reizarmes Umfeld kann helfen, wenn Ablenkung das Hauptproblem ist. Bei manchen Aufgaben ist aber nicht weniger Reiz, sondern ein klareres und stärkeres Signal nötig.
+
+## 6. Mini-Experiment: Stabilität messen
+
+Wähle eine Aufgabe von fünf bis zehn Minuten. Notiere vorher genau ein Ziel. Mache jedes Mal einen kleinen Strich, wenn du merkst, dass dein Fokus abgewichen ist. Kehre dann ohne Bewertung zurück.
+
+Am Ende fragst du:
+
+- Wie oft ist der Fokus abgewichen?
+- Wie schnell habe ich es bemerkt?
+- Wie leicht war der Wiedereinstieg?
+- Welche Reize waren besonders wirksam?
+- War das Ziel eindeutig genug?
+
+Der Erfolg besteht nicht darin, nie abzuschweifen. Der Erfolg besteht darin, den Prozess sichtbar zu machen und das Zurückkehren zu erleichtern.
+
+## 7. Verbindung zu Autismus
+
+Bei Autismus können Orientierung, Wechsel und Priorisierung von Reizen ebenfalls verändert sein. Gleichzeitig können bestimmte Interessen sehr stabilen Fokus erzeugen. Bei gemeinsamem ADHS und Autismus können leichte Ablenkbarkeit, sensorische Überlastung und starkes Festhalten an einem Fokus nebeneinander auftreten.
+
+Ein einzelner Aufmerksamkeitstest kann diese komplexen Profile nicht ausreichend abbilden.
+
+## 8. Verbindung zu Parkinson
+
+Parkinson kann neben motorischen Symptomen Aufmerksamkeit und exekutive Kontrolle beeinflussen. Frontostriatale und dopaminerge Systeme spielen dabei eine Rolle. Die Ursachen und der Krankheitsverlauf unterscheiden sich jedoch grundlegend von ADHS.
 
 ## Review-Frage
 
-**Wie kann eine Person zeitweise ausgezeichnete Leistung und dennoch relevante Aufmerksamkeitsprobleme haben?**
+**Wie kann eine Person zeitweise ausgezeichnete Leistung zeigen und dennoch relevante Aufmerksamkeitsprobleme haben?**
 
 <details>
 <summary>Antwort</summary>
 
-Weil die Schwierigkeit in Stabilität und Koordination liegen kann, nicht in einer konstanten Unfähigkeit.
+Weil die Schwierigkeit in Stabilität und Koordination liegen kann. Gute Phasen und kurze Aussetzer können direkt nebeneinander auftreten, und Leistung hängt stark von Aufgabe, Aktivierung, Motivation und Umgebung ab.
 
 </details>
 
+## Wissenschaftliche Quelle
+
+[[references/Castellanos2006|Castellanos et al. 2006]] – ein einflussreicher Review, der ADHS-Kognition über ein einzelnes Exekutivdefizit hinaus betrachtet; für aktuelle Detailfragen sollten neuere Reviews ergänzt werden.
+
 ## Merksatz
 
-> Komplexes Verhalten entsteht aus dem Zusammenspiel mehrerer Systeme – nicht aus einem einzelnen „Defekt“.
-
-## Quelle
-
-[[references/Castellanos2006|Studienkarte Castellanos2006]]
+> Die entscheidende Frage lautet oft nicht „Kann ich aufpassen?“, sondern „Wie stabil bleibt mein Aufmerksamkeitssystem und wie gut finde ich zurück?“
 
 ## Navigation
 
-- Zurück: [[01-Grundlagen/04-Arbeitsgedaechtnis|vorherige Einheit]]
-- Weiter: [[01-Grundlagen/06-Zeitverarbeitung|nächste Einheit]]
+- Zurück: [[01-Grundlagen/04-Arbeitsgedaechtnis|Arbeitsgedächtnis]]
+- Weiter: [[01-Grundlagen/06-Zeitverarbeitung|Zeitverarbeitung]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]
