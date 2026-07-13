@@ -56,7 +56,7 @@ Das ist methodisch wichtig: Ein durchschnittlicher Gruppenunterschied bedeutet n
 Die Forschung findet bei ADHS im Gruppenmittel Unterschiede in verteilten Hirnnetzwerken. Besonders häufig diskutiert werden frontostriatale, frontoparietale und Default-Mode-Netzwerke sowie die Regulation durch Dopamin und Noradrenalin.
 
 Daraus folgt nicht:
-
+Gbbcvc 
 - dass ein einzelner Bereich „defekt“ ist,
 - dass ADHS einfach Dopaminmangel bedeutet,
 - dass ein MRT die Diagnose stellen kann,
