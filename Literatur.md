@@ -1,12 +1,14 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-13
+last_reviewed: 2026-07-14
 ---
 
 # Literatur
 
 > Automatisch aus `references/` erzeugt. Nicht manuell bearbeiten.
+
+[BibTeX herunterladen](references.bib) · [CSL JSON herunterladen](references.json)
 
 ## Beheshti2020
 
@@ -74,4 +76,3 @@ Volkow, N. D., Wang, G.-J., Newcorn, J. H., et al. (2011). Motivation deficit in
 
 - DOI: [https://doi.org/10.1038/mp.2010.97](https://doi.org/10.1038/mp.2010.97)
 - Evidenztyp: `primary-study` · Evidenzgrad: `moderate` · Status: `probable`
-
