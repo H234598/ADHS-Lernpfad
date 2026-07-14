@@ -10,7 +10,7 @@ Arbeite im Repository `H234598/ADHS-Lernpfad`.
 2. Suche nach offenen Pull Requests gegen `main`, deren Head-Branch dem Muster `agent/einheit-*` entspricht oder deren Beschreibung den Marker `<!-- adhs-daily-unit -->` enthält.
 3. Falls bereits ein solcher Pull Request offen ist, erstelle **keine** weitere Einheit und keinen weiteren Branch. Melde den vorhandenen PR als Blocker.
 4. Stelle sicher, dass das Arbeitsverzeichnis sauber ist und der neue Branch vom aktuellen `main` ausgeht.
-5. Lies `README.md`, `00-Einfuehrung.md`, `index.json`, die letzten zwei Kapitel, `Glossar.md`, die Referenzkarten, `ROADMAP.md` und alle einschlägigen Dateien unter `prompts/`.
+5. Lies `README.md`, `00-Einfuehrung.md`, `index.json`, die letzten zwei Kapitel, `Glossar.md`, die Referenzkarten, `references/README.md`, `ROADMAP.md` und alle einschlägigen Dateien unter `prompts/`.
 6. Führe vor dem Schreiben vollständig `prompts/DEEP-RESEARCH-PROMPT.md` aus.
 
 ## 2. Auftrag
@@ -59,13 +59,15 @@ Jede Einheit enthält mindestens:
 ## 6. Dateipflege
 
 1. Lege die Einheit im fachlich passenden Ordner ab.
-2. Lege neue Quellen als einzelne Dateien in `references/` an; `Literatur.md` wird generiert.
-3. Ergänze neue Fachbegriffe in `Glossar.md`.
-4. Ergänze passende Anki-Karten in `cards/cards.yaml`.
-5. Aktualisiere README, Index, MkDocs-Navigation und Wissensgraph-Verknüpfungen.
-6. Erhalte die Datei `CNAME` exakt mit dem Inhalt `ADHS.telacore.org`.
-7. Verändere keine Dateien unter `.github/` oder `prompts/`, keine Validatoren, Requirements, Build-, Veröffentlichungs-, Sicherheits- oder Synchronisationsinfrastruktur, sofern dies nicht zwingend für die neue Einheit erforderlich ist.
-8. Falls eine solche sensible Datei zwingend geändert werden muss, erläutere jede Änderung im PR und füge der PR-Beschreibung den Marker `<!-- manual-merge-required -->` hinzu. Dieser PR darf nicht automatisch gemergt werden.
+2. Lege neue Quellen als einzelne Dateien in `references/` an. Pflege sämtliche bibliografischen Felder strukturiert unter `citation` entsprechend `references/README.md`. Der Abschnitt `Vollständige Zitation` muss exakt aus diesen Feldern reproduzierbar sein.
+3. Erzeuge `Literatur.md`, `references.bib` und `references.json` ausschließlich mit `scripts/build_literature.py`; bearbeite diese drei Dateien nicht unabhängig voneinander.
+4. Ergänze neue Fachbegriffe in `Glossar.md`.
+5. Ergänze passende Anki-Karten in `cards/cards.yaml`.
+6. Aktualisiere README, Index, MkDocs-Navigation und Wissensgraph-Verknüpfungen.
+7. Verwende weiterhin Obsidian-Wikilinks in den Quelldateien. Aliasnamen, Unterordner und Überschriftenanker müssen von `scripts/validate_links.py` eindeutig auflösbar sein.
+8. Erhalte die Datei `CNAME` exakt mit dem Inhalt `ADHS.telacore.org`.
+9. Verändere keine Dateien unter `.github/` oder `prompts/`, keine Validatoren, Requirements, Build-, Veröffentlichungs-, Sicherheits- oder Synchronisationsinfrastruktur, sofern dies nicht zwingend für die neue Einheit erforderlich ist.
+10. Falls eine solche sensible Datei zwingend geändert werden muss, erläutere jede Änderung im PR und füge der PR-Beschreibung den Marker `<!-- manual-merge-required -->` hinzu. Dieser PR darf nicht automatisch gemergt werden.
 
 ## 7. Pflichtprüfungen
 
@@ -73,6 +75,8 @@ Führe aus:
 
 ```bash
 python3 scripts/build_literature.py
+git diff --exit-code -- Literatur.md references.bib references.json
+python3 scripts/validate_links.py
 python3 scripts/build_graph.py
 python3 scripts/validate_compendium.py
 python3 scripts/build_combined.py
@@ -81,7 +85,7 @@ python3 scripts/build_docs.py
 mkdocs build --strict
 ```
 
-Alle Prüfungen müssen erfolgreich beendet sein. Die Validierung muss insbesondere Mindest- und Maximallänge, Pflichtabschnitte, Quellen, Wikilinks und fortlaufende Nummerierung prüfen.
+Alle Prüfungen müssen erfolgreich beendet sein. Die Validierung muss insbesondere Mindest- und Maximallänge, Pflichtabschnitte, Quellen, Obsidian-Wikilinks, Bibliografiekonsistenz und fortlaufende Nummerierung prüfen.
 
 ## 8. Git-Arbeitsweise
 
@@ -97,6 +101,7 @@ Alle Prüfungen müssen erfolgreich beendet sein. Die Validierung muss insbesond
    - Unsicherheiten und Limitationen,
    - geänderte Alttexte mit Begründung,
    - sämtliche lokalen Prüfergebnisse,
+   - den Zustand der generierten Markdown-, BibTeX- und CSL-Ausgaben,
    - alle geänderten sensiblen Dateien,
    - Branch und Head-Commit.
 7. Prüfe nach der PR-Erstellung, dass der Head-Branch tatsächlich diesem PR zugeordnet ist und der PR den aktuellen Head-Commit enthält.
