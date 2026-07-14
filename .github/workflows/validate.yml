@@ -1,33 +1,77 @@
 name: Validate compendium
+
 on:
   push:
+    branches: [main]
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
 permissions:
   contents: read
   issues: write
   pull-requests: write
+
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    name: Validate and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: {python-version: '3.12'}
-      - run: pip install -r requirements-docs.txt -r requirements-export.txt
-      - run: python3 scripts/build_literature.py
-      - run: python3 scripts/build_graph.py
-      - id: compendium_validation
-        run: python3 scripts/validate_compendium.py
-      - name: "Validation ${{ steps.compendium_validation.outputs.summary }}"
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements-docs.txt
+            requirements-export.txt
+
+      - name: Install Python dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-docs.txt -r requirements-export.txt
+
+      - name: Verify installed dependencies
+        run: python -m pip check
+
+      - name: Check whitespace and Python syntax
+        run: |
+          git diff --check
+          python -m compileall -q scripts
+
+      - name: Build literature
+        run: python scripts/build_literature.py
+
+      - name: Verify generated literature is committed
+        run: git diff --exit-code -- Literatur.md
+
+      - name: Build knowledge graph
+        run: python scripts/build_graph.py
+
+      - name: Validate compendium
+        id: compendium_validation
+        run: python scripts/validate_compendium.py
+
+      - name: Show validation summary
         if: always()
         run: echo "${{ steps.compendium_validation.outputs.summary }}"
+
       - name: Upload validation report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: validation-report
           path: build/validation-report.txt
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Comment validation report
         if: always() && github.event_name == 'pull_request'
         continue-on-error: true
@@ -35,13 +79,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           jq -Rs '{body: .}' build/validation-report.txt > /tmp/comment.json
-          gh api --method POST repos/H234598/ADHS-Lernpfad/issues/${{ github.event.pull_request.number }}/comments --input /tmp/comment.json
+          gh api --method POST \
+            repos/H234598/ADHS-Lernpfad/issues/${{ github.event.pull_request.number }}/comments \
+            --input /tmp/comment.json
+
       - name: Fail on validation errors
         if: steps.compendium_validation.outputs.failed == 'true'
         run: |
           cat build/validation-report.txt
           exit 1
-      - run: python3 scripts/build_combined.py
-      - run: python3 scripts/build_anki.py
-      - run: python3 scripts/build_docs.py
-      - run: mkdocs build --strict
+
+      - name: Build combined document
+        run: python scripts/build_combined.py
+
+      - name: Build Anki deck
+        run: python scripts/build_anki.py
+
+      - name: Build documentation sources
+        run: python scripts/build_docs.py
+
+      - name: Build MkDocs site strictly
+        run: mkdocs build --strict
