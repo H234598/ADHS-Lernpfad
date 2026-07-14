@@ -2,7 +2,7 @@ site_name: ADHS-Lernpfad
 site_description: Wissenschaftlich fundierter Lernpfad zu ADHS
 site_url: https://ADHS.telacore.org/
 repo_url: https://github.com/H234598/ADHS-Lernpfad
-edit_uri: edit/main/
+edit_uri: ""
 docs_dir: build/docs
 site_dir: site
 strict: true
