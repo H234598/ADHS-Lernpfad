@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-13
+last_reviewed: 2026-07-14
 ---
 
 # Glossar
@@ -33,5 +33,14 @@ Statistischer Unterschied zwischen Gruppen, der keine sichere Aussage über eine
 ## Inhibition
 Hemmung dominanter oder begonnener Reaktionen zugunsten eines Ziels.
 
+## Neuroentwicklung
+Veränderung und Reifung neuronaler Systeme im Zusammenspiel mit Lernen, Umwelt und biologischen Voraussetzungen über die Entwicklung hinweg.
+
+## Persistenz
+Fortbestehen von Symptomen oder Beeinträchtigungen über einen längeren Zeitraum; nicht zwingend mit unveränderter Stärke.
+
 ## Reaktionszeitvariabilität
 Schwankung der Reaktionsgeschwindigkeit innerhalb einer Person über mehrere Durchgänge.
+
+## Remission
+Rückgang von Symptomen oder Beeinträchtigungen unter festgelegte Schwellen; kann teilweise, vollständig, zeitweise oder anhaltend sein.
