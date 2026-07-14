@@ -1,40 +1,44 @@
-# Prompt-Verzeichnis
+# Prompts und tägliche Automationspipeline
 
-Alle automatisierbaren Arbeitsanweisungen des Projekts liegen zentral in diesem Ordner.
+Dieser Ordner ist die zentrale Quelle für sämtliche Agentenprompts des ADHS-Lernpfads.
 
 ## Dateien
 
-- `AUTOMATION-PROMPT.md` – tägliche Erzeugung genau einer neuen Lerneinheit; wird um 06:00 Uhr Europe/Berlin ausgeführt und endet mit einem Draft-Pull-Request.
-- `DEEP-RESEARCH-PROMPT.md` – verbindliche wissenschaftliche Recherche- und Evidenzprüfung für neue oder zu revidierende Kapitel.
-- `MERGE-AUTOMATION-PROMPT.md` – getrennter Merge-Wächter; wartet mindestens zwei Stunden, berücksichtigt vorhandene CodeRabbit-Hinweise optional, repariert fehlgeschlagene CI und merged erst nach einer zweiten grünen CI.
-- `PR-REPAIR-PROMPT.md` – sicherer Reparaturzyklus für fehlgeschlagene Checks auf dem bestehenden Einheiten-Branch.
+- `DEEP-RESEARCH-PROMPT.md`: wissenschaftliche Recherche, Evidenzhierarchie und Ergebnissynthese.
+- `AUTOMATION-PROMPT.md`: tägliche Erzeugung genau einer neuen Lerneinheit um 06:00 Uhr Europe/Berlin; endet mit einem Draft-Pull-Request.
+- `MERGE-AUTOMATION-PROMPT.md`: gestufte Prüfung frühestens zwei Stunden nach PR-Erstellung; repariert fehlgeschlagene CI, macht einen grünen Draft zunächst „Ready for review“ und merged erst nach erneut grüner CI.
+- `PR-REPAIR-PROMPT.md`: eng begrenzter Reparaturzyklus auf dem bestehenden Einheiten-Branch.
 
 ## Ablauf
 
-```text
-06:00  Erzeugungsprompt
-          ↓
-        Draft-PR
-          ↓
-        mindestens zwei Stunden Prüfzeit
-          ↓
-ab 08:00 stündlicher Merge-Wächter
-          ↓
-        CodeRabbit-Signale auswerten, falls vorhanden
-          ↓
-        CI rot? → genau ein Reparaturzyklus → neue CI
-          ↓
-        erste PR-CI vollständig grün
-          ↓
-        Ready for review
-          ↓
-        zweite Pull-Request-CI
-          ↓
-        bei Fehler erneut reparieren
-          ↓
-        bei vollständig grüner CI Squash-Merge nach main
+```mermaid
+flowchart TD
+  A[06:00 Erzeugungsautomation] --> B[Deep Research]
+  B --> C[Einheit, Quellen, Karten und Navigation]
+  C --> D[Lokale Pflichtprüfungen]
+  D --> E[Push und Draft-PR]
+  E --> F[Mindestens zwei Stunden Gelegenheit für CodeRabbit]
+  F --> G[08:00 oder später: Merge-Wächter]
+  G -->|CI rot| R[Ein sicherer Reparaturzyklus]
+  R --> G
+  G -->|erste CI grün| H[Ready for review]
+  H --> I[Neue ready_for_review-CI]
+  I -->|CI rot| R
+  I -->|zweite CI grün| J[Squash-Merge nach main]
 ```
 
-CodeRabbit ist kein verpflichtendes Gate. GitHub kann sichtbare Reviews, Kommentare, Threads und Checks abbilden, aber nicht zuverlässig das verbleibende CodeRabbit-Kontingent oder dessen Erholungszeit. Nach Ablauf der Zwei-Stunden-Frist darf der Ablauf deshalb auch ohne CodeRabbit-Prüfung fortfahren.
+CodeRabbit ist kein Pflicht-Gate. Sichtbare, nachvollziehbare Hinweise werden berücksichtigt; ein fehlendes Review oder ausgeschöpftes Kontingent blockiert nach Ablauf der Zweistundenfrist nicht.
 
-Die Automationen selbst enthalten nur einen kurzen Startauftrag. Die ausführlichen Regeln werden bei jedem Lauf frisch aus diesen Dateien gelesen, damit Änderungen an den Prompts ohne eine erneute Anlage der Automationen wirksam werden.
+## Sicherheitsprinzipien
+
+- Keine direkte Bearbeitung von `main` durch die Erzeugungsautomation.
+- Kein Merge eines Draft-Pull-Requests.
+- Kein Merge bei ausstehender, fehlender oder roter CI.
+- Kein automatischer Merge bei Änderungen an `.github/`, `prompts/`, `.coderabbit.yaml`, `CNAME`, Validatoren, Requirements, Build-, Veröffentlichungs-, Sicherheits- oder Synchronisationsinfrastruktur.
+- Erwartbare Inhalts- und Navigationsdateien wie Kapitel, Quellen, Karten, `README.md`, `index.json`, `Glossar.md`, `Literatur.md` und `mkdocs.yml` dürfen im Einheiten-PR geändert werden.
+- Keine Umgehung von Branchschutz, Reviews oder Konflikten.
+- Ein offener täglicher Einheiten-PR blockiert die Erzeugung eines weiteren PR.
+- Jeder Nicht-`main`-Branch muss einem Pull Request oder einer ausdrücklich dokumentierten Aufräumaktion zugeordnet sein.
+- Nach Merge oder partieller Übernahme wird geprüft, ob auf dem Quellbranch noch einzigartige Änderungen verbleiben. Solche Änderungen dürfen nicht still liegen bleiben.
+
+Die Automationen selbst enthalten nur einen kurzen Startauftrag. Die ausführlichen Regeln werden bei jedem Lauf frisch aus diesen Dateien gelesen.
