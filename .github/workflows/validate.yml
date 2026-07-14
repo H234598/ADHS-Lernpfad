@@ -20,7 +20,7 @@ jobs:
   validate:
     name: Validate and build
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
@@ -42,10 +42,33 @@ jobs:
         run: python -m pip check
 
       - name: Check whitespace and source syntax
+        shell: bash
         run: |
           git diff --check
           python -m compileall -q scripts
           find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
+          pwsh -NoProfile -Command '
+            $failed = $false
+            Get-ChildItem Sync -Recurse -Filter *.ps1 | ForEach-Object {
+              $tokens = $null
+              $errors = $null
+              [System.Management.Automation.Language.Parser]::ParseFile(
+                $_.FullName,
+                [ref]$tokens,
+                [ref]$errors
+              ) | Out-Null
+              if ($errors.Count -gt 0) {
+                $failed = $true
+                Write-Host "PowerShell-Parserfehler in $($_.FullName):"
+                $errors | ForEach-Object { Write-Host "  $($_.Message)" }
+              }
+            }
+            if ($failed) { exit 1 }
+          '
+
+      - name: Test synchronization engines
+        shell: bash
+        run: bash Sync/tests/test-posix-sync.sh
 
       - name: Validate Obsidian links
         run: python scripts/validate_links.py
