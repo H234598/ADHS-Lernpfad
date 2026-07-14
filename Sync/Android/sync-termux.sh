@@ -42,13 +42,19 @@ release_lock() {
 
 has_target_changes() {
   [[ -d "$TARGET_DIR" ]] || return 1
-  local differences
-  differences="$(
+  local differences status
+  if differences="$(
     rsync -rcn --delete --itemize-changes \
       "${RSYNC_EXCLUDES[@]}" \
       "$REPO_DIR/" "$TARGET_DIR/"
-  )"
-  [[ -n "$differences" ]]
+  )"; then
+    [[ -n "$differences" ]]
+    return
+  else
+    status=$?
+    log "Fehler beim rsync-Vergleich (Exit-Code: $status)"
+    exit "$status"
+  fi
 }
 
 show_target_changes() {
