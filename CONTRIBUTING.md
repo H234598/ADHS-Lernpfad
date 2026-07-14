@@ -28,6 +28,21 @@ python3 scripts/build_docs.py
 mkdocs build --strict
 ```
 
+Zusätzlich müssen `git diff --check`, `python -m compileall -q scripts`, `python -m pip check` und die Konsistenz der generierten `Literatur.md` erfolgreich sein.
+
+## Branch-Hygiene
+
+- `main` ist die einzige dauerhafte Hauptlinie.
+- Jeder Nicht-`main`-Branch muss einem offenen Pull Request oder einer ausdrücklich dokumentierten Wiederherstellung zugeordnet sein.
+- Nach Merge, Squash-Merge oder partieller Übernahme muss geprüft werden, ob der Ursprungsbranch noch einzigartige Änderungen enthält.
+- Veraltete Parallelzweige dürfen nicht still liegen bleiben: fehlende sinnvolle Änderungen werden gezielt übernommen, überholte Varianten dokumentiert verworfen und der Branch anschließend entfernt.
+- Automatische Einheitenbranches verwenden `agent/einheit-NN-kurztitel`.
+- Direkte Inhalts- oder Konfigurationsänderungen auf `main` sind außerhalb eines begründeten Notfalls unzulässig.
+
+## Automatische Merge-Grenzen
+
+Normale Einheiten-, Quellen-, Karten-, Glossar-, Index- und Navigationsänderungen dürfen nach den definierten Prüfungen automatisch gemergt werden. Änderungen an `.github/`, `prompts/`, Validatoren, `CNAME`, Abhängigkeiten, Build-, Veröffentlichungs-, Sicherheits- oder Synchronisationsinfrastruktur benötigen eine bewusste manuelle Prüfung.
+
 ## Evidenzregeln
 
 - Gruppenbefund ≠ Aussage über jede Einzelperson.
