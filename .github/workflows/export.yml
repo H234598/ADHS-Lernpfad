@@ -39,7 +39,12 @@ jobs:
         run: |
           python scripts/validate_links.py
           python scripts/build_literature.py
-          git diff --exit-code -- Literatur.md references.bib references.json
+          git add --intent-to-add Literatur.md references.bib references.json
+          if ! git diff --quiet -- Literatur.md references.bib references.json; then
+            echo 'Generated bibliography differs from the committed files:'
+            git diff -- Literatur.md references.bib references.json
+            exit 1
+          fi
           python scripts/build_graph.py
           python scripts/build_combined.py
           python scripts/build_anki.py
