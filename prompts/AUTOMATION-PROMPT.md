@@ -64,7 +64,8 @@ Jede Einheit enthält mindestens:
 4. Ergänze passende Anki-Karten in `cards/cards.yaml`.
 5. Aktualisiere README, Index, MkDocs-Navigation und Wissensgraph-Verknüpfungen.
 6. Erhalte die Datei `CNAME` exakt mit dem Inhalt `ADHS.telacore.org`.
-7. Verändere keine Prompt-, Workflow-, Validator- oder Infrastrukturdateien, sofern dies nicht für die neue Einheit zwingend erforderlich ist. Solche Änderungen müssen im PR besonders hervorgehoben werden.
+7. Verändere keine Dateien unter `.github/` oder `prompts/`, keine Validatoren, Requirements, Build-, Veröffentlichungs-, Sicherheits- oder Synchronisationsinfrastruktur, sofern dies nicht zwingend für die neue Einheit erforderlich ist.
+8. Falls eine solche sensible Datei zwingend geändert werden muss, erläutere jede Änderung im PR und füge der PR-Beschreibung den Marker `<!-- manual-merge-required -->` hinzu. Dieser PR darf nicht automatisch gemergt werden.
 
 ## 7. Pflichtprüfungen
 
@@ -96,8 +97,10 @@ Alle Prüfungen müssen erfolgreich beendet sein. Die Validierung muss insbesond
    - Unsicherheiten und Limitationen,
    - geänderte Alttexte mit Begründung,
    - sämtliche lokalen Prüfergebnisse,
+   - alle geänderten sensiblen Dateien,
    - Branch und Head-Commit.
-7. Lasse den PR im Draft-Status. Markiere ihn nicht als „Ready for review“ und merge ihn nicht.
-8. Melde abschließend PR-Nummer, PR-Link, Branch, Head-Commit, Wortzahl und Prüfergebnisse.
+7. Prüfe nach der PR-Erstellung, dass der Head-Branch tatsächlich diesem PR zugeordnet ist und der PR den aktuellen Head-Commit enthält.
+8. Lasse den PR im Draft-Status. Markiere ihn nicht als „Ready for review“ und merge ihn nicht.
+9. Melde abschließend PR-Nummer, PR-Link, Branch, Head-Commit, Wortzahl und Prüfergebnisse.
 
-Falls Push oder PR-Erstellung wegen fehlender Berechtigungen scheitern, dokumentiere Branch, lokalen Commit und die genaue Fehlermeldung. Führe keinen stillen oder direkten Commit auf `main` aus.
+Falls Push oder PR-Erstellung wegen fehlender Berechtigungen scheitern, dokumentiere Branch, lokalen Commit und die genaue Fehlermeldung. Ein gepushter Branch darf nicht still ohne PR liegen bleiben. Führe keinen direkten Commit auf `main` aus.

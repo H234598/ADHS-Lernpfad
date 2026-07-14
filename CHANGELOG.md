@@ -1,5 +1,20 @@
 # Änderungsverlauf
 
+## 0.4.2 – 2026-07-14
+
+- sämtliche Agentenprompts unter `prompts/` zentralisiert
+- tägliche Erzeugungsautomation auf 06:00 Uhr Europe/Berlin festgelegt
+- getrennten Prüf-, Reparatur- und Merge-Wächter ab 08:00 Uhr ergänzt
+- zweistündige Gelegenheit für CodeRabbit-Draftprüfungen eingerichtet, ohne CodeRabbit zum Pflicht-Gate zu machen
+- automatische Reparaturzyklen für fehlgeschlagene CI auf dem bestehenden PR-Branch ergänzt
+- automatische Merge-Sperren für Workflow-, Prompt-, Validator-, `CNAME`- und Infrastrukturänderungen ergänzt
+- erneute CI-Ausführung beim Übergang von Draft zu `ready for review` eingerichtet
+- Promptpipeline in README und MkDocs dokumentiert
+- Branch-Hygiene und Kontrolle auf zurückgebliebene einzigartige Änderungen verbindlich festgelegt
+- GitHub Actions auf aktuelle Node-24-Majors aktualisiert und veraltete Action-Runtimes entfernt
+- CI mit Dependency-Caching, Zeitlimits, Generator-Konsistenzchecks und klaren Concurrency-Regeln gehärtet
+- Dependabot für GitHub Actions und Python-Abhängigkeiten aktiviert
+
 ## 0.4.1 – 2026-07-13
 
 - harte Mindestlänge auf 800 Fließtextwörter erhöht

@@ -1,26 +1,66 @@
 name: Publish documentation
+
 on:
-  push: {branches: [main]}
+  push:
+    branches: [main]
   workflow_dispatch:
-permissions: {contents: read, pages: write, id-token: write}
-concurrency: {group: pages, cancel-in-progress: true}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build Pages artifact
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: {python-version: '3.12'}
-      - run: pip install -r requirements-docs.txt
-      - run: python3 scripts/build_docs.py
-      - run: mkdocs build --strict
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with: {path: site}
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
+
+      - name: Install documentation dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-docs.txt
+
+      - name: Verify installed dependencies
+        run: python -m pip check
+
+      - name: Build documentation sources
+        run: python scripts/build_docs.py
+
+      - name: Build MkDocs site strictly
+        run: mkdocs build --strict
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
   deploy:
-    environment: {name: github-pages, url: '${{ steps.deployment.outputs.page_url }}'}
-    runs-on: ubuntu-latest
+    name: Deploy GitHub Pages
+    runs-on: ubuntu-24.04
     needs: build
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v5
