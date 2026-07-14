@@ -8,6 +8,20 @@ doi: "10.1176/appi.ajp.2021.21010032"
 pmid: "34384227"
 last_checked: 2026-07-14
 tags: [Literatur, ADHS, Lebensspanne, Remission]
+citation:
+  entry_type: article
+  csl_type: article-journal
+  authors:
+    - "Sibley, M. H."
+    - "Arnold, L. E."
+    - "Swanson, J. M."
+  et_al: true
+  year: 2022
+  article_title: "Variable patterns of remission from ADHD in the Multimodal Treatment Study of ADHD"
+  journal: American Journal of Psychiatry
+  volume: "179"
+  issue: "2"
+  pages: "142–151"
 ---
 
 # Sibley et al. 2022

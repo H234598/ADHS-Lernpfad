@@ -1,12 +1,14 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-13
+last_reviewed: 2026-07-14
 ---
 
 # Literatur
 
 > Automatisch aus `references/` erzeugt. Nicht manuell bearbeiten.
+
+[BibTeX herunterladen](references.bib) · [CSL JSON herunterladen](references.json)
 
 ## Beheshti2020
 

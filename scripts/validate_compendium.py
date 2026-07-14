@@ -5,6 +5,8 @@ import os
 import re
 import yaml
 
+from content_links import validate_all
+
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "build" / "validation-report.txt"
 MIN_WORDS = 800
@@ -29,6 +31,7 @@ required_sections = [
     "## Merksatz", "## Navigation",
 ]
 
+
 def prose_word_count(text: str) -> int:
     text = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S)
     text = re.sub(r"```.*?```", "", text, flags=re.S)
@@ -36,6 +39,7 @@ def prose_word_count(text: str) -> int:
     text = re.sub(r"## Navigation.*\Z", "", text, flags=re.S)
     text = re.sub(r"\[\[([^\]|]+)(?:\|([^\]]+))?\]\]", lambda m: m.group(2) or m.group(1), text)
     return len(re.findall(r"\b[\wÄÖÜäöüß]+(?:[-’'][\wÄÖÜäöüß]+)*\b", text))
+
 
 for item in index["chapters"]:
     path = ROOT / item["path"]
@@ -77,14 +81,7 @@ for item in index["chapters"]:
         if reference_id not in reference_ids:
             errors.append(f"{path}: unbekannte Quelle {reference_id}")
 
-wikilink = re.compile(r"\[\[([^\]|#]+)")
-for path in ROOT.rglob("*.md"):
-    if any(part in {"build", "site"} for part in path.parts):
-        continue
-    for target in wikilink.findall(path.read_text(encoding="utf-8")):
-        candidates = [ROOT / f"{target}.md", ROOT / target, ROOT / "01-Grundlagen" / f"{target}.md"]
-        if not any(candidate.exists() for candidate in candidates):
-            errors.append(f"{path.relative_to(ROOT)}: ungelöster Link [[{target}]]")
+errors.extend(validate_all(ROOT))
 
 cname = ROOT / "CNAME"
 if not cname.exists() or cname.read_text(encoding="utf-8").strip() != "ADHS.telacore.org":

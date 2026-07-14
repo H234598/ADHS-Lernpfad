@@ -20,7 +20,7 @@ jobs:
   validate:
     name: Validate and build
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout repository
@@ -46,11 +46,28 @@ jobs:
           git diff --check
           python -m compileall -q scripts
 
-      - name: Build literature
+      - name: Validate Obsidian links
+        run: python scripts/validate_links.py
+
+      - name: Build literature and citation exports
         run: python scripts/build_literature.py
 
-      - name: Verify generated literature is committed
-        run: git diff --exit-code -- Literatur.md
+      - name: Verify generated bibliography is committed
+        run: |
+          mkdir -p build
+          git add --intent-to-add Literatur.md references.bib references.json
+          if ! git diff --quiet -- Literatur.md references.bib references.json; then
+            {
+              echo '# Bibliografie-Generatorabweichung'
+              echo
+              echo 'Die folgenden generierten Dateien stimmen nicht mit dem Commit überein:'
+              echo
+              echo '```diff'
+              git diff -- Literatur.md references.bib references.json
+              echo '```'
+            } | tee build/validation-report.txt
+            exit 1
+          fi
 
       - name: Build knowledge graph
         run: python scripts/build_graph.py
@@ -69,7 +86,7 @@ jobs:
         with:
           name: validation-report
           path: build/validation-report.txt
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Comment validation report
@@ -78,10 +95,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          jq -Rs '{body: .}' build/validation-report.txt > /tmp/comment.json
-          gh api --method POST \
-            repos/H234598/ADHS-Lernpfad/issues/${{ github.event.pull_request.number }}/comments \
-            --input /tmp/comment.json
+          if [[ -f build/validation-report.txt ]]; then
+            jq -Rs '{body: .}' build/validation-report.txt > /tmp/comment.json
+            gh api --method POST \
+              repos/H234598/ADHS-Lernpfad/issues/${{ github.event.pull_request.number }}/comments \
+              --input /tmp/comment.json
+          fi
 
       - name: Fail on validation errors
         if: steps.compendium_validation.outputs.failed == 'true'

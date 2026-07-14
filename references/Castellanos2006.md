@@ -8,6 +8,21 @@ doi: "10.1016/j.tics.2006.01.011"
 pmid: ""
 last_checked: 2026-07-13
 tags: [Literatur, ADHS]
+citation:
+  entry_type: article
+  csl_type: article-journal
+  authors:
+    - "Castellanos, F. X."
+    - "Sonuga-Barke, E. J. S."
+    - "Milham, M. P."
+    - "Tannock, R."
+  et_al: false
+  year: 2006
+  article_title: "Characterizing cognition in ADHD: Beyond executive dysfunction"
+  journal: Trends in Cognitive Sciences
+  volume: "10"
+  issue: "3"
+  pages: "117–123"
 ---
 
 # Castellanos et al. 2006
