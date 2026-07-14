@@ -16,7 +16,7 @@ jobs:
   export:
     name: Build export artifacts
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 35
 
     steps:
       - name: Checkout repository
@@ -35,30 +35,59 @@ jobs:
       - name: Verify installed dependencies
         run: python -m pip check
 
-      - name: Build Markdown and Anki sources
+      - name: Build Markdown, bibliography and Anki sources
         run: |
+          python scripts/validate_links.py
           python scripts/build_literature.py
-          git diff --exit-code -- Literatur.md
+          git diff --exit-code -- Literatur.md references.bib references.json
           python scripts/build_graph.py
           python scripts/build_combined.py
           python scripts/build_anki.py
+          cp references.bib references.json build/
 
-      - name: Install Pandoc
+      - name: Install Pandoc and LuaLaTeX
         run: |
           sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends pandoc
+          sudo apt-get install --yes --no-install-recommends \
+            pandoc \
+            texlive-luatex \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-lang-german \
+            fonts-dejavu-core
 
-      - name: Build EPUB and HTML exports
+      - name: Build EPUB HTML and LaTeX source
+        run: |
+          COMMON_ARGS=(
+            build/ADHS-Lernpfad-Gesamtdokument.md
+            --standalone
+            --toc
+            --citeproc
+            --bibliography references.bib
+            --metadata title='ADHS-Lernpfad'
+            --metadata lang='de-DE'
+            --resource-path='.:figures:assets'
+          )
+          pandoc "${COMMON_ARGS[@]}" --output build/ADHS-Lernpfad.epub
+          pandoc "${COMMON_ARGS[@]}" --output build/ADHS-Lernpfad.html
+          pandoc "${COMMON_ARGS[@]}" --output build/ADHS-Lernpfad.tex
+
+      - name: Build PDF with LuaLaTeX
         run: |
           pandoc build/ADHS-Lernpfad-Gesamtdokument.md \
-            --output build/ADHS-Lernpfad.epub \
-            --toc \
-            --metadata title='ADHS-Lernpfad'
-          pandoc build/ADHS-Lernpfad-Gesamtdokument.md \
-            --output build/ADHS-Lernpfad.html \
+            --output build/ADHS-Lernpfad.pdf \
             --standalone \
             --toc \
-            --metadata title='ADHS-Lernpfad'
+            --citeproc \
+            --bibliography references.bib \
+            --pdf-engine=lualatex \
+            --metadata title='ADHS-Lernpfad' \
+            --metadata lang='de-DE' \
+            --variable mainfont='DejaVu Serif' \
+            --variable sansfont='DejaVu Sans' \
+            --variable monofont='DejaVu Sans Mono' \
+            --resource-path='.:figures:assets'
 
       - name: Upload export artifacts
         uses: actions/upload-artifact@v7
