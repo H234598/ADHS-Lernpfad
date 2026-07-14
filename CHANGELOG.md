@@ -1,5 +1,12 @@
 # Änderungsverlauf
 
+## 0.4.4 – 2026-07-14
+
+- 404-Fehler des Wartungssymbols durch einen von MkDocs und Obsidian auflösbaren Markdown-Link behoben
+- sichtbare Seitenbearbeitungs-Aktion aus der Webfassung entfernt
+- GitHub-Repository-Symbol in der Kopfzeile bewusst beibehalten
+- Lernoberfläche weiter auf Inhalte statt Projekttechnik fokussiert
+
 ## 0.4.3 – 2026-07-14
 
 - Startseite auf Lerninhalte, Schnellstart und Wissenssystem reduziert
@@ -18,7 +25,7 @@
 - zweistündige Gelegenheit für CodeRabbit-Draftprüfungen eingerichtet, ohne CodeRabbit zum Pflicht-Gate zu machen
 - automatische Reparaturzyklen für fehlgeschlagene CI auf dem bestehenden PR-Branch ergänzt
 - automatische Merge-Sperren für Workflow-, Prompt-, Validator-, `CNAME`- und Infrastrukturänderungen ergänzt
-- erneute CI-Ausführung beim Übergang von Draft zu `ready for review` eingerichtet
+- erneute CI-Ausführung beim Übergang von Draft zu `ready for_review` eingerichtet
 - Promptpipeline in README und MkDocs dokumentiert
 - Branch-Hygiene und Kontrolle auf zurückgebliebene einzigartige Änderungen verbindlich festgelegt
 - GitHub Actions auf aktuelle Node-24-Majors aktualisiert und veraltete Action-Runtimes entfernt
