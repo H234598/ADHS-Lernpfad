@@ -10,6 +10,10 @@ flowchart TD
   ADHS --> Motivation
   ADHS --> Zeitverarbeitung
   ADHS --> Emotionsregulation
+  ADHS --> Neuroentwicklung
+  Neuroentwicklung --> Lebensspanne
+  Lebensspanne --> Persistenz
+  Lebensspanne --> Remission
   Dopamin --> Motivation
   Dopamin --> Parkinson
   Exekutive_Funktionen --> Arbeitsgedächtnis
