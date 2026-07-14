@@ -35,8 +35,8 @@ function Get-ConfigValue {
 $RepoUrl = [string](Get-ConfigValue 'RepoUrl' 'https://github.com/H234598/ADHS-Lernpfad.git')
 $Remote = [string](Get-ConfigValue 'Remote' 'origin')
 $BaseBranch = [string](Get-ConfigValue 'BaseBranch' 'main')
-$RepoDir = [string](Get-ConfigValue 'RepoDir' "$env:LOCALAPPDATA\ADHS-Lernpfad-Sync\repo")
-$TargetDir = [string](Get-ConfigValue 'TargetDir' "$env:USERPROFILE\Documents\Obsidian\ADHS-Lernpfad")
+$RepoDir = [IO.Path]::GetFullPath([string](Get-ConfigValue 'RepoDir' "$env:LOCALAPPDATA\ADHS-Lernpfad-Sync\repo")).TrimEnd('\', '/')
+$TargetDir = [IO.Path]::GetFullPath([string](Get-ConfigValue 'TargetDir' "$env:USERPROFILE\Documents\Obsidian\ADHS-Lernpfad")).TrimEnd('\', '/')
 $Mode = [string](Get-ConfigValue 'Mode' 'safe-pull')
 $DeviceBranch = [string](Get-ConfigValue 'DeviceBranch' '')
 $ProtectObsidian = [bool](Get-ConfigValue 'ProtectObsidian' $true)
@@ -46,17 +46,36 @@ $GitAuthorName = [string](Get-ConfigValue 'GitAuthorName' 'ADHS Sync')
 $GitAuthorEmail = [string](Get-ConfigValue 'GitAuthorEmail' 'adhs-sync@localhost')
 $StateFile = Join-Path $RepoDir '.git\adhs-sync-state.json'
 
+$separator = [IO.Path]::DirectorySeparatorChar
+$repoPrefix = $RepoDir + $separator
+$targetPrefix = $TargetDir + $separator
+if ($RepoDir.Equals($TargetDir, [StringComparison]::OrdinalIgnoreCase)) {
+    Stop-Sync 64 'Privater Checkout und sichtbarer Vault dürfen nicht derselbe Pfad sein'
+}
+if ($RepoDir.StartsWith($targetPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+    Stop-Sync 64 'Der private Checkout darf nicht innerhalb des sichtbaren Vaults liegen'
+}
+if ($TargetDir.StartsWith($repoPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+    Stop-Sync 64 'Der sichtbare Vault darf nicht innerhalb des privaten Checkouts liegen'
+}
+
 $AllowedModes = @('safe-pull', 'prompt-pull', 'forced-pull', 'additive-pull', 'full-sync')
 if ($AllowedModes -notcontains $Mode) { Stop-Sync 64 "Unbekannter Modus: $Mode" }
-if ($Mode -eq 'full-sync') {
-    if ([string]::IsNullOrWhiteSpace($DeviceBranch)) { Stop-Sync 64 'full-sync benötigt DeviceBranch' }
-    if ($DeviceBranch -eq $BaseBranch) { Stop-Sync 64 'DeviceBranch darf nicht BaseBranch entsprechen' }
-}
+if ($Remote.StartsWith('-') -or $Remote -match '\s') { Stop-Sync 64 "Ungültiger Remote-Name: $Remote" }
 
 foreach ($command in @('git.exe', 'robocopy.exe')) {
     if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
         Stop-Sync 127 "Benötigtes Programm fehlt: $command"
     }
+}
+
+& git.exe check-ref-format --branch $BaseBranch *> $null
+if ($LASTEXITCODE -ne 0) { Stop-Sync 64 "Ungültiger Basisbranch: $BaseBranch" }
+if ($Mode -eq 'full-sync') {
+    if ([string]::IsNullOrWhiteSpace($DeviceBranch)) { Stop-Sync 64 'full-sync benötigt DeviceBranch' }
+    if ($DeviceBranch -eq $BaseBranch) { Stop-Sync 64 'DeviceBranch darf nicht BaseBranch entsprechen' }
+    & git.exe check-ref-format --branch $DeviceBranch *> $null
+    if ($LASTEXITCODE -ne 0) { Stop-Sync 64 "Ungültiger Gerätebranch: $DeviceBranch" }
 }
 
 $ProtectedDirectories = @('.git', '.trash')
@@ -71,8 +90,12 @@ function Invoke-Git {
     )
     $output = & git.exe -C $RepoDir @Arguments 2>&1
     $code = $LASTEXITCODE
-    if ($code -ne 0 -and -not $AllowFailure) {
-        throw "git $($Arguments -join ' ') fehlgeschlagen ($code): $($output -join [Environment]::NewLine)"
+    if ($code -ne 0) {
+        if (-not $AllowFailure) {
+            throw "git $($Arguments -join ' ') fehlgeschlagen ($code): $($output -join [Environment]::NewLine)"
+        }
+        if ($Capture) { return $null }
+        return $code
     }
     if ($Capture) { return ($output -join "`n").Trim() }
     return $code
@@ -85,8 +108,7 @@ function Test-GitSuccess {
 }
 
 function Ensure-Checkout {
-    $parent = Split-Path -Parent $RepoDir
-    New-Item -ItemType Directory -Force -Path $parent | Out-Null
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $RepoDir) | Out-Null
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $TargetDir) | Out-Null
     if ((Test-Path -LiteralPath $RepoDir) -and -not (Test-Path -LiteralPath (Join-Path $RepoDir '.git'))) {
         Stop-Sync 65 "Privater Checkoutpfad ist kein Git-Repository: $RepoDir"
@@ -122,13 +144,19 @@ function Get-TreeManifest {
     param([string]$Root)
     $manifest = @{}
     if (-not (Test-Path -LiteralPath $Root -PathType Container)) { return $manifest }
-    Get-ChildItem -LiteralPath $Root -File -Recurse -Force | ForEach-Object {
+    Get-ChildItem -LiteralPath $Root -File -Recurse -Force | Where-Object {
+        ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) -eq 0
+    } | ForEach-Object {
         $relative = Get-RelativePath $Root $_.FullName
         if (-not (Test-ProtectedRelativePath $relative)) {
             $manifest[$relative] = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
         }
     }
     return $manifest
+}
+
+function Test-TargetHasSyncableFiles {
+    return ((Get-TreeManifest $TargetDir).Count -gt 0)
 }
 
 function Test-TreeDifferent {
@@ -168,12 +196,14 @@ function Confirm-Overwrite {
 }
 
 function Get-CurrentBranch {
-    return [string](Invoke-Git @('symbolic-ref', '--quiet', '--short', 'HEAD') -AllowFailure -Capture)
+    $branch = Invoke-Git @('symbolic-ref', '--quiet', '--short', 'HEAD') -AllowFailure -Capture
+    if ($null -eq $branch) { return '' }
+    return [string]$branch
 }
 
 function Get-PendingCommitCount {
-    $upstream = [string](Invoke-Git @('rev-parse', '--abbrev-ref', '@{upstream}') -AllowFailure -Capture)
-    if ([string]::IsNullOrWhiteSpace($upstream)) { return 0 }
+    $upstream = Invoke-Git @('rev-parse', '--abbrev-ref', '@{upstream}') -AllowFailure -Capture
+    if ($null -eq $upstream -or [string]::IsNullOrWhiteSpace([string]$upstream)) { return 0 }
     return [int](Invoke-Git @('rev-list', '--count', "$upstream..HEAD") -Capture)
 }
 
@@ -195,7 +225,7 @@ function Run-PullMode {
     }
 
     $targetChanged = $false
-    if ($Mode -ne 'additive-pull' -and (Test-TreeDifferent $RepoDir $TargetDir)) {
+    if ($Mode -ne 'additive-pull' -and (Test-TargetHasSyncableFiles) -and (Test-TreeDifferent $RepoDir $TargetDir)) {
         $targetChanged = $true
         Write-Log 'Lokale Abweichungen im Vault wurden erkannt.'
     }
@@ -206,7 +236,8 @@ function Run-PullMode {
     Invoke-Git @('clean', '-fd') | Out-Null
     Invoke-Git @('fetch', '--prune', $Remote, $BaseBranch) | Out-Null
     Invoke-Git @('checkout', '-f', '-B', $BaseBranch, "$Remote/$BaseBranch") | Out-Null
-    Invoke-RobocopySync $RepoDir $TargetDir ($(if ($Mode -eq 'additive-pull') { 'additive' } else { 'mirror' }))
+    $copyMode = if ($Mode -eq 'additive-pull') { 'additive' } else { 'mirror' }
+    Invoke-RobocopySync $RepoDir $TargetDir $copyMode
     Write-State
     Write-Log "Synchronisierung abgeschlossen: Modus=$Mode Branch=$BaseBranch Ziel=$TargetDir"
 }
@@ -227,6 +258,20 @@ function Prepare-DeviceBranch {
     }
 }
 
+function Merge-LatestBase {
+    if (Test-GitSuccess @('merge-base', '--is-ancestor', "$Remote/$BaseBranch", 'HEAD')) { return }
+    if (Test-GitSuccess @('merge-base', '--is-ancestor', 'HEAD', "$Remote/$BaseBranch")) {
+        Invoke-Git @('merge', '--ff-only', "$Remote/$BaseBranch") | Out-Null
+        return
+    }
+
+    $code = Invoke-Git @('merge', '--no-edit', "$Remote/$BaseBranch") -AllowFailure
+    if ($code -ne 0) {
+        Invoke-Git @('merge', '--abort') -AllowFailure | Out-Null
+        Stop-Sync 7 "Gerätebranch und $BaseBranch enthalten kollidierende Änderungen; manuelle Git-Auflösung erforderlich"
+    }
+}
+
 function Push-DeviceBranch {
     & git.exe -C $RepoDir push -u $Remote "HEAD:refs/heads/$DeviceBranch"
     if ($LASTEXITCODE -ne 0) { Stop-Sync 8 "Push nach $DeviceBranch fehlgeschlagen; Commit bleibt lokal erhalten" }
@@ -242,7 +287,7 @@ function Run-FullSync {
     }
     Prepare-DeviceBranch $remoteExists
 
-    $targetChanged = Test-TreeDifferent $RepoDir $TargetDir
+    $targetChanged = (Test-TargetHasSyncableFiles) -and (Test-TreeDifferent $RepoDir $TargetDir)
     if (-not (Test-Path -LiteralPath $StateFile) -and $targetChanged -and -not $AdoptExistingTarget) {
         Stop-Sync 6 'Vorhandener Vault weicht beim ersten Full Sync ab; AdoptExistingTarget bewusst aktivieren'
     }
@@ -258,10 +303,6 @@ function Run-FullSync {
 
     if (-not $targetChanged -and $behind -gt 0) {
         Invoke-Git @('merge', '--ff-only', "$Remote/$DeviceBranch") | Out-Null
-        Invoke-RobocopySync $RepoDir $TargetDir 'mirror'
-        Write-State
-        Write-Log "Remote-Gerätebranch übernommen: $DeviceBranch"
-        return
     }
 
     if ($targetChanged) {
@@ -273,6 +314,8 @@ function Run-FullSync {
         }
     }
 
+    Merge-LatestBase
+
     if ($remoteExists) {
         $ahead = [int](Invoke-Git @('rev-list', '--count', "$Remote/$DeviceBranch..HEAD") -Capture)
     } else {
@@ -282,7 +325,7 @@ function Run-FullSync {
 
     Invoke-RobocopySync $RepoDir $TargetDir 'mirror'
     Write-State
-    Write-Log "Full Sync abgeschlossen: Gerätebranch=$DeviceBranch Ziel=$TargetDir"
+    Write-Log "Full Sync abgeschlossen: Gerätebranch=$DeviceBranch Basis=$BaseBranch Ziel=$TargetDir"
 }
 
 Ensure-Checkout
@@ -301,3 +344,5 @@ try {
     $mutex.Dispose()
     $sha.Dispose()
 }
+
+exit 0
