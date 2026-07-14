@@ -59,10 +59,16 @@ Diagramm, Übung und Review gehören zusätzlich zum Lernumfang. Komplexe Themen
 
 ## Betrieb
 
-- [[AUTOMATION-PROMPT|Prompt für neue Einheiten]]
+- [[prompts/README|Übersicht aller Prompts]]
+- [[prompts/AUTOMATION-PROMPT|06-Uhr-Prompt für neue Einheiten]]
 - [[prompts/DEEP-RESEARCH-PROMPT|Deep-Research-Prompt]]
+- [[prompts/MERGE-AUTOMATION-PROMPT|Prüf- und Merge-Prompt ab 08 Uhr]]
 - [[SYNC-OBSIDIAN|GitHub → Obsidian per systemd]]
 - [[CONTRIBUTING|Beitrags- und Evidenzregeln]]
+
+## Automatisierter Tagesablauf
+
+Um 06:00 Uhr Europe/Berlin erzeugt die erste Automation genau eine neue Einheit und einen Draft-Pull-Request. Ab 08:00 Uhr prüft ein getrennter Wächter regelmäßig CodeRabbit, Review-Threads und CI. Erst nach erfolgreicher Draft-Prüfung wird der PR als bereit markiert; nach einer weiteren vollständig grünen Pull-Request-CI wird er per Squash-Merge nach `main` übernommen.
 
 ## Automatische Ausgaben
 
