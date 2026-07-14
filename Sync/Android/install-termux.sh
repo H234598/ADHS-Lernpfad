@@ -50,11 +50,11 @@ mkdir -p "$HOME/.config"
 if [[ "$START_MODE" == 'boot' ]]; then
   BOOT_FILE="$HOME/.termux/boot/adhs-lernpfad-sync"
   mkdir -p "$(dirname "$BOOT_FILE")"
-  cat > "$BOOT_FILE" <<'EOF'
-#!/data/data/com.termux/files/usr/bin/bash
-sleep 60
-"$HOME/.local/bin/adhs-lernpfad-sync"
-EOF
+  {
+    printf '%s\n' '#!/data/data/com.termux/files/usr/bin/bash'
+    printf '%s\n' 'sleep 60'
+    printf 'exec %q\n' "$BIN_FILE"
+  } > "$BOOT_FILE"
   chmod 700 "$BOOT_FILE"
 fi
 
