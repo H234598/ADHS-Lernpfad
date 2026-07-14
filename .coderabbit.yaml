@@ -1,0 +1,11 @@
+# CodeRabbit erhält vor dem automatischen Merge eine zweistündige Gelegenheit,
+# den frisch erzeugten Draft-Pull-Request zu prüfen.
+#
+# Incremental Reviews nach jedem Reparatur-Push bleiben deaktiviert, damit das
+# begrenzte Review-Kontingent nicht durch automatische Wiederholungen verbraucht wird.
+reviews:
+  auto_review:
+    enabled: true
+    drafts: true
+    auto_incremental_review: false
+    base_branches: []
