@@ -20,7 +20,7 @@ jobs:
   validate:
     name: Validate and build
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout repository
@@ -46,11 +46,14 @@ jobs:
           git diff --check
           python -m compileall -q scripts
 
-      - name: Build literature
+      - name: Validate Obsidian links
+        run: python scripts/validate_links.py
+
+      - name: Build literature and citation exports
         run: python scripts/build_literature.py
 
-      - name: Verify generated literature is committed
-        run: git diff --exit-code -- Literatur.md
+      - name: Verify generated bibliography is committed
+        run: git diff --exit-code -- Literatur.md references.bib references.json
 
       - name: Build knowledge graph
         run: python scripts/build_graph.py
