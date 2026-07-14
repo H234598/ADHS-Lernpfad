@@ -12,7 +12,7 @@ last_reviewed: 2026-07-14
 
 Wähle das Format, das zu deinem Gerät und deinem Arbeitsstil passt. Alle Dateien werden automatisch aus demselben aktuellen Stand des Kompendiums erzeugt. Für die Integritätsprüfung stehen außerdem SHA-256-Prüfsummen und ein maschinenlesbares Manifest bereit.
 
-[Alle Prüfsummen](../artifacts/SHA256SUMS.txt){ .md-button } [Manifest ansehen](../artifacts/downloads.json){ .md-button .md-button--primary }
+[Alle Prüfsummen](https://ADHS.telacore.org/artifacts/SHA256SUMS.txt){ .md-button } [Manifest ansehen](https://ADHS.telacore.org/artifacts/downloads.json){ .md-button .md-button--primary }
 
 </div>
 
@@ -20,7 +20,7 @@ Wähle das Format, das zu deinem Gerät und deinem Arbeitsstil passt. Alle Datei
 
 <div class="download-grid" markdown>
 
-<a class="download-card download-card--recommended" href="../artifacts/ADHS-Lernpfad.pdf" download>
+<a class="download-card download-card--recommended" href="https://ADHS.telacore.org/artifacts/ADHS-Lernpfad.pdf" download>
 <span class="download-card__badge">Empfohlen</span>
 <span class="download-card__icon">📕</span>
 <strong>PDF</strong>
@@ -28,35 +28,35 @@ Wähle das Format, das zu deinem Gerät und deinem Arbeitsstil passt. Alle Datei
 <small>ISO-standardisierte Dokumentfamilie · nicht als PDF/A zertifiziert</small>
 </a>
 
-<a class="download-card" href="../artifacts/ADHS-Lernpfad.epub" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/ADHS-Lernpfad.epub" download>
 <span class="download-card__icon">📱</span>
 <strong>EPUB 3</strong>
 <span>Flexible E-Book-Fassung für Tolino, Apple Books, Calibre und viele Reader.</span>
 <small>W3C-Standard · passt Schrift und Layout an das Lesegerät an</small>
 </a>
 
-<a class="download-card" href="../artifacts/ADHS-Lernpfad.html" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/ADHS-Lernpfad.html" download>
 <span class="download-card__icon">🌐</span>
 <strong>Offline-HTML</strong>
 <span>Eine eigenständige HTML-Datei zum Öffnen im Browser — ohne Webserver.</span>
 <small>HTML Living Standard · Ressourcen werden eingebettet</small>
 </a>
 
-<a class="download-card" href="../artifacts/ADHS-Lernpfad-Gesamtdokument.md" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/ADHS-Lernpfad-Gesamtdokument.md" download>
 <span class="download-card__icon">📝</span>
 <strong>Markdown</strong>
 <span>Das vollständige Kompendium als gut weiterverarbeitbarer UTF-8-Text.</span>
 <small>Pandoc-Markdown mit Erweiterungen · bewusst nicht nur striktes CommonMark</small>
 </a>
 
-<a class="download-card" href="../artifacts/ADHS-Lernpfad-Obsidian-Vault.zip" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/ADHS-Lernpfad-Obsidian-Vault.zip" download>
 <span class="download-card__icon">💎</span>
 <strong>Obsidian Vault</strong>
 <span>Kapitel, Studienkarten, Wissensgraph, Abbildungen und Literatur als ZIP.</span>
 <small>ZIP ist ein offen dokumentiertes Archivformat; die Inhalte bleiben normale Dateien</small>
 </a>
 
-<a class="download-card" href="../artifacts/ADHS-Lernpfad.apkg" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/ADHS-Lernpfad.apkg" download>
 <span class="download-card__icon">🧠</span>
 <strong>Anki-Karten</strong>
 <span>Lernkarten für aktives Abrufen und verteilte Wiederholung.</span>
@@ -69,28 +69,28 @@ Wähle das Format, das zu deinem Gerät und deinem Arbeitsstil passt. Alle Datei
 
 <div class="download-grid" markdown>
 
-<a class="download-card" href="../artifacts/ADHS-Lernpfad.tex" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/ADHS-Lernpfad.tex" download>
 <span class="download-card__icon">📐</span>
 <strong>LaTeX-Quelltext</strong>
 <span>Von Pandoc erzeugte Satzquelle für eigene Layouts und wissenschaftliche Workflows.</span>
 <small>LaTeX2e-Quelltext · die PDF-Fassung wird mit LuaLaTeX gebaut</small>
 </a>
 
-<a class="download-card" href="../artifacts/references.bib" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/references.bib" download>
 <span class="download-card__icon">📚</span>
 <strong>BibTeX</strong>
 <span>Literaturdaten für LaTeX, Pandoc, JabRef, Zotero und andere Werkzeuge.</span>
 <small>Verbreitetes textbasiertes Austauschformat der TeX-Welt</small>
 </a>
 
-<a class="download-card" href="../artifacts/references.json" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/references.json" download>
 <span class="download-card__icon">🔖</span>
 <strong>CSL JSON</strong>
 <span>Strukturierte Literaturdaten für CiteProc und frei wählbare Zitierstile.</span>
 <small>JSON-Datenmodell der Citation Style Language</small>
 </a>
 
-<a class="download-card" href="../artifacts/downloads.json" download>
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/downloads.json" download>
 <span class="download-card__icon">🤖</span>
 <strong>Download-Manifest</strong>
 <span>Dateinamen, Medientypen, Größen und SHA-256-Prüfsummen für Automatisierung.</span>
