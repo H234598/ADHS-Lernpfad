@@ -8,6 +8,14 @@ doi: ""
 pmid: ""
 last_checked: 2026-07-13
 tags: [Literatur, ADHS]
+citation:
+  entry_type: misc
+  csl_type: article-journal
+  authors:
+    - "Kofler, M. J."
+  et_al: true
+  year: 2020
+  article_title: "Working memory and short-term memory deficits in ADHD: A bifactor modeling approach"
 ---
 
 # Kofler et al. 2020
