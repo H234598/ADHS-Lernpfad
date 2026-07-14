@@ -15,12 +15,12 @@ Dieser Bereich bündelt alle Wege, den ADHS-Lernpfad auf Geräte und in Obsidian
 
 | System | Stand | Anleitung |
 |---|---|---|
-| Linux | produktiv: systemd-Benutzertimer und manuelle Ausführung | [[Sync/Linux/README|Linux]] |
-| Android | produktiv: Termux, privater Git-Checkout und Vault-Spiegel | [[Sync/Android/README|Android]] |
-| Windows | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [[Sync/Windows/README|Windows]] |
-| macOS | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [[Sync/macOS/README|macOS]] |
-| iPhone und iPad | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [[Sync/iOS/README|iOS]] |
-| BSD | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [[Sync/BSD/README|BSD]] |
+| Linux | produktiv: systemd-Benutzertimer und manuelle Ausführung | [Linux](Linux/README.md) |
+| Android | produktiv: Termux, privater Git-Checkout und Vault-Spiegel | [Android](Android/README.md) |
+| Windows | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [Windows](Windows/README.md) |
+| macOS | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [macOS](macOS/README.md) |
+| iPhone und iPad | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [iOS](iOS/README.md) |
+| BSD | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [BSD](BSD/README.md) |
 
 ## Synchronisationsarten
 
