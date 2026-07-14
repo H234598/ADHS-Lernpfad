@@ -2,10 +2,12 @@
 
 ## Single Source of Truth
 
-- Kapitel: Markdown-Dateien
-- Quellen: `references/*.md`
+- Kapitel und Lerntexte: Markdown-Dateien
+- Quellen und bibliografische Metadaten: `references/*.md`
 - Lernkarten: `cards/cards.yaml`
-- Literaturverzeichnis, Graph und Exporte: generiert
+- `Literatur.md`, `references.bib`, `references.json`, Wissensgraph und Exporte: generiert
+
+Die drei Literaturausgaben dürfen nicht unabhängig voneinander editiert werden. Änderungen erfolgen an den Studienkarten und anschließend über `scripts/build_literature.py`.
 
 ## Umfang regulärer Einheiten
 
@@ -16,10 +18,36 @@
 
 Gezählt wird der didaktische Fließtext ohne YAML-Frontmatter, Navigation und Diagrammcode. Benötigt ein Thema mehr als 2.500 Wörter, wird es in mehrere fachlich sinnvolle Einheiten geteilt. Die Grenzen dürfen nicht mit Wiederholungen oder Fülltext erreicht werden.
 
+## Links
+
+Die Quelldateien verwenden Obsidian-Wikilinks. Unterstützt werden:
+
+```markdown
+[[Glossar]]
+[[01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne|Neuroentwicklung und Lebensspanne]]
+[[Glossar#Remission|Begriff Remission]]
+```
+
+Beim Web- und Export-Build werden daraus reguläre Links beziehungsweise interne Dokumentanker. Ziele müssen eindeutig existieren; Codeblöcke werden nicht verändert. Manuell doppelte HTML-Links neben Wikilinks sind unerwünscht.
+
+## Studienkarten und Zitationen
+
+Jede Studienkarte enthält:
+
+- eine stabile `reference_id`, die dem Dateinamen entspricht,
+- DOI ohne URL-Präfix und PubMed-ID, soweit vorhanden,
+- strukturierte bibliografische Angaben unter `citation`,
+- einen aus diesen Angaben reproduzierbaren Abschnitt `Vollständige Zitation`,
+- Evidenztyp, Kernaussage und Limitationen.
+
+Das genaue Schema steht in `references/README.md`. Unvollständige historische Karten werden ausdrücklich gekennzeichnet und bei fachlicher Überarbeitung vervollständigt; fehlende Daten dürfen nicht erfunden werden.
+
 ## Pflichtprüfungen
 
 ```bash
 python3 scripts/build_literature.py
+git diff --exit-code -- Literatur.md references.bib references.json
+python3 scripts/validate_links.py
 python3 scripts/build_graph.py
 python3 scripts/validate_compendium.py
 python3 scripts/build_combined.py
@@ -28,7 +56,7 @@ python3 scripts/build_docs.py
 mkdocs build --strict
 ```
 
-Zusätzlich müssen `git diff --check`, `python -m compileall -q scripts`, `python -m pip check` und die Konsistenz der generierten `Literatur.md` erfolgreich sein.
+Zusätzlich müssen `git diff --check`, `python -m compileall -q scripts` und `python -m pip check` erfolgreich sein.
 
 ## Branch-Hygiene
 
