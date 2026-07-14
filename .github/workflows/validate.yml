@@ -41,10 +41,11 @@ jobs:
       - name: Verify installed dependencies
         run: python -m pip check
 
-      - name: Check whitespace and Python syntax
+      - name: Check whitespace and source syntax
         run: |
           git diff --check
           python -m compileall -q scripts
+          find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
 
       - name: Validate Obsidian links
         run: python scripts/validate_links.py
