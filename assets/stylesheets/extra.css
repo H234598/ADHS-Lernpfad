@@ -39,6 +39,90 @@
   overflow: hidden;
 }
 
+.download-hero {
+  margin: 1rem 0 2rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 100% 0, color-mix(in srgb, var(--md-accent-fg-color) 18%, transparent), transparent 45%),
+    color-mix(in srgb, var(--md-primary-fg-color) 8%, var(--md-default-bg-color));
+  box-shadow: 0 0.55rem 1.8rem rgb(0 0 0 / 8%);
+}
+
+.download-hero > :first-child {
+  margin-top: 0;
+}
+
+.download-hero > :last-child {
+  margin-bottom: 0;
+}
+
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.md-typeset .download-card {
+  position: relative;
+  display: flex;
+  min-height: 13rem;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.15rem;
+  overflow: hidden;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.85rem;
+  background: var(--md-default-bg-color);
+  box-shadow: 0 0.25rem 0.85rem rgb(0 0 0 / 7%);
+  color: var(--md-default-fg-color);
+  text-decoration: none;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.md-typeset .download-card:hover,
+.md-typeset .download-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--md-accent-fg-color);
+  box-shadow: 0 0.7rem 1.5rem rgb(0 0 0 / 13%);
+}
+
+.md-typeset .download-card strong {
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.md-typeset .download-card small {
+  margin-top: auto;
+  color: var(--md-default-fg-color--light);
+  line-height: 1.45;
+}
+
+.download-card__icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.download-card__badge {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: var(--md-accent-fg-color);
+  color: var(--md-accent-bg-color);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.download-card--recommended {
+  border-color: color-mix(in srgb, var(--md-accent-fg-color) 55%, transparent);
+}
+
 @media (min-width: 76.25em) {
   .md-typeset a[title="Wartung, Automatisierung und CI"],
   .md-typeset a[title="Zurück zur Startseite"] {
@@ -49,5 +133,13 @@
 
   .md-content__inner {
     position: relative;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .download-card,
+  .md-typeset a[title="Wartung, Automatisierung und CI"],
+  .md-typeset a[title="Zurück zur Startseite"] {
+    transition: none;
   }
 }
