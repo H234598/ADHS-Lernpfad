@@ -1,0 +1,20 @@
+:root {
+  --md-admonition-icon--evidence: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M9%202v2h1v5.59l-5.7%209.5A2%202%200%200%200%206%2022h12a2%202%200%200%200%201.7-2.91L14%209.59V4h1V2H9m3%208.41L17.7%2020H6.3L12%2010.41Z'/%3E%3C/svg%3E");
+}
+
+.md-typeset .admonition.evidence,
+.md-typeset details.evidence {
+  border-color: #00897b;
+}
+
+.md-typeset .evidence > .admonition-title,
+.md-typeset .evidence > summary {
+  background-color: color-mix(in srgb, #00897b 12%, transparent);
+}
+
+.md-typeset .evidence > .admonition-title::before,
+.md-typeset .evidence > summary::before {
+  background-color: #00897b;
+  -webkit-mask-image: var(--md-admonition-icon--evidence);
+  mask-image: var(--md-admonition-icon--evidence);
+}
