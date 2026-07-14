@@ -1,5 +1,23 @@
 # Änderungsverlauf
 
+## 0.9.0 – 2026-07-15
+
+- gemeinsamen detaillierten Architektur- und Sicherheitsplan für den gesamten `Sync/`-Bereich ergänzt
+- gemeinsame Bash-Engine für Linux, Android/Termux, macOS, BSD und iSH eingeführt
+- native PowerShell-Engine für Windows mit gleicher Modus- und Konfliktsemantik ergänzt
+- `safe-pull`, `prompt-pull`, `forced-pull`, `additive-pull` und `full-sync` auf allen Skriptplattformen umgesetzt
+- Full Sync auf verpflichtende Gerätebranches beschränkt und direkte Schreibzugriffe auf `main` ausgeschlossen
+- Divergenzerkennung für gleichzeitig lokal und entfernt geänderte Gerätebranches ergänzt
+- Linux-Installer, systemd-Service, konfigurierbaren Timer und Deinstaller ausgebaut
+- Android-Termux-Installer, optionalen Bootstart, Full Sync und Deinstaller ergänzt
+- Windows-Installer mit Aufgabenplanung und Deinstaller ergänzt
+- macOS-Installer mit LaunchAgent und Deinstaller ergänzt
+- BSD-Installer mit Benutzer-Crontab und Deinstaller ergänzt
+- manuelles iSH-Paket für iPhone und iPad ergänzt
+- Konfigurations-, Modus- und Fehlersuchdokumentation vereinheitlicht
+- Git-/rsync-Integrationstests für Pull-Modi, geschützte Obsidian-Dateien, Gerätebranch-Push und Konfliktabbruch ergänzt
+- PowerShell-Parserprüfung und Sync-Integrationstests in die CI aufgenommen
+
 ## 0.8.1 – 2026-07-14
 
 - Obsidian-Callouts beim Web-Build in native MkDocs-Material-Admonitions umgewandelt
