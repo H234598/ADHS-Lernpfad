@@ -8,6 +8,20 @@ doi: "10.1176/appi.ajp.2017.17030298"
 pmid: "29070684"
 last_checked: 2026-07-14
 tags: [Literatur, ADHS, Lebensspanne, Adult-onset]
+citation:
+  entry_type: article
+  csl_type: article-journal
+  authors:
+    - "Sibley, M. H."
+    - "Rohde, L. A."
+    - "Swanson, J. M."
+  et_al: true
+  year: 2018
+  article_title: "Late-onset ADHD reconsidered with comprehensive repeated assessments between ages 10 and 25"
+  journal: American Journal of Psychiatry
+  volume: "175"
+  issue: "2"
+  pages: "140–149"
 ---
 
 # Sibley et al. 2018
