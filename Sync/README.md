@@ -1,7 +1,7 @@
 ---
 title: Synchronisierung
 tags: [Wartung, Sync, Obsidian]
-last_reviewed: 2026-07-14
+last_reviewed: 2026-07-15
 hide: [navigation]
 ---
 
@@ -9,26 +9,46 @@ hide: [navigation]
 
 # Synchronisierung
 
-Dieser Bereich bündelt alle Wege, den ADHS-Lernpfad auf Geräte und in Obsidian-Vaults zu spiegeln. Die Lerninhalte bleiben dadurch von betriebssystemspezifischen Installationsdateien getrennt.
+Dieser Bereich bündelt alle Wege, den ADHS-Lernpfad auf Geräte und in Obsidian-Vaults zu spiegeln. Die technische Infrastruktur bleibt außerhalb der normalen Lernnavigation; alle Installer und Skripte sind von den jeweiligen Plattformseiten direkt herunterladbar.
 
 ## Betriebssysteme
 
-| System | Stand | Anleitung |
-|---|---|---|
-| Linux | produktiv: systemd-Benutzertimer und manuelle Ausführung | [Linux](Linux/README.md) |
-| Android | produktiv: Termux, privater Git-Checkout und Vault-Spiegel | [Android](Android/README.md) |
-| Windows | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [Windows](Windows/README.md) |
-| macOS | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [macOS](macOS/README.md) |
-| iPhone und iPad | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [iOS](iOS/README.md) |
-| BSD | Struktur vorbereitet; Implementierung folgt in einem eigenen Plan | [BSD](BSD/README.md) |
+| System | Paket | Zeitplaner | Anleitung |
+|---|---|---|---|
+| Linux | Bash, Git und rsync | systemd-Benutzertimer oder manuell | [Linux](Linux/README.md) |
+| Android | Termux, privater Checkout und rsync | manuell oder Termux:Boot | [Android](Android/README.md) |
+| Windows | native PowerShell-Engine | Windows-Aufgabenplanung oder manuell | [Windows](Windows/README.md) |
+| macOS | Bash, Git und rsync | LaunchAgent oder manuell | [macOS](macOS/README.md) |
+| iPhone und iPad | iSH mit eingebundenem Files-Ordner | bewusst nur manuell | [iOS/iPadOS](iOS/README.md) |
+| BSD | Bash, Git und rsync | Benutzer-Crontab oder manuell | [BSD](BSD/README.md) |
 
-## Synchronisationsarten
+## Dokumentation
 
-Die gemeinsame Bedeutung der Modi steht unter [[Sync/MODES|Synchronisationsmodi]]. Nicht jeder Modus ist auf jedem System bereits implementiert.
+- [[Sync/PLAN|Architektur- und Ausbauplan]]
+- [[Sync/MODES|Synchronisationsmodi]]
+- [[Sync/CONFIGURATION|Konfiguration]]
+- [[Sync/TROUBLESHOOTING|Fehlersuche]]
+- [[Sync/Common/README|Gemeinsame Bash-Engine]]
 
-> [!warning] Vor dem Wechsel des Modus sichern
-> `forced-pull` verwirft lokale Änderungen an den gespiegelten Lerninhalten. Gerätespezifische Obsidian- und Syncthing-Dateien werden von den vorhandenen Linux- und Android-Skripten ausdrücklich ausgenommen.
+## Die fünf Modi
 
-## Grundprinzip
+| Modus | Typischer Einsatz |
+|---|---|
+| `safe-pull` | Arbeitsvault schützen; bei lokalen Änderungen abbrechen |
+| `prompt-pull` | vor einem Überschreiben manuell entscheiden |
+| `forced-pull` | reiner Lesespiegel von `main` |
+| `additive-pull` | nur fehlende Dateien ergänzen; bestehende Dateien nicht aktualisieren |
+| `full-sync` | lokale Änderungen über einen eigenen Gerätebranch zurückschreiben |
 
-`main` ist der veröffentlichte, geprüfte Stand. Ein Pull-Skript darf deshalb keine unbeabsichtigten lokalen Änderungen zurück nach GitHub übertragen. Ein echter bidirektionaler Full Sync benötigt einen getrennten, später auszuarbeitenden Konflikt-, Authentifizierungs- und Review-Prozess.
+> [!warning] Full Sync schreibt nicht nach `main`
+> Der bidirektionale Modus verwendet zwingend einen Gerätebranch wie `sync/mein-laptop`. Fachliche Änderungen gelangen erst über einen normalen Pull Request in den veröffentlichten Lernpfad.
+
+## Gemeinsames Sicherheitsmodell
+
+- Git liegt in einem privaten Checkout außerhalb des sichtbaren Vaults.
+- Gerätespezifische `.obsidian`- und Syncthing-Dateien bleiben standardmäßig erhalten.
+- Zeitplaner laufen nichtinteraktiv und brechen bei notwendigen Rückfragen ab.
+- Gleichzeitige lokale und entfernte Full-Sync-Änderungen führen zu einem Konfliktabbruch statt zu einem automatischen Überschreiben.
+- Deinstaller löschen den Vault niemals und entfernen den privaten Checkout nur nach ausdrücklicher Option.
+
+Die automatisierten Integrationstests erzeugen temporäre lokale Git-Remotes und prüfen Pull, Überschreiben, additive Kopie, geschützte Obsidian-Dateien, Gerätebranch-Push und Divergenzabbruch.
