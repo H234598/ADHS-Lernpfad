@@ -1,6 +1,6 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.5.0",
+  "version": "0.4.4",
   "last_reviewed": "2026-07-14",
   "chapters": [
     {"number": 1, "path": "01-Grundlagen/01-Was-ist-ADHS.md", "title": "Was ist ADHS?"},
