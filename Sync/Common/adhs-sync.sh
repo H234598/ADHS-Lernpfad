@@ -25,10 +25,12 @@ DISCARD_PENDING="${ADHS_SYNC_DISCARD_PENDING:-0}"
 ADOPT_EXISTING_TARGET="${ADHS_SYNC_ADOPT_EXISTING_TARGET:-0}"
 GIT_AUTHOR_NAME="${ADHS_SYNC_GIT_AUTHOR_NAME:-ADHS Sync}"
 GIT_AUTHOR_EMAIL="${ADHS_SYNC_GIT_AUTHOR_EMAIL:-adhs-sync@localhost}"
-STATE_FILE="${ADHS_SYNC_STATE_FILE:-$REPO_DIR/.git/adhs-sync-state}"
+CONFIGURED_STATE_FILE="${ADHS_SYNC_STATE_FILE:-}"
+CONFIGURED_LOCK_DIR="${ADHS_SYNC_LOCK_DIR:-}"
 
-LOCK_KEY="$(printf '%s' "$TARGET_DIR" | cksum | awk '{print $1}')"
-LOCK_DIR="${ADHS_SYNC_LOCK_DIR:-${TMPDIR:-/tmp}/adhs-lernpfad-sync-${UID:-$(id -u)}-${LOCK_KEY}.lock}"
+STATE_FILE=""
+LOCK_ROOT=""
+LOCK_DIR=""
 DIFF_FILE=""
 
 log() {
@@ -46,9 +48,56 @@ require_command() {
   command -v "$1" >/dev/null 2>&1 || die 127 "Benötigtes Programm fehlt: $1"
 }
 
+canonical_path() {
+  local original="$1" probe suffix="" parent
+  case "$original" in
+    /*) probe="$original" ;;
+    *) probe="$PWD/$original" ;;
+  esac
+
+  while [[ ! -e "$probe" ]]; do
+    suffix="/$(basename "$probe")$suffix"
+    parent="$(dirname "$probe")"
+    [[ "$parent" != "$probe" ]] || break
+    probe="$parent"
+  done
+
+  if [[ -d "$probe" ]]; then
+    probe="$(cd "$probe" && pwd -P)"
+  else
+    probe="$(cd "$(dirname "$probe")" && pwd -P)/$(basename "$probe")"
+  fi
+  printf '%s%s\n' "${probe%/}" "$suffix"
+}
+
+prepare_runtime_paths() {
+  local repo_path target_path lock_key
+  mkdir -p "$(dirname "$REPO_DIR")" "$(dirname "$TARGET_DIR")"
+  repo_path="$(canonical_path "$REPO_DIR")"
+  target_path="$(canonical_path "$TARGET_DIR")"
+
+  if [[ "$repo_path" == "$target_path" ]]; then
+    die 64 'Privater Checkout und sichtbarer Vault dürfen nicht derselbe Pfad sein'
+  fi
+  case "$repo_path/" in
+    "$target_path/"*) die 64 'Der private Checkout darf nicht innerhalb des sichtbaren Vaults liegen' ;;
+  esac
+  case "$target_path/" in
+    "$repo_path/"*) die 64 'Der sichtbare Vault darf nicht innerhalb des privaten Checkouts liegen' ;;
+  esac
+
+  REPO_DIR="$repo_path"
+  TARGET_DIR="$target_path"
+  STATE_FILE="${CONFIGURED_STATE_FILE:-$REPO_DIR/.git/adhs-sync-state}"
+  LOCK_ROOT="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}"
+  lock_key="$(printf '%s' "$TARGET_DIR" | cksum)"
+  lock_key="${lock_key%% *}"
+  LOCK_DIR="${CONFIGURED_LOCK_DIR:-$LOCK_ROOT/adhs-lernpfad-sync-${UID:-$(id -u)}-${lock_key}.lock}"
+}
+
 cleanup() {
   [[ -z "$DIFF_FILE" ]] || rm -f "$DIFF_FILE"
-  rmdir "$LOCK_DIR" 2>/dev/null || true
+  [[ -z "$LOCK_DIR" ]] || rmdir "$LOCK_DIR" 2>/dev/null || true
 }
 
 acquire_lock() {
@@ -86,20 +135,21 @@ validate_configuration() {
     *) die 64 "Unbekannter Modus: $SYNC_MODE" ;;
   esac
 
-  [[ "$BASE_BRANCH" != -* && "$BASE_BRANCH" != *[[:space:]]* ]] \
+  [[ "$REMOTE" != -* && "$REMOTE" != *[[:space:]]* ]] \
+    || die 64 "Ungültiger Remote-Name: $REMOTE"
+  git check-ref-format --branch "$BASE_BRANCH" >/dev/null 2>&1 \
     || die 64 "Ungültiger Basisbranch: $BASE_BRANCH"
 
   if [[ "$SYNC_MODE" == full-sync ]]; then
     [[ -n "$DEVICE_BRANCH" ]] || die 64 'full-sync benötigt ADHS_SYNC_DEVICE_BRANCH'
     [[ "$DEVICE_BRANCH" != "$BASE_BRANCH" ]] \
       || die 64 'Der Full-Sync-Gerätebranch darf nicht dem Basisbranch entsprechen'
-    [[ "$DEVICE_BRANCH" != -* && "$DEVICE_BRANCH" != *[[:space:]]* ]] \
+    git check-ref-format --branch "$DEVICE_BRANCH" >/dev/null 2>&1 \
       || die 64 "Ungültiger Gerätebranch: $DEVICE_BRANCH"
   fi
 }
 
 ensure_checkout() {
-  mkdir -p "$(dirname "$REPO_DIR")" "$(dirname "$TARGET_DIR")"
   if [[ -e "$REPO_DIR" && ! -d "$REPO_DIR/.git" ]]; then
     die 65 "Privater Checkoutpfad ist kein Git-Repository: $REPO_DIR"
   fi
@@ -136,7 +186,7 @@ check_pending_before_pull() {
   ahead="$(pending_commits)"
   if (( ahead > 0 )); then
     if [[ "$DISCARD_PENDING" == 1 && "$SYNC_MODE" == forced-pull ]]; then
-      log "Verwerfe $ahead ausstehende Commit(s) im privaten Checkout auf ausdrückliche Konfiguration"
+      log "Ignoriere $ahead ausstehende Commit(s) auf ausdrückliche Konfiguration und wechsle zum Basisbranch"
     else
       die 9 "$ahead nicht gepushte Commit(s) im privaten Checkout; zuerst Full Sync reparieren oder ADHS_SYNC_DISCARD_PENDING=1 mit forced-pull setzen"
     fi
@@ -147,7 +197,7 @@ compare_trees() {
   local source="$1" destination="$2" status
   [[ -d "$destination" ]] || return 1
   [[ -z "$DIFF_FILE" ]] || rm -f "$DIFF_FILE"
-  DIFF_FILE="$(mktemp "${TMPDIR:-/tmp}/adhs-sync-diff.XXXXXX")"
+  DIFF_FILE="$(mktemp "$LOCK_ROOT/adhs-sync-diff.XXXXXX")"
   if rsync -rcn --delete --itemize-changes \
       "${RSYNC_EXCLUDES[@]}" \
       "$source/" "$destination/" >"$DIFF_FILE"; then
@@ -196,12 +246,16 @@ import_target_to_checkout() {
 }
 
 target_has_syncable_files() {
+  local first
   [[ -d "$TARGET_DIR" ]] || return 1
-  find "$TARGET_DIR" \
-    -type d \( -name .git -o -name .obsidian -o -name .trash \) -prune -o \
-    -type f ! -name .stfolder ! -name .stignore ! -name .nomedia \
-      ! -name .DS_Store ! -name Thumbs.db ! -name desktop.ini -print \
-    | grep -q .
+  first="$(
+    find "$TARGET_DIR" \
+      -type d \( -name .git -o -name .obsidian -o -name .trash \) -prune -o \
+      -type f ! -name .stfolder ! -name .stignore ! -name .nomedia \
+        ! -name .DS_Store ! -name Thumbs.db ! -name desktop.ini -print 2>/dev/null \
+      | sed -n '1p'
+  )"
+  [[ -n "$first" ]]
 }
 
 write_state() {
@@ -219,7 +273,9 @@ run_pull_mode() {
   local target_changed=false
   check_pending_before_pull
 
-  if [[ "$SYNC_MODE" != additive-pull ]] && compare_trees "$REPO_DIR" "$TARGET_DIR"; then
+  if [[ "$SYNC_MODE" != additive-pull ]] \
+      && target_has_syncable_files \
+      && compare_trees "$REPO_DIR" "$TARGET_DIR"; then
     target_changed=true
     show_differences
   fi
@@ -268,6 +324,22 @@ commit_target_changes() {
   return 0
 }
 
+merge_latest_base() {
+  if git -C "$REPO_DIR" merge-base --is-ancestor "$REMOTE/$BASE_BRANCH" HEAD; then
+    return 0
+  fi
+
+  if git -C "$REPO_DIR" merge-base --is-ancestor HEAD "$REMOTE/$BASE_BRANCH"; then
+    git -C "$REPO_DIR" merge --ff-only "$REMOTE/$BASE_BRANCH" >/dev/null
+    return 0
+  fi
+
+  if ! git -C "$REPO_DIR" merge --no-edit "$REMOTE/$BASE_BRANCH" >/dev/null; then
+    git -C "$REPO_DIR" merge --abort >/dev/null 2>&1 || true
+    die 7 "Gerätebranch und $BASE_BRANCH enthalten kollidierende Änderungen; manuelle Git-Auflösung erforderlich"
+  fi
+}
+
 push_device_branch() {
   if ! git -C "$REPO_DIR" push -u "$REMOTE" "HEAD:refs/heads/$DEVICE_BRANCH"; then
     die 8 "Push nach $DEVICE_BRANCH fehlgeschlagen; der lokale Commit bleibt im privaten Checkout erhalten"
@@ -285,7 +357,7 @@ run_full_sync() {
   fi
   prepare_device_branch "$remote_exists"
 
-  if compare_trees "$REPO_DIR" "$TARGET_DIR"; then
+  if target_has_syncable_files && compare_trees "$REPO_DIR" "$TARGET_DIR"; then
     target_changed=true
   fi
 
@@ -310,16 +382,19 @@ run_full_sync() {
 
   if [[ "$target_changed" == false ]] && (( behind > 0 )); then
     git -C "$REPO_DIR" merge --ff-only "$REMOTE/$DEVICE_BRANCH" >/dev/null
-    mirror_checkout_to_target
-    write_state
-    log "Full Sync: Remote-Gerätebranch nach lokal übernommen: $DEVICE_BRANCH"
-    return
   fi
 
   if [[ "$target_changed" == true ]]; then
     show_differences
     commit_target_changes || true
-    ahead="$(git -C "$REPO_DIR" rev-list --count "$REMOTE/$DEVICE_BRANCH..HEAD" 2>/dev/null || git -C "$REPO_DIR" rev-list --count "$REMOTE/$BASE_BRANCH..HEAD")"
+  fi
+
+  merge_latest_base
+
+  if [[ "$remote_exists" == true ]]; then
+    ahead="$(git -C "$REPO_DIR" rev-list --count "$REMOTE/$DEVICE_BRANCH..HEAD")"
+  else
+    ahead=1
   fi
 
   if [[ "$remote_exists" == false || "$ahead" -gt 0 ]]; then
@@ -328,14 +403,17 @@ run_full_sync() {
 
   mirror_checkout_to_target
   write_state
-  log "Full Sync abgeschlossen: Gerätebranch=$DEVICE_BRANCH Ziel=$TARGET_DIR"
+  log "Full Sync abgeschlossen: Gerätebranch=$DEVICE_BRANCH Basis=$BASE_BRANCH Ziel=$TARGET_DIR"
 }
 
 main() {
   require_command git
   require_command rsync
   require_command cksum
+  require_command sed
+  require_command find
   validate_configuration
+  prepare_runtime_paths
   build_rsync_excludes
   acquire_lock
   ensure_checkout
