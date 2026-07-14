@@ -13,7 +13,7 @@ REPO_URL="${ADHS_LERNPFAD_REPO_URL:-https://github.com/H234598/ADHS-Lernpfad.git
 BRANCH="${ADHS_LERNPFAD_BRANCH:-main}"
 TARGET_DIR="${ADHS_LERNPFAD_TARGET_DIR:-$HOME/Dokumente/Obsidian/ADHS-Lernpfad}"
 SYNC_MODE="${ADHS_LERNPFAD_SYNC_MODE:-safe-pull}"
-LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/adhs-lernpfad-sync.lock"
+LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/adhs-lernpfad-sync-${UID:-$(id -u)}.lock"
 NEEDS_FORCE=false
 FORCE_CONFIRMED=false
 
@@ -68,14 +68,13 @@ confirm_force() {
 }
 
 force_to_remote() {
-  git reset --hard
+  git switch -f -C "$BRANCH" "origin/$BRANCH" >/dev/null
   git clean -fd \
     -e '.obsidian/' \
     -e '.stfolder' \
     -e '.stignore' \
     -e '.nomedia' \
     -e '.trash/'
-  git switch -C "$BRANCH" "origin/$BRANCH" >/dev/null
 }
 
 case "$SYNC_MODE" in
