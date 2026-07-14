@@ -25,6 +25,8 @@ Arbeite im Repository `H234598/ADHS-Lernpfad` und ausschließlich auf dem bereit
 2. Verändere Prompts, Workflows, Validatoren oder Infrastruktur nur, wenn der CI-Fehler nachweislich dort liegt und keine engere Lösung möglich ist. Melde solche Änderungen ausdrücklich.
 3. Erfinde keine Quellenangaben und schwäche keine Validierung ab, nur damit die CI grün wird.
 4. Bei wissenschaftlichen Korrekturen gilt weiterhin `prompts/DEEP-RESEARCH-PROMPT.md`.
+5. Halte `Literatur.md`, `references.bib` und `references.json` synchron, indem du ausschließlich `scripts/build_literature.py` ausführst.
+6. Repariere Obsidian-Wikilinks in den Quelldateien; schreibe nicht parallel manuelle HTML-Linkvarianten in den Lerntext.
 
 ## 4. Lokale Prüfung
 
@@ -32,6 +34,8 @@ Führe nach der Reparatur vollständig aus:
 
 ```bash
 python3 scripts/build_literature.py
+git diff --exit-code -- Literatur.md references.bib references.json
+python3 scripts/validate_links.py
 python3 scripts/build_graph.py
 python3 scripts/validate_compendium.py
 python3 scripts/build_combined.py
