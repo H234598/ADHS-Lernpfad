@@ -8,6 +8,20 @@ doi: "10.1080/87565641.2023.2293712"
 pmid: "38145491"
 last_checked: 2026-07-13
 tags: [Literatur, ADHS]
+citation:
+  entry_type: article
+  csl_type: article-journal
+  authors:
+    - "Metcalfe, K. B."
+    - "McFeaters, C. D."
+    - "Voyer, D."
+  et_al: false
+  year: 2024
+  article_title: "Time-Perception Deficits in Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis"
+  journal: Developmental Neuropsychology
+  volume: "49"
+  issue: "1"
+  pages: "1–25"
 ---
 
 # Metcalfe et al. 2024
