@@ -68,7 +68,22 @@ jobs:
 
       - name: Test synchronization engines
         shell: bash
-        run: bash Sync/tests/test-posix-sync.sh
+        run: |
+          mkdir -p build
+          set +e
+          bash Sync/tests/test-posix-sync.sh 2>&1 | tee build/sync-test.log
+          status=${PIPESTATUS[0]}
+          set -e
+          if (( status != 0 )); then
+            {
+              echo '# Sync-Integrationstest fehlgeschlagen'
+              echo
+              echo '```text'
+              cat build/sync-test.log
+              echo '```'
+            } > build/validation-report.txt
+            exit "$status"
+          fi
 
       - name: Validate Obsidian links
         run: python scripts/validate_links.py
@@ -109,7 +124,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: validation-report
-          path: build/validation-report.txt
+          path: |
+            build/validation-report.txt
+            build/sync-test.log
           if-no-files-found: warn
           retention-days: 14
 
