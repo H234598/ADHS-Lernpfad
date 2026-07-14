@@ -14,6 +14,8 @@ BRANCH="${ADHS_LERNPFAD_BRANCH:-main}"
 TARGET_DIR="${ADHS_LERNPFAD_TARGET_DIR:-$HOME/Dokumente/Obsidian/ADHS-Lernpfad}"
 SYNC_MODE="${ADHS_LERNPFAD_SYNC_MODE:-safe-pull}"
 LOCK_FILE="${XDG_RUNTIME_DIR:-/tmp}/adhs-lernpfad-sync.lock"
+NEEDS_FORCE=false
+FORCE_CONFIRMED=false
 
 log() {
   printf '[%s] %s\n' "$(date --iso-8601=seconds)" "$*"
@@ -36,17 +38,37 @@ ensure_local_excludes() {
   done
 }
 
-has_local_changes() {
+has_worktree_changes() {
   [[ -n "$(git status --porcelain --untracked-files=all)" ]]
 }
 
-show_local_changes() {
-  log 'Lokale Änderungen im Spiegel:'
+show_worktree_changes() {
+  log 'Lokale Dateiänderungen im Spiegel:'
   git status --short
 }
 
+confirm_force() {
+  local reason="$1"
+  if [[ "$FORCE_CONFIRMED" == true ]]; then
+    NEEDS_FORCE=true
+    return
+  fi
+  if [[ ! -t 0 ]]; then
+    log "prompt-pull benötigt ein Terminal; sicherer Abbruch: $reason"
+    exit 4
+  fi
+  printf '%s\n' "$reason"
+  read -r -p 'Lokalen Stand verwerfen und origin/main spiegeln? [y/N] ' answer
+  [[ "$answer" =~ ^[Yy]$ ]] || {
+    log 'Abgebrochen; lokaler Stand bleibt erhalten'
+    exit 4
+  }
+  FORCE_CONFIRMED=true
+  NEEDS_FORCE=true
+}
+
 force_to_remote() {
-  git reset --hard "origin/$BRANCH"
+  git reset --hard
   git clean -fd \
     -e '.obsidian/' \
     -e '.stfolder' \
@@ -89,36 +111,55 @@ fi
 cd "$TARGET_DIR"
 ensure_local_excludes
 
-if has_local_changes; then
+if has_worktree_changes; then
   case "$SYNC_MODE" in
     safe-pull)
-      show_local_changes
+      show_worktree_changes
       log 'safe-pull bricht ab und überschreibt nichts'
       exit 4
       ;;
     prompt-pull)
-      show_local_changes
-      if [[ ! -t 0 ]]; then
-        log 'prompt-pull benötigt ein Terminal; sicherer Abbruch'
-        exit 4
-      fi
-      read -r -p 'Lokale Änderungen verwerfen und origin/main spiegeln? [y/N] ' answer
-      [[ "$answer" =~ ^[Yy]$ ]] || {
-        log 'Abgebrochen; lokale Änderungen bleiben erhalten'
-        exit 4
-      }
+      show_worktree_changes
+      confirm_force 'Lokale Dateiänderungen wurden erkannt.'
       ;;
-    forced-pull) ;;
+    forced-pull)
+      NEEDS_FORCE=true
+      ;;
   esac
 fi
 
 git fetch --prune origin "$BRANCH"
 
-if [[ "$SYNC_MODE" == 'forced-pull' ]] || has_local_changes; then
+if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+  LOCAL_AHEAD="$(git rev-list --count "origin/$BRANCH..$BRANCH")"
+else
+  LOCAL_AHEAD=0
+fi
+
+if (( LOCAL_AHEAD > 0 )); then
+  case "$SYNC_MODE" in
+    safe-pull)
+      log "Lokaler Branch enthält $LOCAL_AHEAD nicht veröffentlichte Commit(s); sicherer Abbruch"
+      exit 5
+      ;;
+    prompt-pull)
+      confirm_force "Lokaler Branch enthält $LOCAL_AHEAD nicht veröffentlichte Commit(s)."
+      ;;
+    forced-pull)
+      NEEDS_FORCE=true
+      ;;
+  esac
+fi
+
+if [[ "$NEEDS_FORCE" == true ]]; then
   force_to_remote
 else
-  git switch "$BRANCH" >/dev/null
-  git merge --ff-only "origin/$BRANCH"
+  if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+    git switch "$BRANCH" >/dev/null
+    git merge --ff-only "origin/$BRANCH"
+  else
+    git switch -c "$BRANCH" --track "origin/$BRANCH" >/dev/null
+  fi
 fi
 
 log "Synchronisierung abgeschlossen: Modus=$SYNC_MODE Ziel=$TARGET_DIR"
