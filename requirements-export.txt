@@ -1,2 +1,2 @@
-PyYAML==6.0.2
+PyYAML==6.0.3
 genanki==0.13.1
