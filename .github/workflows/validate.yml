@@ -177,7 +177,8 @@ jobs:
           test -s build/artifacts/references.json
           test -s build/artifacts/downloads.json
           test -s build/artifacts/SHA256SUMS.txt
-          sha256sum --check build/artifacts/SHA256SUMS.txt --ignore-missing
+          cd build/artifacts
+          sha256sum --check SHA256SUMS.txt
 
       - name: Upload preview download bundle
         uses: actions/upload-artifact@v7
