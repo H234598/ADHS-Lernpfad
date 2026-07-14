@@ -3,8 +3,8 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.4.1
-last_reviewed: 2026-07-13
+version: 0.4.2
+last_reviewed: 2026-07-14
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
 
@@ -62,13 +62,23 @@ Diagramm, Übung und Review gehören zusätzlich zum Lernumfang. Komplexe Themen
 - [[prompts/README|Übersicht aller Prompts]]
 - [[prompts/AUTOMATION-PROMPT|06-Uhr-Prompt für neue Einheiten]]
 - [[prompts/DEEP-RESEARCH-PROMPT|Deep-Research-Prompt]]
-- [[prompts/MERGE-AUTOMATION-PROMPT|Prüf- und Merge-Prompt ab 08 Uhr]]
+- [[prompts/MERGE-AUTOMATION-PROMPT|Prüf-, Reparatur- und Merge-Prompt ab 08 Uhr]]
+- [[prompts/PR-REPAIR-PROMPT|Reparaturprompt für fehlgeschlagene CI]]
 - [[SYNC-OBSIDIAN|GitHub → Obsidian per systemd]]
-- [[CONTRIBUTING|Beitrags- und Evidenzregeln]]
+- [[CONTRIBUTING|Beitrags-, Evidenz- und Branchregeln]]
 
 ## Automatisierter Tagesablauf
 
-Um 06:00 Uhr Europe/Berlin erzeugt die erste Automation genau eine neue Einheit und einen Draft-Pull-Request. Ab 08:00 Uhr prüft ein getrennter Wächter regelmäßig CodeRabbit, Review-Threads und CI. Erst nach erfolgreicher Draft-Prüfung wird der PR als bereit markiert; nach einer weiteren vollständig grünen Pull-Request-CI wird er per Squash-Merge nach `main` übernommen.
+Um 06:00 Uhr Europe/Berlin erzeugt die erste Automation genau eine neue Einheit und einen Draft-Pull-Request. Der Draft bleibt mindestens zwei volle Stunden bestehen, damit CodeRabbit bei verfügbarem Kontingent prüfen kann. CodeRabbit ist kein Pflicht-Gate.
+
+Ab 08:00 Uhr prüft ein getrennter Wächter stündlich:
+
+1. Ist die erste CI grün, wird der Draft als **Ready for review** markiert.
+2. Ist die CI rot, wird auf demselben Branch genau ein sicherer Reparaturzyklus ausgeführt und anschließend die neue CI abgewartet.
+3. Nach der Statusänderung muss eine zweite Pull-Request-CI vollständig grün sein.
+4. Erst dann wird per Squash-Merge nach `main` übernommen.
+
+Pull Requests mit Änderungen an Prompts, Workflows, Validatoren, `CNAME` oder zentraler Infrastruktur werden niemals automatisch gemergt. Sie benötigen eine manuelle Prüfung.
 
 ## Automatische Ausgaben
 
