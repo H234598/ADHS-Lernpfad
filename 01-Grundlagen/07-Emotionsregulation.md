@@ -183,5 +183,5 @@ Weil nicht nur die Intensität zählt, sondern auch Geschwindigkeit, Dauer, Erho
 ## Navigation
 
 - Zurück: [[01-Grundlagen/06-Zeitverarbeitung|Zeitverarbeitung]]
-- Weiter: [[README|Übersicht]]
+- Weiter: [[01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne|Neuroentwicklung und Lebensspanne]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]

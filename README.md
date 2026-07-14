@@ -50,6 +50,7 @@ Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Si
 5. [[01-Grundlagen/05-Aufmerksamkeit-und-Stabilitaet|Aufmerksamkeit und Stabilität]]
 6. [[01-Grundlagen/06-Zeitverarbeitung|Zeitverarbeitung]]
 7. [[01-Grundlagen/07-Emotionsregulation|Emotionsregulation]]
+8. [[01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne|Neuroentwicklung und Lebensspanne]]
 
 ## Wissenssystem
 
