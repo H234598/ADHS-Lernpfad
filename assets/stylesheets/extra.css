@@ -1,9 +1,14 @@
-.maintenance-entry,
+.md-typeset > p:has(> a[title="Wartung, Automatisierung und CI"]),
 .maintenance-back {
   min-height: 2.6rem;
 }
 
-.maintenance-entry a,
+.md-typeset > p:has(> a[title="Wartung, Automatisierung und CI"]) {
+  margin-bottom: 0;
+  text-align: right;
+}
+
+.md-typeset a[title="Wartung, Automatisierung und CI"],
 .maintenance-back a {
   display: inline-grid;
   place-items: center;
@@ -18,8 +23,8 @@
   transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
 }
 
-.maintenance-entry a:hover,
-.maintenance-entry a:focus-visible,
+.md-typeset a[title="Wartung, Automatisierung und CI"]:hover,
+.md-typeset a[title="Wartung, Automatisierung und CI"]:focus-visible,
 .maintenance-back a:hover,
 .maintenance-back a:focus-visible {
   transform: translateY(-1px);
@@ -38,7 +43,7 @@
 }
 
 @media (min-width: 76.25em) {
-  .maintenance-entry {
+  .md-typeset a[title="Wartung, Automatisierung und CI"] {
     position: absolute;
     top: 1.1rem;
     right: 0;
