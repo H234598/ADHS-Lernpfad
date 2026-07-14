@@ -80,6 +80,10 @@ Ab 08:00 Uhr prüft ein getrennter Wächter stündlich:
 
 Pull Requests mit Änderungen an Prompts, Workflows, Validatoren, `CNAME` oder zentraler Infrastruktur werden niemals automatisch gemergt. Sie benötigen eine manuelle Prüfung.
 
+## CI und Wartung
+
+Die Workflows verwenden aktuelle GitHub-Actions-Majors auf Node 24, feste Ubuntu-Runner, explizite Berechtigungen, Dependency-Caches, Zeitlimits und Concurrency-Regeln. Die Validierung prüft zusätzlich Python-Syntax, Whitespace, installierte Abhängigkeiten und ob das generierte Literaturverzeichnis committed wurde. Dependabot kontrolliert wöchentlich GitHub Actions und Python-Abhängigkeiten; solche Infrastruktur-PRs bleiben bis zur bewussten Prüfung vom automatischen Merge ausgeschlossen.
+
 ## Automatische Ausgaben
 
 GitHub Actions prüfen Struktur, Mindest- und Maximallänge sowie Links, bauen die MkDocs-Webseite und erzeugen Markdown-, HTML-, EPUB- und APKG-Artefakte.
