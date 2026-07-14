@@ -90,11 +90,18 @@ Diese Trennung verhindert, dass ein PR seine eigenen Prüfregeln verändert und 
 
 ## Betrieb und Synchronisierung
 
-- [[SYNC-OBSIDIAN|Desktop-Synchronisierung nach Obsidian]]
+- [[Sync/README|Synchronisierung nach Betriebssystem]]
+  - [[Sync/Linux/README|Linux und systemd]]
+  - [[Sync/Android/README|Android und Termux]]
+  - [[Sync/Windows/README|Windows]]
+  - [[Sync/macOS/README|macOS]]
+  - [[Sync/iOS/README|iPhone und iPad]]
+  - [[Sync/BSD/README|BSD]]
+- [[Sync/MODES|Pull-, Überschreib- und Full-Sync-Modi]]
 - [[CONTRIBUTING|Beitrags-, Evidenz- und Branchregeln]]
 - [[CHANGELOG|Änderungsverlauf]]
 
-Der Android-Vault wird als schreibgeschützter Spiegel aus `main` erzeugt. Lokale inhaltliche Änderungen im Spiegel werden beim nächsten erzwungenen Abgleich überschrieben; gerätespezifische Obsidian- und Syncthing-Dateien bleiben erhalten.
+Linux und Android besitzen bereits getestete Pull-Pakete. Windows, macOS, iOS und BSD sind als klare Zielstruktur vorbereitet und werden später in einem gemeinsamen Plan implementiert. Der Android-Vault kann weiterhin als schreibgeschützter Spiegel aus `main` betrieben werden; gerätespezifische Obsidian- und Syncthing-Dateien bleiben geschützt.
 
 ## Automatische Ausgaben
 
