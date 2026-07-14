@@ -11,6 +11,9 @@
 - erneute CI-Ausführung beim Übergang von Draft zu `ready for review` eingerichtet
 - Promptpipeline in README und MkDocs dokumentiert
 - Branch-Hygiene und Kontrolle auf zurückgebliebene einzigartige Änderungen verbindlich festgelegt
+- GitHub Actions auf aktuelle Node-24-Majors aktualisiert und veraltete Action-Runtimes entfernt
+- CI mit Dependency-Caching, Zeitlimits, Generator-Konsistenzchecks und klaren Concurrency-Regeln gehärtet
+- Dependabot für GitHub Actions und Python-Abhängigkeiten aktiviert
 
 ## 0.4.1 – 2026-07-13
 
