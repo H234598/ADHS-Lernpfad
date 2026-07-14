@@ -1,7 +1,7 @@
 ---
 title: Wartung und Automatisierung
 tags: [Wartung, Automatisierung, CI]
-last_reviewed: 2026-07-14
+last_reviewed: 2026-07-15
 hide: [navigation]
 ---
 
@@ -49,7 +49,9 @@ Die CI verwendet aktuelle GitHub-Actions-Majors mit Node-24-Runtime, feste Ubunt
 
 Geprüft werden unter anderem:
 
-- Python-Syntax und Whitespace,
+- Python-, Bash- und PowerShell-Syntax,
+- echte Git-/rsync-Integrationstests der Sync-Modi,
+- Schutz lokaler Obsidian-Dateien und Full-Sync-Divergenzabbruch,
 - Quellen- und Kapitelstruktur,
 - Mindest-, Warn- und Maximallänge,
 - Obsidian-Wikilinks einschließlich Aliasen, Unterordnern und Überschriftenankern,
@@ -60,11 +62,11 @@ Geprüft werden unter anderem:
 
 Dependabot kontrolliert wöchentlich GitHub Actions und Python-Abhängigkeiten. Einzelheiten stehen in [[.github/README|GitHub-Automation]].
 
-## Linkaufbereitung für Web und Exporte
+## Link- und Callout-Aufbereitung
 
-Die Markdown-Quelldateien behalten ihre Obsidian-Wikilinks. Beim Web-Build werden sie in relative Standard-Markdown-Links umgewandelt; MkDocs erzeugt daraus korrekte HTML-Ziele. Für das Gesamtdokument werden stabile interne Anker erzeugt, damit Navigation auch in HTML, EPUB, LaTeX und PDF erhalten bleibt.
+Die Markdown-Quelldateien behalten ihre Obsidian-Wikilinks und Callouts. Beim Web-Build werden Wikilinks in relative Standard-Markdown-Links und Obsidian-Callouts in Material-Admonitions umgewandelt. Für das Gesamtdokument werden stabile interne Anker erzeugt, damit Navigation auch in HTML, EPUB, LaTeX und PDF erhalten bleibt.
 
-Nicht auflösbare oder mehrdeutige Ziele lassen die CI fehlschlagen. Quelltextblöcke werden von der Konvertierung ausgenommen.
+Nicht auflösbare oder mehrdeutige Ziele sowie nicht korrekt konvertierte Evidenzfelder lassen die CI fehlschlagen. Quelltextblöcke werden von der Konvertierung ausgenommen.
 
 ## Literaturdaten
 
@@ -93,15 +95,18 @@ Diese Trennung verhindert, dass ein PR seine eigenen Prüfregeln verändert und 
 - [[Sync/README|Synchronisierung nach Betriebssystem]]
   - [[Sync/Linux/README|Linux und systemd]]
   - [[Sync/Android/README|Android und Termux]]
-  - [[Sync/Windows/README|Windows]]
-  - [[Sync/macOS/README|macOS]]
-  - [[Sync/iOS/README|iPhone und iPad]]
-  - [[Sync/BSD/README|BSD]]
+  - [[Sync/Windows/README|Windows und PowerShell]]
+  - [[Sync/macOS/README|macOS und LaunchAgent]]
+  - [[Sync/iOS/README|iPhone und iPad über iSH]]
+  - [[Sync/BSD/README|BSD und Cron]]
+- [[Sync/PLAN|Architektur- und Ausbauplan]]
 - [[Sync/MODES|Pull-, Überschreib- und Full-Sync-Modi]]
+- [[Sync/CONFIGURATION|Konfiguration]]
+- [[Sync/TROUBLESHOOTING|Fehlersuche]]
 - [[CONTRIBUTING|Beitrags-, Evidenz- und Branchregeln]]
 - [[CHANGELOG|Änderungsverlauf]]
 
-Linux und Android besitzen bereits getestete Pull-Pakete. Windows, macOS, iOS und BSD sind als klare Zielstruktur vorbereitet und werden später in einem gemeinsamen Plan implementiert. Der Android-Vault kann weiterhin als schreibgeschützter Spiegel aus `main` betrieben werden; gerätespezifische Obsidian- und Syncthing-Dateien bleiben geschützt.
+Alle Plattformordner enthalten Installer, ausführbare Synchronisationslogik oder Wrapper, Deinstaller und eine Anleitung. Linux, Android, macOS, BSD und iSH verwenden eine gemeinsame Bash-Engine; Windows besitzt eine native PowerShell-Implementierung mit derselben Modussemantik. Full Sync schreibt ausschließlich in einen konfigurierten Gerätebranch und niemals direkt nach `main`.
 
 ## Automatische Ausgaben
 
