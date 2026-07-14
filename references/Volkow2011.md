@@ -8,6 +8,19 @@ doi: "10.1038/mp.2010.97"
 pmid: ""
 last_checked: 2026-07-13
 tags: [Literatur, ADHS]
+citation:
+  entry_type: article
+  csl_type: article-journal
+  authors:
+    - "Volkow, N. D."
+    - "Wang, G.-J."
+    - "Newcorn, J. H."
+  et_al: true
+  year: 2011
+  article_title: "Motivation deficit in ADHD is associated with dysfunction of the dopamine reward pathway"
+  journal: Molecular Psychiatry
+  volume: "16"
+  pages: "1147–1154"
 ---
 
 # Volkow et al. 2011
