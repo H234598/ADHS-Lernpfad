@@ -119,3 +119,70 @@ jobs:
 
       - name: Build MkDocs site strictly
         run: mkdocs build --strict
+
+  export-smoke:
+    name: Build all download formats
+    if: github.event_name != 'push'
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-export.txt
+
+      - name: Install Python dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-export.txt
+
+      - name: Build source artifacts
+        run: |
+          python scripts/validate_links.py
+          python scripts/build_literature.py
+          python scripts/build_graph.py
+          python scripts/build_combined.py
+          python scripts/build_anki.py
+
+      - name: Install Pandoc and LuaLaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            pandoc \
+            texlive-luatex \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-lang-german \
+            fonts-dejavu-core
+
+      - name: Build complete download bundle
+        run: python scripts/build_exports.py
+
+      - name: Verify expected downloads
+        run: |
+          test -s build/artifacts/ADHS-Lernpfad.pdf
+          test -s build/artifacts/ADHS-Lernpfad.epub
+          test -s build/artifacts/ADHS-Lernpfad.html
+          test -s build/artifacts/ADHS-Lernpfad.tex
+          test -s build/artifacts/ADHS-Lernpfad-Gesamtdokument.md
+          test -s build/artifacts/ADHS-Lernpfad-Obsidian-Vault.zip
+          test -s build/artifacts/ADHS-Lernpfad.apkg
+          test -s build/artifacts/references.bib
+          test -s build/artifacts/references.json
+          test -s build/artifacts/downloads.json
+          test -s build/artifacts/SHA256SUMS.txt
+          sha256sum --check build/artifacts/SHA256SUMS.txt --ignore-missing
+
+      - name: Upload preview download bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: download-center-preview
+          path: build/artifacts/
+          if-no-files-found: error
+          retention-days: 7
