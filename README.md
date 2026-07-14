@@ -3,14 +3,12 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.4.3
+version: 0.4.4
 last_reviewed: 2026-07-14
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
 
-<div class="maintenance-entry" align="right">
-<a href="WARTUNG.md" title="Wartung, Automatisierung und CI" aria-label="Wartung, Automatisierung und CI">🛠️</a>
-</div>
+[🛠️](WARTUNG.md "Wartung, Automatisierung und CI")
 
 # ADHS-Lernpfad
 
