@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Prepare converted Markdown, assets and downloads for the MkDocs build."""
+
 from pathlib import Path
 import shutil
 
@@ -18,6 +20,7 @@ DOCS.mkdir(parents=True)
 files = [
     "README.md",
     "00-Einfuehrung.md",
+    "DOWNLOADS.md",
     "Glossar.md",
     "Literatur.md",
     "ROADMAP.md",
@@ -60,8 +63,12 @@ for directory in ("figures", "assets"):
     if source.exists():
         shutil.copytree(source, DOCS / directory, dirs_exist_ok=True)
 
+artifact_source = ROOT / "build" / "artifacts"
+if artifact_source.is_dir():
+    shutil.copytree(artifact_source, DOCS / "artifacts", dirs_exist_ok=True)
+
 shutil.copy2(ROOT / "CNAME", DOCS / "CNAME")
 print(
     f"MkDocs-Quellen: {len(files)} konvertierte Markdown-Dateien, "
-    "Bibliografiedaten, Assets und CNAME"
+    "Bibliografiedaten, Assets, optionale Downloads und CNAME"
 )

@@ -48,7 +48,6 @@ jobs:
           python scripts/build_graph.py
           python scripts/build_combined.py
           python scripts/build_anki.py
-          cp references.bib references.json build/
 
       - name: Install Pandoc and LuaLaTeX
         run: |
@@ -62,40 +61,13 @@ jobs:
             texlive-lang-german \
             fonts-dejavu-core
 
-      - name: Build EPUB HTML and LaTeX source
-        run: |
-          COMMON_ARGS=(
-            build/ADHS-Lernpfad-Gesamtdokument.md
-            --standalone
-            --toc
-            --citeproc
-            --metadata title='ADHS-Lernpfad'
-            --metadata lang='de-DE'
-            --resource-path='.:figures:assets'
-          )
-          pandoc "${COMMON_ARGS[@]}" --output build/ADHS-Lernpfad.epub
-          pandoc "${COMMON_ARGS[@]}" --output build/ADHS-Lernpfad.html
-          pandoc "${COMMON_ARGS[@]}" --output build/ADHS-Lernpfad.tex
-
-      - name: Build PDF with LuaLaTeX
-        run: |
-          pandoc build/ADHS-Lernpfad-Gesamtdokument.md \
-            --output build/ADHS-Lernpfad.pdf \
-            --standalone \
-            --toc \
-            --citeproc \
-            --pdf-engine=lualatex \
-            --metadata title='ADHS-Lernpfad' \
-            --metadata lang='de-DE' \
-            --variable mainfont='DejaVu Serif' \
-            --variable sansfont='DejaVu Sans' \
-            --variable monofont='DejaVu Sans Mono' \
-            --resource-path='.:figures:assets'
+      - name: Build public download bundle
+        run: python scripts/build_exports.py
 
       - name: Upload export artifacts
         uses: actions/upload-artifact@v7
         with:
           name: adhs-lernpfad-exports
-          path: build/
+          path: build/artifacts/
           if-no-files-found: error
           retention-days: 30

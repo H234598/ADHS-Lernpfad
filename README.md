@@ -3,7 +3,7 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.6.0
+version: 0.7.0
 last_reviewed: 2026-07-14
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
@@ -29,6 +29,7 @@ Ein quelloffenes, Obsidian-taugliches Lernkompendium zu ADHS. Es beginnt bei den
 | [[01-Grundlagen/01-Was-ist-ADHS|Mit Einheit 1 beginnen]] | den Lernpfad von Grund auf durcharbeiten |
 | [[Glossar|Begriffe nachschlagen]] | Fachbegriffe schnell und knapp klären |
 | [[Literatur|Quellen prüfen]] | Studien, Reviews und Konsenspapiere nachvollziehen |
+| [[DOWNLOADS|Offline lernen und Dateien laden]] | PDF, EPUB, Obsidian, Anki und wissenschaftliche Formate herunterladen |
 
 ## Wissenschaftlicher Rahmen
 
@@ -60,4 +61,5 @@ Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Si
 - [[knowledge-graph/README|Wissensgraph]] – Verbindungen zwischen Kapiteln und Begriffen
 - [[cards/README|Anki-Karten]] – aktives Abrufen und verteiltes Wiederholen
 - [[figures/README|Abbildungen]] – Modelle und zusätzliche Diagramme
+- [[DOWNLOADS|Downloads]] – stabile Webdownloads, Prüfsummen und Formathinweise
 - [[ROADMAP|Roadmap]] – geplante Themen von Grundlagen bis Forschungsniveau

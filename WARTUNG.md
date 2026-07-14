@@ -102,11 +102,15 @@ Bei Änderungen an `main` werden erzeugt beziehungsweise veröffentlicht:
 
 - die MkDocs-Webseite mit MathJax-Unterstützung,
 - ein Markdown-Gesamtdokument,
-- HTML- und EPUB-Exporte,
+- HTML- und EPUB-3-Exporte,
 - LaTeX-Quelltext und ein mit LuaLaTeX gebautes PDF,
 - BibTeX- und CSL-JSON-Bibliografien,
 - ein Anki-Deck im APKG-Format,
+- ein lernorientierter Obsidian-Vault als ZIP,
+- SHA-256-Prüfsummen und ein JSON-Downloadmanifest,
 - Validierungs- und Wissensgraph-Artefakte.
+
+Die lesefreundliche Übersicht steht unter [[DOWNLOADS|Downloads]]. Die Dateien werden zusammen mit der Website unter stabilen `/artifacts/`-Adressen veröffentlicht; die klassischen GitHub-Actions-Artefakte bleiben als zeitlich begrenzte technische Kopie erhalten.
 
 ## Branch-Hygiene
 

@@ -1,5 +1,15 @@
 # Änderungsverlauf
 
+## 0.7.0 – 2026-07-14
+
+- eigenständige, responsive Downloadseite mit Formatberatung ergänzt
+- PDF, EPUB 3, Offline-HTML, Markdown, LaTeX, BibTeX, CSL JSON und Anki unter stabilen Webadressen veröffentlicht
+- schlanken Obsidian-Vault als ZIP-Download ergänzt
+- zentrale Exportlogik für GitHub-Actions-Artefakte und Website vereinheitlicht
+- SHA-256-Prüfsummen und maschinenlesbares Download-Manifest erzeugt
+- Offline-HTML mit eingebetteten Ressourcen und EPUB ausdrücklich als EPUB 3 gebaut
+- Dateiformate mit ihren Standards, Stärken und Einschränkungen erklärt
+
 ## 0.6.0 – 2026-07-14
 
 - Obsidian-Wikilinks beim Web-Build in reguläre relative Markdown- und HTML-Ziele umgewandelt

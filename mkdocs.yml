@@ -52,6 +52,7 @@ markdown_extensions:
 nav:
   - Start: README.md
   - Einführung: 00-Einfuehrung.md
+  - Downloads: DOWNLOADS.md
   - Grundlagen:
       - Was ist ADHS?: 01-Grundlagen/01-Was-ist-ADHS.md
       - Inhibition: 01-Grundlagen/02-Inhibition-und-Handlungssteuerung.md
