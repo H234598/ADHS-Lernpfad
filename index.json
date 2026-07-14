@@ -1,7 +1,7 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.8.1",
-  "last_reviewed": "2026-07-14",
+  "version": "0.9.0",
+  "last_reviewed": "2026-07-15",
   "chapters": [
     {"number": 1, "path": "01-Grundlagen/01-Was-ist-ADHS.md", "title": "Was ist ADHS?"},
     {"number": 2, "path": "01-Grundlagen/02-Inhibition-und-Handlungssteuerung.md", "title": "Inhibition und Handlungssteuerung"},
