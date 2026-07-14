@@ -40,4 +40,10 @@ nav:
       - Wissensgraph: knowledge-graph/README.md
       - Anki: cards/README.md
       - Abbildungen: figures/README.md
+  - Automationsprompts:
+      - Übersicht: prompts/README.md
+      - Tägliche Einheit: prompts/AUTOMATION-PROMPT.md
+      - Deep Research: prompts/DEEP-RESEARCH-PROMPT.md
+      - Prüfung, Reparatur und Merge: prompts/MERGE-AUTOMATION-PROMPT.md
+      - CI-Reparatur: prompts/PR-REPAIR-PROMPT.md
   - Roadmap: ROADMAP.md
