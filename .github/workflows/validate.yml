@@ -54,10 +54,18 @@ jobs:
 
       - name: Verify generated bibliography is committed
         run: |
+          mkdir -p build
           git add --intent-to-add Literatur.md references.bib references.json
           if ! git diff --quiet -- Literatur.md references.bib references.json; then
-            echo 'Generated bibliography differs from the committed files:'
-            git diff -- Literatur.md references.bib references.json
+            {
+              echo '# Bibliografie-Generatorabweichung'
+              echo
+              echo 'Die folgenden generierten Dateien stimmen nicht mit dem Commit überein:'
+              echo
+              echo '```diff'
+              git diff -- Literatur.md references.bib references.json
+              echo '```'
+            } | tee build/validation-report.txt
             exit 1
           fi
 
