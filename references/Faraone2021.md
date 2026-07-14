@@ -8,6 +8,19 @@ doi: "10.1016/j.neubiorev.2021.01.022"
 pmid: "33549739"
 last_checked: 2026-07-13
 tags: [Literatur, ADHS]
+citation:
+  entry_type: article
+  csl_type: article-journal
+  authors:
+    - "Faraone, S. V."
+    - "Banaschewski, T."
+    - "Coghill, D."
+  et_al: true
+  year: 2021
+  article_title: "The World Federation of ADHD International Consensus Statement: 208 evidence-based conclusions about the disorder"
+  journal: Neuroscience & Biobehavioral Reviews
+  volume: "128"
+  pages: "789–818"
 ---
 
 # Faraone et al. 2021
