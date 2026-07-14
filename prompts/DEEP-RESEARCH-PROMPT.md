@@ -26,11 +26,17 @@ Für jede belastbare Quelle:
 
 - stabile ID `ErstautorJahr`,
 - vollständige Zitation,
-- DOI und PubMed-ID,
+- vollständige beziehungsweise ausdrücklich als abgekürzt gekennzeichnete Autorenliste,
+- Erscheinungsjahr und Beitragstitel,
+- Zeitschrift beziehungsweise Publikation, Band, Ausgabe, Seiten oder Artikelnummer,
+- DOI ohne URL-Präfix und PubMed-ID, soweit vorhanden,
+- BibTeX-Eintragstyp und CSL-Typ,
 - Evidenztyp,
 - Population und Design,
 - zentrale, vorsichtig formulierte Aussage,
 - Limitationen,
 - Verhältnis zum bisherigen Konsens: bestätigt / präzisiert / widerspricht / offen.
+
+Überführe diese Daten in das strukturierte `citation`-Schema aus `references/README.md`. Der sichtbare Abschnitt `Vollständige Zitation`, `Literatur.md`, `references.bib` und `references.json` müssen daraus reproduzierbar sein.
 
 Schließe mit einer Evidenzsynthese: **Konsens**, **wahrscheinlich**, **umstritten**, **experimentell**. Verwende keine Foren, SEO-Ratgeber oder Herstellertexte als Evidenz.
