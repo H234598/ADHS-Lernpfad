@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+CONFIG_FILE="${ADHS_LERNPFAD_CONFIG:-$HOME/.config/adhs-lernpfad-sync.env}"
+if [[ -f "$CONFIG_FILE" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$CONFIG_FILE"
+  set +a
+fi
+
 REPO_URL="${ADHS_LERNPFAD_REPO_URL:-https://github.com/H234598/ADHS-Lernpfad.git}"
 BRANCH="${ADHS_LERNPFAD_BRANCH:-main}"
 TARGET_DIR="${ADHS_LERNPFAD_TARGET_DIR:-$HOME/Dokumente/Obsidian/ADHS-Lernpfad}"
