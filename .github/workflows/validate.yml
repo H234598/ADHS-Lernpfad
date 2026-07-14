@@ -53,7 +53,13 @@ jobs:
         run: python scripts/build_literature.py
 
       - name: Verify generated bibliography is committed
-        run: git diff --exit-code -- Literatur.md references.bib references.json
+        run: |
+          git add --intent-to-add Literatur.md references.bib references.json
+          if ! git diff --quiet -- Literatur.md references.bib references.json; then
+            echo 'Generated bibliography differs from the committed files:'
+            git diff -- Literatur.md references.bib references.json
+            exit 1
+          fi
 
       - name: Build knowledge graph
         run: python scripts/build_graph.py
@@ -72,7 +78,7 @@ jobs:
         with:
           name: validation-report
           path: build/validation-report.txt
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Comment validation report
@@ -81,10 +87,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          jq -Rs '{body: .}' build/validation-report.txt > /tmp/comment.json
-          gh api --method POST \
-            repos/H234598/ADHS-Lernpfad/issues/${{ github.event.pull_request.number }}/comments \
-            --input /tmp/comment.json
+          if [[ -f build/validation-report.txt ]]; then
+            jq -Rs '{body: .}' build/validation-report.txt > /tmp/comment.json
+            gh api --method POST \
+              repos/H234598/ADHS-Lernpfad/issues/${{ github.event.pull_request.number }}/comments \
+              --input /tmp/comment.json
+          fi
 
       - name: Fail on validation errors
         if: steps.compendium_validation.outputs.failed == 'true'
