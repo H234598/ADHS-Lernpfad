@@ -52,10 +52,25 @@ Metcalfe, K. B., McFeaters, C. D., & Voyer, D. (2024). Time-Perception Deficits 
 - PubMed: [PMID 38145491](https://pubmed.ncbi.nlm.nih.gov/38145491/)
 - Evidenztyp: `meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
+## Sibley2018
+
+Sibley, M. H., Rohde, L. A., Swanson, J. M., et al. (2018). Late-onset ADHD reconsidered with comprehensive repeated assessments between ages 10 and 25. *American Journal of Psychiatry, 175*(2), 140–149.
+
+- DOI: [https://doi.org/10.1176/appi.ajp.2017.17030298](https://doi.org/10.1176/appi.ajp.2017.17030298)
+- PubMed: [PMID 29070684](https://pubmed.ncbi.nlm.nih.gov/29070684/)
+- Evidenztyp: `longitudinal-cohort` · Evidenzgrad: `moderate` · Status: `disputed`
+
+## Sibley2022
+
+Sibley, M. H., Arnold, L. E., Swanson, J. M., et al. (2022). Variable patterns of remission from ADHD in the Multimodal Treatment Study of ADHD. *American Journal of Psychiatry, 179*(2), 142–151.
+
+- DOI: [https://doi.org/10.1176/appi.ajp.2021.21010032](https://doi.org/10.1176/appi.ajp.2021.21010032)
+- PubMed: [PMID 34384227](https://pubmed.ncbi.nlm.nih.gov/34384227/)
+- Evidenztyp: `longitudinal-cohort` · Evidenzgrad: `high` · Status: `probable`
+
 ## Volkow2011
 
 Volkow, N. D., Wang, G.-J., Newcorn, J. H., et al. (2011). Motivation deficit in ADHD is associated with dysfunction of the dopamine reward pathway. *Molecular Psychiatry, 16*, 1147–1154.
 
 - DOI: [https://doi.org/10.1038/mp.2010.97](https://doi.org/10.1038/mp.2010.97)
 - Evidenztyp: `primary-study` · Evidenzgrad: `moderate` · Status: `probable`
-
