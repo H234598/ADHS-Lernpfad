@@ -5,9 +5,7 @@ last_reviewed: 2026-07-14
 hide: [navigation]
 ---
 
-<div class="maintenance-back" align="right">
-<a href="README.md" title="Zurück zur Startseite" aria-label="Zurück zur Startseite">↩️</a>
-</div>
+[↩️](README.md "Zurück zur Startseite")
 
 # Wartung und Automatisierung
 
@@ -54,12 +52,29 @@ Geprüft werden unter anderem:
 - Python-Syntax und Whitespace,
 - Quellen- und Kapitelstruktur,
 - Mindest-, Warn- und Maximallänge,
-- Wikilinks und fortlaufende Nummerierung,
-- Übereinstimmung des generierten Literaturverzeichnisses,
+- Obsidian-Wikilinks einschließlich Aliasen, Unterordnern und Überschriftenankern,
+- fortlaufende Kapitelnummerierung,
+- Übereinstimmung von Studienkarten, `Literatur.md`, `references.bib` und `references.json`,
 - Wissensgraph, Gesamtdokument und Anki-Paket,
 - MkDocs-Build im Strict-Modus.
 
 Dependabot kontrolliert wöchentlich GitHub Actions und Python-Abhängigkeiten. Einzelheiten stehen in [[.github/README|GitHub-Automation]].
+
+## Linkaufbereitung für Web und Exporte
+
+Die Markdown-Quelldateien behalten ihre Obsidian-Wikilinks. Beim Web-Build werden sie in relative Standard-Markdown-Links umgewandelt; MkDocs erzeugt daraus korrekte HTML-Ziele. Für das Gesamtdokument werden stabile interne Anker erzeugt, damit Navigation auch in HTML, EPUB, LaTeX und PDF erhalten bleibt.
+
+Nicht auflösbare oder mehrdeutige Ziele lassen die CI fehlschlagen. Quelltextblöcke werden von der Konvertierung ausgenommen.
+
+## Literaturdaten
+
+Die Studienkarten unter `references/` sind die gemeinsame Quelle für:
+
+- das lesbare `Literatur.md`,
+- `references.bib` für BibTeX und BibLaTeX,
+- `references.json` im CSL-JSON-Format für CiteProc und Literaturverwaltungen.
+
+Die im Studienkartentext sichtbare vollständige Zitation muss exakt aus den strukturierten `citation`-Metadaten reproduzierbar sein. Dadurch können die Ausgabeformate nicht unbemerkt auseinanderlaufen.
 
 ## Schutzregeln für automatische Merges
 
@@ -85,9 +100,11 @@ Der Android-Vault wird als schreibgeschützter Spiegel aus `main` erzeugt. Lokal
 
 Bei Änderungen an `main` werden erzeugt beziehungsweise veröffentlicht:
 
-- die MkDocs-Webseite,
+- die MkDocs-Webseite mit MathJax-Unterstützung,
 - ein Markdown-Gesamtdokument,
 - HTML- und EPUB-Exporte,
+- LaTeX-Quelltext und ein mit LuaLaTeX gebautes PDF,
+- BibTeX- und CSL-JSON-Bibliografien,
 - ein Anki-Deck im APKG-Format,
 - Validierungs- und Wissensgraph-Artefakte.
 
