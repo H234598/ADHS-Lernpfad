@@ -8,6 +8,7 @@ from pathlib import Path
 import os
 import re
 import unicodedata
+from collections.abc import Callable
 
 WIKILINK_RE = re.compile(r"(?<!!)\[\[([^\]\n]+)\]\]")
 EMBED_RE = re.compile(r"!\[\[([^\]\n]+)\]\]")
@@ -19,17 +20,20 @@ IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".avif"}
 
 
 class LinkError(ValueError):
-    pass
+    """Fehler bei einem fehlenden, mehrdeutigen oder ungültigen internen Link."""
 
 
 @dataclass(frozen=True)
 class LinkTarget:
+    """Eindeutig aufgelöstes Linkziel mit optionaler Überschrift."""
+
     path: Path
     heading: str | None = None
 
 
 def slugify(value: str) -> str:
-    """Python-Markdown-kompatibler, ASCII-basierter Überschriften-Slug."""
+    """Einen Python-Markdown-kompatiblen ASCII-Überschriften-Slug erzeugen."""
+
     value = re.sub(r"\{#[-\w]+\}\s*$", "", value)
     value = re.sub(r"[`*_~]", "", value)
     normalized = unicodedata.normalize("NFKD", value)
@@ -38,11 +42,15 @@ def slugify(value: str) -> str:
 
 
 def document_anchor(relative_path: Path) -> str:
+    """Einen stabilen Dokumentanker aus einem relativen Markdown-Pfad bilden."""
+
     without_suffix = relative_path.with_suffix("").as_posix()
     return "doc-" + slugify(without_suffix)
 
 
 def _is_inside_root(path: Path, root: Path) -> bool:
+    """Prüfen, ob ein aufgelöster Pfad innerhalb des Projektwurzelpfads liegt."""
+
     try:
         path.resolve().relative_to(root.resolve())
     except ValueError:
@@ -51,6 +59,8 @@ def _is_inside_root(path: Path, root: Path) -> bool:
 
 
 def markdown_files(root: Path) -> list[Path]:
+    """Alle relevanten Markdown-Quelldateien unterhalb des Projekts auflisten."""
+
     return sorted(
         path
         for path in root.rglob("*.md")
@@ -59,6 +69,8 @@ def markdown_files(root: Path) -> list[Path]:
 
 
 def _split_link(raw: str) -> tuple[str, str | None, str | None]:
+    """Obsidian-Ziel, optionale Überschrift und sichtbaren Alias zerlegen."""
+
     if "|" in raw:
         target_raw, label = raw.split("|", 1)
         label = label.strip() or None
@@ -77,6 +89,8 @@ def _split_link(raw: str) -> tuple[str, str | None, str | None]:
 
 
 def _candidate_paths(root: Path, source: Path, target: str) -> list[Path]:
+    """Plausible absolute Zielpfade für ein Obsidian-Linkziel erzeugen."""
+
     target_path = Path(target.replace("\\", "/"))
     if target_path.suffix.lower() == ".md":
         target_path = target_path.with_suffix("")
@@ -96,6 +110,8 @@ def _candidate_paths(root: Path, source: Path, target: str) -> list[Path]:
 
 
 def _basename_matches(root: Path, target: str) -> list[Path]:
+    """Markdown-Dateien mit passendem Dateistamm als Obsidian-Fallback finden."""
+
     normalized = Path(target).stem.casefold()
     return [
         path
@@ -104,7 +120,14 @@ def _basename_matches(root: Path, target: str) -> list[Path]:
     ]
 
 
-def resolve_target(root: Path, source: Path, target: str, heading: str | None = None) -> LinkTarget:
+def resolve_target(
+    root: Path,
+    source: Path,
+    target: str,
+    heading: str | None = None,
+) -> LinkTarget:
+    """Ein Linkziel eindeutig auflösen und eine angegebene Überschrift prüfen."""
+
     if not target:
         target_path = source
     else:
@@ -148,10 +171,17 @@ def resolve_target(root: Path, source: Path, target: str, heading: str | None = 
 
 
 def _relative_link(source: Path, target: Path) -> str:
+    """Einen POSIX-relativen Link vom Quelldokument zum Ziel erzeugen."""
+
     return Path(os.path.relpath(target, start=source.parent)).as_posix()
 
 
-def _replace_outside_fences(text: str, replacer) -> str:
+def _replace_outside_fences(
+    text: str,
+    replacer: Callable[[str], str],
+) -> str:
+    """Zeilen außerhalb von Markdown-Codeblöcken mit einer Funktion umschreiben."""
+
     output: list[str] = []
     fence: str | None = None
     for line in text.splitlines(keepends=True):
@@ -172,7 +202,11 @@ def convert_for_web(text: str, source: Path, root: Path) -> str:
     """Wikilinks in relative Standard-Markdown-Links für MkDocs umwandeln."""
 
     def replace_line(line: str) -> str:
+        """Alle Wikilinks und Einbettungen einer einzelnen Textzeile ersetzen."""
+
         def embed(match: re.Match[str]) -> str:
+            """Eine Obsidian-Einbettung in Markdown-Bild- oder Linksyntax umwandeln."""
+
             target, heading, label = _split_link(match.group(1))
             resolved = resolve_target(root, source, target, heading)
             relative = _relative_link(source, resolved.path)
@@ -183,6 +217,8 @@ def convert_for_web(text: str, source: Path, root: Path) -> str:
             return f"[{label}]({relative})"
 
         def link(match: re.Match[str]) -> str:
+            """Einen normalen Obsidian-Wikilink in einen Markdown-Link umwandeln."""
+
             target, heading, label = _split_link(match.group(1))
             resolved = resolve_target(root, source, target, heading)
             relative = _relative_link(source, resolved.path)
@@ -205,6 +241,8 @@ def convert_for_combined(
     """Wikilinks in interne Pandoc-Anker des Gesamtdokuments umwandeln."""
 
     def combined_target(target: LinkTarget) -> tuple[Path, str | None]:
+        """Studienkarten auf den Literaturabschnitt des Gesamtdokuments abbilden."""
+
         path = target.path
         heading = target.heading
         relative = path.relative_to(root)
@@ -214,9 +252,16 @@ def convert_for_combined(
         return path, heading
 
     def replace_line(line: str) -> str:
-        def replace(match: re.Match[str]) -> str:
+        """Wikilinks und Einbettungen einer Zeile für den Pandoc-Build ersetzen."""
+
+        def replace(match: re.Match[str], *, is_embed: bool = False) -> str:
+            """Ein einzelnes Linkziel als Anker oder erhaltene Bildeinbettung ausgeben."""
+
             target_raw, heading, label = _split_link(match.group(1))
             resolved = resolve_target(root, source, target_raw, heading)
+            if is_embed and resolved.path.suffix.lower() in IMAGE_SUFFIXES:
+                relative = resolved.path.relative_to(root).as_posix()
+                return f"![{label}]({relative})"
             target_path, target_heading = combined_target(resolved)
             if target_path.resolve() not in included_paths:
                 return label or target_raw
@@ -225,7 +270,7 @@ def convert_for_combined(
                 anchor += "--" + slugify(target_heading)
             return f"[{label}](#{anchor})"
 
-        line = EMBED_RE.sub(replace, line)
+        line = EMBED_RE.sub(lambda match: replace(match, is_embed=True), line)
         return WIKILINK_RE.sub(replace, line)
 
     converted = _replace_outside_fences(text, replace_line)
@@ -251,6 +296,8 @@ def convert_for_combined(
 
 
 def validate_all(root: Path) -> list[str]:
+    """Alle internen Wikilinks prüfen und verständliche Fehlermeldungen sammeln."""
+
     errors: list[str] = []
     for source in markdown_files(root):
         text = source.read_text(encoding="utf-8")
