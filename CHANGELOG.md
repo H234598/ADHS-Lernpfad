@@ -1,5 +1,23 @@
 # Änderungsverlauf
 
+## 0.6.0 – 2026-07-14
+
+- Obsidian-Wikilinks beim Web-Build in reguläre relative Markdown- und HTML-Ziele umgewandelt
+- Aliasnamen, Unterordner und Überschriftenanker unterstützt und in der CI validiert
+- individuelle Studienkarten als versteckte, direkt verlinkbare Webseiten veröffentlicht
+- Studienkarten als gemeinsame Quelle für `Literatur.md`, `references.bib` und `references.json` strukturiert
+- Konsistenzprüfung zwischen sichtbarer Zitation und strukturierten Metadaten ergänzt
+- BibTeX- und CSL-JSON-Downloads in das Literaturverzeichnis aufgenommen
+- Gesamtdokument mit stabilen internen Ankern für HTML, EPUB, LaTeX und PDF ausgestattet
+- LaTeX-Quelltext und LuaLaTeX-PDF als Exportartefakte ergänzt
+- MathJax-Unterstützung für Formeln in der Webfassung aktiviert
+
+## 0.5.0 – 2026-07-14
+
+- Einheit 8 „Neuroentwicklung und Lebensspanne“ ergänzt
+- Persistenz, Teilremission, zeitweise Remission und Adult-onset-Debatte differenziert eingeordnet
+- zwei longitudinale Studienkarten, Glossarbegriffe, Anki-Karte und Wissensgraph-Verknüpfungen ergänzt
+
 ## 0.4.4 – 2026-07-14
 
 - 404-Fehler des Wartungssymbols durch einen von MkDocs und Obsidian auflösbaren Markdown-Link behoben
@@ -25,7 +43,7 @@
 - zweistündige Gelegenheit für CodeRabbit-Draftprüfungen eingerichtet, ohne CodeRabbit zum Pflicht-Gate zu machen
 - automatische Reparaturzyklen für fehlgeschlagene CI auf dem bestehenden PR-Branch ergänzt
 - automatische Merge-Sperren für Workflow-, Prompt-, Validator-, `CNAME`- und Infrastrukturänderungen ergänzt
-- erneute CI-Ausführung beim Übergang von Draft zu `ready for_review` eingerichtet
+- erneute CI-Ausführung beim Übergang von Draft zu `ready_for_review` eingerichtet
 - Promptpipeline in README und MkDocs dokumentiert
 - Branch-Hygiene und Kontrolle auf zurückgebliebene einzigartige Änderungen verbindlich festgelegt
 - GitHub Actions auf aktuelle Node-24-Majors aktualisiert und veraltete Action-Runtimes entfernt
