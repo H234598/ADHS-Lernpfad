@@ -18,11 +18,13 @@ CITATION_RE = re.compile(r"## Vollständige Zitation\n\n(.+?)(?:\n\n##|\Z)", re.
 
 
 class ReferenceError(ValueError):
-    pass
+    """Fehlerhafte oder unvollständige bibliografische Metadaten einer Studienkarte."""
 
 
 @dataclass(frozen=True)
 class Reference:
+    """Geprüfte Studienkarte mit Metadaten, Zitation und Quelldatei."""
+
     reference_id: str
     meta: dict[str, Any]
     citation: dict[str, Any]
@@ -31,6 +33,8 @@ class Reference:
 
 
 def parse_reference(path: Path) -> Reference:
+    """Eine Studienkarte lesen und ihre grundlegende Struktur validieren."""
+
     text = path.read_text(encoding="utf-8")
     match = FRONTMATTER_RE.match(text)
     if not match:
@@ -53,6 +57,8 @@ def parse_reference(path: Path) -> Reference:
 
 
 def require(citation: dict[str, Any], field: str, source: Path) -> Any:
+    """Ein verpflichtendes Zitationsfeld zurückgeben oder einen präzisen Fehler auslösen."""
+
     value = citation.get(field)
     if value in (None, "", []):
         raise ReferenceError(f"citation.{field} fehlt: {source.relative_to(ROOT)}")
@@ -60,6 +66,8 @@ def require(citation: dict[str, Any], field: str, source: Path) -> Any:
 
 
 def author_text(citation: dict[str, Any], source: Path) -> str:
+    """Autorennamen für die sichtbare Markdown-Zitation formatieren."""
+
     authors = require(citation, "authors", source)
     if not isinstance(authors, list) or not all(
         isinstance(item, str) and item.strip() for item in authors
@@ -78,6 +86,8 @@ def author_text(citation: dict[str, Any], source: Path) -> str:
 
 
 def formatted_citation(reference: Reference) -> str:
+    """Eine reproduzierbare vollständige Zitation aus strukturierten Feldern bilden."""
+
     citation = reference.citation
     authors = author_text(citation, reference.source)
     year = require(citation, "year", reference.source)
@@ -102,6 +112,8 @@ def formatted_citation(reference: Reference) -> str:
 
 
 def bibtex_escape(value: Any) -> str:
+    """Einen Feldwert für die sichere Ausgabe in einer BibTeX-Datei maskieren."""
+
     text = str(value)
     return (
         text.replace("\\", r"\textbackslash{}")
@@ -112,6 +124,8 @@ def bibtex_escape(value: Any) -> str:
 
 
 def bibtex_entry(reference: Reference) -> str:
+    """Eine Studienkarte in einen vollständigen BibTeX-Eintrag umwandeln."""
+
     citation = reference.citation
     entry_type = str(citation.get("entry_type", "article")).strip() or "article"
     authors = [str(item).strip() for item in citation["authors"]]
@@ -150,6 +164,8 @@ def bibtex_entry(reference: Reference) -> str:
 
 
 def csl_author(name: str) -> dict[str, str]:
+    """Einen Autorennamen in das CSL-JSON-Namensschema überführen."""
+
     if "," in name:
         family, given = name.split(",", 1)
         return {"family": family.strip(), "given": given.strip()}
@@ -157,6 +173,8 @@ def csl_author(name: str) -> dict[str, str]:
 
 
 def csl_entry(reference: Reference) -> dict[str, Any]:
+    """Eine Studienkarte in einen CSL-JSON-Datensatz umwandeln."""
+
     citation = reference.citation
     entry: dict[str, Any] = {
         "id": reference.reference_id,
@@ -191,6 +209,8 @@ def csl_entry(reference: Reference) -> dict[str, Any]:
 
 
 def markdown_bibliography(references: list[Reference]) -> str:
+    """Das menschenlesbare Markdown-Literaturverzeichnis vollständig erzeugen."""
+
     last_reviewed = max(str(ref.meta.get("last_checked", "")) for ref in references)
     lines = [
         "---",
@@ -227,6 +247,8 @@ def markdown_bibliography(references: list[Reference]) -> str:
 
 
 def main() -> None:
+    """Alle Studienkarten validieren und die drei Literaturformate schreiben."""
+
     references = [
         parse_reference(path)
         for path in sorted(REFERENCE_DIR.glob("*.md"))
