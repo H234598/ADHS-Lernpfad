@@ -29,7 +29,7 @@ exclude_docs: |
 
 not_in_nav: |
   /WARTUNG.md
-  /SYNC-OBSIDIAN.md
+  /Sync/
   /CONTRIBUTING.md
   /CHANGELOG.md
   /.github/

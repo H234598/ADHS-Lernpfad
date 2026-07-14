@@ -25,7 +25,6 @@ files = [
     "Literatur.md",
     "ROADMAP.md",
     "WARTUNG.md",
-    "SYNC-OBSIDIAN.md",
     "CONTRIBUTING.md",
     "CHANGELOG.md",
     ".github/README.md",
@@ -45,6 +44,7 @@ files.extend(
     for path in sorted((ROOT / "references").glob("*.md"))
     if path.name != "README.md"
 )
+files.extend(str(path.relative_to(ROOT)) for path in sorted((ROOT / "Sync").rglob("*.md")))
 
 for relative_path in files:
     source = ROOT / relative_path
@@ -58,6 +58,15 @@ for generated_reference_file in ("references.bib", "references.json"):
     if source.exists():
         shutil.copy2(source, DOCS / generated_reference_file)
 
+sync_root = ROOT / "Sync"
+if sync_root.is_dir():
+    for source in sorted(path for path in sync_root.rglob("*") if path.is_file()):
+        if source.suffix.lower() == ".md":
+            continue
+        destination = DOCS / source.relative_to(ROOT)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+
 for directory in ("figures", "assets"):
     source = ROOT / directory
     if source.exists():
@@ -70,5 +79,5 @@ if artifact_source.is_dir():
 shutil.copy2(ROOT / "CNAME", DOCS / "CNAME")
 print(
     f"MkDocs-Quellen: {len(files)} konvertierte Markdown-Dateien, "
-    "Bibliografiedaten, Assets, optionale Downloads und CNAME"
+    "Sync-Downloads, Bibliografiedaten, Assets, optionale Downloads und CNAME"
 )

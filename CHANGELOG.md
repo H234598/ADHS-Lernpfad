@@ -1,5 +1,16 @@
 # Änderungsverlauf
 
+## 0.8.0 – 2026-07-14
+
+- sämtliche Synchronisationsdateien unter `Sync/` gebündelt
+- Linux-Paket einschließlich systemd-Service, Timer, Installer und Sync-Skript aus dem Repository-Stamm verschoben
+- Android-Termux-Gesamtpaket in Installer und eigenständiges Sync-Skript aufgeteilt
+- Plattformordner für Windows, macOS, iOS und BSD als klar gekennzeichnete Planungsziele angelegt
+- gemeinsame Modi `safe-pull`, `prompt-pull`, `forced-pull`, `additive-pull` und geplanter `full-sync` dokumentiert
+- Wartungsunterseiten für alle Plattformen mit direkt herunterladbaren Dateien ergänzt
+- Web-Build so erweitert, dass Sync-Anleitungen und ausführbare Hilfsdateien gemeinsam veröffentlicht werden
+- veraltete Stammdatei `SYNC-OBSIDIAN.md`, alten `systemd/`-Ordner und verstreute Sync-Skripte entfernt
+
 ## 0.7.0 – 2026-07-14
 
 - eigenständige, responsive Downloadseite mit Formatberatung ergänzt

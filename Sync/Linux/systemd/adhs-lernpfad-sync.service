@@ -2,6 +2,7 @@
 Description=ADHS-Lernpfad von GitHub nach Obsidian synchronisieren
 Wants=network-online.target
 After=network-online.target
+
 [Service]
 Type=oneshot
 EnvironmentFile=%h/.config/adhs-lernpfad-sync.env
