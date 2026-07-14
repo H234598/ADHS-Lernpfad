@@ -1,5 +1,13 @@
 # Änderungsverlauf
 
+## 0.8.1 – 2026-07-14
+
+- Obsidian-Callouts beim Web-Build in native MkDocs-Material-Admonitions umgewandelt
+- `[!evidence]` in der Webfassung durch ein eigenes Evidenzfeld mit Wissenschafts-Icon ersetzt
+- Titel wie „Evidenz: Konsens / hoch“ und der zugehörige Text bleiben vollständig erhalten
+- auch vorhandene `important`-, `warning`-, `info`- und `note`-Callouts webgerecht dargestellt
+- Obsidian-Quelldateien unverändert und weiterhin nativ nutzbar belassen
+
 ## 0.8.0 – 2026-07-14
 
 - sämtliche Synchronisationsdateien unter `Sync/` gebündelt

@@ -18,6 +18,7 @@ plugins:
 
 extra_css:
   - assets/stylesheets/extra.css
+  - assets/stylesheets/evidence.css
 
 extra_javascript:
   - assets/javascripts/mathjax.js

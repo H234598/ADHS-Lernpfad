@@ -4,6 +4,7 @@
 from pathlib import Path
 import shutil
 
+from callouts import convert_obsidian_callouts_for_web
 from content_links import convert_for_web, validate_all
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,6 +52,7 @@ for relative_path in files:
     destination = DOCS / relative_path
     destination.parent.mkdir(parents=True, exist_ok=True)
     converted = convert_for_web(source.read_text(encoding="utf-8"), source, ROOT)
+    converted = convert_obsidian_callouts_for_web(converted)
     destination.write_text(converted, encoding="utf-8")
 
 for generated_reference_file in ("references.bib", "references.json"):
@@ -79,5 +81,6 @@ if artifact_source.is_dir():
 shutil.copy2(ROOT / "CNAME", DOCS / "CNAME")
 print(
     f"MkDocs-Quellen: {len(files)} konvertierte Markdown-Dateien, "
-    "Sync-Downloads, Bibliografiedaten, Assets, optionale Downloads und CNAME"
+    "Obsidian-Callouts, Sync-Downloads, Bibliografiedaten, Assets, "
+    "optionale Downloads und CNAME"
 )
