@@ -8,6 +8,19 @@ doi: "10.1186/s12888-020-2442-7"
 pmid: "32164655"
 last_checked: 2026-07-13
 tags: [Literatur, ADHS]
+citation:
+  entry_type: article
+  csl_type: article-journal
+  authors:
+    - "Beheshti, A."
+    - "Chavanon, M.-L."
+    - "Christiansen, H."
+  et_al: false
+  year: 2020
+  article_title: "Emotion dysregulation in adults with attention deficit hyperactivity disorder: a meta-analysis"
+  journal: BMC Psychiatry
+  volume: "20"
+  article_number: "120"
 ---
 
 # Beheshti et al. 2020
