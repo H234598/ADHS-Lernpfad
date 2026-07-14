@@ -64,7 +64,6 @@ jobs:
             --standalone
             --toc
             --citeproc
-            --bibliography references.bib
             --metadata title='ADHS-Lernpfad'
             --metadata lang='de-DE'
             --resource-path='.:figures:assets'
@@ -80,7 +79,6 @@ jobs:
             --standalone \
             --toc \
             --citeproc \
-            --bibliography references.bib \
             --pdf-engine=lualatex \
             --metadata title='ADHS-Lernpfad' \
             --metadata lang='de-DE' \
