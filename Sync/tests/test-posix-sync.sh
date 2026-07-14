@@ -62,6 +62,17 @@ run_sync() {
   bash "$ENGINE"
 }
 
+assert_exit 64 run_sync \
+  "$TMP_ROOT/overlap" \
+  "$TMP_ROOT/overlap/vault" \
+  forced-pull
+
+EMPTY_REPO="$TMP_ROOT/empty-repo"
+EMPTY_TARGET="$TMP_ROOT/empty-target"
+mkdir -p "$EMPTY_TARGET"
+run_sync "$EMPTY_REPO" "$EMPTY_TARGET" safe-pull
+assert_file_contains "$EMPTY_TARGET/README.md" 'version 1'
+
 PULL_REPO="$TMP_ROOT/pull-repo"
 PULL_TARGET="$TMP_ROOT/pull-target"
 run_sync "$PULL_REPO" "$PULL_TARGET" forced-pull
@@ -107,6 +118,15 @@ printf 'lokale Full-Sync-Notiz\n' > "$FULL_TARGET/device-note.md"
 run_sync "$FULL_REPO" "$FULL_TARGET" full-sync "$DEVICE_BRANCH"
 git --git-dir="$REMOTE" show "$DEVICE_BRANCH:device-note.md" | grep -qF 'lokale Full-Sync-Notiz' \
   || fail 'Full-Sync-Änderung wurde nicht gepusht'
+
+printf 'neuer veröffentlichter Inhalt\n' > "$SEED/main-update.md"
+git -C "$SEED" add main-update.md
+git -C "$SEED" commit -m 'Advance main after device changes' >/dev/null
+git -C "$SEED" push origin main >/dev/null
+run_sync "$FULL_REPO" "$FULL_TARGET" full-sync "$DEVICE_BRANCH"
+assert_file_contains "$FULL_TARGET/main-update.md" 'neuer veröffentlichter Inhalt'
+git --git-dir="$REMOTE" show "$DEVICE_BRANCH:main-update.md" | grep -qF 'neuer veröffentlichter Inhalt' \
+  || fail 'Neuer main-Stand wurde nicht in den Gerätebranch integriert'
 
 REMOTE_EDIT="$TMP_ROOT/remote-edit"
 git clone --branch "$DEVICE_BRANCH" "$REMOTE" "$REMOTE_EDIT" >/dev/null
