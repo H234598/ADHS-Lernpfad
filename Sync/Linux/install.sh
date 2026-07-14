@@ -30,10 +30,12 @@ install -Dm644 \
   "$HOME/.config/systemd/user/adhs-lernpfad-sync.timer"
 
 mkdir -p "$HOME/.config"
-printf 'ADHS_LERNPFAD_REPO_URL="https://github.com/H234598/ADHS-Lernpfad.git"\n' > "$ENV_FILE"
-printf 'ADHS_LERNPFAD_BRANCH="main"\n' >> "$ENV_FILE"
-printf 'ADHS_LERNPFAD_TARGET_DIR="%s"\n' "${TARGET_DIR//\"/\\\"}" >> "$ENV_FILE"
-printf 'ADHS_LERNPFAD_SYNC_MODE="%s"\n' "$SYNC_MODE" >> "$ENV_FILE"
+{
+  printf 'ADHS_LERNPFAD_REPO_URL="https://github.com/H234598/ADHS-Lernpfad.git"\n'
+  printf 'ADHS_LERNPFAD_BRANCH="main"\n'
+  printf 'ADHS_LERNPFAD_TARGET_DIR="%s"\n' "${TARGET_DIR//\"/\\\"}"
+  printf 'ADHS_LERNPFAD_SYNC_MODE="%s"\n' "$SYNC_MODE"
+} > "$ENV_FILE"
 
 systemctl --user daemon-reload
 systemctl --user enable --now adhs-lernpfad-sync.timer
