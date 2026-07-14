@@ -3,3 +3,8 @@ build/
 __pycache__/
 *.pyc
 .DS_Store
+.obsidian/
+.trash/
+.stfolder/
+.stignore
+.sync-conflict-*
