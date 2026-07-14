@@ -3,8 +3,8 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.4.1
-last_reviewed: 2026-07-13
+version: 0.5.0
+last_reviewed: 2026-07-14
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
 
@@ -46,6 +46,7 @@ Diagramm, Übung und Review gehören zusätzlich zum Lernumfang. Komplexe Themen
 5. [[01-Grundlagen/05-Aufmerksamkeit-und-Stabilitaet|Aufmerksamkeit und Stabilität]]
 6. [[01-Grundlagen/06-Zeitverarbeitung|Zeitverarbeitung]]
 7. [[01-Grundlagen/07-Emotionsregulation|Emotionsregulation]]
+8. [[01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne|Neuroentwicklung und Lebensspanne]]
 
 ## Wissenssystem
 
