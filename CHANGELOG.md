@@ -1,5 +1,15 @@
 # Änderungsverlauf
 
+## 0.4.3 – 2026-07-14
+
+- Startseite auf Lerninhalte, Schnellstart und Wissenssystem reduziert
+- technischen Betrieb, Tagesautomation, CI, Wartung und Ausgaben auf `WARTUNG.md` gebündelt
+- Wartungszugang über ein kleines Werkzeug-Symbol auf der Startseite ergänzt
+- vollständige Automationsprompt-Sektion aus der sichtbaren MkDocs-Navigation entfernt
+- Wartungs- und Promptseiten weiterhin gebaut, aber über `not_in_nav` bewusst im Hintergrund gehalten
+- zurückhaltende, barrierearme Gestaltung für Wartungslink und Startseite ergänzt
+- Wartungs-, Beitrags-, Sync- und CI-Dokumentation in den Dokumentationsbuild aufgenommen
+
 ## 0.4.2 – 2026-07-14
 
 - sämtliche Agentenprompts unter `prompts/` zentralisiert

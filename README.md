@@ -3,16 +3,34 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.4.2
+version: 0.4.3
 last_reviewed: 2026-07-14
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
 
+<div class="maintenance-entry" align="right">
+<a href="WARTUNG.md" title="Wartung, Automatisierung und CI" aria-label="Wartung, Automatisierung und CI">🛠️</a>
+</div>
+
 # ADHS-Lernpfad
+
+**Wissenschaftlich fundiert · verständlich aufgebaut · alltagstauglich erklärt**
 
 Ein quelloffenes, Obsidian-taugliches Lernkompendium zu ADHS. Es beginnt bei den Grundlagen und wächst schrittweise bis zum Lesen, Bewerten und Einordnen aktueller Forschung.
 
 **Webfassung:** https://ADHS.telacore.org/
+
+> [!important]
+> Das Kompendium ersetzt keine ärztliche oder psychotherapeutische Diagnostik oder Behandlung. Gruppenbefunde werden nicht als sichere Aussagen über einzelne Personen dargestellt.
+
+## Direkt loslegen
+
+| Einstieg | Wofür? |
+|---|---|
+| [[00-Einfuehrung|Wie der Lernpfad funktioniert]] | Evidenzmarker, Gruppenbefunde und Aufbau verstehen |
+| [[01-Grundlagen/01-Was-ist-ADHS|Mit Einheit 1 beginnen]] | den Lernpfad von Grund auf durcharbeiten |
+| [[Glossar|Begriffe nachschlagen]] | Fachbegriffe schnell und knapp klären |
+| [[Literatur|Quellen prüfen]] | Studien, Reviews und Konsenspapiere nachvollziehen |
 
 ## Wissenschaftlicher Rahmen
 
@@ -23,19 +41,7 @@ Die Texte unterscheiden konsequent zwischen:
 - Konsens, wahrscheinlichen Modellen und offenen Fragen,
 - gemeinsamen Mechanismen und einer Gleichsetzung von ADHS, Autismus oder Parkinson.
 
-> [!important]
-> Das Kompendium ersetzt keine ärztliche oder psychotherapeutische Diagnostik oder Behandlung.
-
-## Umfang der Einheiten
-
-Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt.
-
-- mindestens **800 Fließtextwörter**,
-- CI-Warnung unter **1.000 Fließtextwörtern**,
-- Zielbereich ungefähr **1.000–2.000 Wörter**,
-- maximal **2.500 Fließtextwörter**.
-
-Diagramm, Übung und Review gehören zusätzlich zum Lernumfang. Komplexe Themen dürfen den oberen Zielbereich ausschöpfen; würden mehr als 2.500 Wörter benötigt, wird das Thema in mehrere Einheiten geteilt. Künstliche Fülltexte sind ausdrücklich unerwünscht.
+Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Sie umfasst mindestens **800 Fließtextwörter**, zielt auf **1.000 bis 2.000 Wörter** und bleibt unter **2.500 Wörtern**. Diagramme, Übungen und Review-Fragen ergänzen den Text; künstliche Füllsätze sind ausdrücklich unerwünscht.
 
 ## Lernpfad
 
@@ -49,41 +55,10 @@ Diagramm, Übung und Review gehören zusätzlich zum Lernumfang. Komplexe Themen
 
 ## Wissenssystem
 
-- [[00-Einfuehrung|Wie der Lernpfad gelesen wird]]
-- [[Glossar|Glossar]]
-- [[Literatur|automatisch erzeugtes Literaturverzeichnis]]
-- [[references/README|Studienkarten]]
-- [[knowledge-graph/README|Wissensgraph]]
-- [[cards/README|Anki-Karten und APKG-Export]]
-- [[figures/README|Abbildungen und Diagramme]]
-
-## Betrieb
-
-- [[prompts/README|Übersicht aller Prompts]]
-- [[prompts/AUTOMATION-PROMPT|06-Uhr-Prompt für neue Einheiten]]
-- [[prompts/DEEP-RESEARCH-PROMPT|Deep-Research-Prompt]]
-- [[prompts/MERGE-AUTOMATION-PROMPT|Prüf-, Reparatur- und Merge-Prompt ab 08 Uhr]]
-- [[prompts/PR-REPAIR-PROMPT|Reparaturprompt für fehlgeschlagene CI]]
-- [[SYNC-OBSIDIAN|GitHub → Obsidian per systemd]]
-- [[CONTRIBUTING|Beitrags-, Evidenz- und Branchregeln]]
-
-## Automatisierter Tagesablauf
-
-Um 06:00 Uhr Europe/Berlin erzeugt die erste Automation genau eine neue Einheit und einen Draft-Pull-Request. Der Draft bleibt mindestens zwei volle Stunden bestehen, damit CodeRabbit bei verfügbarem Kontingent prüfen kann. CodeRabbit ist kein Pflicht-Gate.
-
-Ab 08:00 Uhr prüft ein getrennter Wächter stündlich:
-
-1. Ist die erste CI grün, wird der Draft als **Ready for review** markiert.
-2. Ist die CI rot, wird auf demselben Branch genau ein sicherer Reparaturzyklus ausgeführt und anschließend die neue CI abgewartet.
-3. Nach der Statusänderung muss eine zweite Pull-Request-CI vollständig grün sein.
-4. Erst dann wird per Squash-Merge nach `main` übernommen.
-
-Pull Requests mit Änderungen an Prompts, Workflows, Validatoren, `CNAME` oder zentraler Infrastruktur werden niemals automatisch gemergt. Sie benötigen eine manuelle Prüfung.
-
-## CI und Wartung
-
-Die Workflows verwenden aktuelle GitHub-Actions-Majors auf Node 24, feste Ubuntu-Runner, explizite Berechtigungen, Dependency-Caches, Zeitlimits und Concurrency-Regeln. Die Validierung prüft zusätzlich Python-Syntax, Whitespace, installierte Abhängigkeiten und ob das generierte Literaturverzeichnis committed wurde. Dependabot kontrolliert wöchentlich GitHub Actions und Python-Abhängigkeiten; solche Infrastruktur-PRs bleiben bis zur bewussten Prüfung vom automatischen Merge ausgeschlossen.
-
-## Automatische Ausgaben
-
-GitHub Actions prüfen Struktur, Mindest- und Maximallänge sowie Links, bauen die MkDocs-Webseite und erzeugen Markdown-, HTML-, EPUB- und APKG-Artefakte.
+- [[Glossar|Glossar]] – zentrale Fachbegriffe in knapper Form
+- [[Literatur|Literaturverzeichnis]] – automatisch aus den Studienkarten erzeugt
+- [[references/README|Studienkarten]] – Kernaussagen, Evidenztyp und Limitationen einzelner Quellen
+- [[knowledge-graph/README|Wissensgraph]] – Verbindungen zwischen Kapiteln und Begriffen
+- [[cards/README|Anki-Karten]] – aktives Abrufen und verteiltes Wiederholen
+- [[figures/README|Abbildungen]] – Modelle und zusätzliche Diagramme
+- [[ROADMAP|Roadmap]] – geplante Themen von Grundlagen bis Forschungsniveau
