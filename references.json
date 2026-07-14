@@ -1,0 +1,147 @@
+[
+  {
+    "DOI": "10.1186/s12888-020-2442-7",
+    "PMID": "32164655",
+    "URL": "https://doi.org/10.1186/s12888-020-2442-7",
+    "author": [
+      {"family": "Beheshti", "given": "A."},
+      {"family": "Chavanon", "given": "M.-L."},
+      {"family": "Christiansen", "given": "H."}
+    ],
+    "container-title": "BMC Psychiatry",
+    "id": "Beheshti2020",
+    "issued": {"date-parts": [[2020]]},
+    "number": "120",
+    "title": "Emotion dysregulation in adults with attention deficit hyperactivity disorder: a meta-analysis",
+    "type": "article-journal",
+    "volume": "20"
+  },
+  {
+    "DOI": "10.1016/j.tics.2006.01.011",
+    "URL": "https://doi.org/10.1016/j.tics.2006.01.011",
+    "author": [
+      {"family": "Castellanos", "given": "F. X."},
+      {"family": "Sonuga-Barke", "given": "E. J. S."},
+      {"family": "Milham", "given": "M. P."},
+      {"family": "Tannock", "given": "R."}
+    ],
+    "container-title": "Trends in Cognitive Sciences",
+    "id": "Castellanos2006",
+    "issue": "3",
+    "issued": {"date-parts": [[2006]]},
+    "page": "117–123",
+    "title": "Characterizing cognition in ADHD: Beyond executive dysfunction",
+    "type": "article-journal",
+    "volume": "10"
+  },
+  {
+    "DOI": "10.1016/j.neubiorev.2021.01.022",
+    "PMID": "33549739",
+    "URL": "https://doi.org/10.1016/j.neubiorev.2021.01.022",
+    "author": [
+      {"family": "Faraone", "given": "S. V."},
+      {"family": "Banaschewski", "given": "T."},
+      {"family": "Coghill", "given": "D."}
+    ],
+    "container-title": "Neuroscience & Biobehavioral Reviews",
+    "id": "Faraone2021",
+    "issued": {"date-parts": [[2021]]},
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "789–818",
+    "title": "The World Federation of ADHD International Consensus Statement: 208 evidence-based conclusions about the disorder",
+    "type": "article-journal",
+    "volume": "128"
+  },
+  {
+    "author": [{"family": "Kofler", "given": "M. J."}],
+    "id": "Kofler2020",
+    "issued": {"date-parts": [[2020]]},
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "title": "Working memory and short-term memory deficits in ADHD: A bifactor modeling approach",
+    "type": "article-journal"
+  },
+  {
+    "PMID": "39429646",
+    "URL": "https://pubmed.ncbi.nlm.nih.gov/39429646/",
+    "author": [{"family": "Kofler", "given": "M. J."}],
+    "container-title": "Nature Reviews Psychology",
+    "id": "Kofler2024",
+    "issued": {"date-parts": [[2024]]},
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "title": "Executive function deficits in attention-deficit/hyperactivity disorder and autism spectrum disorder",
+    "type": "article-journal"
+  },
+  {
+    "DOI": "10.1080/87565641.2023.2293712",
+    "PMID": "38145491",
+    "URL": "https://doi.org/10.1080/87565641.2023.2293712",
+    "author": [
+      {"family": "Metcalfe", "given": "K. B."},
+      {"family": "McFeaters", "given": "C. D."},
+      {"family": "Voyer", "given": "D."}
+    ],
+    "container-title": "Developmental Neuropsychology",
+    "id": "Metcalfe2024",
+    "issue": "1",
+    "issued": {"date-parts": [[2024]]},
+    "page": "1–25",
+    "title": "Time-Perception Deficits in Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis",
+    "type": "article-journal",
+    "volume": "49"
+  },
+  {
+    "DOI": "10.1176/appi.ajp.2017.17030298",
+    "PMID": "29070684",
+    "URL": "https://doi.org/10.1176/appi.ajp.2017.17030298",
+    "author": [
+      {"family": "Sibley", "given": "M. H."},
+      {"family": "Rohde", "given": "L. A."},
+      {"family": "Swanson", "given": "J. M."}
+    ],
+    "container-title": "American Journal of Psychiatry",
+    "id": "Sibley2018",
+    "issue": "2",
+    "issued": {"date-parts": [[2018]]},
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "140–149",
+    "title": "Late-onset ADHD reconsidered with comprehensive repeated assessments between ages 10 and 25",
+    "type": "article-journal",
+    "volume": "175"
+  },
+  {
+    "DOI": "10.1176/appi.ajp.2021.21010032",
+    "PMID": "34384227",
+    "URL": "https://doi.org/10.1176/appi.ajp.2021.21010032",
+    "author": [
+      {"family": "Sibley", "given": "M. H."},
+      {"family": "Arnold", "given": "L. E."},
+      {"family": "Swanson", "given": "J. M."}
+    ],
+    "container-title": "American Journal of Psychiatry",
+    "id": "Sibley2022",
+    "issue": "2",
+    "issued": {"date-parts": [[2022]]},
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "142–151",
+    "title": "Variable patterns of remission from ADHD in the Multimodal Treatment Study of ADHD",
+    "type": "article-journal",
+    "volume": "179"
+  },
+  {
+    "DOI": "10.1038/mp.2010.97",
+    "URL": "https://doi.org/10.1038/mp.2010.97",
+    "author": [
+      {"family": "Volkow", "given": "N. D."},
+      {"family": "Wang", "given": "G.-J."},
+      {"family": "Newcorn", "given": "J. H."}
+    ],
+    "container-title": "Molecular Psychiatry",
+    "id": "Volkow2011",
+    "issued": {"date-parts": [[2011]]},
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "1147–1154",
+    "title": "Motivation deficit in ADHD is associated with dysfunction of the dopamine reward pathway",
+    "type": "article-journal",
+    "volume": "16"
+  }
+]
