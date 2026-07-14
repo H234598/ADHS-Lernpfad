@@ -1,6 +1,6 @@
-# Automatisierungsprompt: Draft-Prüfung und Merge
+# Automatisierungsprompt: Draft-Prüfung, Reparatur und Merge
 
-Dieser Prompt wird durch einen getrennten Merge-Wächter ausgeführt. Er prüft den von der 06-Uhr-Automation erzeugten Draft-Pull-Request in wiederkehrenden, voneinander unabhängigen Läufen. Es gibt weder eine feste Wartezeit noch eine Abhängigkeit von CodeRabbit.
+Dieser Prompt wird durch einen getrennten Merge-Wächter **frühestens zwei Stunden nach Erstellung des Draft-Pull-Requests** ausgeführt. Die Frist gibt CodeRabbit Gelegenheit zur Prüfung und verhindert einen vorschnellen Merge. CodeRabbit ist dennoch kein Pflicht-Gate: Eine fehlende Prüfung oder ein ausgeschöpftes Review-Limit blockiert den Ablauf nach Ablauf der Frist nicht.
 
 Arbeite im Repository `H234598/ADHS-Lernpfad`.
 
@@ -9,58 +9,92 @@ Arbeite im Repository `H234598/ADHS-Lernpfad`.
 1. Suche offene Pull Requests gegen `main`, deren Head-Branch dem Muster `agent/einheit-*` entspricht und deren Beschreibung den Marker `<!-- adhs-daily-unit -->` enthält.
 2. Falls kein geeigneter PR vorhanden ist, beende den Lauf ohne Benachrichtigung.
 3. Falls mehrere geeignete PRs vorhanden sind, verändere keinen davon und benachrichtige den Benutzer über den Mehrdeutigkeitsfehler.
-4. Arbeite ausschließlich mit dem eindeutig bestimmten PR und seinem aktuellen Head-Commit.
+4. Berücksichtige den eindeutig bestimmten PR erst, wenn seit seiner Erstellung mindestens **zwei volle Stunden** vergangen sind. Vorher beende den Lauf ohne Änderung und ohne Benachrichtigung.
+5. Arbeite ausschließlich mit diesem PR und seinem aktuellen Head-Commit.
 
-## 2. CI vollständig grün
+## 2. CodeRabbit-Signale über GitHub prüfen
+
+Prüfe über die auf GitHub sichtbaren Daten:
+
+- formelle Pull-Request-Reviews;
+- PR-Konversationskommentare;
+- Inline-Review-Kommentare und Review-Threads;
+- Check-Runs oder Statuschecks, deren Name oder Absender CodeRabbit erkennen lässt.
+
+Bewerte nur Einträge, die zum aktuellen PR und möglichst zum aktuellen Head-Commit gehören.
+
+- Ist eine CodeRabbit-Prüfung vorhanden, berücksichtige nachvollziehbare, relevante Hinweise vor einer Statusänderung oder einem Merge.
+- Ist keine Prüfung vorhanden, CodeRabbit still geblieben oder das Review-Limit vermutlich ausgeschöpft, fahre nach Ablauf der Zwei-Stunden-Frist allein anhand von CI, Mergebarkeit und Projektregeln fort.
+- GitHub-Signale dürfen nicht als zuverlässige Auskunft über das verbleibende CodeRabbit-Kontingent oder dessen Erholungszeit interpretiert werden.
+
+## 3. CI-Status bestimmen
 
 „CI vollständig grün“ bedeutet:
 
-- alle zum aktuellen Head-Commit gehörenden Checks und Workflow-Läufe sind abgeschlossen;
+- alle zum aktuellen Head-Commit gehörenden erwarteten Checks und Workflow-Läufe sind vorhanden und abgeschlossen;
 - kein Check ist `queued`, `in_progress`, `pending`, `action_required`, `cancelled`, `timed_out`, `failure` oder `startup_failure`;
 - alle erforderlichen Checks enden mit `success`, `neutral` oder einem ausdrücklich zulässigen `skipped`;
 - insbesondere `Validate compendium` einschließlich Literatur-, Graph-, Validator-, Gesamt-, Anki-, Dokumentations- und MkDocs-Schritten ist erfolgreich;
-- es fehlt kein für den PR erwarteter Validierungslauf;
 - der PR ist konfliktfrei und GitHub meldet ihn als mergebar.
 
-Falls CI noch läuft oder noch kein erwarteter Prüflauf vorhanden ist, beende den Lauf ohne Benachrichtigung. Falls CI fehlgeschlagen oder der PR nicht mergebar ist, benachrichtige den Benutzer mit den betroffenen Checks beziehungsweise Konflikten und merge nicht.
+### CI läuft noch
 
-## 3. Draft in normalen Pull Request umwandeln
+Falls CI noch läuft oder ein erwarteter Prüflauf noch nicht sichtbar ist, beende den Lauf ohne Änderung und ohne Benachrichtigung. Ein späterer stündlicher Lauf prüft erneut.
 
-Wenn der PR noch ein Draft ist und die CI für den aktuellen Head-Commit vollständig erfolgreich ist:
+### CI ist fehlgeschlagen
 
-1. Markiere den PR als **Ready for review**.
-2. Verändere in diesem Lauf keine Dateien und pushe keinen neuen Commit.
-3. Merge den PR in diesem Lauf noch nicht.
-4. Beende den Lauf. Dadurch erhält GitHub Gelegenheit, die durch `ready_for_review` ausgelösten Prüfungen erneut auszuführen.
+Falls ein Check fehlgeschlagen ist:
 
-## 4. Zweite Prüfung nach der Umwandlung
+1. Lies `prompts/PR-REPAIR-PROMPT.md` vollständig.
+2. Führe in diesem Lauf **genau einen sicheren Reparaturzyklus** auf dem bestehenden PR-Branch aus.
+3. Berücksichtige dabei vorhandene, nachvollziehbare CodeRabbit-Hinweise, ohne deren Vorhandensein vorauszusetzen.
+4. Pushe die Reparatur und beende den Lauf, ohne den Draft-Status zu ändern und ohne zu mergen.
+5. Die neue CI wird in einem späteren Merge-Wächter-Lauf erneut bewertet.
+6. Ist keine sichere automatische Reparatur möglich, lasse den PR offen und benachrichtige den Benutzer präzise über den Blocker.
+
+Der Pull Request darf bei reparierbaren CI-Fehlern also nicht bloß unbeachtet liegen bleiben.
+
+## 4. Draft in normalen Pull Request umwandeln
+
+Wenn der PR noch ein Draft ist, mindestens zwei Stunden alt ist und die CI für den aktuellen Head-Commit vollständig erfolgreich ist:
+
+1. Stelle sicher, dass keine vorhandene, nachvollziehbare CodeRabbit-Feststellung einen konkreten kritischen Fehler des aktuellen Head-Commits beschreibt. Das Fehlen eines CodeRabbit-Reviews ist kein Blocker.
+2. Markiere den PR als **Ready for review**.
+3. Verändere in diesem Lauf keine Dateien und pushe keinen neuen Commit.
+4. Merge den PR in diesem Lauf noch nicht.
+5. Beende den Lauf, damit die durch `ready_for_review` ausgelösten Prüfungen erneut laufen können.
+
+## 5. Zweite Prüfung nach der Umwandlung
 
 Wenn der PR kein Draft mehr ist:
 
-1. Stelle fest, dass nach der Umwandlung zu „Ready for review“ mindestens ein neuer Pull-Request-CI-Lauf gestartet und für den aktuellen Head-Commit vollständig grün abgeschlossen wurde.
-2. Prüfe erneut sämtliche Checks, Konflikte und die Mergebarkeit.
-3. Falls nach der Umwandlung noch keine neue grüne CI vorliegt, beende den Lauf ohne Benachrichtigung.
+1. Stelle fest, dass nach der Umwandlung zu „Ready for review“ mindestens ein neuer Pull-Request-CI-Lauf gestartet wurde.
+2. Falls dieser Lauf noch läuft, beende den aktuellen Wächterlauf ohne Änderung.
+3. Falls dieser Lauf fehlschlägt, führe nach `prompts/PR-REPAIR-PROMPT.md` genau einen Reparaturzyklus durch und warte anschließend auf die nächste CI.
+4. Falls er vollständig grün ist, prüfe erneut Konflikte, Mergebarkeit und vorhandene relevante Review-Hinweise.
 
-## 5. Merge
+## 6. Merge
 
-Nur wenn alle Bedingungen aus den vorherigen Abschnitten erneut erfüllt sind:
+Nur wenn die zweite Pull-Request-CI vollständig grün ist und keine konkrete kritische Feststellung oder Konfliktsituation offen ist:
 
 1. Merge den PR per **Squash-Merge** nach `main`.
 2. Verwende einen sachlichen Commit-Titel mit Einheitsnummer und Thema.
-3. Lösche den Head-Branch nach dem Merge, sofern die verfügbare GitHub-Schnittstelle dies unterstützt. Ein Fehlschlag beim Löschen des Branches darf den bereits erfolgreichen Merge nicht rückgängig machen, muss aber gemeldet werden.
-4. Prüfe anschließend, ob `main` den gemergten Commit beziehungsweise dessen Inhalt enthält.
+3. Lösche den Head-Branch nach dem Merge, sofern die verfügbare GitHub-Schnittstelle dies unterstützt. Ein Fehlschlag beim Löschen darf den erfolgreichen Merge nicht rückgängig machen, muss aber gemeldet werden.
+4. Prüfe anschließend, ob `main` den gemergten Inhalt enthält.
 5. Benachrichtige den Benutzer mit PR-Nummer, Thema, Merge-Commit und dem Ergebnis der Branch-Bereinigung.
 
-## 6. Harte Abbruchregeln
+## 7. Harte Abbruchregeln
 
 Führe keinen Merge durch, wenn mindestens eine dieser Bedingungen vorliegt:
 
-- ein CI-Check läuft, fehlt oder ist fehlgeschlagen;
-- der PR enthält Mergekonflikte;
+- der PR ist jünger als zwei Stunden;
+- ein erwarteter CI-Check läuft, fehlt oder ist fehlgeschlagen;
+- der PR enthält Mergekonflikte oder ist nicht mergebar;
 - der PR wurde nach dem letzten vollständig grünen CI-Lauf verändert;
 - mehrere passende automatische PRs sind offen;
 - der PR zielt nicht auf `main` oder stammt nicht aus `agent/einheit-*`;
 - der Marker `<!-- adhs-daily-unit -->` fehlt;
-- nach „Ready for review“ wurde noch kein neuer vollständig grüner Pull-Request-CI-Lauf abgeschlossen.
+- nach „Ready for review“ wurde noch kein neuer vollständig grüner Pull-Request-CI-Lauf abgeschlossen;
+- ein vorhandener Review-Hinweis beschreibt einen nachvollziehbaren kritischen Fehler, der noch nicht behoben wurde.
 
-Nimm in diesem Prüf- und Merge-Lauf keine eigenständigen inhaltlichen Korrekturen vor. Erfordert die CI Änderungen, bleibt der PR offen und der Benutzer wird über den konkreten Blocker informiert.
+CodeRabbit als solches ist **keine** harte Abbruchbedingung. Sein Fehlen, Schweigen oder mutmaßlich ausgeschöpftes Kontingent verhindert den Merge nicht.
