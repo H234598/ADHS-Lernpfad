@@ -66,3 +66,12 @@ cards:
   - ADHS
   - Grundlagen
   - Einheit_07
+- id: 1008
+  unit: 8
+  front: Warum ist „ADHS ausgewachsen – ja oder nein?“ als Verlaufsfrage zu grob?
+  back: Weil Symptome, Beeinträchtigung, Unterstützung und Anforderungen sich unabhängig
+    verändern können und Remission zeitweise oder teilweise sein kann.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_08
