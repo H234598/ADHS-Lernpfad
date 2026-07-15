@@ -11,9 +11,14 @@ flowchart TD
   ADHS --> Zeitverarbeitung
   ADHS --> Emotionsregulation
   ADHS --> Neuroentwicklung
+  ADHS --> Diagnostik
   Neuroentwicklung --> Lebensspanne
   Lebensspanne --> Persistenz
   Lebensspanne --> Remission
+  Diagnostik --> Differentialdiagnostik
+  Diagnostik --> Beeinträchtigung
+  Diagnostik --> Entwicklungsgeschichte
+  Screening --> Diagnostik
   Dopamin --> Motivation
   Dopamin --> Parkinson
   Exekutive_Funktionen --> Arbeitsgedächtnis
