@@ -75,3 +75,13 @@ cards:
   - ADHS
   - Grundlagen
   - Einheit_08
+- id: 1009
+  unit: 9
+  front: Warum reicht ein erhöhter ADHS-Fragebogenwert nicht für eine Diagnose?
+  back: Weil Entwicklung, mehrere Lebensbereiche, Beeinträchtigung, Fremdberichte,
+    Komorbiditäten und bessere Alternativerklärungen zusätzlich geprüft werden müssen.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Diagnostik
+  - Einheit_09
