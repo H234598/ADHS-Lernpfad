@@ -175,6 +175,23 @@
     "volume": "49"
   },
   {
+    "author": [
+      {
+        "literal": "National Institute for Health and Care Excellence"
+      }
+    ],
+    "id": "NICE2018",
+    "issued": {
+      "date-parts": [
+        [
+          2018
+        ]
+      ]
+    },
+    "title": "Attention deficit hyperactivity disorder: diagnosis and management (NICE guideline NG87)",
+    "type": "report"
+  },
+  {
     "DOI": "10.1176/appi.ajp.2017.17030298",
     "PMID": "29070684",
     "URL": "https://doi.org/10.1176/appi.ajp.2017.17030298",
@@ -273,5 +290,22 @@
     "title": "Motivation deficit in ADHD is associated with dysfunction of the dopamine reward pathway",
     "type": "article-journal",
     "volume": "16"
+  },
+  {
+    "author": [
+      {
+        "literal": "World Health Organization"
+      }
+    ],
+    "id": "WHO2024",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "title": "Clinical descriptions and diagnostic requirements for ICD-11 mental, behavioural and neurodevelopmental disorders (CDDR)",
+    "type": "book"
   }
 ]
