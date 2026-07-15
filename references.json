@@ -1,5 +1,22 @@
 [
   {
+    "author": [
+      {
+        "literal": "Australasian ADHD Professionals Association"
+      }
+    ],
+    "id": "AADPA2022",
+    "issued": {
+      "date-parts": [
+        [
+          2022
+        ]
+      ]
+    },
+    "title": "Australian evidence-based clinical practice guideline for attention deficit hyperactivity disorder",
+    "type": "report"
+  },
+  {
     "DOI": "10.1186/s12888-020-2442-7",
     "PMID": "32164655",
     "URL": "https://doi.org/10.1186/s12888-020-2442-7",
@@ -173,6 +190,23 @@
     "title": "Time-Perception Deficits in Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis",
     "type": "article-journal",
     "volume": "49"
+  },
+  {
+    "author": [
+      {
+        "literal": "National Institute for Health and Care Excellence"
+      }
+    ],
+    "id": "NICE2018",
+    "issued": {
+      "date-parts": [
+        [
+          2018
+        ]
+      ]
+    },
+    "title": "Attention deficit hyperactivity disorder: diagnosis and management (NICE guideline NG87)",
+    "type": "report"
   },
   {
     "DOI": "10.1176/appi.ajp.2017.17030298",

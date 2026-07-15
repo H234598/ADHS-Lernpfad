@@ -75,3 +75,13 @@ cards:
   - ADHS
   - Grundlagen
   - Einheit_08
+- id: 1009
+  unit: 9
+  front: Warum kann ein positiver ADHS-Fragebogen die Diagnose nicht allein entscheiden?
+  back: Weil Screeningwerte nur einen Ausschnitt erfassen; die Diagnose zusätzlich
+    Entwicklungsgeschichte, mehrere Lebensbereiche, Funktionsbeeinträchtigung sowie
+    Komorbiditäten und Alternativerklärungen prüfen muss.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_09

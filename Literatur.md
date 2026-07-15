@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-14
+last_reviewed: 2026-07-15
 ---
 
 # Literatur
@@ -9,6 +9,12 @@ last_reviewed: 2026-07-14
 > Automatisch aus `references/` erzeugt. Nicht manuell bearbeiten.
 
 [BibTeX herunterladen](references.bib) · [CSL JSON herunterladen](references.json)
+
+## AADPA2022
+
+Australasian ADHD Professionals Association (2022). Australian evidence-based clinical practice guideline for attention deficit hyperactivity disorder.
+
+- Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Beheshti2020
 
@@ -53,6 +59,12 @@ Metcalfe, K. B., McFeaters, C. D., & Voyer, D. (2024). Time-Perception Deficits 
 - DOI: [https://doi.org/10.1080/87565641.2023.2293712](https://doi.org/10.1080/87565641.2023.2293712)
 - PubMed: [PMID 38145491](https://pubmed.ncbi.nlm.nih.gov/38145491/)
 - Evidenztyp: `meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## NICE2018
+
+National Institute for Health and Care Excellence (2018). Attention deficit hyperactivity disorder: diagnosis and management (NICE guideline NG87).
+
+- Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Sibley2018
 
