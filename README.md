@@ -4,7 +4,7 @@ subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Fo
 language: de
 status: fortlaufend
 version: 0.8.1
-last_reviewed: 2026-07-14
+last_reviewed: 2026-07-15
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
 
@@ -52,6 +52,7 @@ Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Si
 6. [[01-Grundlagen/06-Zeitverarbeitung|Zeitverarbeitung]]
 7. [[01-Grundlagen/07-Emotionsregulation|Emotionsregulation]]
 8. [[01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne|Neuroentwicklung und Lebensspanne]]
+9. [[01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik|Diagnostische Kriterien und Differentialdiagnostik]]
 
 ## Wissenssystem
 
