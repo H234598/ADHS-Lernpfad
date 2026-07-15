@@ -176,5 +176,5 @@ Weil Symptome, funktionelle Beeinträchtigung, Unterstützung und Anforderungen 
 ## Navigation
 
 - Zurück: [[01-Grundlagen/07-Emotionsregulation|Emotionsregulation]]
-- Weiter: [[README|Übersicht]]
+- Weiter: [[01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik|Diagnostische Kriterien und Differentialdiagnostik]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]
