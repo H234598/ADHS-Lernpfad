@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-14
+last_reviewed: 2026-07-15
 ---
 
 # Literatur
@@ -54,6 +54,12 @@ Metcalfe, K. B., McFeaters, C. D., & Voyer, D. (2024). Time-Perception Deficits 
 - PubMed: [PMID 38145491](https://pubmed.ncbi.nlm.nih.gov/38145491/)
 - Evidenztyp: `meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
+## NICE2018
+
+National Institute for Health and Care Excellence (2018). Attention deficit hyperactivity disorder: diagnosis and management (NICE guideline NG87).
+
+- Evidenztyp: `clinical-guideline` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Sibley2018
 
 Sibley, M. H., Rohde, L. A., Swanson, J. M., et al. (2018). Late-onset ADHD reconsidered with comprehensive repeated assessments between ages 10 and 25. *American Journal of Psychiatry, 175*(2), 140–149.
@@ -77,3 +83,8 @@ Volkow, N. D., Wang, G.-J., Newcorn, J. H., et al. (2011). Motivation deficit in
 - DOI: [https://doi.org/10.1038/mp.2010.97](https://doi.org/10.1038/mp.2010.97)
 - Evidenztyp: `primary-study` · Evidenzgrad: `moderate` · Status: `probable`
 
+## WHO2024
+
+World Health Organization (2024). Clinical descriptions and diagnostic requirements for ICD-11 mental, behavioural and neurodevelopmental disorders (CDDR).
+
+- Evidenztyp: `diagnostic-manual` · Evidenzgrad: `high` · Status: `consensus`
