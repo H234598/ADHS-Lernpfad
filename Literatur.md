@@ -88,3 +88,4 @@ Volkow, N. D., Wang, G.-J., Newcorn, J. H., et al. (2011). Motivation deficit in
 World Health Organization (2024). Clinical descriptions and diagnostic requirements for ICD-11 mental, behavioural and neurodevelopmental disorders (CDDR).
 
 - Evidenztyp: `diagnostic-manual` · Evidenzgrad: `high` · Status: `consensus`
+
