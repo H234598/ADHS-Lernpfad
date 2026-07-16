@@ -61,7 +61,7 @@ jobs:
             git diff --check
             python -m compileall -q scripts tests
             node --check assets/javascripts/knowledge-graph.js
-            python -m unittest discover -s tests -p 'test_*.py'
+            PYTHONPATH=scripts python -m unittest discover -s tests -p 'test_*.py'
             python scripts/build_literature.py
             git diff --exit-code -- Literatur.md references.bib references.json
             python scripts/build_graph.py
