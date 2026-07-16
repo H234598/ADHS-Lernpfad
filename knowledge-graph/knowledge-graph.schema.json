@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ADHS.telacore.org/schemas/knowledge-graph-1.0.0.json",
+  "title": "ADHS-Lernpfad Wissensgraph",
+  "type": "object",
+  "required": ["schema_version", "source_revision", "scopes", "stats", "nodes", "edges", "issues"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "source_revision": {"type": ["string", "null"]},
+    "scopes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "stats": {
+      "type": "object",
+      "required": ["node_count", "edge_count", "issue_count", "error_count", "warning_count", "nodes_by_type", "edges_by_type", "issues_by_code"],
+      "properties": {
+        "node_count": {"type": "integer", "minimum": 0},
+        "edge_count": {"type": "integer", "minimum": 0},
+        "issue_count": {"type": "integer", "minimum": 0},
+        "error_count": {"type": "integer", "minimum": 0},
+        "warning_count": {"type": "integer", "minimum": 0},
+        "nodes_by_type": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "edges_by_type": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "issues_by_code": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}}
+      },
+      "additionalProperties": false
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "label", "scope", "exists", "planned"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "type": {"type": "string", "minLength": 1},
+          "label": {"type": "string"},
+          "scope": {"type": "string"},
+          "exists": {"type": "boolean"},
+          "planned": {"type": "boolean"},
+          "path": {"type": "string"},
+          "url": {"type": "string"},
+          "aliases": {"type": "array", "items": {"type": "string"}},
+          "tags": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "source", "target", "status", "count", "occurrences"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "type": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "target": {"type": "string", "minLength": 1},
+          "status": {"type": "string", "minLength": 1},
+          "count": {"type": "integer", "minimum": 1},
+          "occurrences": {"type": "array", "items": {"type": "object"}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "severity", "message"],
+        "properties": {
+          "code": {"type": "string"},
+          "severity": {"enum": ["error", "warning", "info"]},
+          "message": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}
