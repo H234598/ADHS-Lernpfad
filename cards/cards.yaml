@@ -85,3 +85,13 @@ cards:
   - ADHS
   - Grundlagen
   - Einheit_09
+- id: 1010
+  unit: 10
+  front: Warum bedeutet eine hohe Heritabilität von ADHS kein genetisches Schicksal?
+  back: Weil Heritabilität Unterschiede in einer untersuchten Population beschreibt,
+    nicht den genetischen Anteil einer einzelnen Person; Entwicklung und Beeinträchtigung
+    bleiben von Umwelt, Unterstützung und weiteren Bedingungen beeinflusst.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Einheit_10
