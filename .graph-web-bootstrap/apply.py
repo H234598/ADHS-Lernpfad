@@ -12,7 +12,7 @@ import tarfile
 ROOT = Path(__file__).resolve().parents[1]
 BOOTSTRAP = ROOT / ".graph-web-bootstrap"
 WORKFLOW = ROOT / ".github" / "workflows" / "apply-graph-web-phase.yml"
-EXPECTED_CHUNKS = 3
+EXPECTED_CHUNKS = 7
 
 chunks = sorted(BOOTSTRAP.glob("payload-*.txt"))
 if len(chunks) != EXPECTED_CHUNKS:
