@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-15
+last_reviewed: 2026-07-16
 ---
 
 # Literatur
@@ -30,6 +30,14 @@ Castellanos, F. X., Sonuga-Barke, E. J. S., Milham, M. P., & Tannock, R. (2006).
 
 - DOI: [https://doi.org/10.1016/j.tics.2006.01.011](https://doi.org/10.1016/j.tics.2006.01.011)
 - Evidenztyp: `review` · Evidenzgrad: `moderate` · Status: `consensus`
+
+## Demontis2023
+
+Demontis, D., Walters, G. B., Athanasiadis, G., et al. (2023). Genome-wide analyses of ADHD identify 27 risk loci, refine the genetic architecture and implicate several cognitive domains. *Nature Genetics, 55*(2), 198–208.
+
+- DOI: [https://doi.org/10.1038/s41588-022-01285-8](https://doi.org/10.1038/s41588-022-01285-8)
+- PubMed: [PMID 36702997](https://pubmed.ncbi.nlm.nih.gov/36702997/)
+- Evidenztyp: `genome-wide-association-study` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Faraone2021
 
@@ -66,6 +74,13 @@ National Institute for Health and Care Excellence (2018). Attention deficit hype
 
 - Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
 
+## Nikolas2010
+
+Nikolas, M. A. & Burt, S. A. (2010). Genetic and environmental influences on ADHD symptom dimensions of inattention and hyperactivity: A meta-analysis. *Journal of Abnormal Psychology, 119*(1), 1–17.
+
+- DOI: [https://doi.org/10.1037/a0018010](https://doi.org/10.1037/a0018010)
+- Evidenztyp: `twin-study-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Sibley2018
 
 Sibley, M. H., Rohde, L. A., Swanson, J. M., et al. (2018). Late-onset ADHD reconsidered with comprehensive repeated assessments between ages 10 and 25. *American Journal of Psychiatry, 175*(2), 140–149.
@@ -81,6 +96,14 @@ Sibley, M. H., Arnold, L. E., Swanson, J. M., et al. (2022). Variable patterns o
 - DOI: [https://doi.org/10.1176/appi.ajp.2021.21010032](https://doi.org/10.1176/appi.ajp.2021.21010032)
 - PubMed: [PMID 34384227](https://pubmed.ncbi.nlm.nih.gov/34384227/)
 - Evidenztyp: `longitudinal-cohort` · Evidenzgrad: `high` · Status: `probable`
+
+## Thapar2013
+
+Thapar, A., Cooper, M., Eyre, O., & Langley, K. (2013). What have we learnt about the causes of ADHD?. *Journal of Child Psychology and Psychiatry, 54*(1), 3–16.
+
+- DOI: [https://doi.org/10.1111/j.1469-7610.2012.02611.x](https://doi.org/10.1111/j.1469-7610.2012.02611.x)
+- PubMed: [PMID 22963644](https://pubmed.ncbi.nlm.nih.gov/22963644/)
+- Evidenztyp: `narrative-review` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Volkow2011
 

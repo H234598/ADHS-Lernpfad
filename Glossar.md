@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-15
+last_reviewed: 2026-07-16
 ---
 
 # Glossar
@@ -30,14 +30,29 @@ Neuromodulator für Lernen, Motivation, Anstrengungsbewertung, Bewegung und Hand
 ## Emotionsregulation
 Prozesse, die Entstehung, Intensität, Dauer, Aufmerksamkeit, Ausdruck oder Verhalten bei Emotionen beeinflussen.
 
+## Epigenetik
+Veränderungen der Genregulation, die nicht auf einer Änderung der DNA-Sequenz beruhen; kein Beleg dafür, dass einzelne Erfahrungen eine komplexe Störung gezielt „anschalten“.
+
 ## Exekutive Funktionen
 Sammelbegriff für Kontrollprozesse wie Arbeitsgedächtnis, Inhibition, Planung und kognitive Flexibilität.
 
 ## Funktionsbeeinträchtigung
 Klinisch relevante Einschränkung von Alltag, Bildung, Beruf, Beziehungen, Gesundheit oder Teilhabe; nicht gleichbedeutend mit bloßer Symptomzahl.
 
+## Genetische Korrelation
+Statistisches Maß dafür, in welchem Umfang genetische Einflüsse auf zwei Merkmale überlappen; keine Gleichsetzung der Merkmale und kein Beweis eines identischen Mechanismus.
+
+## Gen-Umwelt-Interaktion
+Modell, in dem die Wirkung einer Umweltbedingung von genetischen Voraussetzungen abhängt oder umgekehrt; beim einzelnen Menschen meist nicht eindeutig bestimmbar.
+
+## Gen-Umwelt-Korrelation
+Zusammenhang, bei dem genetisch beeinflusste Eigenschaften mitbestimmen, welchen Umwelten Menschen begegnen, welche sie auswählen oder wie andere auf sie reagieren.
+
 ## Gruppenbefund
 Statistischer Unterschied zwischen Gruppen, der keine sichere Aussage über eine Einzelperson erlaubt.
+
+## Heritabilität
+Populationsbezogene Schätzung des Anteils beobachteter Unterschiede, der unter den untersuchten Bedingungen statistisch mit genetischen Unterschieden zusammenhängt; kein genetischer Prozentanteil einer Person.
 
 ## Inhibition
 Hemmung dominanter oder begonnener Reaktionen zugunsten eines Ziels.
@@ -50,6 +65,12 @@ Veränderung und Reifung neuronaler Systeme im Zusammenspiel mit Lernen, Umwelt 
 
 ## Persistenz
 Fortbestehen von Symptomen oder Beeinträchtigungen über einen längeren Zeitraum; nicht zwingend mit unveränderter Stärke.
+
+## Polygenetischer Score
+Zusammenfassung vieler genetischer Varianten zu einem statistischen Gruppenrisikomaß; derzeit kein eigenständiges diagnostisches Instrument für ADHS.
+
+## Polygenität
+Eigenschaft eines Merkmals, von sehr vielen genetischen Varianten mit jeweils kleinen Effekten beeinflusst zu werden.
 
 ## Reaktionszeitvariabilität
 Schwankung der Reaktionsgeschwindigkeit innerhalb einer Person über mehrere Durchgänge.
