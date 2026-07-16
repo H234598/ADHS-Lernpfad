@@ -29,7 +29,7 @@ citation:
 
 ## Vollständige Zitation
 
-Thapar, A., Cooper, M., Eyre, O., & Langley, K. (2013). What have we learnt about the causes of ADHD? *Journal of Child Psychology and Psychiatry, 54*(1), 3–16.
+Thapar, A., Cooper, M., Eyre, O., & Langley, K. (2013). What have we learnt about the causes of ADHD?. *Journal of Child Psychology and Psychiatry, 54*(1), 3–16.
 
 ## Kernaussage
 
