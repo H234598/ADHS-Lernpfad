@@ -1,13 +1,29 @@
 #!/usr/bin/env python3
-"""Validate Obsidian links and web-only callout conversion."""
+"""Validate internal links, planned targets and web-only callout conversion."""
 
 from pathlib import Path
 
 from callouts import convert_obsidian_callouts_for_web
-from content_links import markdown_files, validate_all
+from content_links import analyze_all, markdown_files
 
 ROOT = Path(__file__).resolve().parents[1]
-errors = validate_all(ROOT)
+index, link_issues = analyze_all(ROOT)
+errors = [
+    f"{issue.path or 'Repository'}"
+    + (f":{issue.line}" if issue.line else "")
+    + f": {issue.message}"
+    for issue in index.model_issues
+    if issue.severity == "error"
+]
+warnings = [
+    f"{issue.path or 'Repository'}"
+    + (f":{issue.line}" if issue.line else "")
+    + f": {issue.message}"
+    for issue in index.model_issues
+    if issue.severity != "error"
+]
+errors.extend(issue.format() for issue in link_issues if issue.severity == "error")
+warnings.extend(issue.format() for issue in link_issues if issue.severity != "error")
 
 sample = (
     "> [!evidence] Evidenz: Konsens / hoch\n"
@@ -27,6 +43,11 @@ for source in markdown_files(ROOT):
             f"{source.relative_to(ROOT)}: [!evidence] bleibt nach Web-Konvertierung sichtbar"
         )
 
+if warnings:
+    print("Linkwarnungen:")
+    for warning in warnings:
+        print(f"- {warning}")
+
 if errors:
     print("Link- oder Callout-Validierung fehlgeschlagen:")
     for error in errors:
@@ -34,6 +55,6 @@ if errors:
     raise SystemExit(1)
 
 print(
-    "Validierung erfolgreich: Wikilinks sind eindeutig und "
+    "Validierung erfolgreich: interne Links sind eindeutig oder ausdrücklich geplant; "
     "Obsidian-Callouts werden webgerecht umgewandelt"
 )

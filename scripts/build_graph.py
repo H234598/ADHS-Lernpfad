@@ -1,26 +1,42 @@
 #!/usr/bin/env python3
+"""Build the canonical, typed and deterministic project knowledge graph."""
+
+from __future__ import annotations
+
+import argparse
 from pathlib import Path
-import json
-import re
+
+from content_model import build_content_index
+from graph_model import GraphBuilder
+from graph_relations import build_graph
+from graph_render import render_graphml, render_mermaid, render_report, write_outputs
 
 ROOT = Path(__file__).resolve().parents[1]
-edges = set()
-pattern = re.compile(r"\[\[([^\]|#]+)")
-for path in ROOT.rglob("*.md"):
-    if any(part in {"build", "site"} for part in path.parts):
-        continue
-    source = str(path.relative_to(ROOT).with_suffix(""))
-    for target in pattern.findall(path.read_text(encoding="utf-8")):
-        edges.add((source, target))
 
-out = ROOT / "build"
-out.mkdir(exist_ok=True)
-(out / "knowledge-graph.json").write_text(
-    json.dumps({"edges": [{"source": a, "target": b} for a, b in sorted(edges)]}, ensure_ascii=False, indent=2) + "\n",
-    encoding="utf-8",
-)
-lines = ["flowchart LR"]
-for i, (source, target) in enumerate(sorted(edges)):
-    lines.append(f'  A{i}["{source}"] --> B{i}["{target}"]')
-(out / "knowledge-graph.mmd").write_text("\n".join(lines) + "\n", encoding="utf-8")
-print(f"Wissensgraph: {len(edges)} Kanten")
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--scope", choices=("learning", "all"), default="learning",
+        help="Mermaid-Ausgabe auf Lerninhalte begrenzen oder alle Knoten ausgeben",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    graph = build_graph(GraphBuilder(build_content_index(ROOT)))
+    write_outputs(graph, ROOT, scope=args.scope)
+    stats = graph["stats"]
+    print(
+        "Wissensgraph: "
+        f"{stats['node_count']} Knoten, {stats['edge_count']} Kanten, "
+        f"{stats['error_count']} Fehler, {stats['warning_count']} Warnungen"
+    )
+
+
+if __name__ == "__main__":
+    main()
+
+
+__all__ = ["GraphBuilder", "render_graphml", "render_mermaid", "render_report"]
