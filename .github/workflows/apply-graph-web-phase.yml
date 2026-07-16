@@ -52,22 +52,36 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Run source, graph and documentation checks
+        shell: bash
         run: |
-          python -m pip check
-          git diff --check
-          python -m compileall -q scripts tests
-          node --check assets/javascripts/knowledge-graph.js
-          python -m unittest discover -s tests -p 'test_*.py'
-          python scripts/build_literature.py
-          git diff --exit-code -- Literatur.md references.bib references.json
-          python scripts/build_graph.py
-          python scripts/validate_links.py
-          python scripts/validate_compendium.py
-          python scripts/build_combined.py
-          python scripts/build_anki.py
-          python scripts/build_docs.py
-          mkdocs build --strict
-          npm run test:web
+          set -o pipefail
+          mkdir -p build
+          {
+            python -m pip check
+            git diff --check
+            python -m compileall -q scripts tests
+            node --check assets/javascripts/knowledge-graph.js
+            python -m unittest discover -s tests -p 'test_*.py'
+            python scripts/build_literature.py
+            git diff --exit-code -- Literatur.md references.bib references.json
+            python scripts/build_graph.py
+            python scripts/validate_links.py
+            python scripts/validate_compendium.py
+            python scripts/build_combined.py
+            python scripts/build_anki.py
+            python scripts/build_docs.py
+            mkdocs build --strict
+            npm run test:web
+          } 2>&1 | tee build/phase2-check.log
+
+      - name: Upload diagnostic log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: graph-web-phase-diagnostics
+          path: build/phase2-check.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Commit verified phase
         run: |
