@@ -31,6 +31,7 @@ files = [
     ".github/README.md",
     "references/README.md",
     "knowledge-graph/README.md",
+    "knowledge-graph/IMPLEMENTIERUNGSPLAN.md",
     "cards/README.md",
     "figures/README.md",
     "prompts/README.md",
