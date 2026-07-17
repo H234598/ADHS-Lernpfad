@@ -1,0 +1,29 @@
+name: Retry final graph pipeline phase
+
+on:
+  push:
+    branches: [agent/wissensgraph-pipeline-final]
+    paths:
+      - '.graph-pipeline-retry/**'
+      - '.github/workflows/retry-graph-pipeline-final.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  retry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Correct smoke assertion and rerun complete phase
+        run: python3 .graph-pipeline-retry/run.py
