@@ -1,14 +1,6 @@
 # Bewusst geplante, noch nicht vorhandene Seiten.
 # Nur hier registrierte fehlende Ziele dürfen als "planned" veröffentlicht werden.
 nodes:
-  - path: 01-Grundlagen/11-Schlaf-Bewegung-und-koerperliche-Gesundheit
-    title: Schlaf, Bewegung und körperliche Gesundheit
-    type: chapter
-    scope: learning
-    level: Grundlagen
-    roadmap: ROADMAP.md#grundlagen
-    reason: nächste geplante Grundlagen-Einheit
-
   - path: 01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet
     title: Komorbidität, Depression und Suizidalität
     type: chapter
