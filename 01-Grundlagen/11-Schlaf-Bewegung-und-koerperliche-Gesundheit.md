@@ -140,5 +140,5 @@ Weil Schlafmangel und Schlafstörungen Aufmerksamkeit, Impulskontrolle und Emoti
 ## Navigation
 
 - Zurück: [[01-Grundlagen/10-Genetik-und-Umwelt|Genetik und Umwelt]]
-- Weiter: [[01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet|Komorbidität, Depression und Suizidalität]]
+- Weiter: [[README|Übersicht]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]
