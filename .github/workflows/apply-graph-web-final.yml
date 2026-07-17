@@ -1,0 +1,32 @@
+name: Apply final graph web phase
+
+on:
+  push:
+    branches: [agent/wissensgraph-web-final-8]
+    paths:
+      - '.graph-web-final/**'
+      - '.github/workflows/apply-graph-web-final.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-graph-web-final-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Apply, verify and commit phase 2
+        run: python3 .graph-web-final/apply.py
