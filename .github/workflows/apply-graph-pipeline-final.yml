@@ -1,0 +1,33 @@
+name: Apply final graph pipeline phase
+
+on:
+  push:
+    branches: [agent/wissensgraph-pipeline-final]
+    paths:
+      - '.graph-pipeline-final/**'
+      - '.github/workflows/apply-graph-pipeline-final.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-graph-pipeline-final-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Apply, verify and commit phase 3
+        run: python3 .graph-pipeline-final/apply.py
