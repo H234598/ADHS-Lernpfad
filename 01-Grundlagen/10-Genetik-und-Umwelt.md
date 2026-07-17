@@ -154,5 +154,5 @@ Weil Heritabilität Unterschiede innerhalb einer bestimmten Population unter bes
 ## Navigation
 
 - Zurück: [[01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik|Diagnostische Kriterien und Differentialdiagnostik]]
-- Weiter: [[README|Übersicht]]
+- Weiter: [[01-Grundlagen/11-Schlaf-Bewegung-und-koerperliche-Gesundheit|Schlaf, Bewegung und körperliche Gesundheit]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]
