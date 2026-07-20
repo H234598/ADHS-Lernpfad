@@ -95,3 +95,14 @@ cards:
   - ADHS
   - Grundlagen
   - Einheit_10
+- id: 1011
+  unit: 11
+  front: Warum sollte Schlaf bei ADHS geprüft werden, ohne ADHS auf Schlafmangel zu reduzieren?
+  back: Weil Schlafmangel und Schlafstörungen ADHS-ähnliche Beschwerden erzeugen oder
+    bestehende Symptome verstärken können, während die ADHS-Diagnose ein früh beginnendes,
+    situationsübergreifendes Entwicklungs- und Beeinträchtigungsmuster voraussetzt.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Schlaf
+  - Einheit_11

@@ -85,6 +85,40 @@
     "volume": "10"
   },
   {
+    "DOI": "10.1080/14737175.2024.2353692",
+    "PMID": "38738544",
+    "URL": "https://doi.org/10.1080/14737175.2024.2353692",
+    "author": [
+      {
+        "family": "Cortese",
+        "given": "S."
+      },
+      {
+        "family": "Veronesi",
+        "given": "G. F."
+      },
+      {
+        "family": "Gabellone",
+        "given": "A."
+      }
+    ],
+    "container-title": "Expert Review of Neurotherapeutics",
+    "id": "Cortese2024",
+    "issue": "6",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "585–596",
+    "title": "The management of sleep disturbances in children with attention-deficit/hyperactivity disorder (ADHD): an update of the literature",
+    "type": "article-journal",
+    "volume": "24"
+  },
+  {
     "DOI": "10.1038/s41588-022-01285-8",
     "PMID": "36702997",
     "URL": "https://doi.org/10.1038/s41588-022-01285-8",
@@ -191,6 +225,38 @@
     "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
     "title": "Executive function deficits in attention-deficit/hyperactivity disorder and autism spectrum disorder",
     "type": "article-journal"
+  },
+  {
+    "DOI": "10.1016/j.psychres.2023.115447",
+    "PMID": "37657199",
+    "URL": "https://doi.org/10.1016/j.psychres.2023.115447",
+    "author": [
+      {
+        "family": "Liang",
+        "given": "X."
+      },
+      {
+        "family": "Qiu",
+        "given": "H."
+      },
+      {
+        "family": "Li",
+        "given": "S. X."
+      }
+    ],
+    "container-title": "Psychiatry Research",
+    "id": "Liang2023",
+    "issued": {
+      "date-parts": [
+        [
+          2023
+        ]
+      ]
+    },
+    "number": "115447",
+    "title": "Objectively measured sleep continuity in children and adolescents with ADHD: A systematic review and meta-analysis",
+    "type": "article-journal",
+    "volume": "328"
   },
   {
     "DOI": "10.1080/87565641.2023.2293712",
@@ -337,6 +403,59 @@
     "title": "Variable patterns of remission from ADHD in the Multimodal Treatment Study of ADHD",
     "type": "article-journal",
     "volume": "179"
+  },
+  {
+    "DOI": "10.1111/cch.13150",
+    "PMID": "37433667",
+    "URL": "https://doi.org/10.1111/cch.13150",
+    "author": [
+      {
+        "family": "Sun",
+        "given": "F."
+      },
+      {
+        "family": "Fang",
+        "given": "Y."
+      },
+      {
+        "family": "Chan",
+        "given": "C. K. M."
+      },
+      {
+        "family": "Poon",
+        "given": "E. T. C."
+      },
+      {
+        "family": "Chung",
+        "given": "L. M. Y."
+      },
+      {
+        "family": "Or",
+        "given": "P. P. L."
+      },
+      {
+        "family": "Chen",
+        "given": "Y."
+      },
+      {
+        "family": "Cooper",
+        "given": "S. B."
+      }
+    ],
+    "container-title": "Child: Care, Health and Development",
+    "id": "Sun2024",
+    "issue": "1",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "number": "e13150",
+    "title": "Structured physical exercise interventions and children and adolescents with attention deficit hyperactivity disorder: A systematic review and meta-analysis",
+    "type": "article-journal",
+    "volume": "50"
   },
   {
     "DOI": "10.1111/j.1469-7610.2012.02611.x",

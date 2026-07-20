@@ -1,10 +1,13 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-16
+last_reviewed: 2026-07-17
 ---
 
 # Glossar
+
+## Aktigrafie
+Verfahren zur längerfristigen Schätzung von Aktivitäts- und Ruhephasen mit einem tragbaren Bewegungssensor; nützlich für Alltagsmuster, aber kein vollständiger Ersatz für eine Schlaflaboruntersuchung.
 
 ## Arbeitsgedächtnis
 System zur kurzfristigen aktiven Speicherung und Bearbeitung von Information.
@@ -57,6 +60,9 @@ Populationsbezogene Schätzung des Anteils beobachteter Unterschiede, der unter 
 ## Inhibition
 Hemmung dominanter oder begonnener Reaktionen zugunsten eines Ziels.
 
+## Insomnie
+Anhaltende Ein- oder Durchschlafstörung trotz ausreichender Schlafgelegenheit, verbunden mit relevanten Folgen am Tag.
+
 ## Komorbidität
 Zusätzliche Erkrankung oder Störung, die gleichzeitig mit einer anderen Diagnose besteht.
 
@@ -78,5 +84,14 @@ Schwankung der Reaktionsgeschwindigkeit innerhalb einer Person über mehrere Dur
 ## Remission
 Rückgang von Symptomen oder Beeinträchtigungen unter festgelegte Schwellen; kann teilweise, vollständig, zeitweise oder anhaltend sein.
 
+## Schlafapnoe
+Schlafbezogene Atemstörung mit wiederholten Atempausen oder deutlicher Einschränkung der Atmung; Schnarchen, Atempausen und Tagesmüdigkeit können eine medizinische Abklärung erfordern.
+
+## Schlafkontinuität
+Zusammenfassender Begriff für Einschlafdauer, nächtliche Wachphasen, Gesamtschlafzeit und Schlafeffizienz.
+
 ## Screening
 Kurze systematische Prüfung, die eine Wahrscheinlichkeit abschätzt, aber keine vollständige Diagnose ersetzt.
+
+## Zirkadianer Rhythmus
+Ungefähr 24-stündiger biologischer Zeitrhythmus, der unter anderem Schlafneigung, Wachheit, Körpertemperatur und Hormonausschüttung beeinflusst.

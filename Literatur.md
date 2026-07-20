@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-16
+last_reviewed: 2026-07-17
 ---
 
 # Literatur
@@ -31,6 +31,14 @@ Castellanos, F. X., Sonuga-Barke, E. J. S., Milham, M. P., & Tannock, R. (2006).
 - DOI: [https://doi.org/10.1016/j.tics.2006.01.011](https://doi.org/10.1016/j.tics.2006.01.011)
 - Evidenztyp: `review` · Evidenzgrad: `moderate` · Status: `consensus`
 
+## Cortese2024
+
+Cortese, S., Veronesi, G. F., Gabellone, A., et al. (2024). The management of sleep disturbances in children with attention-deficit/hyperactivity disorder (ADHD): an update of the literature. *Expert Review of Neurotherapeutics, 24*(6), 585–596.
+
+- DOI: [https://doi.org/10.1080/14737175.2024.2353692](https://doi.org/10.1080/14737175.2024.2353692)
+- PubMed: [PMID 38738544](https://pubmed.ncbi.nlm.nih.gov/38738544/)
+- Evidenztyp: `systematic-review-of-randomized-trials` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Demontis2023
 
 Demontis, D., Walters, G. B., Athanasiadis, G., et al. (2023). Genome-wide analyses of ADHD identify 27 risk loci, refine the genetic architecture and implicate several cognitive domains. *Nature Genetics, 55*(2), 198–208.
@@ -59,6 +67,14 @@ Kofler, M. J., et al. (2024). Executive function deficits in attention-deficit/h
 
 - PubMed: [PMID 39429646](https://pubmed.ncbi.nlm.nih.gov/39429646/)
 - Evidenztyp: `systematic-review` · Evidenzgrad: `high` · Status: `consensus`
+
+## Liang2023
+
+Liang, X., Qiu, H., & Li, S. X. (2023). Objectively measured sleep continuity in children and adolescents with ADHD: A systematic review and meta-analysis. *Psychiatry Research, 328*, 115447.
+
+- DOI: [https://doi.org/10.1016/j.psychres.2023.115447](https://doi.org/10.1016/j.psychres.2023.115447)
+- PubMed: [PMID 37657199](https://pubmed.ncbi.nlm.nih.gov/37657199/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## Metcalfe2024
 
@@ -96,6 +112,14 @@ Sibley, M. H., Arnold, L. E., Swanson, J. M., et al. (2022). Variable patterns o
 - DOI: [https://doi.org/10.1176/appi.ajp.2021.21010032](https://doi.org/10.1176/appi.ajp.2021.21010032)
 - PubMed: [PMID 34384227](https://pubmed.ncbi.nlm.nih.gov/34384227/)
 - Evidenztyp: `longitudinal-cohort` · Evidenzgrad: `high` · Status: `probable`
+
+## Sun2024
+
+Sun, F., Fang, Y., Chan, C. K. M., Poon, E. T. C., Chung, L. M. Y., Or, P. P. L., Chen, Y., & Cooper, S. B. (2024). Structured physical exercise interventions and children and adolescents with attention deficit hyperactivity disorder: A systematic review and meta-analysis. *Child: Care, Health and Development, 50*(1), e13150.
+
+- DOI: [https://doi.org/10.1111/cch.13150](https://doi.org/10.1111/cch.13150)
+- PubMed: [PMID 37433667](https://pubmed.ncbi.nlm.nih.gov/37433667/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## Thapar2013
 
