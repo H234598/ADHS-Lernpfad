@@ -1,5 +1,5 @@
 # Änderungsverlauf
-
+ 
 ## 0.8.1 – 2026-07-14
 
 - Obsidian-Callouts beim Web-Build in native MkDocs-Material-Admonitions umgewandelt
