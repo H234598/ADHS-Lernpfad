@@ -45,13 +45,26 @@ jobs:
         continue-on-error: true
         if: github.event_name == 'pull_request' && github.head_ref == 'agent/einheit-12-depression-und-suizidalitaet'
         run: |
-          rm -f bootstrap-diagnostic.txt
+          rm -f bootstrap-diagnostic.txt bootstrap-failed-command.txt
           python - <<'PY'
           from pathlib import Path
           path = Path('.unit12-bootstrap/apply.py')
           text = path.read_text(encoding='utf-8')
           if 'import yaml\n' not in text:
               text = text.replace('import subprocess\n', 'import subprocess\nimport yaml\n', 1)
+          old_run = '''def run(*command: str) -> None:
+              print("+", " ".join(command), flush=True)
+              subprocess.run(command, cwd=ROOT, check=True)'''
+          new_run = '''def run(*command: str) -> None:
+              print("+", " ".join(command), flush=True)
+              try:
+                  subprocess.run(command, cwd=ROOT, check=True)
+              except subprocess.CalledProcessError:
+                  (ROOT / "bootstrap-failed-command.txt").write_text(" ".join(command) + "\\n", encoding="utf-8")
+                  raise'''
+          if old_run not in text:
+              raise RuntimeError('run()-Block im Bootstrap nicht gefunden')
+          text = text.replace(old_run, new_run, 1)
           old = '''planned = planned_path.read_text(encoding="utf-8")
           planned = re.sub(
               r"(?ms)^  - path: 01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet\n(?:    .*\n)+\n?",
@@ -93,8 +106,12 @@ jobs:
         if: steps.bootstrap.outcome == 'failure'
         run: |
           tail -n 160 bootstrap-unit-12.log > bootstrap-diagnostic.txt
-          summary=$(tail -n 12 bootstrap-unit-12.log | tr '\n' '_' | sed -E 's/[^[:alnum:]ÄÖÜäöüß._-]+/-/g' | cut -c1-180 || true)
-          if [[ -z "$summary" ]]; then summary=unbekannte-Fehlerursache; fi
+          if [[ -s bootstrap-failed-command.txt ]]; then
+            summary=$(tr ' /' '--' < bootstrap-failed-command.txt | tr -cd 'A-Za-z0-9._-' | cut -c1-180)
+          else
+            summary=python-bootstrap-runtime
+          fi
+          if [[ -z "$summary" ]]; then summary=unbekannter-Pflichtbefehl; fi
           echo "slug=$summary" >> "$GITHUB_OUTPUT"
 
       - name: Upload diagnostic
@@ -102,8 +119,10 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: unit12-${{ steps.diagnostic.outputs.slug }}
-          path: bootstrap-diagnostic.txt
-          if-no-files-found: error
+          path: |
+            bootstrap-diagnostic.txt
+            bootstrap-failed-command.txt
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Fail if generation failed
