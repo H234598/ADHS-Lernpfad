@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-17
+last_reviewed: 2026-07-21
 ---
 
 # Literatur
@@ -55,6 +55,14 @@ Faraone, S. V., Banaschewski, T., Coghill, D., et al. (2021). The World Federati
 - PubMed: [PMID 33549739](https://pubmed.ncbi.nlm.nih.gov/33549739/)
 - Evidenztyp: `consensus` · Evidenzgrad: `high` · Status: `consensus`
 
+## Garas2025
+
+Garas, P., Takacs, Z. K., & Balázs, J. (2025). Longitudinal Suicide Risk in Children and Adolescents With Attention Deficit and Hyperactivity Disorder: A Systematic Review and Meta-Analysis. *Brain and Behavior, 15*(6), e70618.
+
+- DOI: [https://doi.org/10.1002/brb3.70618](https://doi.org/10.1002/brb3.70618)
+- PubMed: [PMID 40534226](https://pubmed.ncbi.nlm.nih.gov/40534226/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Kofler2020
 
 Kofler, M. J., et al. (2020). Working memory and short-term memory deficits in ADHD: A bifactor modeling approach.
@@ -97,6 +105,14 @@ Nikolas, M. A. & Burt, S. A. (2010). Genetic and environmental influences on ADH
 - DOI: [https://doi.org/10.1037/a0018010](https://doi.org/10.1037/a0018010)
 - Evidenztyp: `twin-study-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
+## Rother2025
+
+Rother, Y., Orlando, C. M., Warren, P., & Flory, K. (2025). ADHD and Suicidality in Adolescents: A Systematic Review of Moderators and Mediators. *Clinical Child and Family Psychology Review, 28*(3), 573–611.
+
+- DOI: [https://doi.org/10.1007/s10567-025-00531-9](https://doi.org/10.1007/s10567-025-00531-9)
+- PubMed: [PMID 40536652](https://pubmed.ncbi.nlm.nih.gov/40536652/)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Sibley2018
 
 Sibley, M. H., Rohde, L. A., Swanson, J. M., et al. (2018). Late-onset ADHD reconsidered with comprehensive repeated assessments between ages 10 and 25. *American Journal of Psychiatry, 175*(2), 140–149.
@@ -136,3 +152,18 @@ Volkow, N. D., Wang, G.-J., Newcorn, J. H., et al. (2011). Motivation deficit in
 - DOI: [https://doi.org/10.1038/mp.2010.97](https://doi.org/10.1038/mp.2010.97)
 - Evidenztyp: `primary-study` · Evidenzgrad: `moderate` · Status: `probable`
 
+## Zhang2025
+
+Zhang, Y., Liao, W., Rao, Y., Gao, W., & Yang, R. (2025). Effects of ADHD and ADHD medications on depression and anxiety in children and adolescents: A systematic review and meta-analysis. *Journal of Psychiatric Research, 181*, 623–639.
+
+- DOI: [https://doi.org/10.1016/j.jpsychires.2024.12.022](https://doi.org/10.1016/j.jpsychires.2024.12.022)
+- PubMed: [PMID 39740618](https://pubmed.ncbi.nlm.nih.gov/39740618/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## vanDerPlas2026
+
+van der Plas, N. E., Noordermeer, S. D. S., Oosterlaan, J., & Luman, M. (2026). Systematic Review and Meta-Analysis: Predictors of Adult Psychiatric Outcomes of Childhood Attention-Deficit/Hyperactivity Disorder. *Journal of the American Academy of Child & Adolescent Psychiatry, 65*(2), 231–249.
+
+- DOI: [https://doi.org/10.1016/j.jaac.2025.04.012](https://doi.org/10.1016/j.jaac.2025.04.012)
+- PubMed: [PMID 40287009](https://pubmed.ncbi.nlm.nih.gov/40287009/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
