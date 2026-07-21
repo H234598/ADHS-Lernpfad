@@ -88,17 +88,23 @@ jobs:
             git push origin HEAD:agent/einheit-12-depression-und-suizidalitaet
           fi
 
-      - name: Persist compact diagnostic on branch
+      - name: Prepare compact diagnostic
+        id: diagnostic
         if: steps.bootstrap.outcome == 'failure'
         run: |
-          tail -n 120 bootstrap-unit-12.log > bootstrap-diagnostic.txt
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add bootstrap-diagnostic.txt
-          if ! git diff --cached --quiet; then
-            git commit -m 'diagnostic: sichere Fehlerursache für Einheit 12'
-            git push origin HEAD:agent/einheit-12-depression-und-suizidalitaet
-          fi
+          tail -n 160 bootstrap-unit-12.log > bootstrap-diagnostic.txt
+          summary=$(grep -E 'fehlgeschlagen|FEHLER|Error|error|ungültig|nicht gefunden|fehlt|nur [0-9]+|Maximum|mindestens|CalledProcessError' bootstrap-unit-12.log | tail -n 6 | tr '\n' '_' | sed -E 's/[^[:alnum:]ÄÖÜäöüß._-]+/-/g' | cut -c1-180)
+          if [[ -z "$summary" ]]; then summary=unbekannte-Fehlerursache; fi
+          echo "slug=$summary" >> "$GITHUB_OUTPUT"
+
+      - name: Upload diagnostic
+        if: steps.bootstrap.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit12-${{ steps.diagnostic.outputs.slug }}
+          path: bootstrap-diagnostic.txt
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Fail if generation failed
         if: steps.bootstrap.outcome == 'failure'
