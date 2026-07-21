@@ -1,51 +1,58 @@
 # Explizit geplante, noch nicht vorhandene Seiten.
-# Nur hier registrierte fehlende Ziele dürfen als planned veröffentlicht werden.
+# Nur hier registrierte fehlende Ziele dürfen als "planned" veröffentlicht werden.
 nodes:
-- path: 02-Vertiefung/01-Pharmakologie-und-Psychotherapie
-  title: Pharmakologie und Psychotherapie
-  type: chapter
-  scope: learning
-  level: Vertiefung
-  roadmap: ROADMAP.md#vertiefung
-- path: 02-Vertiefung/02-Autismus-ADHS-Ueberlappung
-  title: Autismus-/ADHS-Überlappung
-  type: chapter
-  scope: learning
-  level: Vertiefung
-  roadmap: ROADMAP.md#vertiefung
-- path: 02-Vertiefung/03-Parkinson-mechanistische-Vergleiche
-  title: Parkinson – mechanistische Vergleiche und klare Grenzen
-  type: chapter
-  scope: learning
-  level: Vertiefung
-  roadmap: ROADMAP.md#vertiefung
-- path: 02-Vertiefung/04-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet
-  title: Studienmethodik, Effektgrößen, Bias und Kausalität
-  type: chapter
-  scope: learning
-  level: Vertiefung
-  roadmap: ROADMAP.md#vertiefung
-- path: 03-Forschungsniveau/01-Genomik-Bildgebung-und-Computational-Psychiatry
-  title: Genomik, Bildgebung und Computational Psychiatry
-  type: chapter
-  scope: learning
-  level: Forschungsniveau
-  roadmap: ROADMAP.md#forschungsniveau
-- path: 03-Forschungsniveau/02-Kausale-Inferenz-und-longitudinale-Modelle
-  title: Kausale Inferenz und longitudinale Modelle
-  type: chapter
-  scope: learning
-  level: Forschungsniveau
-  roadmap: ROADMAP.md#forschungsniveau
-- path: 03-Forschungsniveau/03-Personalisierte-Behandlung
-  title: Personalisierte Behandlung – Möglichkeiten und Grenzen
-  type: chapter
-  scope: learning
-  level: Forschungsniveau
-  roadmap: ROADMAP.md#forschungsniveau
-- path: 03-Forschungsniveau/04-Offene-Forschungsfragen-und-Replikationsprobleme
-  title: Offene Forschungsfragen und Replikationsprobleme
-  type: chapter
-  scope: learning
-  level: Forschungsniveau
-  roadmap: ROADMAP.md#forschungsniveau
+  - path: 02-Vertiefung/01-Pharmakologie-und-Psychotherapie
+    title: Pharmakologie und Psychotherapie
+    type: chapter
+    scope: learning
+    level: Vertiefung
+    roadmap: ROADMAP.md#vertiefung
+
+  - path: 02-Vertiefung/02-Autismus-ADHS-Ueberlappung
+    title: Autismus-/ADHS-Überlappung
+    type: chapter
+    scope: learning
+    level: Vertiefung
+    roadmap: ROADMAP.md#vertiefung
+
+  - path: 02-Vertiefung/03-Parkinson-mechanistische-Vergleiche
+    title: Parkinson – mechanistische Vergleiche und klare Grenzen
+    type: chapter
+    scope: learning
+    level: Vertiefung
+    roadmap: ROADMAP.md#vertiefung
+
+  - path: 02-Vertiefung/04-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet
+    title: Studienmethodik, Effektgrößen, Bias und Kausalität
+    type: chapter
+    scope: learning
+    level: Vertiefung
+    roadmap: ROADMAP.md#vertiefung
+
+  - path: 03-Forschungsniveau/01-Genomik-Bildgebung-und-Computational-Psychiatry
+    title: Genomik, Bildgebung und Computational Psychiatry
+    type: chapter
+    scope: learning
+    level: Forschungsniveau
+    roadmap: ROADMAP.md#forschungsniveau
+
+  - path: 03-Forschungsniveau/02-Kausale-Inferenz-und-longitudinale-Modelle
+    title: Kausale Inferenz und longitudinale Modelle
+    type: chapter
+    scope: learning
+    level: Forschungsniveau
+    roadmap: ROADMAP.md#forschungsniveau
+
+  - path: 03-Forschungsniveau/03-Personalisierte-Behandlung
+    title: Personalisierte Behandlung – Möglichkeiten und Grenzen
+    type: chapter
+    scope: learning
+    level: Forschungsniveau
+    roadmap: ROADMAP.md#forschungsniveau
+
+  - path: 03-Forschungsniveau/04-Offene-Forschungsfragen-und-Replikationsprobleme
+    title: Offene Forschungsfragen und Replikationsprobleme
+    type: chapter
+    scope: learning
+    level: Forschungsniveau
+    roadmap: ROADMAP.md#forschungsniveau
