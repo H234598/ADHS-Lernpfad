@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          show-progress: false
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -38,26 +39,43 @@ jobs:
             requirements-export.txt
 
       - name: Install Python dependencies
-        run: python -m pip install --disable-pip-version-check -r requirements-docs.txt -r requirements-export.txt
+        run: python -m pip install --disable-pip-version-check -q -r requirements-docs.txt -r requirements-export.txt
 
       - name: Apply unit 12 bootstrap
+        id: bootstrap
+        continue-on-error: true
         if: github.event_name == 'pull_request' && github.head_ref == 'agent/einheit-12-depression-und-suizidalitaet'
         run: |
-          set +e
-          python .unit12-bootstrap/apply.py > bootstrap-unit-12.log 2>&1
-          status=$?
-          set -e
-          if [[ "$status" -ne 0 ]]; then
-            echo 'Bootstrap fehlgeschlagen; letzte Diagnosezeilen:'
-            tail -n 8 bootstrap-unit-12.log
-            exit "$status"
-          fi
+          set -o pipefail
+          python .unit12-bootstrap/apply.py 2>&1 | tee bootstrap-unit-12.log
           git show origin/main:.github/workflows/validate.yml > .github/workflows/validate.yml
           git add .github/workflows/validate.yml
           if ! git diff --cached --quiet; then
             git commit -m 'chore: stelle regulären Validierungsworkflow wieder her'
             git push origin HEAD:agent/einheit-12-depression-und-suizidalitaet
           fi
+
+      - name: Publish bootstrap diagnostic in PR body
+        if: always() && steps.bootstrap.outcome == 'failure' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr view "$PR_NUMBER" --json body --jq .body > /tmp/current-body.md
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          body = Path('/tmp/current-body.md').read_text(encoding='utf-8')
+          body = re.sub(r'\n?<!-- bootstrap-diagnostic:start -->.*?<!-- bootstrap-diagnostic:end -->\n?', '\n', body, flags=re.S)
+          log = Path('bootstrap-unit-12.log').read_text(encoding='utf-8', errors='replace').splitlines()
+          diagnostic = '\n\n<!-- bootstrap-diagnostic:start -->\n## Aktuelle Bootstrap-Diagnose\n\n```text\n' + '\n'.join(log[-80:]) + '\n```\n<!-- bootstrap-diagnostic:end -->\n'
+          Path('/tmp/updated-body.md').write_text(body.rstrip() + diagnostic, encoding='utf-8')
+          PY
+          gh pr edit "$PR_NUMBER" --body-file /tmp/updated-body.md
+
+      - name: Stop after bootstrap failure
+        if: steps.bootstrap.outcome == 'failure'
+        run: exit 1
 
       - name: Verify installed dependencies
         run: python -m pip check
