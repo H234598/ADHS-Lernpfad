@@ -52,19 +52,6 @@ jobs:
           text = path.read_text(encoding='utf-8')
           if 'import yaml\n' not in text:
               text = text.replace('import subprocess\n', 'import subprocess\nimport yaml\n', 1)
-          old_run = '''def run(*command: str) -> None:
-              print("+", " ".join(command), flush=True)
-              subprocess.run(command, cwd=ROOT, check=True)'''
-          new_run = '''def run(*command: str) -> None:
-              print("+", " ".join(command), flush=True)
-              try:
-                  subprocess.run(command, cwd=ROOT, check=True)
-              except subprocess.CalledProcessError:
-                  (ROOT / "bootstrap-failed-command.txt").write_text(" ".join(command) + "\\n", encoding="utf-8")
-                  raise'''
-          if old_run not in text:
-              raise RuntimeError('run()-Block im Bootstrap nicht gefunden')
-          text = text.replace(old_run, new_run, 1)
           old = '''planned = planned_path.read_text(encoding="utf-8")
           planned = re.sub(
               r"(?ms)^  - path: 01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet\n(?:    .*\n)+\n?",
@@ -111,15 +98,9 @@ jobs:
           import re
 
           log_path = Path('bootstrap-unit-12.log')
-          command_path = Path('bootstrap-failed-command.txt')
           lines = log_path.read_text(encoding='utf-8', errors='replace').splitlines() if log_path.exists() else []
           Path('bootstrap-diagnostic.txt').write_text('\n'.join(lines[-160:]) + ('\n' if lines else 'Kein Bootstrap-Log erzeugt.\n'), encoding='utf-8')
-          if command_path.exists() and command_path.read_text(encoding='utf-8').strip():
-              source = command_path.read_text(encoding='utf-8').strip()
-          elif lines:
-              source = 'runtime-' + '-'.join(lines[-3:])
-          else:
-              source = 'runtime-patch-failed-before-log'
+          source = 'runtime-' + '-'.join(lines[-3:]) if lines else 'runtime-patch-failed-before-log'
           slug = re.sub(r'[^A-Za-z0-9._-]+', '-', source).strip('-')[:180] or 'unknown-error'
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as handle:
               handle.write(f'slug={slug}\n')
@@ -130,10 +111,8 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: unit12-${{ steps.diagnostic.outputs.slug }}
-          path: |
-            bootstrap-diagnostic.txt
-            bootstrap-failed-command.txt
-          if-no-files-found: warn
+          path: bootstrap-diagnostic.txt
+          if-no-files-found: error
           retention-days: 7
 
       - name: Fail if generation failed
