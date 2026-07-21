@@ -105,14 +105,25 @@ jobs:
         id: diagnostic
         if: steps.bootstrap.outcome == 'failure'
         run: |
-          tail -n 160 bootstrap-unit-12.log > bootstrap-diagnostic.txt
-          if [[ -s bootstrap-failed-command.txt ]]; then
-            summary=$(tr ' /' '--' < bootstrap-failed-command.txt | tr -cd 'A-Za-z0-9._-' | cut -c1-180)
-          else
-            summary=python-bootstrap-runtime
-          fi
-          if [[ -z "$summary" ]]; then summary=unbekannter-Pflichtbefehl; fi
-          echo "slug=$summary" >> "$GITHUB_OUTPUT"
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          log_path = Path('bootstrap-unit-12.log')
+          command_path = Path('bootstrap-failed-command.txt')
+          lines = log_path.read_text(encoding='utf-8', errors='replace').splitlines() if log_path.exists() else []
+          Path('bootstrap-diagnostic.txt').write_text('\n'.join(lines[-160:]) + ('\n' if lines else 'Kein Bootstrap-Log erzeugt.\n'), encoding='utf-8')
+          if command_path.exists() and command_path.read_text(encoding='utf-8').strip():
+              source = command_path.read_text(encoding='utf-8').strip()
+          elif lines:
+              source = 'runtime-' + '-'.join(lines[-3:])
+          else:
+              source = 'runtime-patch-failed-before-log'
+          slug = re.sub(r'[^A-Za-z0-9._-]+', '-', source).strip('-')[:180] or 'unknown-error'
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as handle:
+              handle.write(f'slug={slug}\n')
+          PY
 
       - name: Upload diagnostic
         if: steps.bootstrap.outcome == 'failure'
