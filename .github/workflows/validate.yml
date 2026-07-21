@@ -63,6 +63,21 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+      - name: Comment bootstrap diagnostic
+        if: always() && steps.bootstrap.outcome == 'failure' && github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo '## Bootstrap-Diagnose für Einheit 12'
+            echo
+            echo '```text'
+            tail -n 140 bootstrap-unit-12.log
+            echo '```'
+          } > /tmp/bootstrap-comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/bootstrap-comment.md
+
       - name: Stop after bootstrap failure
         if: steps.bootstrap.outcome == 'failure'
         run: exit 1
