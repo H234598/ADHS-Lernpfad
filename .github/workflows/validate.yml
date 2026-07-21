@@ -41,46 +41,23 @@ jobs:
         run: python -m pip install --disable-pip-version-check -r requirements-docs.txt -r requirements-export.txt
 
       - name: Apply unit 12 bootstrap
-        id: bootstrap
-        continue-on-error: true
         if: github.event_name == 'pull_request' && github.head_ref == 'agent/einheit-12-depression-und-suizidalitaet'
         run: |
-          set -o pipefail
-          python .unit12-bootstrap/apply.py 2>&1 | tee bootstrap-unit-12.log
+          set +e
+          python .unit12-bootstrap/apply.py > bootstrap-unit-12.log 2>&1
+          status=$?
+          set -e
+          if [[ "$status" -ne 0 ]]; then
+            echo 'Bootstrap fehlgeschlagen; letzte Diagnosezeilen:'
+            tail -n 8 bootstrap-unit-12.log
+            exit "$status"
+          fi
           git show origin/main:.github/workflows/validate.yml > .github/workflows/validate.yml
           git add .github/workflows/validate.yml
           if ! git diff --cached --quiet; then
             git commit -m 'chore: stelle regulären Validierungsworkflow wieder her'
             git push origin HEAD:agent/einheit-12-depression-und-suizidalitaet
           fi
-
-      - name: Upload bootstrap diagnostic
-        if: always() && steps.bootstrap.outcome == 'failure'
-        uses: actions/upload-artifact@v7
-        with:
-          name: unit-12-bootstrap-diagnostic
-          path: bootstrap-unit-12.log
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Comment bootstrap diagnostic
-        if: always() && steps.bootstrap.outcome == 'failure' && github.event_name == 'pull_request'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          {
-            echo '## Bootstrap-Diagnose für Einheit 12'
-            echo
-            echo '```text'
-            tail -n 140 bootstrap-unit-12.log
-            echo '```'
-          } > /tmp/bootstrap-comment.md
-          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/bootstrap-comment.md
-
-      - name: Stop after bootstrap failure
-        if: steps.bootstrap.outcome == 'failure'
-        run: exit 1
 
       - name: Verify installed dependencies
         run: python -m pip check
