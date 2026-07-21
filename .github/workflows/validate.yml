@@ -47,7 +47,7 @@ jobs:
         if: github.event_name == 'pull_request' && github.head_ref == 'agent/einheit-12-depression-und-suizidalitaet'
         run: |
           set -o pipefail
-          python .unit12-bootstrap/apply.py 2>&1 | tee bootstrap-unit-12.log
+          PYTHONPATH=scripts python .unit12-bootstrap/apply.py 2>&1 | tee bootstrap-unit-12.log
           git show origin/main:.github/workflows/validate.yml > .github/workflows/validate.yml
           git add .github/workflows/validate.yml
           if ! git diff --cached --quiet; then
