@@ -1,5 +1,14 @@
 # Änderungsverlauf
  
+
+## 0.11.0 – 2026-07-21
+
+- Einheit 12 „Komorbidität, Depression und Suizidalität“ ergänzt
+- Depression, Suizidalität und nichtsuizidale Selbstverletzung voneinander abgegrenzt
+- Gruppenrisiken, individuelle Krisenbeurteilung, Sicherheitsplanung und Akuthilfe differenziert eingeordnet
+- sieben aktuelle Leitlinien-, Meta-Analyse- und Register-Studienkarten ergänzt
+- Glossar, Anki, Navigation, Index und Wissensgraphplanung aktualisiert
+
 ## 0.8.1 – 2026-07-14
 
 - Obsidian-Callouts beim Web-Build in native MkDocs-Material-Admonitions umgewandelt

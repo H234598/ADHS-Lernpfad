@@ -1,13 +1,16 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-17
+last_reviewed: 2026-07-21
 ---
 
 # Glossar
 
 ## Aktigrafie
 Verfahren zur längerfristigen Schätzung von Aktivitäts- und Ruhephasen mit einem tragbaren Bewegungssensor; nützlich für Alltagsmuster, aber kein vollständiger Ersatz für eine Schlaflaboruntersuchung.
+
+## Anhedonie
+Deutlicher Verlust von Interesse oder Freude an Tätigkeiten, die zuvor als angenehm oder bedeutsam erlebt wurden; ein mögliches Kernsymptom depressiver Episoden.
 
 ## Arbeitsgedächtnis
 System zur kurzfristigen aktiven Speicherung und Bearbeitung von Information.
@@ -20,6 +23,9 @@ Abnahme des subjektiven Werts einer Belohnung mit zunehmender Verzögerung.
 
 ## Default Mode Network
 Netzwerk für innerlich gerichtete Gedanken, autobiografische Verarbeitung und spontanes Gedankenschweifen.
+
+## Depressive Episode
+Zeitlich abgrenzbare Konstellation depressiver Symptome mit klinisch relevanter Dauer, Schwere und Funktionsbeeinträchtigung; nicht gleichbedeutend mit vorübergehender Traurigkeit oder Frustration.
 
 ## Diagnostisches Überschatten
 Fehlschluss, neue oder zusätzliche Beschwerden vollständig einer bereits bekannten Diagnose zuzuschreiben.
@@ -69,6 +75,9 @@ Zusätzliche Erkrankung oder Störung, die gleichzeitig mit einer anderen Diagno
 ## Neuroentwicklung
 Veränderung und Reifung neuronaler Systeme im Zusammenspiel mit Lernen, Umwelt und biologischen Voraussetzungen über die Entwicklung hinweg.
 
+## Nichtsuizidales selbstverletzendes Verhalten
+Absichtliche Selbstverletzung ohne beabsichtigten Tod; die Absicht kann ambivalent oder veränderlich sein, weshalb eine individuelle fachliche Beurteilung erforderlich bleibt.
+
 ## Persistenz
 Fortbestehen von Symptomen oder Beeinträchtigungen über einen längeren Zeitraum; nicht zwingend mit unveränderter Stärke.
 
@@ -92,6 +101,12 @@ Zusammenfassender Begriff für Einschlafdauer, nächtliche Wachphasen, Gesamtsch
 
 ## Screening
 Kurze systematische Prüfung, die eine Wahrscheinlichkeit abschätzt, aber keine vollständige Diagnose ersetzt.
+
+## Sicherheitsplan
+Kurze, gemeinsam entwickelte Folge konkreter Schritte, Kontakte und Schutzmaßnahmen für eine psychische Krise; ersetzt weder Behandlung noch akute Notfallhilfe.
+
+## Suizidalität
+Spektrum von Todes- oder Suizidgedanken über Absichten und Planungen bis zu suizidalen Handlungen; Dringlichkeit und Bedeutung müssen individuell und direkt beurteilt werden.
 
 ## Zirkadianer Rhythmus
 Ungefähr 24-stündiger biologischer Zeitrhythmus, der unter anderem Schlafneigung, Wachheit, Körpertemperatur und Hormonausschüttung beeinflusst.

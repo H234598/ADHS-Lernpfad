@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-17
+last_reviewed: 2026-07-21
 ---
 
 # Literatur
@@ -55,6 +55,22 @@ Faraone, S. V., Banaschewski, T., Coghill, D., et al. (2021). The World Federati
 - PubMed: [PMID 33549739](https://pubmed.ncbi.nlm.nih.gov/33549739/)
 - Evidenztyp: `consensus` · Evidenzgrad: `high` · Status: `consensus`
 
+## Fitzgerald2019
+
+Fitzgerald, C., Dalsgaard, S., Nordentoft, M., & Erlangsen, A. (2019). Suicidal behaviour among persons with attention-deficit hyperactivity disorder. *The British Journal of Psychiatry, 215*(4), 615–620.
+
+- DOI: [https://doi.org/10.1192/bjp.2019.128](https://doi.org/10.1192/bjp.2019.128)
+- PubMed: [PMID 31172893](https://pubmed.ncbi.nlm.nih.gov/31172893/)
+- Evidenztyp: `national-register-cohort` · Evidenzgrad: `moderate` · Status: `consensus`
+
+## Garas2025
+
+Garas, P., Takacs, Z. K., & Balázs, J. (2025). Longitudinal Suicide Risk in Children and Adolescents With Attention Deficit and Hyperactivity Disorder: A Systematic Review and Meta-Analysis. *Brain and Behavior, 15*(6), e70618.
+
+- DOI: [https://doi.org/10.1002/brb3.70618](https://doi.org/10.1002/brb3.70618)
+- PubMed: [PMID 40534226](https://pubmed.ncbi.nlm.nih.gov/40534226/)
+- Evidenztyp: `systematic-review-and-meta-analysis-longitudinal` · Evidenzgrad: `moderate` · Status: `consensus`
+
 ## Kofler2020
 
 Kofler, M. J., et al. (2020). Working memory and short-term memory deficits in ADHD: A bifactor modeling approach.
@@ -90,12 +106,32 @@ National Institute for Health and Care Excellence (2018). Attention deficit hype
 
 - Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
 
+## NICE2022SelfHarm
+
+National Institute for Health and Care Excellence (2022). Self-harm: assessment, management and preventing recurrence.
+
+- Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
+
+## NVLDepression2022
+
+Bundesärztekammer, Kassenärztliche Bundesvereinigung, & Arbeitsgemeinschaft der Wissenschaftlichen Medizinischen Fachgesellschaften (2022). Nationale VersorgungsLeitlinie Unipolare Depression, Version 3.2.
+
+- Evidenztyp: `national-clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Nikolas2010
 
 Nikolas, M. A. & Burt, S. A. (2010). Genetic and environmental influences on ADHD symptom dimensions of inattention and hyperactivity: A meta-analysis. *Journal of Abnormal Psychology, 119*(1), 1–17.
 
 - DOI: [https://doi.org/10.1037/a0018010](https://doi.org/10.1037/a0018010)
 - Evidenztyp: `twin-study-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## Septier2019
+
+Septier, M., Stordeur, C., Zhang, J., Delorme, R., & Cortese, S. (2019). Association between suicidal spectrum behaviors and Attention-Deficit/Hyperactivity Disorder: A systematic review and meta-analysis. *Neuroscience & Biobehavioral Reviews, 103*, 109–118.
+
+- DOI: [https://doi.org/10.1016/j.neubiorev.2019.05.022](https://doi.org/10.1016/j.neubiorev.2019.05.022)
+- PubMed: [PMID 31129238](https://pubmed.ncbi.nlm.nih.gov/31129238/)
+- Evidenztyp: `preregistered-systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `consensus`
 
 ## Sibley2018
 
@@ -135,4 +171,20 @@ Volkow, N. D., Wang, G.-J., Newcorn, J. H., et al. (2011). Motivation deficit in
 
 - DOI: [https://doi.org/10.1038/mp.2010.97](https://doi.org/10.1038/mp.2010.97)
 - Evidenztyp: `primary-study` · Evidenzgrad: `moderate` · Status: `probable`
+
+## Zhang2025Depression
+
+Zhang, Y., Liao, W., Rao, Y., Gao, W., & Yang, R. (2025). Effects of ADHD and ADHD medications on depression and anxiety in children and adolescents: A systematic review and meta-analysis. *Journal of Psychiatric Research, 181*, 623–639.
+
+- DOI: [https://doi.org/10.1016/j.jpsychires.2024.12.022](https://doi.org/10.1016/j.jpsychires.2024.12.022)
+- PubMed: [PMID 39740618](https://pubmed.ncbi.nlm.nih.gov/39740618/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `consensus`
+
+## Zhang2025Medication
+
+Zhang, L., Zhu, N., Sjölander, A., et al. (2025). ADHD drug treatment and risk of suicidal behaviours, substance misuse, accidental injuries, transport accidents, and criminality: emulation of target trials. *BMJ, 390*, e083658.
+
+- DOI: [https://doi.org/10.1136/bmj-2024-083658](https://doi.org/10.1136/bmj-2024-083658)
+- PubMed: [PMID 40803836](https://pubmed.ncbi.nlm.nih.gov/40803836/)
+- Evidenztyp: `target-trial-emulation-register-study` · Evidenzgrad: `moderate` · Status: `probable`
 

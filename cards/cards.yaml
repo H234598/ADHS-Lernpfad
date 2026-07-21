@@ -106,3 +106,15 @@ cards:
   - Grundlagen
   - Schlaf
   - Einheit_11
+- id: 1012
+  unit: 12
+  front: Warum erlaubt ein erhöhtes Suizidalitätsrisiko bei ADHS keine Vorhersage für eine einzelne Person?
+  back: Weil es ein heterogener Gruppenbefund ist; die konkrete Beurteilung muss aktuelle
+    Gedanken und Absichten, frühere Handlungen, Depression und weitere Komorbiditäten,
+    Belastungen, Schutzfaktoren und erreichbare Hilfe berücksichtigen.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Depression
+  - Suizidalität
+  - Einheit_12

@@ -186,6 +186,76 @@
     "volume": "128"
   },
   {
+    "DOI": "10.1192/bjp.2019.128",
+    "PMID": "31172893",
+    "URL": "https://doi.org/10.1192/bjp.2019.128",
+    "author": [
+      {
+        "family": "Fitzgerald",
+        "given": "C."
+      },
+      {
+        "family": "Dalsgaard",
+        "given": "S."
+      },
+      {
+        "family": "Nordentoft",
+        "given": "M."
+      },
+      {
+        "family": "Erlangsen",
+        "given": "A."
+      }
+    ],
+    "container-title": "The British Journal of Psychiatry",
+    "id": "Fitzgerald2019",
+    "issue": "4",
+    "issued": {
+      "date-parts": [
+        [
+          2019
+        ]
+      ]
+    },
+    "page": "615–620",
+    "title": "Suicidal behaviour among persons with attention-deficit hyperactivity disorder",
+    "type": "article-journal",
+    "volume": "215"
+  },
+  {
+    "DOI": "10.1002/brb3.70618",
+    "PMID": "40534226",
+    "URL": "https://doi.org/10.1002/brb3.70618",
+    "author": [
+      {
+        "family": "Garas",
+        "given": "P."
+      },
+      {
+        "family": "Takacs",
+        "given": "Z. K."
+      },
+      {
+        "family": "Balázs",
+        "given": "J."
+      }
+    ],
+    "container-title": "Brain and Behavior",
+    "id": "Garas2025",
+    "issue": "6",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "number": "e70618",
+    "title": "Longitudinal Suicide Risk in Children and Adolescents With Attention Deficit and Hyperactivity Disorder: A Systematic Review and Meta-Analysis",
+    "type": "article-journal",
+    "volume": "15"
+  },
+  {
     "author": [
       {
         "family": "Kofler",
@@ -309,6 +379,46 @@
     "type": "report"
   },
   {
+    "author": [
+      {
+        "literal": "National Institute for Health and Care Excellence"
+      }
+    ],
+    "id": "NICE2022SelfHarm",
+    "issued": {
+      "date-parts": [
+        [
+          2022
+        ]
+      ]
+    },
+    "title": "Self-harm: assessment, management and preventing recurrence",
+    "type": "report"
+  },
+  {
+    "author": [
+      {
+        "literal": "Bundesärztekammer"
+      },
+      {
+        "literal": "Kassenärztliche Bundesvereinigung"
+      },
+      {
+        "literal": "Arbeitsgemeinschaft der Wissenschaftlichen Medizinischen Fachgesellschaften"
+      }
+    ],
+    "id": "NVLDepression2022",
+    "issued": {
+      "date-parts": [
+        [
+          2022
+        ]
+      ]
+    },
+    "title": "Nationale VersorgungsLeitlinie Unipolare Depression, Version 3.2",
+    "type": "report"
+  },
+  {
     "DOI": "10.1037/a0018010",
     "URL": "https://doi.org/10.1037/a0018010",
     "author": [
@@ -335,6 +445,46 @@
     "title": "Genetic and environmental influences on ADHD symptom dimensions of inattention and hyperactivity: A meta-analysis",
     "type": "article-journal",
     "volume": "119"
+  },
+  {
+    "DOI": "10.1016/j.neubiorev.2019.05.022",
+    "PMID": "31129238",
+    "URL": "https://doi.org/10.1016/j.neubiorev.2019.05.022",
+    "author": [
+      {
+        "family": "Septier",
+        "given": "M."
+      },
+      {
+        "family": "Stordeur",
+        "given": "C."
+      },
+      {
+        "family": "Zhang",
+        "given": "J."
+      },
+      {
+        "family": "Delorme",
+        "given": "R."
+      },
+      {
+        "family": "Cortese",
+        "given": "S."
+      }
+    ],
+    "container-title": "Neuroscience & Biobehavioral Reviews",
+    "id": "Septier2019",
+    "issued": {
+      "date-parts": [
+        [
+          2019
+        ]
+      ]
+    },
+    "page": "109–118",
+    "title": "Association between suicidal spectrum behaviors and Attention-Deficit/Hyperactivity Disorder: A systematic review and meta-analysis",
+    "type": "article-journal",
+    "volume": "103"
   },
   {
     "DOI": "10.1176/appi.ajp.2017.17030298",
@@ -525,5 +675,78 @@
     "title": "Motivation deficit in ADHD is associated with dysfunction of the dopamine reward pathway",
     "type": "article-journal",
     "volume": "16"
+  },
+  {
+    "DOI": "10.1016/j.jpsychires.2024.12.022",
+    "PMID": "39740618",
+    "URL": "https://doi.org/10.1016/j.jpsychires.2024.12.022",
+    "author": [
+      {
+        "family": "Zhang",
+        "given": "Y."
+      },
+      {
+        "family": "Liao",
+        "given": "W."
+      },
+      {
+        "family": "Rao",
+        "given": "Y."
+      },
+      {
+        "family": "Gao",
+        "given": "W."
+      },
+      {
+        "family": "Yang",
+        "given": "R."
+      }
+    ],
+    "container-title": "Journal of Psychiatric Research",
+    "id": "Zhang2025Depression",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "page": "623–639",
+    "title": "Effects of ADHD and ADHD medications on depression and anxiety in children and adolescents: A systematic review and meta-analysis",
+    "type": "article-journal",
+    "volume": "181"
+  },
+  {
+    "DOI": "10.1136/bmj-2024-083658",
+    "PMID": "40803836",
+    "URL": "https://doi.org/10.1136/bmj-2024-083658",
+    "author": [
+      {
+        "family": "Zhang",
+        "given": "L."
+      },
+      {
+        "family": "Zhu",
+        "given": "N."
+      },
+      {
+        "family": "Sjölander",
+        "given": "A."
+      }
+    ],
+    "container-title": "BMJ",
+    "id": "Zhang2025Medication",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "number": "e083658",
+    "title": "ADHD drug treatment and risk of suicidal behaviours, substance misuse, accidental injuries, transport accidents, and criminality: emulation of target trials",
+    "type": "article-journal",
+    "volume": "390"
   }
 ]
