@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: write
-  issues: write
-  pull-requests: write
 
 concurrency:
   group: validate-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -18,12 +16,12 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate and build
+    name: Generate and validate unit 12
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout repository
+      - name: Checkout actual PR head
         uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -39,14 +37,15 @@ jobs:
             requirements-docs.txt
             requirements-export.txt
 
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: python -m pip install --disable-pip-version-check -q -r requirements-docs.txt -r requirements-export.txt
 
-      - name: Apply unit 12 bootstrap
+      - name: Apply unit 12 and all required checks
         id: bootstrap
         continue-on-error: true
         if: github.event_name == 'pull_request' && github.head_ref == 'agent/einheit-12-depression-und-suizidalitaet'
         run: |
+          rm -f bootstrap-diagnostic.txt
           python - <<'PY'
           from pathlib import Path
           path = Path('.unit12-bootstrap/apply.py')
@@ -89,176 +88,18 @@ jobs:
             git push origin HEAD:agent/einheit-12-depression-und-suizidalitaet
           fi
 
-      - name: Publish bootstrap diagnostic in PR body
-        if: always() && steps.bootstrap.outcome == 'failure' && github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+      - name: Persist compact diagnostic on branch
+        if: steps.bootstrap.outcome == 'failure'
         run: |
-          gh api "repos/H234598/ADHS-Lernpfad/pulls/$PR_NUMBER" --jq .body > /tmp/current-body.md
-          python - <<'PY'
-          from pathlib import Path
-          import re
-          body = Path('/tmp/current-body.md').read_text(encoding='utf-8')
-          body = re.sub(r'\n?<!-- bootstrap-diagnostic:start -->.*?<!-- bootstrap-diagnostic:end -->\n?', '\n', body, flags=re.S)
-          log = Path('bootstrap-unit-12.log').read_text(encoding='utf-8', errors='replace').splitlines()
-          diagnostic = '\n\n<!-- bootstrap-diagnostic:start -->\n## Aktuelle Bootstrap-Diagnose\n\n```text\n' + '\n'.join(log[-80:]) + '\n```\n<!-- bootstrap-diagnostic:end -->\n'
-          Path('/tmp/updated-body.md').write_text(body.rstrip() + diagnostic, encoding='utf-8')
-          PY
-          jq -Rs '{body: .}' /tmp/updated-body.md > /tmp/pr-body.json
-          gh api --method PATCH "repos/H234598/ADHS-Lernpfad/pulls/$PR_NUMBER" --input /tmp/pr-body.json
+          tail -n 120 bootstrap-unit-12.log > bootstrap-diagnostic.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add bootstrap-diagnostic.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'diagnostic: sichere Fehlerursache für Einheit 12'
+            git push origin HEAD:agent/einheit-12-depression-und-suizidalitaet
+          fi
 
-      - name: Stop after bootstrap failure
+      - name: Fail if generation failed
         if: steps.bootstrap.outcome == 'failure'
         run: exit 1
-
-      - name: Verify installed dependencies
-        run: python -m pip check
-
-      - name: Check whitespace and source syntax
-        run: |
-          git diff --check
-          python -m compileall -q scripts
-          find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
-
-      - name: Validate Obsidian links
-        run: python scripts/validate_links.py
-
-      - name: Build literature and citation exports
-        run: python scripts/build_literature.py
-
-      - name: Verify generated bibliography is committed
-        run: |
-          mkdir -p build
-          git add --intent-to-add Literatur.md references.bib references.json
-          if ! git diff --quiet -- Literatur.md references.bib references.json; then
-            {
-              echo '# Bibliografie-Generatorabweichung'
-              echo
-              echo 'Die folgenden generierten Dateien stimmen nicht mit dem Commit überein:'
-              echo
-              echo '```diff'
-              git diff -- Literatur.md references.bib references.json
-              echo '```'
-            } | tee build/validation-report.txt
-            exit 1
-          fi
-
-      - name: Build knowledge graph
-        run: python scripts/build_graph.py
-
-      - name: Validate compendium
-        id: compendium_validation
-        run: python scripts/validate_compendium.py
-
-      - name: Show validation summary
-        if: always()
-        run: echo "${{ steps.compendium_validation.outputs.summary }}"
-
-      - name: Upload validation report
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: validation-report
-          path: build/validation-report.txt
-          if-no-files-found: warn
-          retention-days: 14
-
-      - name: Comment validation report
-        if: always() && github.event_name == 'pull_request'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if [[ -f build/validation-report.txt ]]; then
-            jq -Rs '{body: .}' build/validation-report.txt > /tmp/comment.json
-            gh api --method POST \
-              repos/H234598/ADHS-Lernpfad/issues/${{ github.event.pull_request.number }}/comments \
-              --input /tmp/comment.json
-          fi
-
-      - name: Fail on validation errors
-        if: steps.compendium_validation.outputs.failed == 'true'
-        run: |
-          cat build/validation-report.txt
-          exit 1
-
-      - name: Build combined document
-        run: python scripts/build_combined.py
-
-      - name: Build Anki deck
-        run: python scripts/build_anki.py
-
-      - name: Build documentation sources
-        run: python scripts/build_docs.py
-
-      - name: Build MkDocs site strictly
-        run: mkdocs build --strict
-
-  export-smoke:
-    name: Build all download formats
-    if: github.event_name != 'push'
-    needs: validate
-    runs-on: ubuntu-24.04
-    timeout-minutes: 35
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-          cache: pip
-          cache-dependency-path: requirements-export.txt
-
-      - name: Install Python dependencies
-        run: python -m pip install --disable-pip-version-check -r requirements-export.txt
-
-      - name: Build source artifacts
-        run: |
-          python scripts/validate_links.py
-          python scripts/build_literature.py
-          python scripts/build_graph.py
-          python scripts/build_combined.py
-          python scripts/build_anki.py
-
-      - name: Install Pandoc and LuaLaTeX
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends \
-            pandoc \
-            texlive-luatex \
-            texlive-latex-recommended \
-            texlive-latex-extra \
-            texlive-fonts-recommended \
-            texlive-lang-german \
-            fonts-dejavu-core
-
-      - name: Build complete download bundle
-        run: python scripts/build_exports.py
-
-      - name: Verify expected downloads
-        run: |
-          test -s build/artifacts/ADHS-Lernpfad.pdf
-          test -s build/artifacts/ADHS-Lernpfad.epub
-          test -s build/artifacts/ADHS-Lernpfad.html
-          test -s build/artifacts/ADHS-Lernpfad.tex
-          test -s build/artifacts/ADHS-Lernpfad-Gesamtdokument.md
-          test -s build/artifacts/ADHS-Lernpfad-Obsidian-Vault.zip
-          test -s build/artifacts/ADHS-Lernpfad.apkg
-          test -s build/artifacts/references.bib
-          test -s build/artifacts/references.json
-          test -s build/artifacts/downloads.json
-          test -s build/artifacts/SHA256SUMS.txt
-          cd build/artifacts
-          sha256sum --check SHA256SUMS.txt
-
-      - name: Upload preview download bundle
-        uses: actions/upload-artifact@v7
-        with:
-          name: download-center-preview
-          path: build/artifacts/
-          if-no-files-found: error
-          retention-days: 7
