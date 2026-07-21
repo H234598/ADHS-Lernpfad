@@ -94,7 +94,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh pr view "$PR_NUMBER" --json body --jq .body > /tmp/current-body.md
+          gh api "repos/H234598/ADHS-Lernpfad/pulls/$PR_NUMBER" --jq .body > /tmp/current-body.md
           python - <<'PY'
           from pathlib import Path
           import re
@@ -104,7 +104,8 @@ jobs:
           diagnostic = '\n\n<!-- bootstrap-diagnostic:start -->\n## Aktuelle Bootstrap-Diagnose\n\n```text\n' + '\n'.join(log[-80:]) + '\n```\n<!-- bootstrap-diagnostic:end -->\n'
           Path('/tmp/updated-body.md').write_text(body.rstrip() + diagnostic, encoding='utf-8')
           PY
-          gh pr edit "$PR_NUMBER" --body-file /tmp/updated-body.md
+          jq -Rs '{body: .}' /tmp/updated-body.md > /tmp/pr-body.json
+          gh api --method PATCH "repos/H234598/ADHS-Lernpfad/pulls/$PR_NUMBER" --input /tmp/pr-body.json
 
       - name: Stop after bootstrap failure
         if: steps.bootstrap.outcome == 'failure'
