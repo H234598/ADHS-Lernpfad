@@ -93,7 +93,7 @@ jobs:
         if: steps.bootstrap.outcome == 'failure'
         run: |
           tail -n 160 bootstrap-unit-12.log > bootstrap-diagnostic.txt
-          summary=$(grep -E 'fehlgeschlagen|FEHLER|Error|error|ungültig|nicht gefunden|fehlt|nur [0-9]+|Maximum|mindestens|CalledProcessError' bootstrap-unit-12.log | tail -n 6 | tr '\n' '_' | sed -E 's/[^[:alnum:]ÄÖÜäöüß._-]+/-/g' | cut -c1-180)
+          summary=$(tail -n 12 bootstrap-unit-12.log | tr '\n' '_' | sed -E 's/[^[:alnum:]ÄÖÜäöüß._-]+/-/g' | cut -c1-180 || true)
           if [[ -z "$summary" ]]; then summary=unbekannte-Fehlerursache; fi
           echo "slug=$summary" >> "$GITHUB_OUTPUT"
 
