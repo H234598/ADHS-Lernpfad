@@ -1,13 +1,6 @@
 # Bewusst geplante, noch nicht vorhandene Seiten.
 # Nur hier registrierte fehlende Ziele dürfen als "planned" veröffentlicht werden.
 nodes:
-  - path: 01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet
-    title: Komorbidität, Depression und Suizidalität
-    type: chapter
-    scope: learning
-    level: Grundlagen
-    roadmap: ROADMAP.md#grundlagen
-
   - path: 02-Vertiefung/01-Pharmakologie-und-Psychotherapie
     title: Pharmakologie und Psychotherapie
     type: chapter

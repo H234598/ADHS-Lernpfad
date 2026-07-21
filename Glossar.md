@@ -1,13 +1,16 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-17
+last_reviewed: 2026-07-21
 ---
 
 # Glossar
 
 ## Aktigrafie
 Verfahren zur längerfristigen Schätzung von Aktivitäts- und Ruhephasen mit einem tragbaren Bewegungssensor; nützlich für Alltagsmuster, aber kein vollständiger Ersatz für eine Schlaflaboruntersuchung.
+
+## Anhedonie
+Deutlich vermindertes Interesse oder verminderte Fähigkeit, Freude an gewöhnlich angenehmen Aktivitäten zu erleben; ein mögliches Kernmerkmal depressiver Episoden.
 
 ## Arbeitsgedächtnis
 System zur kurzfristigen aktiven Speicherung und Bearbeitung von Information.
@@ -20,6 +23,9 @@ Abnahme des subjektiven Werts einer Belohnung mit zunehmender Verzögerung.
 
 ## Default Mode Network
 Netzwerk für innerlich gerichtete Gedanken, autobiografische Verarbeitung und spontanes Gedankenschweifen.
+
+## Depressive Episode
+Zeitlich abgrenzbare Phase mit anhaltend gedrückter Stimmung oder deutlich vermindertem Interesse und weiteren Symptomen, die relevante Beeinträchtigung verursachen; nicht gleichbedeutend mit vorübergehender Traurigkeit oder Entmutigung.
 
 ## Diagnostisches Überschatten
 Fehlschluss, neue oder zusätzliche Beschwerden vollständig einer bereits bekannten Diagnose zuzuschreiben.
@@ -69,6 +75,9 @@ Zusätzliche Erkrankung oder Störung, die gleichzeitig mit einer anderen Diagno
 ## Neuroentwicklung
 Veränderung und Reifung neuronaler Systeme im Zusammenspiel mit Lernen, Umwelt und biologischen Voraussetzungen über die Entwicklung hinweg.
 
+## Nichtsuizidale Selbstverletzung
+Absichtliche Verletzung des eigenen Körpergewebes ohne die Absicht zu sterben; von einem Suizidversuch zu unterscheiden, aber als Zeichen relevanter psychischer Belastung ernst zu nehmen.
+
 ## Persistenz
 Fortbestehen von Symptomen oder Beeinträchtigungen über einen längeren Zeitraum; nicht zwingend mit unveränderter Stärke.
 
@@ -90,8 +99,14 @@ Schlafbezogene Atemstörung mit wiederholten Atempausen oder deutlicher Einschr�
 ## Schlafkontinuität
 Zusammenfassender Begriff für Einschlafdauer, nächtliche Wachphasen, Gesamtschlafzeit und Schlafeffizienz.
 
+## Schutzfaktor
+Merkmal oder Bedingung, die mit einer geringeren Wahrscheinlichkeit eines ungünstigen Verlaufs verbunden ist; kein einzelner Schutzfaktor garantiert Sicherheit.
+
 ## Screening
 Kurze systematische Prüfung, die eine Wahrscheinlichkeit abschätzt, aber keine vollständige Diagnose ersetzt.
+
+## Suizidalität
+Spektrum von Todeswünschen und Suizidgedanken über Pläne und Vorbereitungen bis zu Suizidversuchen und Suiziden; die konkrete Dringlichkeit muss individuell beurteilt werden.
 
 ## Zirkadianer Rhythmus
 Ungefähr 24-stündiger biologischer Zeitrhythmus, der unter anderem Schlafneigung, Wachheit, Körpertemperatur und Hormonausschüttung beeinflusst.

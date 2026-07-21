@@ -106,3 +106,15 @@ cards:
   - Grundlagen
   - Schlaf
   - Einheit_11
+- id: 1012
+  unit: 12
+  front: Warum erlaubt ein erhöhtes Suizidrisiko bei ADHS keine individuelle Vorhersage?
+  back: Weil der Gruppenbefund viele unterschiedliche Verläufe zusammenfasst; die aktuelle
+    Gefahr muss anhand konkreter Gedanken, Absicht und Planung, früherer Versuche,
+    Komorbiditäten, Belastungen und verfügbarer Unterstützung individuell beurteilt werden.
+  tags:
+  - ADHS
+  - Grundlagen
+  - Depression
+  - Suizidalität
+  - Einheit_12
