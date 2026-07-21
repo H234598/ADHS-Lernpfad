@@ -1,0 +1,35 @@
+name: Apply daily unit 12
+
+on:
+  push:
+    branches: [agent/einheit-12-depression-und-suizidalitaet]
+    paths:
+      - '.unit12-bootstrap/**'
+      - '.github/workflows/apply-unit-12.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-unit-12-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements-docs.txt
+            requirements-export.txt
+      - name: Install project dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-docs.txt -r requirements-export.txt
+      - name: Apply, validate and commit unit
+        run: python3 .unit12-bootstrap/apply.py
