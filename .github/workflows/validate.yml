@@ -46,6 +46,39 @@ jobs:
         continue-on-error: true
         if: github.event_name == 'pull_request' && github.head_ref == 'agent/einheit-12-depression-und-suizidalitaet'
         run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.unit12-bootstrap/apply.py')
+          text = path.read_text(encoding='utf-8')
+          if 'import yaml\n' not in text:
+              text = text.replace('import subprocess\n', 'import subprocess\nimport yaml\n', 1)
+          old = '''planned = planned_path.read_text(encoding="utf-8")
+          planned = re.sub(
+              r"(?ms)^  - path: 01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet\n(?:    .*\n)+\n?",
+              "",
+              planned,
+              count=1,
+          )
+          planned_path.write_text(planned, encoding="utf-8")'''
+          new = '''planned_data = yaml.safe_load(planned_path.read_text(encoding="utf-8")) or {"nodes": []}
+          planned_nodes = planned_data.get("nodes", [])
+          if not isinstance(planned_nodes, list):
+              raise RuntimeError("knowledge-graph/planned-nodes.yaml: nodes muss eine Liste sein")
+          planned_data["nodes"] = [
+              item for item in planned_nodes
+              if not isinstance(item, dict)
+              or item.get("path") != "01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet"
+          ]
+          planned_path.write_text(
+              "# Bewusst geplante, noch nicht vorhandene Seiten.\n"
+              "# Nur hier registrierte fehlende Ziele dürfen als planned veröffentlicht werden.\n"
+              + yaml.safe_dump(planned_data, allow_unicode=True, sort_keys=False),
+              encoding="utf-8",
+          )'''
+          if old not in text:
+              raise RuntimeError('Planned-Node-Block im Bootstrap nicht gefunden')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
           set -o pipefail
           PYTHONPATH=scripts python .unit12-bootstrap/apply.py 2>&1 | tee bootstrap-unit-12.log
           git show origin/main:.github/workflows/validate.yml > .github/workflows/validate.yml
