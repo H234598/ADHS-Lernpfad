@@ -28,5 +28,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - name: Apply, verify and commit phase 2
+      - name: Install repository build dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-docs.txt -r requirements-export.txt
+      - name: Reproduce MkDocs strict build
         run: python3 .graph-web-final/apply.py
