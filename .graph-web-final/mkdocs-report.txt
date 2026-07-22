@@ -1,0 +1,116 @@
+Complete MkDocs diagnostic
+$ python scripts/validate_links.py
+exit=0
+--- stdout ---
+Validierung erfolgreich: interne Links sind eindeutig oder ausdrücklich geplant; Obsidian-Callouts werden webgerecht umgewandelt
+
+--- stderr ---
+
+
+$ python scripts/build_literature.py
+exit=0
+--- stdout ---
+Literatur: 26 Quellen; Literatur.md, references.bib und references.json erzeugt
+
+--- stderr ---
+
+
+$ python scripts/build_graph.py
+exit=0
+--- stdout ---
+Wissensgraph: 167 Knoten, 491 Kanten, 1 Fehler, 0 Warnungen
+
+--- stderr ---
+
+
+$ python scripts/validate_compendium.py
+exit=0
+--- stdout ---
+ADHS-Lernpfad Validierungsbericht
+
+Grenzen: Minimum 800, Warnung unter 1000, Maximum 2500 Fließtextwörter
+
+Wortzahlen:
+- Einheit 1: 949 Wörter — 01-Grundlagen/01-Was-ist-ADHS.md
+- Einheit 2: 893 Wörter — 01-Grundlagen/02-Inhibition-und-Handlungssteuerung.md
+- Einheit 3: 906 Wörter — 01-Grundlagen/03-Dopamin-Belohnung-und-Motivation.md
+- Einheit 4: 896 Wörter — 01-Grundlagen/04-Arbeitsgedaechtnis.md
+- Einheit 5: 930 Wörter — 01-Grundlagen/05-Aufmerksamkeit-und-Stabilitaet.md
+- Einheit 6: 888 Wörter — 01-Grundlagen/06-Zeitverarbeitung.md
+- Einheit 7: 857 Wörter — 01-Grundlagen/07-Emotionsregulation.md
+- Einheit 8: 1544 Wörter — 01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne.md
+- Einheit 9: 1688 Wörter — 01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik.md
+- Einheit 10: 1688 Wörter — 01-Grundlagen/10-Genetik-und-Umwelt.md
+- Einheit 11: 1482 Wörter — 01-Grundlagen/11-Schlaf-Bewegung-und-koerperliche-Gesundheit.md
+- Einheit 12: 1927 Wörter — 01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet.md
+- Einheit 13: 1685 Wörter — 02-Vertiefung/01-Pharmakologie-und-Psychotherapie.md
+
+Warnungen:
+- /home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/01-Grundlagen/01-Was-ist-ADHS.md: 949 Wörter; unter dem Zielbereich von 1000 Wörtern
+- /home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/01-Grundlagen/02-Inhibition-und-Handlungssteuerung.md: 893 Wörter; unter dem Zielbereich von 1000 Wörtern
+- /home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/01-Grundlagen/03-Dopamin-Belohnung-und-Motivation.md: 906 Wörter; unter dem Zielbereich von 1000 Wörtern
+- /home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/01-Grundlagen/04-Arbeitsgedaechtnis.md: 896 Wörter; unter dem Zielbereich von 1000 Wörtern
+- /home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/01-Grundlagen/05-Aufmerksamkeit-und-Stabilitaet.md: 930 Wörter; unter dem Zielbereich von 1000 Wörtern
+- /home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/01-Grundlagen/06-Zeitverarbeitung.md: 888 Wörter; unter dem Zielbereich von 1000 Wörtern
+- /home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/01-Grundlagen/07-Emotionsregulation.md: 857 Wörter; unter dem Zielbereich von 1000 Wörtern
+
+Fehler:
+- keine
+
+Validierung abgeschlossen: 13 Kapitel, 26 Quellen
+
+--- stderr ---
+
+
+$ python scripts/build_combined.py
+exit=0
+--- stdout ---
+Gesamtdokument mit exportfähigen internen Links erstellt
+
+--- stderr ---
+
+
+$ python scripts/build_anki.py
+exit=0
+--- stdout ---
+Anki: 13 Karten
+
+--- stderr ---
+
+
+$ python scripts/build_docs.py
+exit=0
+--- stdout ---
+MkDocs-Quellen: 71 konvertierte Markdown-Dateien, Obsidian-Callouts, Sync-Downloads, Bibliografiedaten, Assets, Wissensgraphdaten (knowledge-graph/data/knowledge-graph.json), optionale Downloads und CNAME
+
+--- stderr ---
+
+
+$ mkdocs build --strict
+exit=0
+--- stdout ---
+
+--- stderr ---
+
+[31m │  ⚠  Warning from the Material for MkDocs team[0m
+[31m │[0m
+[31m │[0m  MkDocs 2.0, the underlying framework of Material for MkDocs,
+[31m │[0m  will introduce backward-incompatible changes, including:
+[31m │[0m
+[31m │  × [0mAll plugins will stop working – the plugin system has been removed
+[31m │  × [0mAll theme overrides will break – the theming system has been rewritten
+[31m │  × [0mNo migration path exists – existing projects cannot be upgraded
+[31m │  × [0mClosed contribution model – community members can't report bugs
+[31m │  × [0mCurrently unlicensed – unsuitable for production use
+[31m │[0m
+[31m │[0m  Our full analysis:
+[31m │[0m
+[31m │[0m  [4mhttps://squidfunk.github.io/mkdocs-material/blog/2026/02/18/mkdocs-2.0/[0m
+[0m
+INFO    -  Cleaning site directory
+INFO    -  Building documentation to directory: /home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/site
+INFO    -  The following pages exist in the docs directory, but are not included in the "nav" configuration:
+  - knowledge-graph/IMPLEMENTIERUNGSPLAN.md
+INFO    -  Documentation built in 1.01 seconds
+
+
