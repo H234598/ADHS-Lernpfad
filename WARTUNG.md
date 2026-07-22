@@ -1,7 +1,7 @@
 ---
 title: Wartung und Automatisierung
 tags: [Wartung, Automatisierung, CI]
-last_reviewed: 2026-07-14
+last_reviewed: 2026-07-22
 hide: [navigation]
 ---
 
@@ -56,6 +56,7 @@ Geprüft werden unter anderem:
 - fortlaufende Kapitelnummerierung,
 - Übereinstimmung von Studienkarten, `Literatur.md`, `references.bib` und `references.json`,
 - Wissensgraph, Gesamtdokument und Anki-Paket,
+- Shellsyntax, PowerShell-Parser und echte Sync-Integrationstests,
 - MkDocs-Build im Strict-Modus.
 
 Dependabot kontrolliert wöchentlich GitHub Actions und Python-Abhängigkeiten. Einzelheiten stehen in [[.github/README|GitHub-Automation]].
@@ -93,15 +94,20 @@ Diese Trennung verhindert, dass ein PR seine eigenen Prüfregeln verändert und 
 - [[Sync/README|Synchronisierung nach Betriebssystem]]
   - [[Sync/Linux/README|Linux und systemd]]
   - [[Sync/Android/README|Android und Termux]]
-  - [[Sync/Windows/README|Windows]]
-  - [[Sync/macOS/README|macOS]]
-  - [[Sync/iOS/README|iPhone und iPad]]
-  - [[Sync/BSD/README|BSD]]
+  - [[Sync/Windows/README|Windows und Aufgabenplanung]]
+  - [[Sync/macOS/README|macOS und LaunchAgent]]
+  - [[Sync/iOS/README|iPhone und iPad über iSH]]
+  - [[Sync/BSD/README|BSD und Benutzer-Cron]]
 - [[Sync/MODES|Pull-, Überschreib- und Full-Sync-Modi]]
+- [[Sync/CONFIGURATION|Konfigurationsreferenz]]
+- [[Sync/TROUBLESHOOTING|Fehlersuche und Rückgabecodes]]
+- [[Sync/PLAN|Architektur- und Umsetzungsplan]]
 - [[CONTRIBUTING|Beitrags-, Evidenz- und Branchregeln]]
 - [[CHANGELOG|Änderungsverlauf]]
 
-Linux und Android besitzen bereits getestete Pull-Pakete. Windows, macOS, iOS und BSD sind als klare Zielstruktur vorbereitet und werden später in einem gemeinsamen Plan implementiert. Der Android-Vault kann weiterhin als schreibgeschützter Spiegel aus `main` betrieben werden; gerätespezifische Obsidian- und Syncthing-Dateien bleiben geschützt.
+Alle sechs Plattformbereiche enthalten Installer beziehungsweise Installationspakete, Betriebsanleitungen und Deinstallationswege. Linux, Android, macOS, BSD und iSH verwenden dieselbe getestete Bash-Engine; Windows besitzt eine funktional gleichwertige PowerShell-Engine. Die öffentlichen ZIP-Pakete werden reproduzierbar gebaut und mit SHA-256-Prüfsummen veröffentlicht.
+
+Ein bidirektionaler `full-sync` schreibt nie direkt nach `main`, sondern ausschließlich auf einen konfigurierten Gerätebranch. Checkout und Vault dürfen nicht überlappen; parallele Läufe und divergierende Gerätebranches werden kontrolliert abgefangen.
 
 ## Automatische Ausgaben
 
@@ -114,6 +120,7 @@ Bei Änderungen an `main` werden erzeugt beziehungsweise veröffentlicht:
 - BibTeX- und CSL-JSON-Bibliografien,
 - ein Anki-Deck im APKG-Format,
 - ein lernorientierter Obsidian-Vault als ZIP,
+- sechs plattformspezifische Sync-Pakete,
 - SHA-256-Prüfsummen und ein JSON-Downloadmanifest,
 - Validierungs- und Wissensgraph-Artefakte.
 
