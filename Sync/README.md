@@ -1,7 +1,7 @@
 ---
 title: Synchronisierung
 tags: [Wartung, Sync, Obsidian]
-last_reviewed: 2026-07-15
+last_reviewed: 2026-07-22
 hide: [navigation]
 ---
 
@@ -9,18 +9,18 @@ hide: [navigation]
 
 # Synchronisierung
 
-Dieser Bereich bündelt alle Wege, den ADHS-Lernpfad auf Geräte und in Obsidian-Vaults zu spiegeln. Die technische Infrastruktur bleibt außerhalb der normalen Lernnavigation; alle Installer und Skripte sind von den jeweiligen Plattformseiten direkt herunterladbar.
+Dieser Bereich bündelt alle Wege, den ADHS-Lernpfad auf Geräte und in Obsidian-Vaults zu spiegeln. Die technische Infrastruktur bleibt außerhalb der normalen Lernnavigation. Jede Plattformseite enthält Installer, Betrieb und Deinstallation; vollständige ZIP-Pakete werden zusammen mit der Website veröffentlicht.
 
 ## Betriebssysteme
 
 | System | Paket | Zeitplaner | Anleitung |
 |---|---|---|---|
-| Linux | Bash, Git und rsync | systemd-Benutzertimer oder manuell | [Linux](Linux/README.md) |
-| Android | Termux, privater Checkout und rsync | manuell oder Termux:Boot | [Android](Android/README.md) |
-| Windows | native PowerShell-Engine | Windows-Aufgabenplanung oder manuell | [Windows](Windows/README.md) |
-| macOS | Bash, Git und rsync | LaunchAgent oder manuell | [macOS](macOS/README.md) |
-| iPhone und iPad | iSH mit eingebundenem Files-Ordner | bewusst nur manuell | [iOS/iPadOS](iOS/README.md) |
-| BSD | Bash, Git und rsync | Benutzer-Crontab oder manuell | [BSD](BSD/README.md) |
+| Linux | [ZIP-Paket](https://ADHS.telacore.org/artifacts/ADHS-Lernpfad-Sync-Linux.zip) | systemd-Benutzertimer oder manuell | [Linux](Linux/README.md) |
+| Android | [ZIP-Paket](https://ADHS.telacore.org/artifacts/ADHS-Lernpfad-Sync-Android.zip) | manuell oder Termux:Boot | [Android](Android/README.md) |
+| Windows | [ZIP-Paket](https://ADHS.telacore.org/artifacts/ADHS-Lernpfad-Sync-Windows.zip) | Windows-Aufgabenplanung oder manuell | [Windows](Windows/README.md) |
+| macOS | [ZIP-Paket](https://ADHS.telacore.org/artifacts/ADHS-Lernpfad-Sync-macOS.zip) | LaunchAgent oder manuell | [macOS](macOS/README.md) |
+| iPhone und iPad | [ZIP-Paket](https://ADHS.telacore.org/artifacts/ADHS-Lernpfad-Sync-iOS.zip) | bewusst nur manuell | [iOS/iPadOS](iOS/README.md) |
+| BSD | [ZIP-Paket](https://ADHS.telacore.org/artifacts/ADHS-Lernpfad-Sync-BSD.zip) | Benutzer-Crontab oder manuell | [BSD](BSD/README.md) |
 
 ## Dokumentation
 
@@ -50,5 +50,6 @@ Dieser Bereich bündelt alle Wege, den ADHS-Lernpfad auf Geräte und in Obsidian
 - Zeitplaner laufen nichtinteraktiv und brechen bei notwendigen Rückfragen ab.
 - Gleichzeitige lokale und entfernte Full-Sync-Änderungen führen zu einem Konfliktabbruch statt zu einem automatischen Überschreiben.
 - Deinstaller löschen den Vault niemals und entfernen den privaten Checkout nur nach ausdrücklicher Option.
+- Checkout und Vault dürfen weder identisch sein noch ineinander liegen.
 
-Die automatisierten Integrationstests erzeugen temporäre lokale Git-Remotes und prüfen Pull, Überschreiben, additive Kopie, geschützte Obsidian-Dateien, Gerätebranch-Push und Divergenzabbruch.
+Die automatisierten Integrationstests erzeugen temporäre lokale Git-Remotes und prüfen Pull, Überschreiben, additive Kopie, geschützte Obsidian-Dateien, Gerätebranch-Push, Basisbranch-Übernahme und Divergenzabbruch.
