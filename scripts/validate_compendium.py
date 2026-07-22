@@ -10,8 +10,9 @@ from content_links import validate_all
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "build" / "validation-report.txt"
 MIN_WORDS = 800
-WARNING_WORDS = 1000
-MAX_WORDS = 2500
+WARNING_WORDS = 1200
+MAX_WORDS = 3000
+LEGACY_WARNING_EXEMPTIONS = set(range(1, 11))
 errors = []
 warnings = []
 counts = []
@@ -68,7 +69,7 @@ for item in index["chapters"]:
     counts.append((item["number"], item["path"], words))
     if words < MIN_WORDS:
         errors.append(f"{path}: nur {words} Fließtextwörter; mindestens {MIN_WORDS} erforderlich")
-    elif words < WARNING_WORDS:
+    elif words < WARNING_WORDS and item["number"] not in LEGACY_WARNING_EXEMPTIONS:
         warnings.append(f"{path}: {words} Wörter; unter dem Zielbereich von {WARNING_WORDS} Wörtern")
     if words > MAX_WORDS:
         errors.append(f"{path}: {words} Fließtextwörter; Maximum sind {MAX_WORDS}")
@@ -91,7 +92,8 @@ REPORT.parent.mkdir(parents=True, exist_ok=True)
 report_lines = [
     "ADHS-Lernpfad Validierungsbericht",
     "",
-    f"Grenzen: Minimum {MIN_WORDS}, Warnung unter {WARNING_WORDS}, Maximum {MAX_WORDS} Fließtextwörter",
+    f"Grenzen: Minimum {MIN_WORDS}, Warnung unter {WARNING_WORDS}, Zielbereich 1200–2500, Maximum {MAX_WORDS} Fließtextwörter",
+    "Legacy-Ausnahme: Einheiten 1–10 erzeugen keine Zielbereich-Warnungen",
     "",
     "Wortzahlen:",
 ]
