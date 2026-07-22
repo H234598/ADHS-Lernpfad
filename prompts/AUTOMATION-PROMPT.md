@@ -13,6 +13,36 @@ Arbeite im Repository `H234598/ADHS-Lernpfad`.
 5. Lies `README.md`, `00-Einfuehrung.md`, `index.json`, alle bisherigen Kapitel, `Glossar.md`, die Referenzkarten, `references/README.md`, `ROADMAP.md` und alle einschlägigen Dateien unter `prompts/`.
 6. Führe vor dem Schreiben vollständig `prompts/DEEP-RESEARCH-PROMPT.md` aus.
 
+## Laufstatus und Recovery-Status
+
+Jeder automatische Lauf dokumentiert seinen Fortschritt in `automation/runs/`.
+
+Vor kritischen Schritten wird der Status aktualisiert:
+
+- Laden von `main`
+- Prüfung vorhandener PRs
+- Branch-Erstellung
+- Commit
+- Push
+- Draft-PR-Erstellung
+- PR-Verifikation
+
+Bei Fehlern müssen gemeldet werden:
+
+- genaue Phase
+- bereits erfolgreiche Schritte
+- Fehlerkategorie
+- vorhandene Artefakte
+- mögliche Recovery-Aktion
+
+Ein fehlgeschlagener Lauf darf niemals automatisch eine zweite Einheit erzeugen, solange vorhandene Branches, Commits oder PRs nicht geprüft wurden.
+
+Recovery-Level:
+
+1. Wiederholen derselben Phase bei transienten Fehlern.
+2. Fortsetzen mit vorhandenen Artefakten.
+3. Manueller Eingriff bei wissenschaftlichen, Validierungs- oder Sicherheitsproblemen.
+
 ## 2. Auftrag
 
 Ergänze **genau eine** neue fortlaufende Lerneinheit. Bestimme die nächste freie Einheitsnummer und den fachlich logischen nächsten Baustein. Prüfe, ob bestehende Kapitel wegen neuer Evidenz korrigiert werden müssen. Änderungen an Alttexten müssen im PR ausdrücklich begründet werden.
@@ -59,19 +89,13 @@ Jede Einheit enthält mindestens:
 ## 6. Dateipflege
 
 1. Lege die Einheit im fachlich passenden Ordner ab.
-2. Lege neue Quellen als einzelne Dateien in `references/` an. Pflege sämtliche bibliografischen Felder strukturiert unter `citation` entsprechend `references/README.md`. Der Abschnitt `Vollständige Zitation` muss exakt aus diesen Feldern reproduzierbar sein.
-3. Erzeuge `Literatur.md`, `references.bib` und `references.json` ausschließlich mit `scripts/build_literature.py`; bearbeite diese drei Dateien nicht unabhängig voneinander.
-4. Ergänze neue Fachbegriffe in `Glossar.md`.
-5. Ergänze passende Anki-Karten in `cards/cards.yaml`.
-6. Aktualisiere README, Index, MkDocs-Navigation und Wissensgraph-Verknüpfungen.
-7. Verwende weiterhin Obsidian-Wikilinks in den Quelldateien. Aliasnamen, Unterordner und Überschriftenanker müssen von `scripts/validate_links.py` eindeutig auflösbar sein.
-8. Erhalte die Datei `CNAME` exakt mit dem Inhalt `ADHS.telacore.org`.
-9. Verändere keine Dateien unter `.github/` oder `prompts/`, keine Validatoren, Requirements, Build-, Veröffentlichungs-, Sicherheits- oder Synchronisationsinfrastruktur, sofern dies nicht zwingend für die neue Einheit erforderlich ist.
-10. Falls eine solche sensible Datei zwingend geändert werden muss, erläutere jede Änderung im PR und füge der PR-Beschreibung den Marker `<!-- manual-merge-required -->` hinzu. Dieser PR darf nicht automatisch gemergt werden.
+2. Lege neue Quellen als einzelne Dateien in `references/` an.
+3. Erzeuge Literaturausgaben ausschließlich mit `scripts/build_literature.py`.
+4. Ergänze Glossar und Anki.
+5. Aktualisiere README, Index, MkDocs-Navigation und Wissensgraph.
+6. Verwende weiterhin Obsidian-Wikilinks.
 
 ## 7. Pflichtprüfungen
-
-Führe aus:
 
 ```bash
 python3 scripts/build_literature.py
@@ -85,27 +109,13 @@ python3 scripts/build_docs.py
 mkdocs build --strict
 ```
 
-Alle Prüfungen müssen erfolgreich beendet sein. Die Validierung muss insbesondere Mindest- und Maximallänge, Pflichtabschnitte, Quellen, Obsidian-Wikilinks, Bibliografiekonsistenz und fortlaufende Nummerierung prüfen.
-
 ## 8. Git-Arbeitsweise
 
 1. Erstelle vom aktuellen `main` einen Branch nach dem Schema `agent/einheit-NN-kurztitel`.
 2. Committe ausschließlich die zur Einheit gehörenden Änderungen.
-3. Pushe den Branch zu `origin`.
-4. Erstelle einen **Draft-Pull-Request** gegen `main`.
-5. Füge in die PR-Beschreibung den unsichtbaren Marker `<!-- adhs-daily-unit -->` ein.
-6. Nenne im PR:
-   - Umfang und Fließtextwortzahl,
-   - verwendete Evidenzarten,
-   - zentrale Quellen,
-   - Unsicherheiten und Limitationen,
-   - geänderte Alttexte mit Begründung,
-   - sämtliche lokalen Prüfergebnisse,
-   - den Zustand der generierten Markdown-, BibTeX- und CSL-Ausgaben,
-   - alle geänderten sensiblen Dateien,
-   - Branch und Head-Commit.
-7. Prüfe nach der PR-Erstellung, dass der Head-Branch tatsächlich diesem PR zugeordnet ist und der PR den aktuellen Head-Commit enthält.
-8. Lasse den PR im Draft-Status. Markiere ihn nicht als „Ready for review“ und merge ihn nicht.
-9. Melde abschließend PR-Nummer, PR-Link, Branch, Head-Commit, Wortzahl und Prüfergebnisse.
-
-Falls Push oder PR-Erstellung wegen fehlender Berechtigungen scheitern, dokumentiere Branch, lokalen Commit und die genaue Fehlermeldung. Ein gepushter Branch darf nicht still ohne PR liegen bleiben. Führe keinen direkten Commit auf `main` aus.
+3. Pushe den Branch.
+4. Erstelle einen Draft-Pull-Request.
+5. Füge `<!-- adhs-daily-unit -->` ein.
+6. Dokumentiere Wortzahl, Quellen, Prüfungen, sensible Dateien und Commit.
+7. Verifiziere PR-Zuordnung.
+8. Lasse den PR Draft und merge nicht.
