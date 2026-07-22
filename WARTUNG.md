@@ -117,7 +117,7 @@ Nur Einträge in `planned-nodes.yaml` gelten als bewusst geplant. Sobald eine re
 
 ### Webdarstellung
 
-Der Dokumentationslauf lädt die kanonische JSON-Ausgabe, ersetzt den einzelnen Marker in `knowledge-graph/README.md` durch die Graphoberfläche und kopiert die Daten nach `knowledge-graph/data/knowledge-graph.json`. Das Browser-Skript rendert daraus den aktuellen Graphen, Filter, Knotendetails und die datenabhängige Legende. Cytoscape.js ist auf Version `3.34.0` festgelegt; Farbe ist bei Statusdarstellungen nicht das einzige Unterscheidungsmerkmal.
+Der Dokumentationslauf lädt die kanonische JSON-Ausgabe, ersetzt den einzelnen Marker in `knowledge-graph/README.md` durch die Graphoberfläche und kopiert die Daten nach `knowledge-graph/data/knowledge-graph.json`. Das Browser-Skript rendert daraus den aktuellen Graphen, Filter, Knotendetails und die datenabhängige Legende. Cytoscape.js wird als lokal eingecheckte Version `3.34.0` mit Lizenz, Herkunftsnachweis und SHA-256-Prüfsummen ausgeliefert; der Seitenaufbau benötigt dafür kein externes CDN. Farbe ist bei Statusdarstellungen nicht das einzige Unterscheidungsmerkmal.
 
 Fehlt die Graph-JSON oder enthält sie nicht die erwartete Grundstruktur, bricht `scripts/build_docs.py` mit einer konkreten Fehlermeldung ab. Dadurch kann keine veraltete oder leere Wissensgraph-Seite veröffentlicht werden.
 

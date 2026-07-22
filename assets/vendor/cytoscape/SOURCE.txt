@@ -1,0 +1,5 @@
+Package: cytoscape@3.34.0
+Upstream tag: v3.34.0
+Upstream repository: cytoscape/cytoscape.js
+Upstream Git blob (cytoscape.min.js): be225eadd48edf7c73acb85355af12bfc929556e
+Upstream Git blob (LICENSE): aac05f201cb14147da8c5ffcbc56ddbf9c954ccc

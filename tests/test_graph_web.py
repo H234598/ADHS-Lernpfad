@@ -96,7 +96,21 @@ class GraphWebTests(unittest.TestCase):
     def test_repository_wires_assets_and_keeps_source_page_lean(self) -> None:
         mkdocs = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
         self.assertIn("assets/stylesheets/knowledge-graph.css", mkdocs)
-        self.assertIn("cytoscape@3.34.0/dist/cytoscape.min.js", mkdocs)
+        self.assertIn("assets/vendor/cytoscape/cytoscape.min.js", mkdocs)
+        self.assertNotIn("cdn.jsdelivr.net/npm/cytoscape", mkdocs)
+        vendor = ROOT / "assets" / "vendor" / "cytoscape"
+        self.assertEqual(
+            (vendor / "VERSION.txt").read_text(encoding="utf-8").strip(),
+            "3.34.0",
+        )
+        self.assertIn(
+            "cytoscape.min.js",
+            (vendor / "SHA256SUMS.txt").read_text(encoding="utf-8"),
+        )
+        self.assertIn(
+            "be225eadd48edf7c73acb85355af12bfc929556e",
+            (vendor / "SOURCE.txt").read_text(encoding="utf-8"),
+        )
         self.assertIn("assets/javascripts/knowledge-graph.js", mkdocs)
 
         graph_page = (ROOT / "knowledge-graph" / "README.md").read_text(encoding="utf-8")
