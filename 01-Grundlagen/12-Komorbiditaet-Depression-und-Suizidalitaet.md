@@ -168,5 +168,5 @@ Weil der Befund aus Gruppenvergleichen stammt und die individuelle Situation von
 ## Navigation
 
 - Zurück: [[01-Grundlagen/11-Schlaf-Bewegung-und-koerperliche-Gesundheit|Schlaf, Bewegung und körperliche Gesundheit]]
-- Weiter: [[README|Übersicht]]
+- Weiter: [[02-Vertiefung/01-Pharmakologie-und-Psychotherapie|Pharmakotherapie und Psychotherapie]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]

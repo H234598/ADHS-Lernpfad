@@ -41,6 +41,7 @@ VAULT_ROOT_FILES: Final = (
 )
 VAULT_DIRECTORIES: Final = (
     "01-Grundlagen",
+    "02-Vertiefung",
     "references",
     "knowledge-graph",
     "cards",

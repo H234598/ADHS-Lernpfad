@@ -2,6 +2,7 @@
 """Prepare converted Markdown, assets and downloads for the MkDocs build."""
 
 from pathlib import Path
+import json
 import shutil
 
 from callouts import convert_obsidian_callouts_for_web
@@ -40,7 +41,8 @@ files = [
     "prompts/MERGE-AUTOMATION-PROMPT.md",
     "prompts/PR-REPAIR-PROMPT.md",
 ]
-files.extend(str(path.relative_to(ROOT)) for path in sorted((ROOT / "01-Grundlagen").glob("*.md")))
+chapter_index = json.loads((ROOT / "index.json").read_text(encoding="utf-8"))
+files.extend(item["path"] for item in chapter_index["chapters"])
 files.extend(
     str(path.relative_to(ROOT))
     for path in sorted((ROOT / "references").glob("*.md"))
