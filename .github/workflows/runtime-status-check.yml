@@ -1,0 +1,31 @@
+name: Validate runtime status
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'automation/**'
+      - 'scripts/validate_runtime_status.py'
+      - '.github/workflows/runtime-status-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-runtime-status:
+    name: Validate runtime status schema
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Validate runtime status implementation
+        run: |
+          python scripts/validate_runtime_status.py
