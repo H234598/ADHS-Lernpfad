@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GRAPH = ROOT / "build" / "knowledge-graph" / "knowledge-graph.json"
 OUTPUT = ROOT / "build" / "graph-ci-summary.md"
+STATUS = ROOT / "automation" / "runtime-status.json"
 
 
 def main() -> None:
@@ -23,6 +24,17 @@ def main() -> None:
         f"- Warnungen: **{stats.get('warning_count', 0)}**",
         "",
     ]
+    if STATUS.exists():
+        runtime = json.loads(STATUS.read_text(encoding="utf-8"))
+        lines.extend(
+            [
+                "## Laufstatus",
+                "",
+                f"- Status: **{runtime.get('status', 'unknown')}**",
+                f"- Phase: **{runtime.get('phase', 'unknown')}**",
+                "",
+            ]
+        )
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text("\n".join(lines), encoding="utf-8")
     print(OUTPUT)
