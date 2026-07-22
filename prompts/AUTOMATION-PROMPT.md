@@ -10,7 +10,7 @@ Arbeite im Repository `H234598/ADHS-Lernpfad`.
 2. Suche nach offenen Pull Requests gegen `main`, deren Head-Branch dem Muster `agent/einheit-*` entspricht oder deren Beschreibung den Marker `<!-- adhs-daily-unit -->` enthält.
 3. Falls bereits ein solcher Pull Request offen ist, erstelle **keine** weitere Einheit und keinen weiteren Branch. Melde den vorhandenen PR als Blocker.
 4. Stelle sicher, dass das Arbeitsverzeichnis sauber ist und der neue Branch vom aktuellen `main` ausgeht.
-5. Lies `README.md`, `00-Einfuehrung.md`, `index.json`, die letzten zwei Kapitel, `Glossar.md`, die Referenzkarten, `references/README.md`, `ROADMAP.md` und alle einschlägigen Dateien unter `prompts/`.
+5. Lies `README.md`, `00-Einfuehrung.md`, `index.json`, alle bisherigen Kapitel, `Glossar.md`, die Referenzkarten, `references/README.md`, `ROADMAP.md` und alle einschlägigen Dateien unter `prompts/`.
 6. Führe vor dem Schreiben vollständig `prompts/DEEP-RESEARCH-PROMPT.md` aus.
 
 ## 2. Auftrag
@@ -23,8 +23,8 @@ Eine Einheit ist eine echte **10- bis 20-minütige Lerneinheit**, nicht nur eine
 
 - Harte Untergrenze: **800 Fließtextwörter** nach Abzug von YAML, Navigation und Diagrammcode.
 - CI-Warnung unter **1.000 Fließtextwörtern**.
-- Zielbereich: **1.000–2.000 Fließtextwörter**.
-- Harte Obergrenze: **2.500 Fließtextwörter**.
+- Zielbereich: **1.200–2.500 Fließtextwörter**.
+- Harte Obergrenze: **3.000 Fließtextwörter**.
 - Wird mehr Platz benötigt, teile das Thema in mehrere logisch aufeinanderfolgende Einheiten; in diesem Lauf wird dennoch nur die erste Einheit erstellt.
 - Niemals künstlich durch Wiederholung, Füllsätze oder erzwungene Autismus-/Parkinson-Bezüge verlängern.
 
