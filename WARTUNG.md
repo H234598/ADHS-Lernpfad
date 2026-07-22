@@ -61,6 +61,66 @@ Geprüft werden unter anderem:
 
 Dependabot kontrolliert wöchentlich GitHub Actions und Python-Abhängigkeiten. Einzelheiten stehen in [[.github/README|GitHub-Automation]].
 
+## Wissensgraph
+
+Die öffentlich sichtbare Seite [[knowledge-graph/README|Wissensgraph]] enthält ausschließlich die interaktive Graphoberfläche, die Knotendetails und eine aus den jeweils vorhandenen Knoten-, Beziehungs- und Statustypen erzeugte Legende. Die technische Beschreibung gehört vollständig in diese Wartungssektion.
+
+Der Wissensgraph wird aus den Markdown-Dokumenten, ihren YAML-Metadaten und den internen Obsidian-Wikilinks erzeugt. Er bildet Dokumente und Navigation des Kompendiums ab; er ist keine automatisch abgeleitete medizinische Ontologie. Der native Obsidian-Graph bleibt direkt aus dem Vault ableitbar, zusätzlich erstellt `scripts/build_graph.py` einen kanonischen, typisierten Projektgraphen.
+
+### Datenquellen
+
+Der Generator erfasst:
+
+- jedes relevante Markdown-Dokument als stabilen Knoten,
+- Wikilinks und Einbettungen außerhalb von Frontmatter, Codeblöcken, Inline-Code und HTML-Kommentaren,
+- `prerequisites` als gerichtete Voraussetzungskanten,
+- `tags` als Beziehungen zu Glossarabschnitten oder Begriffsknoten,
+- `references` als Zitationskanten zu Studienkarten,
+- optionale `related`-Beziehungen,
+- die Kapitelreihenfolge aus `index.json`,
+- bewusst geplante Seiten aus `knowledge-graph/planned-nodes.yaml`.
+
+Alle Linkauflösungen verwenden dasselbe Inhaltsmodell wie Web- und Gesamtdokumentexporte. Titel, Aliase, Pfade, Überschriften und `reference_id` werden auf stabile kanonische IDs abgebildet.
+
+### Erzeugte Dateien
+
+Ein Lauf von
+
+```bash
+python3 scripts/build_graph.py
+```
+
+erzeugt:
+
+```text
+build/knowledge-graph/knowledge-graph.json
+build/knowledge-graph/knowledge-graph.mmd
+build/knowledge-graph/knowledge-graph.graphml
+build/knowledge-graph/graph-report.md
+build/knowledge-graph/graph-report.json
+```
+
+Aus Kompatibilitätsgründen bleiben zusätzlich `build/knowledge-graph.json` und `build/knowledge-graph.mmd` erhalten. Die JSON-Ausgabe enthält getrennte `nodes`, `edges`, `issues` und `stats`; jede Kante besitzt Typ, Status und Fundstellen. GraphML ist für Gephi, Cytoscape Desktop und vergleichbare Werkzeuge vorgesehen, Mermaid dient als kompakte Diagnose- und Offlineansicht.
+
+### Linkstatus
+
+| Status | Bedeutung | Freigabe |
+|---|---|---|
+| `ok` | Ziel ist eindeutig vorhanden | erlaubt |
+| `planned` | Ziel fehlt bewusst und ist registriert | Warnung, erlaubt |
+| `missing-document` | Zielseite fehlt ungeplant | Fehler |
+| `missing-heading` | Dokument existiert, Abschnitt fehlt | Fehler |
+| `ambiguous` | mehrere Ziele sind möglich | Fehler |
+| `malformed` | ungültiges oder unsicheres Ziel | Fehler |
+
+Nur Einträge in `planned-nodes.yaml` gelten als bewusst geplant. Sobald eine registrierte Seite tatsächlich existiert, meldet die Validierung den überholten Registry-Eintrag.
+
+### Webdarstellung
+
+Der Dokumentationslauf lädt die kanonische JSON-Ausgabe, ersetzt den einzelnen Marker in `knowledge-graph/README.md` durch die Graphoberfläche und kopiert die Daten nach `knowledge-graph/data/knowledge-graph.json`. Das Browser-Skript rendert daraus den aktuellen Graphen, Filter, Knotendetails und die datenabhängige Legende. Cytoscape.js ist auf Version `3.34.0` festgelegt; Farbe ist bei Statusdarstellungen nicht das einzige Unterscheidungsmerkmal.
+
+Fehlt die Graph-JSON oder enthält sie nicht die erwartete Grundstruktur, bricht `scripts/build_docs.py` mit einer konkreten Fehlermeldung ab. Dadurch kann keine veraltete oder leere Wissensgraph-Seite veröffentlicht werden.
+
 ## Linkaufbereitung für Web und Exporte
 
 Die Markdown-Quelldateien behalten ihre Obsidian-Wikilinks. Beim Web-Build werden sie in relative Standard-Markdown-Links umgewandelt; MkDocs erzeugt daraus korrekte HTML-Ziele. Für das Gesamtdokument werden stabile interne Anker erzeugt, damit Navigation auch in HTML, EPUB, LaTeX und PDF erhalten bleibt.

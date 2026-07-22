@@ -7,6 +7,7 @@ import shutil
 
 from callouts import convert_obsidian_callouts_for_web
 from content_links import convert_for_web, validate_all
+from graph_web import copy_graph_data, inject_graph_page, load_graph
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "build" / "docs"
@@ -14,6 +15,8 @@ DOCS = ROOT / "build" / "docs"
 errors = validate_all(ROOT)
 if errors:
     raise ValueError("Ungültige Obsidian-Links:\n" + "\n".join(f"- {error}" for error in errors))
+
+graph = load_graph(ROOT)
 
 if DOCS.exists():
     shutil.rmtree(DOCS)
@@ -54,7 +57,10 @@ for relative_path in files:
     source = ROOT / relative_path
     destination = DOCS / relative_path
     destination.parent.mkdir(parents=True, exist_ok=True)
-    converted = convert_for_web(source.read_text(encoding="utf-8"), source, ROOT)
+    source_text = source.read_text(encoding="utf-8")
+    if relative_path == "knowledge-graph/README.md":
+        source_text = inject_graph_page(source_text, graph)
+    converted = convert_for_web(source_text, source, ROOT)
     converted = convert_obsidian_callouts_for_web(converted)
     destination.write_text(converted, encoding="utf-8")
 
@@ -81,9 +87,10 @@ artifact_source = ROOT / "build" / "artifacts"
 if artifact_source.is_dir():
     shutil.copytree(artifact_source, DOCS / "artifacts", dirs_exist_ok=True)
 
+graph_data = copy_graph_data(ROOT, DOCS)
 shutil.copy2(ROOT / "CNAME", DOCS / "CNAME")
 print(
     f"MkDocs-Quellen: {len(files)} konvertierte Markdown-Dateien, "
     "Obsidian-Callouts, Sync-Downloads, Bibliografiedaten, Assets, "
-    "optionale Downloads und CNAME"
+    f"Wissensgraphdaten ({graph_data.relative_to(DOCS)}), optionale Downloads und CNAME"
 )
