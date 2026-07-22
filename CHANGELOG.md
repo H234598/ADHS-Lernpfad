@@ -1,5 +1,14 @@
 # Änderungsverlauf
 
+## 0.13.0 – 2026-07-22
+
+- vollständige plattformübergreifende Sync-Pakete für Linux, Android/Termux, Windows, macOS, BSD und iOS/iSH ergänzt
+- gemeinsame, getestete Bash-Engine sowie funktional gleichwertige PowerShell-Engine eingeführt
+- Installer, Deinstaller, native Zeitplaner, Diagnoseanleitungen und reproduzierbare ZIP-Pakete ergänzt
+- Modi `safe-pull`, `prompt-pull`, `forced-pull`, `additive-pull` und Gerätebranch-basierter `full-sync` umgesetzt
+- Schutz vor Pfadüberlappung, unbeabsichtigtem Überschreiben, parallelen Läufen und divergierenden Gerätebranches ergänzt
+- echte Git-/rsync-Integrationstests und PowerShell-Parserprüfung in die CI aufgenommen
+
 ## 0.12.0 – 2026-07-22
 
 - Einheit 13 „Pharmakotherapie und Psychotherapie“ als Einstieg in die Vertiefung ergänzt
@@ -7,7 +16,6 @@
 - fünf aktuelle Studienkarten, Glossarbegriffe, Anki-Karte und Wissensgraph-Verknüpfungen ergänzt
 - Kapitelbuild und Obsidian-Export auf indexbasierte phasenübergreifende Ordner erweitert
 
- 
 ## 0.8.1 – 2026-07-14
 
 - Obsidian-Callouts beim Web-Build in native MkDocs-Material-Admonitions umgewandelt

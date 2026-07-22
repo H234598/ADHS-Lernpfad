@@ -1,29 +1,28 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/usr/bin/env bash
 set -Eeuo pipefail
 
 BASE_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-TARGET_DIR="$HOME/storage/shared/Documents/Obsidian/ADHS-Lernpfad"
-SYNC_MODE="forced-pull"
+TARGET_DIR="/mnt/obsidian/ADHS-Lernpfad"
+SYNC_MODE="safe-pull"
 DEVICE_BRANCH=""
 BASE_BRANCH="main"
 REPO_URL="https://github.com/H234598/ADHS-Lernpfad.git"
-START_MODE="manual"
 ADOPT_EXISTING=0
 
 usage() {
   cat <<'EOF'
-Verwendung: ./Sync/Android/install-termux.sh [Optionen]
+Verwendung: ./Sync/iOS/install-ish.sh [Optionen]
 
-  --target PFAD             Ziel-Vault im Android-Speicher
+  --target PFAD             in iSH eingebundener Files-/Obsidian-Ordner
   --mode MODUS              safe-pull, prompt-pull, forced-pull,
                             additive-pull oder full-sync
   --device-branch BRANCH    eigener Branch für full-sync
   --branch BRANCH           Pull-Basisbranch, Standard main
   --repo-url URL            Git-Repository
-  --boot                    Startskript für Termux:Boot anlegen
-  --manual                  nur manuelle Ausführung
   --adopt-existing-target   vorhandenen Vault beim ersten Full Sync übernehmen
   --help                    Hilfe anzeigen
+
+Die Ausführung auf iOS/iPadOS ist manuell. Hintergrundjobs werden nicht installiert.
 EOF
 }
 
@@ -34,8 +33,6 @@ while (( $# )); do
     --device-branch) DEVICE_BRANCH="${2:?Branch fehlt}"; shift 2 ;;
     --branch) BASE_BRANCH="${2:?Branch fehlt}"; shift 2 ;;
     --repo-url) REPO_URL="${2:?URL fehlt}"; shift 2 ;;
-    --boot) START_MODE="boot"; shift ;;
-    --manual) START_MODE="manual"; shift ;;
     --adopt-existing-target) ADOPT_EXISTING=1; shift ;;
     --help|-h) usage; exit 0 ;;
     *) printf 'Unbekannte Option: %s\n' "$1" >&2; usage >&2; exit 64 ;;
@@ -47,19 +44,23 @@ case "$SYNC_MODE" in
   *) printf 'Nicht unterstützter Modus: %s\n' "$SYNC_MODE" >&2; exit 64 ;;
 esac
 if [[ "$SYNC_MODE" == full-sync && -z "$DEVICE_BRANCH" ]]; then
-  printf 'full-sync benötigt --device-branch, z. B. sync/mein-tablet\n' >&2
+  printf 'full-sync benötigt --device-branch, z. B. sync/mein-ipad\n' >&2
   exit 64
 fi
 
-command -v pkg >/dev/null 2>&1 || {
-  printf 'Dieses Installationsskript ist für Termux vorgesehen.\n' >&2
-  exit 127
-}
-pkg install -y git rsync
+if command -v apk >/dev/null 2>&1; then
+  apk add --no-cache bash git rsync coreutils
+fi
+for command in bash git rsync; do
+  command -v "$command" >/dev/null 2>&1 || {
+    printf 'Benötigtes Programm fehlt: %s\n' "$command" >&2
+    exit 127
+  }
+done
 
-if [[ ! -d "$HOME/storage/shared" ]]; then
-  printf 'Android-Speicher ist noch nicht freigegeben.\n' >&2
-  printf 'Bitte zuerst termux-setup-storage ausführen und den Zugriff erlauben.\n' >&2
+if [[ ! -d "$(dirname "$TARGET_DIR")" || ! -w "$(dirname "$TARGET_DIR")" ]]; then
+  printf 'Der Zielstamm ist nicht schreibbar: %s\n' "$(dirname "$TARGET_DIR")" >&2
+  printf 'Binde zuerst in iSH einen iOS-Files-Ordner ein, z. B. unter /mnt/obsidian.\n' >&2
   exit 2
 fi
 
@@ -67,11 +68,10 @@ INSTALL_ROOT="$HOME/.local/share/adhs-lernpfad-sync"
 REPO_DIR="$INSTALL_ROOT/repo"
 BIN_FILE="$HOME/.local/bin/adhs-lernpfad-sync"
 ENV_FILE="$HOME/.config/adhs-lernpfad-sync.env"
-BOOT_FILE="$HOME/.termux/boot/adhs-lernpfad-sync"
 
 mkdir -p "$INSTALL_ROOT/lib" "$HOME/.local/bin" "$HOME/.config"
 cp "$BASE_DIR/../Common/adhs-sync.sh" "$INSTALL_ROOT/lib/adhs-sync.sh"
-cp "$BASE_DIR/sync-termux.sh" "$BIN_FILE"
+cp "$BASE_DIR/sync-ish.sh" "$BIN_FILE"
 chmod 700 "$INSTALL_ROOT/lib/adhs-sync.sh" "$BIN_FILE"
 
 {
@@ -87,23 +87,10 @@ chmod 700 "$INSTALL_ROOT/lib/adhs-sync.sh" "$BIN_FILE"
 } > "$ENV_FILE"
 chmod 600 "$ENV_FILE"
 
-if [[ "$START_MODE" == boot ]]; then
-  mkdir -p "$(dirname "$BOOT_FILE")"
-  {
-    printf '%s\n' '#!/data/data/com.termux/files/usr/bin/bash'
-    printf '%s\n' 'sleep 60'
-    printf 'ADHS_SYNC_NONINTERACTIVE=1 exec %q\n' "$BIN_FILE"
-  } > "$BOOT_FILE"
-  chmod 700 "$BOOT_FILE"
-else
-  rm -f "$BOOT_FILE"
-fi
-
 ADHS_SYNC_NONINTERACTIVE=0 "$BIN_FILE"
 
 printf 'Installiert: %s\n' "$BIN_FILE"
 printf 'Ziel: %s\n' "$TARGET_DIR"
 printf 'Privater Checkout: %s\n' "$REPO_DIR"
 printf 'Modus: %s\n' "$SYNC_MODE"
-printf 'Start: %s\n' "$START_MODE"
-printf 'Manueller Befehl: adhs-lernpfad-sync\n'
+printf 'Ausführung: manuell mit adhs-lernpfad-sync\n'

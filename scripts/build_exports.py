@@ -12,6 +12,8 @@ import subprocess
 from typing import Final
 from zipfile import ZIP_DEFLATED, ZipFile
 
+from build_sync_packages import build_sync_packages
+
 ROOT: Final = Path(__file__).resolve().parents[1]
 BUILD: Final = ROOT / "build"
 ARTIFACTS: Final = BUILD / "artifacts"
@@ -27,91 +29,57 @@ ARTIFACT_METADATA: Final[dict[str, tuple[str, str]]] = {
     "ADHS-Lernpfad.apkg": ("Anki", "application/octet-stream"),
     "references.bib": ("BibTeX", "application/x-bibtex"),
     "references.json": ("CSL JSON", "application/json"),
+    "ADHS-Lernpfad-Sync-Linux.zip": ("Sync-Paket Linux", "application/zip"),
+    "ADHS-Lernpfad-Sync-Android.zip": ("Sync-Paket Android", "application/zip"),
+    "ADHS-Lernpfad-Sync-Windows.zip": ("Sync-Paket Windows", "application/zip"),
+    "ADHS-Lernpfad-Sync-macOS.zip": ("Sync-Paket macOS", "application/zip"),
+    "ADHS-Lernpfad-Sync-iOS.zip": ("Sync-Paket iOS/iPadOS", "application/zip"),
+    "ADHS-Lernpfad-Sync-BSD.zip": ("Sync-Paket BSD", "application/zip"),
 }
 
 VAULT_ROOT_FILES: Final = (
-    "README.md",
-    "00-Einfuehrung.md",
-    "Glossar.md",
-    "Literatur.md",
-    "ROADMAP.md",
-    "DOWNLOADS.md",
-    "references.bib",
-    "references.json",
+    "README.md", "00-Einfuehrung.md", "Glossar.md", "Literatur.md",
+    "ROADMAP.md", "DOWNLOADS.md", "references.bib", "references.json",
 )
 VAULT_DIRECTORIES: Final = (
-    "01-Grundlagen",
-    "02-Vertiefung",
-    "references",
-    "knowledge-graph",
-    "cards",
-    "figures",
-    "assets",
+    "01-Grundlagen", "02-Vertiefung", "references", "knowledge-graph",
+    "cards", "figures", "assets",
 )
 
 
 def run(command: list[str]) -> None:
-    """Run one external build command and fail immediately on errors."""
-
     subprocess.run(command, cwd=ROOT, check=True)
 
 
 def require_file(path: Path) -> Path:
-    """Return an expected build input or raise a useful error."""
-
     if not path.is_file():
         raise FileNotFoundError(f"Erwartete Datei fehlt: {path.relative_to(ROOT)}")
     return path
 
 
 def common_pandoc_args() -> list[str]:
-    """Return arguments shared by EPUB, HTML, LaTeX and PDF exports."""
-
     return [
-        str(require_file(COMBINED)),
-        "--standalone",
-        "--toc",
-        "--citeproc",
+        str(require_file(COMBINED)), "--standalone", "--toc", "--citeproc",
         f"--bibliography={require_file(ROOT / 'references.bib')}",
-        "--metadata=title:ADHS-Lernpfad",
-        "--metadata=lang:de-DE",
+        "--metadata=title:ADHS-Lernpfad", "--metadata=lang:de-DE",
         "--resource-path=.:figures:assets",
     ]
 
 
 def build_document_exports() -> None:
-    """Create EPUB 3, embedded HTML, LaTeX and PDF reading formats."""
-
     common = common_pandoc_args()
     run(["pandoc", *common, "--to=epub3", "--output", str(ARTIFACTS / "ADHS-Lernpfad.epub")])
-    run(
-        [
-            "pandoc",
-            *common,
-            "--to=html5",
-            "--embed-resources",
-            "--output",
-            str(ARTIFACTS / "ADHS-Lernpfad.html"),
-        ]
-    )
+    run(["pandoc", *common, "--to=html5", "--embed-resources", "--output", str(ARTIFACTS / "ADHS-Lernpfad.html")])
     run(["pandoc", *common, "--output", str(ARTIFACTS / "ADHS-Lernpfad.tex")])
-    run(
-        [
-            "pandoc",
-            *common,
-            "--pdf-engine=lualatex",
-            "--variable=mainfont:DejaVu Serif",
-            "--variable=sansfont:DejaVu Sans",
-            "--variable=monofont:DejaVu Sans Mono",
-            "--output",
-            str(ARTIFACTS / "ADHS-Lernpfad.pdf"),
-        ]
-    )
+    run([
+        "pandoc", *common, "--pdf-engine=lualatex",
+        "--variable=mainfont:DejaVu Serif", "--variable=sansfont:DejaVu Sans",
+        "--variable=monofont:DejaVu Sans Mono", "--output",
+        str(ARTIFACTS / "ADHS-Lernpfad.pdf"),
+    ])
 
 
 def copy_generated_sources() -> None:
-    """Copy text, bibliography and Anki outputs into the public bundle."""
-
     sources = {
         COMBINED: ARTIFACTS / "ADHS-Lernpfad-Gesamtdokument.md",
         ROOT / "references.bib": ARTIFACTS / "references.bib",
@@ -122,9 +90,13 @@ def copy_generated_sources() -> None:
         shutil.copy2(require_file(source), destination)
 
 
-def vault_files() -> list[Path]:
-    """Collect the learning-facing files included in the Obsidian archive."""
+def build_public_sync_packages() -> None:
+    package_dir = BUILD / "sync-packages"
+    for package in build_sync_packages(package_dir):
+        shutil.copy2(package, ARTIFACTS / package.name)
 
+
+def vault_files() -> list[Path]:
     selected: list[Path] = []
     for relative in VAULT_ROOT_FILES:
         path = ROOT / relative
@@ -138,8 +110,6 @@ def vault_files() -> list[Path]:
 
 
 def build_vault_zip() -> None:
-    """Create a clean Obsidian-oriented ZIP without project infrastructure."""
-
     destination = ARTIFACTS / "ADHS-Lernpfad-Obsidian-Vault.zip"
     with ZipFile(destination, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
         for source in vault_files():
@@ -147,8 +117,6 @@ def build_vault_zip() -> None:
 
 
 def digest(path: Path) -> str:
-    """Calculate the SHA-256 digest of one artifact."""
-
     checksum = sha256()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
@@ -157,50 +125,33 @@ def digest(path: Path) -> str:
 
 
 def write_manifest() -> None:
-    """Write a JSON manifest and conventional SHA256SUMS file."""
-
     generated_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     entries: list[dict[str, object]] = []
     checksum_lines: list[str] = []
     for filename, (label, media_type) in ARTIFACT_METADATA.items():
         path = require_file(ARTIFACTS / filename)
         checksum = digest(path)
-        entries.append(
-            {
-                "filename": filename,
-                "label": label,
-                "media_type": media_type,
-                "size_bytes": path.stat().st_size,
-                "sha256": checksum,
-                "url": f"https://ADHS.telacore.org/artifacts/{filename}",
-            }
-        )
+        entries.append({
+            "filename": filename, "label": label, "media_type": media_type,
+            "size_bytes": path.stat().st_size, "sha256": checksum,
+            "url": f"https://ADHS.telacore.org/artifacts/{filename}",
+        })
         checksum_lines.append(f"{checksum}  {filename}")
-
-    manifest = {
-        "project": "ADHS-Lernpfad",
-        "generated_at": generated_at,
-        "artifacts": entries,
-    }
     (ARTIFACTS / "downloads.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        json.dumps({"project": "ADHS-Lernpfad", "generated_at": generated_at, "artifacts": entries}, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    (ARTIFACTS / "SHA256SUMS.txt").write_text(
-        "\n".join(checksum_lines) + "\n",
-        encoding="utf-8",
-    )
+    (ARTIFACTS / "SHA256SUMS.txt").write_text("\n".join(checksum_lines) + "\n", encoding="utf-8")
 
 
 def main() -> None:
-    """Build every public download and its integrity metadata."""
-
     if ARTIFACTS.exists():
         shutil.rmtree(ARTIFACTS)
     ARTIFACTS.mkdir(parents=True)
     build_document_exports()
     copy_generated_sources()
     build_vault_zip()
+    build_public_sync_packages()
     write_manifest()
     print(f"Downloads: {len(ARTIFACT_METADATA)} Artefakte plus Manifest und Prüfsummen")
 

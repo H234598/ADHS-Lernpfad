@@ -1,7 +1,7 @@
 ---
 title: Linux-Synchronisierung
 tags: [Wartung, Sync, Linux, systemd, Obsidian]
-last_reviewed: 2026-07-14
+last_reviewed: 2026-07-15
 hide: [navigation]
 ---
 
@@ -9,57 +9,114 @@ hide: [navigation]
 
 # Linux-Synchronisierung
 
-Das Linux-Paket installiert einen systemd-Benutzertimer. Er synchronisiert den veröffentlichten `main`-Stand alle 30 Minuten in einen Obsidian-Vault. Der Standardmodus ist `safe-pull`: lokale Änderungen werden niemals still überschrieben.
+Das Linux-Paket verwendet einen privaten Git-Checkout und spiegelt daraus in den sichtbaren Obsidian-Vault. Standardmäßig installiert es einen systemd-Benutzertimer im 30-Minuten-Takt. Administratorrechte sind nicht erforderlich.
 
 ## Dateien
 
-- [Installer herunterladen](install.sh){ .md-button .md-button--primary }
-- [Sync-Skript herunterladen](sync.sh){ .md-button }
+- [Installer](install.sh){ .md-button .md-button--primary }
+- [Sync-Wrapper](sync.sh){ .md-button }
+- [Deinstaller](uninstall.sh){ .md-button }
 - [systemd-Service](systemd/adhs-lernpfad-sync.service){ .md-button }
-- [systemd-Timer](systemd/adhs-lernpfad-sync.timer){ .md-button }
+- [systemd-Timer-Beispiel](systemd/adhs-lernpfad-sync.timer){ .md-button }
+- [gemeinsame Engine](../Common/adhs-sync.sh){ .md-button }
 
-## Installation
+## Voraussetzungen
+
+```text
+bash
+Git
+rsync
+systemd --user   nur für den automatischen Timer
+```
+
+## Standardinstallation
 
 ```bash
-
 git clone https://github.com/H234598/ADHS-Lernpfad.git
 cd ADHS-Lernpfad
-./Sync/Linux/install.sh "/vollstaendiger/Pfad/zum/Obsidian-Vault" safe-pull
+./Sync/Linux/install.sh
 ```
 
-Ohne Argument wird `$HOME/Dokumente/Obsidian/ADHS-Lernpfad` verwendet.
+Standardwerte:
 
-## Modus wählen
+```text
+Ziel:     ~/Dokumente/Obsidian/ADHS-Lernpfad
+Modus:    safe-pull
+Intervall: 30 Minuten
+```
+
+## Beispiele
+
+### Reiner Lesespiegel
 
 ```bash
-./Sync/Linux/install.sh "/Pfad/zum/Vault" safe-pull
-./Sync/Linux/install.sh "/Pfad/zum/Vault" prompt-pull
-./Sync/Linux/install.sh "/Pfad/zum/Vault" forced-pull
+./Sync/Linux/install.sh \
+  --target "$HOME/Dokumente/Obsidian/ADHS-Lernpfad" \
+  --mode forced-pull
 ```
 
-Die genaue Bedeutung steht unter [[Sync/MODES|Synchronisationsmodi]]. `full-sync` ist absichtlich noch nicht implementiert.
+### Bei lokalen Änderungen abbrechen
+
+```bash
+./Sync/Linux/install.sh --mode safe-pull
+```
+
+### Full Sync über Gerätebranch
+
+```bash
+./Sync/Linux/install.sh \
+  --mode full-sync \
+  --device-branch sync/mein-linux-laptop \
+  --adopt-existing-target
+```
+
+Der Gerätebranch benötigt einen eingerichteten Git-Schreibzugang. Er wird nicht automatisch nach `main` gemergt.
+
+### Nur manuell, ohne systemd
+
+```bash
+./Sync/Linux/install.sh --manual --mode prompt-pull
+```
 
 ## Betrieb
 
 ```bash
+adhs-lernpfad-sync
 systemctl --user status adhs-lernpfad-sync.timer
 systemctl --user start adhs-lernpfad-sync.service
 journalctl --user -u adhs-lernpfad-sync.service -n 100 --no-pager
 ```
 
-Die Konfiguration liegt unter:
+Konfiguration:
 
 ```text
 ~/.config/adhs-lernpfad-sync.env
 ```
 
-Dort kann `ADHS_LERNPFAD_SYNC_MODE` nachträglich geändert werden. Danach genügt der nächste Timerlauf; ein `daemon-reload` ist für reine Umgebungsänderungen nicht erforderlich.
+Privater Checkout:
 
-## Verhalten bei lokalen Änderungen
+```text
+~/.local/share/adhs-lernpfad-sync/repo
+```
 
-- `safe-pull`: kontrollierter Abbruch mit Statusausgabe.
-- `prompt-pull`: interaktive Rückfrage; in einem nichtinteraktiven Timerlauf sicherer Abbruch.
-- `forced-pull`: Reset auf `origin/main`; `.obsidian`, `.stfolder`, `.stignore`, `.nomedia` und `.trash` bleiben erhalten.
+Der Service setzt `ADHS_SYNC_NONINTERACTIVE=1`. `prompt-pull` kann deshalb nur bei einem manuellen Start tatsächlich fragen; im Timerlauf bricht er bei lokalen Änderungen ab.
 
-> [!warning]
-> Der Zielordner ist bei `forced-pull` ein Spiegel und kein Arbeitsrepository. Normale lokale Markdown- und Bildänderungen werden verworfen.
+## Deinstallation
+
+```bash
+./Sync/Linux/uninstall.sh
+```
+
+Optional:
+
+```bash
+./Sync/Linux/uninstall.sh --purge-config --remove-checkout
+```
+
+Der Vault wird auch mit diesen Optionen nicht gelöscht.
+
+## Sicherheitsdetails
+
+Der systemd-Service läuft mit `NoNewPrivileges`, privatem temporärem Verzeichnis, restriktiver Dateimaske und niedriger I/O-Priorität. `.obsidian/` und Syncthing-Metadaten bleiben standardmäßig lokal.
+
+Weitere Einzelheiten: [[Sync/MODES|Modi]], [[Sync/CONFIGURATION|Konfiguration]] und [[Sync/TROUBLESHOOTING|Fehlersuche]].
