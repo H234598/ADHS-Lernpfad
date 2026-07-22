@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-21
+last_reviewed: 2026-07-22
 ---
 
 # Literatur
@@ -84,6 +84,14 @@ Liang, X., Qiu, H., & Li, S. X. (2023). Objectively measured sleep continuity in
 - PubMed: [PMID 37657199](https://pubmed.ncbi.nlm.nih.gov/37657199/)
 - Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
 
+## Liu2023
+
+Liu, C.-I., Hua, M.-H., Lu, M.-L., & Goh, K. K. (2023). Effectiveness of cognitive behavioural-based interventions for adults with attention-deficit/hyperactivity disorder extends beyond core symptoms: A meta-analysis of randomized controlled trials. *Psychology and Psychotherapy: Theory, Research and Practice, 96*(3), 543–559.
+
+- DOI: [https://doi.org/10.1111/papt.12455](https://doi.org/10.1111/papt.12455)
+- PubMed: [PMID 36794797](https://pubmed.ncbi.nlm.nih.gov/36794797/)
+- Evidenztyp: `meta-analysis-randomized-controlled-trials` · Evidenzgrad: `moderate` · Status: `probable`
+
 ## Metcalfe2024
 
 Metcalfe, K. B., McFeaters, C. D., & Voyer, D. (2024). Time-Perception Deficits in Attention-Deficit/Hyperactivity Disorder: A Systematic Review and Meta-Analysis. *Developmental Neuropsychology, 49*(1), 1–25.
@@ -104,6 +112,30 @@ Nikolas, M. A. & Burt, S. A. (2010). Genetic and environmental influences on ADH
 
 - DOI: [https://doi.org/10.1037/a0018010](https://doi.org/10.1037/a0018010)
 - Evidenztyp: `twin-study-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## Nourredine2026
+
+Nourredine, M., Jurek, L., Hamza, T., et al. (2026). Pharmacological interventions for ADHD: A systematic review and dose–effect network meta-analysis. *The Lancet Psychiatry, 13*(6), 485–495.
+
+- DOI: [https://doi.org/10.1016/S2215-0366(26)00091-X](https://doi.org/10.1016/S2215-0366(26)00091-X)
+- PubMed: [PMID 42134365](https://pubmed.ncbi.nlm.nih.gov/42134365/)
+- Evidenztyp: `systematic-review-dose-effect-network-meta-analysis` · Evidenzgrad: `high` · Status: `probable`
+
+## Ostinelli2025
+
+Ostinelli, E. G., Schulze, M., Zangani, C., et al. (2025). Comparative efficacy and acceptability of pharmacological, psychological, and neurostimulatory interventions for ADHD in adults: A systematic review and component network meta-analysis. *The Lancet Psychiatry, 12*(1), 32–43.
+
+- DOI: [https://doi.org/10.1016/S2215-0366(24)00360-2](https://doi.org/10.1016/S2215-0366(24)00360-2)
+- PubMed: [PMID 39701638](https://pubmed.ncbi.nlm.nih.gov/39701638/)
+- Evidenztyp: `systematic-review-component-network-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## Peterson2024
+
+Peterson, B. S., Trampush, J., Maglione, M., et al. (2024). Treatments for ADHD in Children and Adolescents: A Systematic Review. *Pediatrics, 153*(4), e2024065787.
+
+- DOI: [https://doi.org/10.1542/peds.2024-065787](https://doi.org/10.1542/peds.2024-065787)
+- PubMed: [PMID 38523592](https://pubmed.ncbi.nlm.nih.gov/38523592/)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Rother2025
 
@@ -144,6 +176,14 @@ Thapar, A., Cooper, M., Eyre, O., & Langley, K. (2013). What have we learnt abou
 - DOI: [https://doi.org/10.1111/j.1469-7610.2012.02611.x](https://doi.org/10.1111/j.1469-7610.2012.02611.x)
 - PubMed: [PMID 22963644](https://pubmed.ncbi.nlm.nih.gov/22963644/)
 - Evidenztyp: `narrative-review` · Evidenzgrad: `high` · Status: `consensus`
+
+## Tuerk2023
+
+Türk, S., Korfmacher, A.-K., Gerger, H., van der Oord, S., & Christiansen, H. (2023). Interventions for ADHD in childhood and adolescence: A systematic umbrella review and meta-meta-analysis. *Clinical Psychology Review, 102*, 102271.
+
+- DOI: [https://doi.org/10.1016/j.cpr.2023.102271](https://doi.org/10.1016/j.cpr.2023.102271)
+- PubMed: [PMID 37030086](https://pubmed.ncbi.nlm.nih.gov/37030086/)
+- Evidenztyp: `umbrella-review-meta-meta-analysis` · Evidenzgrad: `moderate` · Status: `consensus`
 
 ## Volkow2011
 

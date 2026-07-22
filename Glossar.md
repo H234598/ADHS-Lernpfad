@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-21
+last_reviewed: 2026-07-22
 ---
 
 # Glossar
@@ -32,6 +32,9 @@ Fehlschluss, neue oder zusätzliche Beschwerden vollständig einer bereits bekan
 
 ## Differentialdiagnose
 Alternative Erklärung für ein Beschwerdebild, die anhand von Beginn, Verlauf, Kontext und Begleitmerkmalen gegen andere Möglichkeiten geprüft wird.
+
+## Dosisfindung
+Schrittweise Anpassung einer Medikamentendosis anhand vorher definierter Ziele, Wirkdauer und Nebenwirkungen innerhalb fachlicher und zugelassener Grenzen.
 
 ## Dopamin
 Neuromodulator für Lernen, Motivation, Anstrengungsbewertung, Bewegung und Handlungswahl; kein simples Glückshormon.
@@ -78,6 +81,15 @@ Veränderung und Reifung neuronaler Systeme im Zusammenspiel mit Lernen, Umwelt 
 ## Nichtsuizidale Selbstverletzung
 Absichtliche Verletzung des eigenen Körpergewebes ohne die Absicht zu sterben; von einem Suizidversuch zu unterscheiden, aber als Zeichen relevanter psychischer Belastung ernst zu nehmen.
 
+## Pharmakotherapie
+Behandlung mit Medikamenten; bei ADHS umfasst sie fachlich ausgewählte, überwachte und regelmäßig überprüfte Wirkstoffe.
+
+## Psychoedukation
+Strukturierte Vermittlung wissenschaftlich fundierten Wissens über Diagnose, Verlauf, Behandlung und Selbstbeobachtung; keine bloße Informationsbroschüre und nicht automatisch eine vollständige Psychotherapie.
+
+## Psychotherapie
+Geplante Behandlung psychischer oder verhaltensbezogener Probleme mit wissenschaftlich begründeten psychologischen Methoden und einer therapeutischen Arbeitsbeziehung.
+
 ## Persistenz
 Fortbestehen von Symptomen oder Beeinträchtigungen über einen längeren Zeitraum; nicht zwingend mit unveränderter Stärke.
 
@@ -102,6 +114,9 @@ Zusammenfassender Begriff für Einschlafdauer, nächtliche Wachphasen, Gesamtsch
 ## Schutzfaktor
 Merkmal oder Bedingung, die mit einer geringeren Wahrscheinlichkeit eines ungünstigen Verlaufs verbunden ist; kein einzelner Schutzfaktor garantiert Sicherheit.
 
+## Shared Decision Making
+Gemeinsame Entscheidungsfindung, bei der Fachperson und betroffene Person Evidenz, Unsicherheit, Ziele, Werte, Belastungen und praktische Umsetzbarkeit einer Behandlung zusammen abwägen.
+
 ## Screening
 Kurze systematische Prüfung, die eine Wahrscheinlichkeit abschätzt, aber keine vollständige Diagnose ersetzt.
 
@@ -110,3 +125,6 @@ Spektrum von Todeswünschen und Suizidgedanken über Pläne und Vorbereitungen b
 
 ## Zirkadianer Rhythmus
 Ungefähr 24-stündiger biologischer Zeitrhythmus, der unter anderem Schlafneigung, Wachheit, Körpertemperatur und Hormonausschüttung beeinflusst.
+
+## Titration
+Kontrollierte schrittweise Veränderung einer Dosis, bis ein sinnvolles Verhältnis aus Nutzen, Wirkdauer und Nebenwirkungen erreicht ist oder ein Wechsel notwendig wird.

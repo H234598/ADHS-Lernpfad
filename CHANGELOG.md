@@ -1,4 +1,12 @@
 # Änderungsverlauf
+
+## 0.12.0 – 2026-07-22
+
+- Einheit 13 „Pharmakotherapie und Psychotherapie“ als Einstieg in die Vertiefung ergänzt
+- kurzfristige Medikamentenwirkung, psychologische Interventionen, Dosisfindung, Monitoring und gemeinsame Entscheidungsfindung differenziert eingeordnet
+- fünf aktuelle Studienkarten, Glossarbegriffe, Anki-Karte und Wissensgraph-Verknüpfungen ergänzt
+- Kapitelbuild und Obsidian-Export auf indexbasierte phasenübergreifende Ordner erweitert
+
  
 ## 0.8.1 – 2026-07-14
 
