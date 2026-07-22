@@ -2,6 +2,7 @@
   "use strict";
 
   const instances = new WeakMap();
+  const activeInstances = new Set();
 
   const statusLabels = {
     ok: "vorhanden",
@@ -46,7 +47,7 @@
     if (node.type === "placeholder") {
       return text(node.issue_code || node.status || "missing-document");
     }
-    return text(node.status || "ok");
+    return "ok";
   }
 
   function labelOfNode(node) {
@@ -503,13 +504,16 @@
         abortController.abort();
         if (resizeObserver) resizeObserver.disconnect();
         if (cy) cy.destroy();
+        activeInstances.delete(instance);
       },
     };
     instances.set(container, instance);
+    activeInstances.add(instance);
     return instance;
   }
 
   function initialiseAll() {
+    [...activeInstances].forEach((instance) => instance.destroy());
     document.querySelectorAll("[data-knowledge-graph]").forEach(initialise);
   }
 

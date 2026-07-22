@@ -33,6 +33,7 @@ class GraphWebTests(unittest.TestCase):
                     "scope": "learning",
                     "exists": True,
                     "planned": False,
+                    "status": "consensus",
                 },
                 {
                     "id": "planned:spaeter",
@@ -71,6 +72,8 @@ class GraphWebTests(unittest.TestCase):
         self.assertNotIn("Datenquellen", rendered)
         self.assertNotIn("Ausgabeformate", rendered)
         self.assertNotIn("Knotenliste", rendered)
+        self.assertIn('<option value="ok">ok</option>', rendered)
+        self.assertNotIn('<option value="consensus">consensus</option>', rendered)
 
     def test_injection_requires_exactly_one_marker(self) -> None:
         source = "# Wissensgraph\n\n<!-- knowledge-graph-app -->\n"

@@ -25,7 +25,7 @@ def _status(node: dict[str, Any]) -> str:
         return "planned"
     if node.get("type") == "placeholder":
         return str(node.get("issue_code", "missing-document"))
-    return str(node.get("status", "ok"))
+    return "ok"
 
 
 def _option(value: str, label: str) -> str:
