@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ADHS.telacore.org/schemas/run-status-1.0.0.json",
+  "title": "Automation Runtime Status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "workflow", "status", "phase"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "workflow": {"type": "string", "minLength": 1},
+    "status": {"enum": ["started", "running", "success", "failed", "blocked", "recovered"]},
+    "phase": {"type": "string", "minLength": 1},
+    "error_class": {"type": "string"},
+    "recovery_action": {"type": "string"},
+    "artifacts": {"type": "array", "items": {"type": "string"}}
+  }
+}
