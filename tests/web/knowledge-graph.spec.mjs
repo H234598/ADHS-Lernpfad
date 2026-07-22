@@ -34,6 +34,18 @@ function searchable(node) {
 }
 
 test("Graph, Laufstatus, Suche und Neurobiologie-Filter funktionieren", async ({ page }) => {
+  // Material for MkDocs asks GitHub for the latest release to decorate the
+  // repository link. This project can legitimately have no release yet, in
+  // which case GitHub returns 404 and Chromium emits an unrelated console
+  // error. Keep the graph smoke test deterministic and scoped to local assets.
+  await page.route(
+    "https://api.github.com/repos/H234598/ADHS-Lernpfad/releases/latest",
+    (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ tag_name: "unreleased" }),
+    }),
+  );
   const errors = captureBrowserErrors(page);
   const response = await page.goto("/knowledge-graph/");
   expect(response?.status()).toBe(200);
