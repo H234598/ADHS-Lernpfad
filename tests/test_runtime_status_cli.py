@@ -113,7 +113,10 @@ def test_write_status_is_atomic_and_leaves_no_temporary_file(tmp_path):
     assert list(target.parent.glob(f".{target.name}.*.tmp")) == []
 
 
-def test_partial_input_with_wrong_scalar_types_is_normalised(tmp_path):
+def test_partial_input_with_wrong_scalar_types_is_normalised(tmp_path, monkeypatch):
+    # GitHub Actions sets this globally; this unit test exercises the
+    # dependency-free local fallback and therefore isolates that environment.
+    monkeypatch.delenv("GITHUB_WORKFLOW", raising=False)
     target = tmp_path / "wrong-types.json"
     payload = write_status(
         target,
