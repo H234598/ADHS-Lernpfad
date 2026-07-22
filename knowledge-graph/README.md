@@ -5,8 +5,6 @@ tags: [Wissensgraph, Obsidian, Navigation, Metadaten]
 
 # Wissensgraph
 
-Der Wissensgraph wird bei jedem Build aus den Markdown-Dateien, ihren YAML-Metadaten, Überschriften, Wikilinks, Einbettungen, Quellenangaben und der Lernpfadreihenfolge neu erzeugt. Er ist ein **Dokument- und Navigationsgraph** des Kompendiums, keine automatisch abgeleitete medizinische Ontologie.
-
 ## Interaktive Ansicht
 
 <!-- knowledge-graph-runtime:start -->
@@ -75,49 +73,8 @@ Der Laufstatus wird beim Dokumentationsbuild eingesetzt.
   <li><span class="knowledge-graph-legend__symbol knowledge-graph-legend__symbol--ambiguous"></span> mehrdeutiges Ziel</li>
 </ul>
 
-Status werden zusätzlich als Text, Form, Rahmen- oder Linienart dargestellt; Farbe ist nie das einzige Unterscheidungsmerkmal. Geplante Seiten führen nicht auf eine 404-Seite, sondern auf ihre Detailansicht im Graphen. Ungeplant fehlende oder mehrdeutige Ziele bleiben Validierungsfehler.
-
-Der Lebenszyklus ist davon getrennt: vorhandene Inhalte gelten als **veröffentlicht**, registrierte künftige Seiten als **geplant** oder **in Arbeit**. Der Laufstatus dokumentiert den letzten Generatorlauf einschließlich Phase, Commit, Fehlerklasse und vorbereitetem Recovery-Schritt.
-
 <!-- knowledge-graph-fallback:start -->
 
 Die semantische Tabellenansicht wird beim Dokumentationsbuild eingesetzt.
 
 <!-- knowledge-graph-fallback:end -->
-
-## Datenquellen und Aktualisierung
-
-Der kanonische Generator verarbeitet:
-
-- jede eingeschlossene Markdown-Datei als Dokumentknoten,
-- `prerequisites`, `tags`, `references` und optionale `related`-Metadaten,
-- Wikilinks und Obsidian-Einbettungen außerhalb von Codebereichen,
-- referenzierte Überschriften,
-- die Reihenfolge aus `index.json`,
-- ausdrücklich registrierte geplante Ziele aus `knowledge-graph/planned-nodes.yaml`.
-
-Die Webansicht verwendet dieselbe JSON-Ausgabe wie die Berichte und maschinenlesbaren Exporte. Der native Obsidian-Graph bleibt davon unabhängig und entsteht unmittelbar aus den Wikilinks im Vault.
-
-## Ausgabeformate
-
-- `knowledge-graph.json` – kanonische Knoten, Kanten, Fundstellen, Status und Kennzahlen
-- `knowledge-graph.graphml` – Austauschformat für Gephi und Cytoscape Desktop
-- `knowledge-graph.mmd` – kompakte Mermaid-Diagnoseansicht
-- `graph-report.md` und `graph-report.json` – verständlicher Qualitätsbericht
-- `runtime-status.json` – schema-validierter Laufstatus mit Phase, Dauer, Commit und Recovery-Hinweis
-
-## Lokal bauen und prüfen
-
-```bash
-python scripts/build_graph.py
-python scripts/validate_graph.py
-python scripts/validate_runtime_status.py build/runtime-status.json
-python scripts/build_docs.py
-mkdocs build --strict
-```
-
-Die gleichen Prüfungen laufen im stabilen GitHub-Check `Validate and build`.
-Bei einem blockierenden Linkfehler bleibt die Veröffentlichung gesperrt; die CI
-erzeugt mit `KNOWLEDGE_GRAPH_DIAGNOSTIC=1` jedoch eine separate, nicht
-veröffentlichte Vorschau, in der Fehlerstatus, fehlende Ziele und Recovery-Daten
-sichtbar bleiben.
