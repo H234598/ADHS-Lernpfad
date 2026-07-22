@@ -3,7 +3,10 @@ import { test, expect } from "@playwright/test";
 function captureBrowserErrors(page) {
   const errors = [];
   page.on("console", (message) => {
-    if (message.type() === "error") errors.push(message.text());
+    if (message.type() === "error") {
+      const location = message.location();
+      errors.push(`${message.text()} @ ${location.url || "unknown source"}`);
+    }
   });
   page.on("pageerror", (error) => errors.push(error.message));
   return errors;
