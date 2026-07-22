@@ -94,7 +94,7 @@ jobs:
           '
           bash Sync/tests/test-posix-sync.sh 2>&1 | tee build/sync-test.log
 
-          python -m pytest -q
+          RUNTIME_STATUS_MANAGED=0 python -m pytest -q
           npm test
           current_phase=load_content
           python scripts/build_literature.py

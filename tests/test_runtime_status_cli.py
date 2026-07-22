@@ -145,7 +145,8 @@ def test_managed_flag_accepts_only_explicit_truthy_values():
     assert not status_is_managed({})
 
 
-def test_phase_context_finishes_standalone_but_not_managed_run(tmp_path):
+def test_phase_context_finishes_standalone_but_not_managed_run(tmp_path, monkeypatch):
+    monkeypatch.delenv("RUNTIME_STATUS_MANAGED", raising=False)
     standalone = tmp_path / "standalone.json"
     with runtime_phase(standalone, "build_nodes") as metrics:
         metrics["nodes"] = 7

@@ -415,11 +415,13 @@ def validate_graph_data(
             "scopes-mismatch", f"scopes={data.get('scopes')!r}, tatsächlich {expected_scopes!r}",
             path="$.scopes",
         )
-    revision = expected_revision if expected_revision is not None else os.getenv("GITHUB_SHA")
+    # Keep the library function deterministic: callers opt into a revision
+    # gate explicitly. The CLI still defaults to GITHUB_SHA in CI.
+    revision = expected_revision
     if revision and data.get("source_revision") != revision:
         result.add_error(
             "source-revision-mismatch",
-            f"source_revision entspricht nicht GITHUB_SHA {revision}",
+            f"source_revision entspricht nicht erwarteter Revision {revision}",
             path="$.source_revision",
         )
     for index, issue in enumerate(issues):
@@ -562,7 +564,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--report-json", type=Path, default=REPORT_JSON)
     parser.add_argument("--report-md", type=Path, default=REPORT_MD)
     parser.add_argument("--root", type=Path, default=ROOT)
-    parser.add_argument("--expected-revision", default=None)
+    parser.add_argument("--expected-revision", default=os.getenv("GITHUB_SHA"))
     return parser.parse_args(argv)
 
 
