@@ -123,7 +123,7 @@
   display: inline-block;
   margin: 0 0.35rem 0.35rem 0;
   padding: 0.12rem 0.45rem;
-  border: 1px solid currentColor;
+  border: 1px solid currentcolor;
   border-radius: 999px;
   font-size: 0.78em;
   font-weight: 750;
@@ -232,7 +232,7 @@
   height: 0;
   border-top: 0.25rem solid transparent;
   border-bottom: 0.25rem solid transparent;
-  border-left: 0.42rem solid currentColor;
+  border-left: 0.42rem solid currentcolor;
   content: "";
 }
 
