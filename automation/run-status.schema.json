@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ADHS-Lernpfad Automation Run Status",
+  "type": "object",
+  "required": ["run_id", "workflow", "status", "phase"],
+  "properties": {
+    "run_id": {"type": "string"},
+    "workflow": {"type": "string"},
+    "status": {"enum": ["started", "running", "success", "failed", "blocked", "recovered"]},
+    "phase": {
+      "type": "object",
+      "required": ["current", "completed"],
+      "properties": {
+        "current": {"type": "string"},
+        "completed": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "failed_step": {"type": "object"},
+    "retry": {"type": "object"},
+    "artifacts": {"type": "object"}
+  }
+}
