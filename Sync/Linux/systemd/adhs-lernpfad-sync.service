@@ -1,10 +1,14 @@
 [Unit]
-Description=ADHS-Lernpfad von GitHub nach Obsidian synchronisieren
+Description=ADHS-Lernpfad mit Obsidian synchronisieren
 Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=oneshot
-EnvironmentFile=%h/.config/adhs-lernpfad-sync.env
+Environment=ADHS_SYNC_NONINTERACTIVE=1
 ExecStart=%h/.local/bin/adhs-lernpfad-sync
 Nice=10
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+UMask=0077
