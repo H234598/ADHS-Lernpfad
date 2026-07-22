@@ -10,7 +10,7 @@ status: fortlaufend
 # Fachliche Roadmap
 
 > [!important] Klare Abgrenzung
-> Diese Datei beschreibt ausschließlich die **inhaltliche und wissenschaftliche Weiterentwicklung** des ADHS-Lernpfads. Betrieb, CI, Automatisierung, Sicherheit, Releases und andere Infrastrukturthemen stehen getrennt in der [[TECHNISCHE_ROADMAP|Technischen Roadmap]]. Die bisherige fachliche Roadmap wird durch diese Fassung erweitert, nicht ersetzt; kein bisheriger Themenpunkt wurde entfernt.
+> Diese Datei beschreibt ausschließlich die **inhaltliche und wissenschaftliche Weiterentwicklung** des ADHS-Lernpfads. Betrieb, CI, Automatisierung, Sicherheit, Releases und andere Infrastrukturthemen stehen getrennt in der [[TECHNISCHE_ROADMAP|Technischen Roadmap]]. 
 
 ## Zweck und Zielbild
 
@@ -57,11 +57,11 @@ Der Lernpfad umfasst derzeit 13 fortlaufende Einheiten:
 12. Komorbidität, Depression und Suizidalität
 13. Pharmakotherapie und Psychotherapie
 
-Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität sowie einen Behandlungsüberblick bereits gut ab. Die größten fachlichen Lücken liegen nun bei der Breite der Komorbiditäten, spezifischen Lebensphasen und Populationen, Funktions- und Versorgungsthemen, differenzierter Behandlungssicherheit, sozialer Ungleichheit, digitaler Diagnostik sowie dem systematischen Übergang auf Forschungsniveau.
+Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität sowie einen Behandlungsüberblick gut ab. Die größten fachlichen Lücken liegen nun bei der Breite der Komorbiditäten, spezifischen Lebensphasen und Populationen, Funktions- und Versorgungsthemen, differenzierter Behandlungssicherheit, sozialer Ungleichheit, digitaler Diagnostik sowie dem systematischen Übergang auf Forschungsniveau.
 
 ## Bisherige Roadmap – vollständig übernommen
 
-Die folgende Liste erhält sämtliche Themen der bisherigen Roadmap. Bereits vorhandene Einheiten sind als abgeschlossen markiert; ein Haken bedeutet nur, dass eine Basiseinheit existiert, nicht dass keine spätere Aktualisierung oder Vertiefung mehr nötig wäre.
+Die folgende Liste erhält sämtliche Themen der bisherigen Roadmap. Bereits vorhandene Einheiten sind als abgeschlossen markiert; ein Haken bedeutet, dass eine Basiseinheit existiert, nicht dass keine spätere Aktualisierung oder Vertiefung mehr nötig wäre.
 
 ### Grundlagen
 
@@ -630,4 +630,4 @@ Diese Roadmap verfolgt ausdrücklich nicht:
 
 ## Merksatz
 
-> Die fachliche Roadmap ist vollständig, wenn sie nicht nur erklärt, **was ADHS ist**, sondern ebenso präzise zeigt, **womit ADHS verwechselt werden kann, womit es gemeinsam auftreten kann, wie Unterstützung geprüft wird, welche Grenzen die Evidenz hat und welche Fragen noch offen sind**.
+> Die fachliche Roadmap/eine Einheit ist vollständig, wenn sie nicht nur erklärt, **was ADHS ist**, sondern ebenso präzise zeigt, **womit ADHS verwechselt werden kann, womit es gemeinsam auftreten kann, wie Unterstützung geprüft wird, welche Grenzen die Evidenz hat und welche Fragen noch offen sind**.
