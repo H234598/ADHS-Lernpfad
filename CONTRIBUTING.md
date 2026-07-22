@@ -12,11 +12,11 @@ Die drei Literaturausgaben dürfen nicht unabhängig voneinander editiert werden
 ## Umfang regulärer Einheiten
 
 - harte Untergrenze: 800 Fließtextwörter
-- CI-Warnung: unter 1.000 Fließtextwörtern
-- Zielbereich: 1.000–2.000 Fließtextwörter
-- harte Obergrenze: 2.500 Fließtextwörter
+- CI-Warnung: außerhalb des Zielbereichs
+- Zielbereich: 1.200–2.500 Fließtextwörter
+- harte Obergrenze: 3.000 Fließtextwörter
 
-Gezählt wird der didaktische Fließtext ohne YAML-Frontmatter, Navigation und Diagrammcode. Benötigt ein Thema mehr als 2.500 Wörter, wird es in mehrere fachlich sinnvolle Einheiten geteilt. Die Grenzen dürfen nicht mit Wiederholungen oder Fülltext erreicht werden.
+Gezählt wird der didaktische Fließtext ohne YAML-Frontmatter, Navigation und Diagrammcode. Benötigt ein Thema mehr als 3.000 Wörter, wird es in mehrere fachlich sinnvolle Einheiten geteilt. Die Grenzen dürfen nicht mit Wiederholungen oder Fülltext erreicht werden. Die Legacy-Einheiten 1–10 werden weiterhin gezählt, sind aber von Zielbereichswarnungen ausgenommen; die harten Grenzen gelten auch für sie.
 
 ## Links
 

@@ -2,16 +2,23 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sys
 import tempfile
 import unittest
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
 
 from content_links import (
     LinkOccurrence,
     analyze_all,
+    convert_for_combined,
     convert_for_web,
     resolve_occurrence,
     scan_wikilinks,
 )
+from callouts import convert_obsidian_callouts_for_web
+from content_index import parse_headings
 from content_model import build_content_index
 
 
@@ -89,6 +96,121 @@ class ContentLinkTests(unittest.TestCase):
         found = scan_wikilinks(text, self.source)
         self.assertEqual([item.target for item in found], ["Alpha", "Bild.png"])
         self.assertEqual([item.embed for item in found], [False, True])
+
+    def test_scanner_ignores_indented_code(self) -> None:
+        text = "    [[Fehlt]]\n\t![[Bild.png]]\n\n[[Alpha]]\n"
+        found = scan_wikilinks(text, self.source)
+        self.assertEqual([item.raw for item in found], ["[[Alpha]]"])
+
+    def test_indented_comment_close_does_not_hide_following_link(self) -> None:
+        text = "<!--\n    Kommentar -->\n[[Alpha]]\n"
+        found = scan_wikilinks(text, self.source)
+        self.assertEqual([item.raw for item in found], ["[[Alpha]]"])
+
+    def test_comment_opener_inside_indented_code_is_literal(self) -> None:
+        text = "    <!-- literal code\n[[Alpha]]\n"
+        found = scan_wikilinks(text, self.source)
+        self.assertEqual([item.raw for item in found], ["[[Alpha]]"])
+
+    def test_fence_marker_inside_comment_does_not_open_fence(self) -> None:
+        text = "<!--\n```\n-->\n[[Alpha]]\n"
+        found = scan_wikilinks(text, self.source)
+        self.assertEqual([item.raw for item in found], ["[[Alpha]]"])
+
+    def test_fence_closer_must_match_character_length_indent_and_tail(self) -> None:
+        text = (
+            "````md\n"
+            "[[Hidden1]]\n"
+            "```\n"
+            "[[Hidden2]]\n"
+            "    ````\n"
+            "```not-a-close\n"
+            "[[Hidden3]]\n"
+            "````\n"
+            "[[Alpha]]\n"
+        )
+        found = scan_wikilinks(text, self.source)
+        self.assertEqual([item.raw for item in found], ["[[Alpha]]"])
+
+    def test_multiline_code_spans_hide_links_and_match_delimiter_length(self) -> None:
+        text = (
+            "`one\n[[Hidden1]]\ntwo`\n"
+            "``one\n[[Hidden2]]\ntwo``\n"
+            "`unmatched literal\n"
+            "[[Alpha]]\n"
+        )
+        found = scan_wikilinks(text, self.source)
+        self.assertEqual([item.raw for item in found], ["[[Alpha]]"])
+
+    def test_inline_code_lookahead_stops_at_markdown_block_boundaries(self) -> None:
+        text = (
+            "Start `\n"
+            "[[BeforeBlank]]\n"
+            "\n"
+            "Next ` literal\n"
+            "[[AfterBlank]]\n"
+            "\n"
+            "Start `\n"
+            "[[BeforeHeading]]\n"
+            "# Heading `\n"
+            "[[AfterHeading]]\n"
+            "\n"
+            "Start `\n"
+            "[[BeforeFence]]\n"
+            "```text\n"
+            "` and [[HiddenInFence]]\n"
+            "```\n"
+            "[[AfterFence]]\n"
+        )
+        found = scan_wikilinks(text, self.source)
+        self.assertEqual(
+            [item.raw for item in found],
+            [
+                "[[BeforeBlank]]", "[[AfterBlank]]",
+                "[[BeforeHeading]]", "[[AfterHeading]]",
+                "[[BeforeFence]]", "[[AfterFence]]",
+            ],
+        )
+
+    def test_shared_fence_state_protects_headings_combined_and_callouts(self) -> None:
+        markdown = (
+            "````md\n"
+            "# Fake one\n"
+            "```\n"
+            "# Fake two\n"
+            "    ````\n"
+            "```not-a-close\n"
+            "# Fake three\n"
+            "````\n"
+            "# Real\n"
+        )
+        headings, issues = parse_headings(markdown, 1)
+        self.assertEqual(issues, [])
+        self.assertEqual([heading.title for heading in headings], ["Real"])
+
+        combined = convert_for_combined(
+            markdown,
+            self.source,
+            self.root,
+            {self.source.resolve()},
+            index=self.index,
+        )
+        self.assertNotIn("Fake two {#", combined)
+        self.assertNotIn("Fake three {#", combined)
+        self.assertIn("# Real {#doc-01-grundlagen-02-b--real}", combined)
+
+        callouts = convert_obsidian_callouts_for_web(
+            "````md\n"
+            "> [!note] Versteckt\n"
+            "```\n"
+            "> bleibt Code\n"
+            "````\n"
+            "> [!note] Sichtbar\n"
+            "> Inhalt\n"
+        )
+        self.assertIn("> [!note] Versteckt", callouts)
+        self.assertIn("> bleibt Code", callouts)
+        self.assertIn('!!! note "Sichtbar"', callouts)
 
     def test_title_alias_heading_and_planned_resolution(self) -> None:
         title = resolve_occurrence(self.index, self.occurrence("Alpha"))

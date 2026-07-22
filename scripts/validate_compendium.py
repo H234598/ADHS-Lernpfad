@@ -6,12 +6,16 @@ import re
 import yaml
 
 from content_links import validate_all
+from word_count_policy import (
+    MAX_WORDS,
+    MIN_WORDS,
+    TARGET_MAX_WORDS,
+    TARGET_MIN_WORDS,
+    evaluate_word_count,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "build" / "validation-report.txt"
-MIN_WORDS = 800
-WARNING_WORDS = 1000
-MAX_WORDS = 2500
 errors = []
 warnings = []
 counts = []
@@ -66,12 +70,9 @@ for item in index["chapters"]:
         errors.append(f"{path}: Lernzeit muss 10–20 Minuten sein")
     words = prose_word_count(text)
     counts.append((item["number"], item["path"], words))
-    if words < MIN_WORDS:
-        errors.append(f"{path}: nur {words} Fließtextwörter; mindestens {MIN_WORDS} erforderlich")
-    elif words < WARNING_WORDS:
-        warnings.append(f"{path}: {words} Wörter; unter dem Zielbereich von {WARNING_WORDS} Wörtern")
-    if words > MAX_WORDS:
-        errors.append(f"{path}: {words} Fließtextwörter; Maximum sind {MAX_WORDS}")
+    word_errors, word_warnings = evaluate_word_count(item["number"], words, str(path))
+    errors.extend(word_errors)
+    warnings.extend(word_warnings)
     for section in required_sections:
         if section not in text:
             errors.append(f"{path}: Pflichtabschnitt fehlt: {section}")
@@ -91,7 +92,8 @@ REPORT.parent.mkdir(parents=True, exist_ok=True)
 report_lines = [
     "ADHS-Lernpfad Validierungsbericht",
     "",
-    f"Grenzen: Minimum {MIN_WORDS}, Warnung unter {WARNING_WORDS}, Maximum {MAX_WORDS} Fließtextwörter",
+    f"Grenzen: Minimum {MIN_WORDS}, Zielbereich {TARGET_MIN_WORDS}-{TARGET_MAX_WORDS}, Maximum {MAX_WORDS} Fließtextwörter",
+    "Legacy-Ausnahme: Einheiten 1-10 erzeugen keine Zielbereich-Warnungen",
     "",
     "Wortzahlen:",
 ]
@@ -115,3 +117,5 @@ if os.getenv("GITHUB_OUTPUT"):
         fh.write(f"failed={'true' if errors else 'false'}\n")
 
 print(f"Validierung abgeschlossen: {len(index['chapters'])} Kapitel, {len(reference_ids)} Quellen")
+if errors:
+    raise SystemExit(1)

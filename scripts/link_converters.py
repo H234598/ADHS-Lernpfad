@@ -10,7 +10,8 @@ from pathlib import Path
 import re
 
 from content_model import (
-    ContentIndex, FENCE_RE, build_content_index, document_anchor, slugify,
+    ContentIndex, FenceState, advance_fence_state, build_content_index,
+    document_anchor, slugify,
 )
 from link_resolution import resolve_occurrence
 from link_types import IMAGE_SUFFIXES, LinkError, LinkOccurrence, Resolution, scan_wikilinks
@@ -108,16 +109,14 @@ def convert_for_combined(
     converted = _replace_occurrences(text, replacements)
     anchor_prefix = document_anchor(source.relative_to(root))
     output = [f"[]{{#{anchor_prefix}}}\n"]
-    fence: str | None = None
+    fence: FenceState | None = None
     for line in converted.splitlines(keepends=True):
-        fence_match = FENCE_RE.match(line)
-        if fence_match:
-            marker = fence_match.group(1)[0]
-            fence = marker if fence is None else (None if fence == marker else fence)
+        fence, is_fenced = advance_fence_state(line, fence)
+        if is_fenced:
             output.append(line)
             continue
         heading_match = re.match(r"^(#{1,6})\s+(.+?)\s*$", line.rstrip("\n"))
-        if fence is None and heading_match:
+        if heading_match:
             level, heading_text = heading_match.groups()
             clean = re.sub(r"\s*\{#[-\w:.]+\}\s*$", "", heading_text)
             heading_id = f"{anchor_prefix}--{slugify(clean)}"

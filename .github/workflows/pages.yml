@@ -17,8 +17,9 @@ concurrency:
 jobs:
   build:
     name: Build Pages and download artifacts
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
@@ -33,42 +34,126 @@ jobs:
             requirements-docs.txt
             requirements-export.txt
 
-      - name: Install Python dependencies
-        run: python -m pip install --disable-pip-version-check -r requirements-docs.txt -r requirements-export.txt
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
 
-      - name: Verify installed dependencies
-        run: python -m pip check
-
-      - name: Validate links and build source artifacts
+      - name: Build validated site and downloads
+        id: build
+        continue-on-error: true
+        shell: bash
+        env:
+          RUNTIME_STATUS_MANAGED: '1'
         run: |
-          python scripts/validate_links.py
+          set -Eeuo pipefail
+          export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+          python scripts/runtime_status_cli.py build/runtime-status.json \
+            --new-run --workflow pages-publication \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" --git-sha "$GITHUB_SHA"
+          current_phase=initialization
+          fail_pages() {
+            code=$?
+            trap - ERR
+            existing_status="$(python -c 'import json; print(json.load(open("build/runtime-status.json", encoding="utf-8")).get("status", ""))' 2>/dev/null || true)"
+            if [[ "$existing_status" != 'failed' ]]; then
+              python scripts/runtime_status_cli.py build/runtime-status.json \
+                --finish failed --phase "$current_phase" --error-class pages_workflow_error \
+                --error-message "Pages-Build fehlgeschlagen (Exit ${code}); siehe Schrittprotokoll." \
+                --recovery-action inspect_pages_build_and_retry || true
+            fi
+            exit "$code"
+          }
+          trap fail_pages ERR
+
+          python -m pip install --disable-pip-version-check \
+            -r requirements-docs.txt -r requirements-export.txt
+          python -m pip check
+          npm ci
+          npx playwright install --with-deps chromium
+
+          git diff --check
+          python -m compileall -q scripts tests
+          find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
+          pwsh -NoProfile -Command '
+            $failed = $false
+            Get-ChildItem Sync -Recurse -Filter *.ps1 | ForEach-Object {
+              $tokens = $null
+              $errors = $null
+              [System.Management.Automation.Language.Parser]::ParseFile(
+                $_.FullName, [ref]$tokens, [ref]$errors
+              ) | Out-Null
+              if ($errors.Count -gt 0) {
+                $failed = $true
+                Write-Host "PowerShell-Parserfehler in $($_.FullName):"
+                $errors | ForEach-Object { Write-Host "  $($_.Message)" }
+              }
+            }
+            if ($failed) { exit 1 }
+          '
+          bash Sync/tests/test-posix-sync.sh 2>&1 | tee build/sync-test.log
+
+          RUNTIME_STATUS_MANAGED=0 python -m pytest -q
+          npm test
+          current_phase=load_content
           python scripts/build_literature.py
           git add --intent-to-add Literatur.md references.bib references.json
           git diff --exit-code -- Literatur.md references.bib references.json
-          python scripts/build_graph.py
-          python scripts/build_combined.py
+          python scripts/build_graph.py --status-file build/runtime-status.json
+          current_phase=validate_graph
+          python scripts/validate_graph.py --expected-revision "$GITHUB_SHA"
+          python scripts/validate_links.py
+          python scripts/validate_compendium.py
+          current_phase=export
+          python scripts/build_combined.py --status-file build/runtime-status.json
           python scripts/build_anki.py
-
-      - name: Install Pandoc and LuaLaTeX
-        run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends \
-            pandoc \
-            texlive-luatex \
-            texlive-latex-recommended \
-            texlive-latex-extra \
-            texlive-fonts-recommended \
-            texlive-lang-german \
-            fonts-dejavu-core
+            pandoc texlive-luatex texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-lang-german fonts-dejavu-core
+          python scripts/build_exports.py --status-file build/runtime-status.json
+          python scripts/runtime_status_cli.py build/runtime-status.json \
+            --finish success --phase success
+          python scripts/validate_runtime_status.py build/runtime-status.json
+          python scripts/build_exports.py --refresh-manifest \
+            --status-file build/runtime-status.json
+          python scripts/build_docs.py
+          mkdocs build --strict
+          npm run test:web
+          python scripts/runtime_status_cli.py build/runtime-status.json \
+            --finish success --phase success --artifact site
+          python scripts/validate_runtime_status.py build/runtime-status.json
+          python scripts/build_exports.py --refresh-manifest \
+            --status-file build/runtime-status.json
+          python scripts/build_docs.py
+          mkdocs build --strict
+          (cd build/artifacts && sha256sum --check SHA256SUMS.txt)
 
-      - name: Build stable website downloads
-        run: python scripts/build_exports.py
+      - name: Create graph and runtime summary
+        if: always()
+        run: python scripts/graph_ci_summary.py
 
-      - name: Build documentation sources
-        run: python scripts/build_docs.py
+      - name: Upload publication diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pages-graph-diagnostics-${{ github.run_attempt }}
+          path: |
+            build/runtime-status.json
+            build/runtime-status-validation-report.json
+            build/runtime-status-validation-report.md
+            build/graph-ci-summary.md
+            build/knowledge-graph/
+            build/validation-report.txt
+            build/sync-test.log
+            build/playwright-results/
+          if-no-files-found: warn
+          retention-days: 14
 
-      - name: Build MkDocs site strictly
-        run: mkdocs build --strict
+      - name: Enforce build result
+        if: always()
+        run: test '${{ steps.build.outcome }}' = 'success'
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6

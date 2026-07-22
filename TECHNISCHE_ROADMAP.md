@@ -40,11 +40,11 @@ Schwerpunkte:
 
 ## Phase 3 – Wissensgraph und Infrastruktur
 
-- [ ] Wissensgraph-Generator stabilisieren
-- [ ] Graph-Health-Checks
-- [ ] fehlende Nodes erkennen
-- [ ] defekte Links markieren
-- [ ] Webdarstellung verbessern
+- [x] Wissensgraph-Generator stabilisieren
+- [x] Graph-Health-Checks
+- [x] fehlende Nodes erkennen
+- [x] defekte Links markieren
+- [x] Webdarstellung verbessern
 
 ## Phase 4 – Release Management
 

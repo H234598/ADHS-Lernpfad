@@ -12,9 +12,9 @@ from typing import Any
 import yaml
 
 from content_model import (
-    ContentIndex, Document, EXPLICIT_ID_RE, FENCE_RE, FRONTMATTER_RE,
-    HEADING_RE, Heading, ModelIssue, canonical_document_path,
-    json_compatible, markdown_files, slugify,
+    ContentIndex, Document, EXPLICIT_ID_RE, FRONTMATTER_RE, HEADING_RE,
+    FenceState, Heading, ModelIssue, advance_fence_state,
+    canonical_document_path, json_compatible, markdown_files, slugify,
 )
 
 
@@ -69,15 +69,11 @@ def parse_headings(
 ) -> tuple[list[Heading], list[ModelIssue]]:
     headings: list[Heading] = []
     issues: list[ModelIssue] = []
-    fence: str | None = None
+    fence: FenceState | None = None
     seen: dict[str, Heading] = {}
     for offset, line in enumerate(body.splitlines()):
-        fence_match = FENCE_RE.match(line)
-        if fence_match:
-            marker = fence_match.group(1)[0]
-            fence = marker if fence is None else (None if fence == marker else fence)
-            continue
-        if fence is not None:
+        fence, is_fenced = advance_fence_state(line, fence)
+        if is_fenced:
             continue
         match = HEADING_RE.match(line)
         if not match:
@@ -111,7 +107,9 @@ def classify_document(path: Path, metadata: dict[str, Any]) -> tuple[str, str]:
         return "chapter", "learning"
     if parts and parts[0] in {".github", "prompts", "Sync"}:
         return "technical", "technical"
-    if name in {"WARTUNG.md", "CONTRIBUTING.md", "CHANGELOG.md"}:
+    if name in {
+        "TECHNISCHE_ROADMAP.md", "WARTUNG.md", "CONTRIBUTING.md", "CHANGELOG.md",
+    }:
         return "technical", "technical"
     learning = {"README.md", "ROADMAP.md", "Literatur.md", "DOWNLOADS.md"}
     return "document", "learning" if name in learning else "support"

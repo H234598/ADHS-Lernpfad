@@ -1,5 +1,6 @@
 # Bewusst geplante, noch nicht vorhandene Seiten.
 # Nur hier registrierte fehlende Ziele dürfen als "planned" veröffentlicht werden.
+# Optionaler Lebenszyklus: status: planned (Standard) oder status: in_progress.
 nodes:
 - path: 02-Vertiefung/02-Autismus-ADHS-Ueberlappung
   title: Autismus-/ADHS-Überlappung

@@ -1,7 +1,7 @@
 ---
 title: Downloads
 subtitle: Lernpfad, Literaturdaten und Lernkarten in offenen und verbreiteten Formaten
-last_reviewed: 2026-07-14
+last_reviewed: 2026-07-22
 ---
 
 # Downloads
@@ -99,6 +99,47 @@ Wähle das Format, das zu deinem Gerät und deinem Arbeitsstil passt. Alle Datei
 
 </div>
 
+## Wissensgraph und Qualitätsdaten
+
+<div class="download-grid" markdown>
+
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/knowledge-graph.json" download>
+<span class="download-card__icon">🕸️</span>
+<strong>Wissensgraph JSON</strong>
+<span>Kanonische Knoten, Beziehungen, Fundstellen, Status und Kennzahlen.</span>
+<small>JSON Schema-validiert · UTF-8 · maschinenlesbar</small>
+</a>
+
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/knowledge-graph.graphml" download>
+<span class="download-card__icon">🔗</span>
+<strong>GraphML</strong>
+<span>Austauschdatei für Gephi, Cytoscape Desktop und andere Graphwerkzeuge.</span>
+<small>GraphML/XML · gerichtete, typisierte Kanten</small>
+</a>
+
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/knowledge-graph.mmd" download>
+<span class="download-card__icon">📊</span>
+<strong>Mermaid</strong>
+<span>Kompakte textbasierte Diagnoseansicht des Lern- und Linkgraphen.</span>
+<small>Mermaid-Quelltext · offline weiterverarbeitbar</small>
+</a>
+
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/graph-report.md" download>
+<span class="download-card__icon">🩺</span>
+<strong>Qualitätsbericht</strong>
+<span>Fehler, Warnungen und Graphkennzahlen in lesbarem Markdown.</span>
+<small>Zusätzlich als graph-report.json verfügbar</small>
+</a>
+
+<a class="download-card" href="https://ADHS.telacore.org/artifacts/runtime-status.json" download>
+<span class="download-card__icon">🚦</span>
+<strong>Generator-Laufstatus</strong>
+<span>Letzte Phase, Laufzeit, Commit, Fehlerklasse und vorbereiteter Recovery-Schritt.</span>
+<small>JSON Schema-validiert · pro Veröffentlichung eingefroren</small>
+</a>
+
+</div>
+
 ## Welches Format passt zu mir?
 
 | Ziel | Gute Wahl |
@@ -111,6 +152,8 @@ Wähle das Format, das zu deinem Gerät und deinem Arbeitsstil passt. Alle Datei
 | Literatur in Zotero, JabRef oder LaTeX übernehmen | **BibTeX** |
 | Literatur mit CiteProc und CSL-Stilen verarbeiten | **CSL JSON** |
 | Wiederholen mit Spaced Repetition | **Anki APKG** |
+| Graph analysieren oder weiterverarbeiten | **JSON**, **GraphML** oder **Mermaid** |
+| Buildqualität und letzten Generatorlauf prüfen | **Qualitätsbericht** und **Runtime-Status** |
 
 > [!info] Automatisch erzeugt
 > Die Download-Dateien sind abgeleitete Ausgaben. Fachliche Änderungen erfolgen in den versionierten Markdown-Kapiteln, Studienkarten und Lernkarten des Repositorys. Die CI prüft Links, Literaturdaten und Builds, bevor ein Stand veröffentlicht wird.

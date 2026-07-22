@@ -103,12 +103,13 @@ class GraphBuilder:
             "scope": document.scope,
             "exists": True,
             "planned": False,
+            "lifecycle_status": "published",
             "aliases": list(document.aliases),
             "tags": as_list(document.metadata.get("tags")),
         }
         for field in NODE_METADATA_FIELDS:
             if field in document.metadata:
-                node[field] = document.metadata[field]
+                node["content_status" if field == "status" else field] = document.metadata[field]
         return self.add_node(node)
 
     def add_planned(self, planned: PlannedNode) -> str:
@@ -121,6 +122,7 @@ class GraphBuilder:
             "scope": planned.scope,
             "exists": False,
             "planned": True,
+            "lifecycle_status": planned.lifecycle_status,
             "aliases": list(planned.aliases),
             "level": planned.level,
             "roadmap": planned.roadmap,
