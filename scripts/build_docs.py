@@ -36,6 +36,7 @@ files = [
     "Glossar.md",
     "Literatur.md",
     "ROADMAP.md",
+    "TECHNISCHE_ROADMAP.md",
     "WARTUNG.md",
     "CONTRIBUTING.md",
     "CHANGELOG.md",

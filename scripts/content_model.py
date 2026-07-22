@@ -12,7 +12,8 @@ import unicodedata
 from typing import Any
 
 EXCLUDED_DIRS = {
-    ".git", ".venv", "build", "node_modules", "site", "__pycache__",
+    ".git", ".pytest_cache", ".venv", "build", "node_modules", "site",
+    "__pycache__",
 }
 FRONTMATTER_RE = re.compile(r"\A---[ \t]*\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")

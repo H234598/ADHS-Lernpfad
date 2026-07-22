@@ -11,6 +11,10 @@ hide: [navigation]
 
 Diese Seite bündelt den technischen Betrieb des Lernkompendiums. Sie gehört nicht zum eigentlichen Lernpfad und ist deshalb aus der normalen Navigation ausgeblendet.
 
+> Die technische Weiterentwicklung des Projekts ist in einer separaten Roadmap dokumentiert:
+>
+> [[TECHNISCHE_ROADMAP|Technische Roadmap]]
+
 ## Automatisierter Tageslauf
 
 ```text
@@ -78,7 +82,7 @@ Die Studienkarten unter `references/` sind die gemeinsame Quelle für:
 - `references.bib` für BibTeX und BibLaTeX,
 - `references.json` im CSL-JSON-Format für CiteProc und Literaturverwaltungen.
 
-Die im Studienkartentext sichtbare vollständige Zitation muss exakt aus den strukturierten `citation`-Metadaten reproduzierbar sein. Dadurch können die Ausgabeformate nicht unbemerkt auseinanderlaufen.
+Die im Studienkartentext sichtbare vollständige Zitation muss exakt aus den strukturierten `citation`-Metadaten reproduzierbar sein.
 
 ## Schutzregeln für automatische Merges
 
@@ -95,22 +99,11 @@ Diese Trennung verhindert, dass ein PR seine eigenen Prüfregeln verändert und 
 ## Betrieb und Synchronisierung
 
 - [[Sync/README|Synchronisierung nach Betriebssystem]]
-  - [[Sync/Linux/README|Linux und systemd]]
-  - [[Sync/Android/README|Android und Termux]]
-  - [[Sync/Windows/README|Windows und Aufgabenplanung]]
-  - [[Sync/macOS/README|macOS und LaunchAgent]]
-  - [[Sync/iOS/README|iPhone und iPad über iSH]]
-  - [[Sync/BSD/README|BSD und Benutzer-Cron]]
 - [[Sync/MODES|Pull-, Überschreib- und Full-Sync-Modi]]
 - [[Sync/CONFIGURATION|Konfigurationsreferenz]]
 - [[Sync/TROUBLESHOOTING|Fehlersuche und Rückgabecodes]]
-- [[Sync/PLAN|Architektur- und Umsetzungsplan]]
 - [[CONTRIBUTING|Beitrags-, Evidenz- und Branchregeln]]
 - [[CHANGELOG|Änderungsverlauf]]
-
-Alle sechs Plattformbereiche enthalten Installer beziehungsweise Installationspakete, Betriebsanleitungen und Deinstallationswege. Linux, Android, macOS, BSD und iSH verwenden dieselbe getestete Bash-Engine; Windows besitzt eine funktional gleichwertige PowerShell-Engine. Die öffentlichen ZIP-Pakete werden reproduzierbar gebaut und mit SHA-256-Prüfsummen veröffentlicht.
-
-Ein bidirektionaler `full-sync` schreibt nie direkt nach `main`, sondern ausschließlich auf einen konfigurierten Gerätebranch. Checkout und Vault dürfen nicht überlappen; parallele Läufe und divergierende Gerätebranches werden kontrolliert abgefangen.
 
 ## Automatische Ausgaben
 
@@ -137,4 +130,4 @@ gehören nicht zu dieser Ausbaustufe.
 
 ## Branch-Hygiene
 
-Jeder Nicht-`main`-Branch muss einem aktiven oder nachvollziehbar abgeschlossenen Arbeitsvorgang zugeordnet sein. Nach Merge oder partieller Übernahme wird geprüft, ob noch einzigartige Änderungen gegenüber `main` verbleiben. Überholte Parallelstände dürfen nicht still liegen bleiben.
+Jeder Nicht-`main`-Branch muss einem aktiven oder nachvollziehbar abgeschlossenen Arbeitsvorgang zugeordnet sein.

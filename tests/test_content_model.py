@@ -99,6 +99,27 @@ class ContentModelTests(unittest.TestCase):
             "doc-01-grundlagen-01-start",
         )
 
+    def test_generated_cache_markdown_is_excluded(self) -> None:
+        cache = self.root / ".pytest_cache"
+        cache.mkdir()
+        (cache / "README.md").write_text("# Pytest cache\n", encoding="utf-8")
+
+        index = build_content_index(self.root)
+
+        self.assertNotIn("doc:.pytest_cache/README", index.documents)
+
+    def test_technical_roadmap_is_classified_as_technical(self) -> None:
+        (self.root / "TECHNISCHE_ROADMAP.md").write_text(
+            "---\ntitle: Technische Roadmap\n---\n\n# Technische Roadmap\n",
+            encoding="utf-8",
+        )
+
+        document = build_content_index(self.root).documents[
+            "doc:TECHNISCHE_ROADMAP"
+        ]
+
+        self.assertEqual((document.type, document.scope), ("technical", "technical"))
+
 
 if __name__ == "__main__":
     unittest.main()

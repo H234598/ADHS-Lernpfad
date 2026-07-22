@@ -107,7 +107,9 @@ def classify_document(path: Path, metadata: dict[str, Any]) -> tuple[str, str]:
         return "chapter", "learning"
     if parts and parts[0] in {".github", "prompts", "Sync"}:
         return "technical", "technical"
-    if name in {"WARTUNG.md", "CONTRIBUTING.md", "CHANGELOG.md"}:
+    if name in {
+        "TECHNISCHE_ROADMAP.md", "WARTUNG.md", "CONTRIBUTING.md", "CHANGELOG.md",
+    }:
         return "technical", "technical"
     learning = {"README.md", "ROADMAP.md", "Literatur.md", "DOWNLOADS.md"}
     return "document", "learning" if name in learning else "support"
