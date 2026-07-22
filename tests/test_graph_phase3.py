@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from scripts.automation_run_status import write_status
+from scripts.validate_graph import SCHEMA, validate_graph_file
 
 
 def test_runtime_status_writer_is_atomic(tmp_path: Path) -> None:
@@ -25,6 +26,17 @@ def test_runtime_status_writer_is_atomic(tmp_path: Path) -> None:
 
 
 def test_graph_validator_detects_missing_output(tmp_path: Path, monkeypatch) -> None:
-    # Placeholder for the integration fixture used by the CI graph build.
-    # The full fixture is intentionally added together with the CI wiring.
-    assert not (tmp_path / "knowledge-graph.json").exists()
+    graph = tmp_path / "knowledge-graph.json"
+    report_json = tmp_path / "graph-report.json"
+    report_md = tmp_path / "graph-report.md"
+    result = validate_graph_file(
+        graph,
+        SCHEMA,
+        root=tmp_path,
+        report_json=report_json,
+        report_markdown=report_md,
+    )
+    assert not result.valid
+    assert result.errors[0]["code"] == "missing-graph"
+    assert report_json.is_file()
+    assert report_md.is_file()

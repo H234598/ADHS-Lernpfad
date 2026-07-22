@@ -16,9 +16,46 @@ EXCLUDED_DIRS = {
 }
 FRONTMATTER_RE = re.compile(r"\A---[ \t]*\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
-FENCE_RE = re.compile(r"^\s*(`{3,}|~{3,})")
+FENCE_RE = re.compile(
+    r"^ {0,3}(?P<marker>`{3,}|~{3,})(?P<info>[^\r\n]*)(?:\r?\n)?$"
+)
+FENCE_CLOSE_RE = re.compile(
+    r"^ {0,3}(?P<marker>`{3,}|~{3,})[ \t]*(?:\r?\n)?$"
+)
 EXPLICIT_ID_RE = re.compile(r"\s*\{#([-\w:.]+)\}\s*$")
 ATTR_LIST_RE = re.compile(r"\s*\{[^{}]+\}\s*$")
+
+FenceState = tuple[str, int]
+
+
+def advance_fence_state(
+    line: str, state: FenceState | None,
+) -> tuple[FenceState | None, bool]:
+    """Advance a CommonMark-style fenced-code state for one source line.
+
+    The boolean result is true for every line belonging to a fence, including
+    its opening and closing delimiters. Closing delimiters must use the same
+    character, be at least as long as the opener, have at most three leading
+    spaces and contain no trailing non-whitespace text.
+    """
+
+    if state is not None:
+        match = FENCE_CLOSE_RE.match(line)
+        if match:
+            marker = match.group("marker")
+            if marker[0] == state[0] and len(marker) >= state[1]:
+                return None, True
+        return state, True
+
+    match = FENCE_RE.match(line)
+    if match is None:
+        return None, False
+    marker = match.group("marker")
+    info = match.group("info")
+    # CommonMark forbids backticks in the info string of a backtick fence.
+    if marker[0] == "`" and "`" in info:
+        return None, False
+    return (marker[0], len(marker)), True
 
 
 def slugify(value: str) -> str:
@@ -115,6 +152,7 @@ class PlannedNode:
     roadmap: str | None = None
     reason: str | None = None
     aliases: tuple[str, ...] = ()
+    lifecycle_status: str = "planned"
 
 
 @dataclass(frozen=True)

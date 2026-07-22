@@ -3,17 +3,27 @@
 
 from pathlib import Path
 import json
+import os
 import shutil
 
 from callouts import convert_obsidian_callouts_for_web
 from content_links import convert_for_web, validate_all
+from graph_web import annotate_special_wikilinks, copy_graph_outputs, inject_fallback
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "build" / "docs"
 
 errors = validate_all(ROOT)
-if errors:
+diagnostic_mode = os.getenv("KNOWLEDGE_GRAPH_DIAGNOSTIC", "").lower() in {
+    "1", "true", "yes", "on",
+}
+if errors and not diagnostic_mode:
     raise ValueError("Ungültige Obsidian-Links:\n" + "\n".join(f"- {error}" for error in errors))
+if errors:
+    print(
+        "Diagnosemodus: defekte Links werden sichtbar markiert:\n"
+        + "\n".join(f"- {error}" for error in errors)
+    )
 
 if DOCS.exists():
     shutil.rmtree(DOCS)
@@ -54,7 +64,11 @@ for relative_path in files:
     source = ROOT / relative_path
     destination = DOCS / relative_path
     destination.parent.mkdir(parents=True, exist_ok=True)
-    converted = convert_for_web(source.read_text(encoding="utf-8"), source, ROOT)
+    source_text = source.read_text(encoding="utf-8")
+    source_text = annotate_special_wikilinks(source_text, source, ROOT)
+    if relative_path == "knowledge-graph/README.md":
+        source_text = inject_fallback(source_text, ROOT)
+    converted = convert_for_web(source_text, source, ROOT)
     converted = convert_obsidian_callouts_for_web(converted)
     destination.write_text(converted, encoding="utf-8")
 
@@ -81,9 +95,11 @@ artifact_source = ROOT / "build" / "artifacts"
 if artifact_source.is_dir():
     shutil.copytree(artifact_source, DOCS / "artifacts", dirs_exist_ok=True)
 
+graph_outputs = copy_graph_outputs(ROOT, DOCS)
+
 shutil.copy2(ROOT / "CNAME", DOCS / "CNAME")
 print(
     f"MkDocs-Quellen: {len(files)} konvertierte Markdown-Dateien, "
     "Obsidian-Callouts, Sync-Downloads, Bibliografiedaten, Assets, "
-    "optionale Downloads und CNAME"
+    f"{len(graph_outputs)} Wissensgraphdateien, optionale Downloads und CNAME"
 )

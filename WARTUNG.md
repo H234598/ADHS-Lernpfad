@@ -56,6 +56,9 @@ Geprüft werden unter anderem:
 - fortlaufende Kapitelnummerierung,
 - Übereinstimmung von Studienkarten, `Literatur.md`, `references.bib` und `references.json`,
 - Wissensgraph, Gesamtdokument und Anki-Paket,
+- JSON-Schema, Knoten- und Relationstypen sowie sämtliche Graphendpunkte,
+- den schema-validierten Laufstatus mit Phase, Dauer, Commit und Recovery-Hinweis,
+- Browser-Smoke-Tests für Graphsuche, Tag- und Lebenszyklusfilter, Tastatur und No-JS-Fallback,
 - Shellsyntax, PowerShell-Parser und echte Sync-Integrationstests,
 - MkDocs-Build im Strict-Modus.
 
@@ -122,9 +125,15 @@ Bei Änderungen an `main` werden erzeugt beziehungsweise veröffentlicht:
 - ein lernorientierter Obsidian-Vault als ZIP,
 - sechs plattformspezifische Sync-Pakete,
 - SHA-256-Prüfsummen und ein JSON-Downloadmanifest,
-- Validierungs- und Wissensgraph-Artefakte.
+- Validierungs- und Wissensgraph-Artefakte einschließlich JSON, GraphML, Mermaid, Qualitätsbericht und Laufstatus.
 
 Die lesefreundliche Übersicht steht unter [[DOWNLOADS|Downloads]]. Die Dateien werden zusammen mit der Website unter stabilen `/artifacts/`-Adressen veröffentlicht; die klassischen GitHub-Actions-Artefakte bleiben als zeitlich begrenzte technische Kopie erhalten.
+
+Jeder Eintrag im Downloadmanifest enthält Dateiname, Medientyp, Beschreibung,
+Erzeugungszeit und SHA-256. Der Wissensgraph zeigt den letzten erfolgreichen
+oder fehlgeschlagenen Lauf sichtbar an. `recovery_action` bereitet einen sicheren
+Folgeschritt vor; zeitgesteuerte Retries oder ein eigener Recovery-Scheduler
+gehören nicht zu dieser Ausbaustufe.
 
 ## Branch-Hygiene
 

@@ -1,0 +1,16 @@
+{
+  "name": "adhs-lernpfad-web-assets",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Reproduzierbare Web-Assets für den ADHS-Lernpfad",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "cytoscape": "3.34.0"
+  },
+  "scripts": {
+    "check:graph-js": "node --check assets/javascripts/knowledge-graph.js",
+    "test": "npm run check:graph-js",
+    "test:web": "playwright test"
+  }
+}

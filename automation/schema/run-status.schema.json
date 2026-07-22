@@ -1,17 +1,104 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ADHS.telacore.org/schemas/run-status-1.0.0.json",
+  "$id": "https://ADHS.telacore.org/schemas/run-status-2.0.0.json",
   "title": "Automation Runtime Status",
+  "description": "Persisted lifecycle and recovery information for one automation run.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["run_id", "workflow", "status", "phase"],
+  "required": [
+    "run_id",
+    "workflow",
+    "git_sha",
+    "status",
+    "phase",
+    "started_at",
+    "ended_at",
+    "duration_seconds",
+    "updated_at",
+    "metrics",
+    "artifacts",
+    "error_class",
+    "error_message",
+    "recovery_action"
+  ],
   "properties": {
     "run_id": {"type": "string", "minLength": 1},
     "workflow": {"type": "string", "minLength": 1},
-    "status": {"enum": ["started", "running", "success", "failed", "blocked", "recovered"]},
-    "phase": {"type": "string", "minLength": 1},
-    "error_class": {"type": "string"},
-    "recovery_action": {"type": "string"},
-    "artifacts": {"type": "array", "items": {"type": "string"}}
-  }
+    "git_sha": {
+      "type": "string",
+      "pattern": "^(unknown|[0-9a-fA-F]{7,64})$"
+    },
+    "status": {
+      "enum": ["started", "running", "success", "failed", "blocked", "recovered"]
+    },
+    "phase": {
+      "enum": [
+        "initialization",
+        "load_content",
+        "build_nodes",
+        "build_edges",
+        "validate_graph",
+        "export",
+        "success",
+        "failed"
+      ]
+    },
+    "started_at": {"type": "string", "format": "date-time"},
+    "ended_at": {
+      "oneOf": [
+        {"type": "string", "format": "date-time"},
+        {"type": "null"}
+      ]
+    },
+    "duration_seconds": {
+      "oneOf": [
+        {"type": "number", "minimum": 0},
+        {"type": "null"}
+      ]
+    },
+    "updated_at": {"type": "string", "format": "date-time"},
+    "metrics": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "error_class": {
+      "oneOf": [{"type": "string", "minLength": 1}, {"type": "null"}]
+    },
+    "error_message": {
+      "oneOf": [{"type": "string", "minLength": 1}, {"type": "null"}]
+    },
+    "recovery_action": {
+      "oneOf": [{"type": "string", "minLength": 1}, {"type": "null"}]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {"enum": ["success", "failed", "recovered"]}
+        }
+      },
+      "then": {
+        "properties": {
+          "ended_at": {"type": "string", "format": "date-time"},
+          "duration_seconds": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "failed"}}},
+      "then": {
+        "properties": {
+          "error_class": {"type": "string", "minLength": 1},
+          "error_message": {"type": "string", "minLength": 1},
+          "recovery_action": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  ]
 }

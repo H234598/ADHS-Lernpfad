@@ -67,5 +67,13 @@ def load_planned_nodes(root: Path) -> tuple[dict[str, PlannedNode], list[ModelIs
             str(item["roadmap"]) if item.get("roadmap") is not None else None,
             str(item["reason"]) if item.get("reason") is not None else None,
             _as_string_tuple(item.get("aliases")),
+            str(item.get("status", "planned")),
         )
+        if nodes[node_id].lifecycle_status not in {"planned", "in_progress"}:
+            issues.append(ModelIssue(
+                "invalid-planned-node-status", "error",
+                f"Unbekannter Planned-Node-Status für {path}: "
+                f"{nodes[node_id].lifecycle_status}",
+                "knowledge-graph/planned-nodes.yaml",
+            ))
     return nodes, issues

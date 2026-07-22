@@ -2,9 +2,10 @@
 
 ## Workflows
 
-- `validate.yml`: Pull-Request- und `main`-Validierung einschließlich Quellen, strukturierter Bibliografie, Obsidian-Links, Struktur, Wortgrenzen, Anki und MkDocs.
-- `export.yml`: erzeugt nach Änderungen an `main` Markdown-, EPUB-, HTML-, LaTeX-, PDF-, BibTeX-, CSL-JSON- und APKG-Artefakte.
-- `pages.yml`: baut und veröffentlicht die MkDocs-Webseite mit funktionierenden konvertierten Links und MathJax über GitHub Pages.
+- `validate.yml`: stabiles Pflichtgate `Validate and build` für Python- und Browsertests, Quellen, strukturierte Bibliografie, Obsidian-Links, Graphschema, Runtime-Status, Wortgrenzen, Anki und MkDocs.
+- `runtime-status-check.yml`: fokussierter Vertragscheck für Statusschema, CLI und atomare Aktualisierungen.
+- `export.yml`: erzeugt nach Änderungen an `main` alle Dokument-, Literatur-, Graph-, Berichts- und Statusartefakte samt Manifest und Prüfsummen.
+- `pages.yml`: baut und veröffentlicht die MkDocs-Webseite, den interaktiven Wissensgraphen, dessen No-JS-Fallback und stabile Downloads über GitHub Pages.
 
 ## Wartung
 
@@ -19,6 +20,21 @@ Die Workflows verwenden aktuelle GitHub-Actions-Majors mit Node-24-Runtime. Depe
 - Zeitlimits und Concurrency-Gruppen verhindern hängende oder überholte Läufe;
 - Obsidian-Wikilinks müssen eindeutig auflösbar sein und werden erst im Build umgewandelt;
 - `Literatur.md`, `references.bib` und `references.json` müssen gemeinsam aus den Studienkarten reproduzierbar sein;
+- der Wissensgraph muss schema-valide sein, nur bekannte Knoten- und Relationstypen enthalten und darf keine ungeplant defekten Ziele besitzen;
+- jeder Laufstatus muss vor Zusammenfassung und Veröffentlichung gegen das versionierte Schema validiert werden;
+- Graphbericht, Laufstatus und PR-Zusammenfassung werden auch bei einem fehlgeschlagenen Gate als Diagnoseartefakte hochgeladen;
+- bei blockierenden Links erzeugt der Diagnosemodus zusätzlich eine nicht veröffentlichte Webvorschau, in der Fehler und fehlende Ziele sichtbar markiert sind;
+- der idempotente PR-Kommentar wird anhand eines stabilen HTML-Markers aktualisiert, nicht bei jedem Lauf dupliziert;
+- die Weboberfläche wird mit Playwright einschließlich Suche, Tagfilter, Tastaturbedienung und No-JS-Tabelle geprüft;
 - die sichtbare vollständige Zitation muss den strukturierten `citation`-Feldern entsprechen;
 - der PDF-Export verwendet Pandoc, CiteProc und LuaLaTeX mit freien DejaVu-Schriften;
 - Pages-Deployments werden nicht während einer laufenden Veröffentlichung abgebrochen.
+
+## Laufstatus und Graphdiagnose
+
+Die Workflows setzen `RUNTIME_STATUS_MANAGED=1`, starten genau einen Lauf und
+lassen die einzelnen Generatoren dessen Phase fortschreiben. Der kanonische
+Status liegt in `build/runtime-status.json`. `scripts/graph_ci_summary.py`
+validiert ihn erneut, bevor es `build/knowledge-graph/ci-summary.md` und die
+GitHub-Actions-Zusammenfassung erzeugt. Der PR-Kommentar verwendet den Marker
+`<!-- adhs-graph-ci-summary -->`.

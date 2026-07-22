@@ -5,7 +5,8 @@ from __future__ import annotations
 
 import re
 
-FENCE_RE = re.compile(r"^\s*(```+|~~~+)")
+from content_model import FenceState, advance_fence_state
+
 CALLOUT_START_RE = re.compile(
     r"^(?P<indent>\s*)>\s*\[!(?P<kind>[A-Za-z0-9_-]+)\]"
     r"(?P<fold>[+-])?\s*(?P<title>.*?)\s*(?P<newline>\r?\n)?$"
@@ -47,20 +48,13 @@ def convert_obsidian_callouts_for_web(text: str) -> str:
 
     lines = text.splitlines(keepends=True)
     output: list[str] = []
-    fence: str | None = None
+    fence: FenceState | None = None
     index = 0
 
     while index < len(lines):
         line = lines[index]
-        fence_match = FENCE_RE.match(line)
-        if fence_match:
-            marker = fence_match.group(1)[0]
-            fence = marker if fence is None else (None if fence == marker else fence)
-            output.append(line)
-            index += 1
-            continue
-
-        if fence is not None:
+        fence, is_fenced = advance_fence_state(line, fence)
+        if is_fenced:
             output.append(line)
             index += 1
             continue

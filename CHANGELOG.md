@@ -1,5 +1,16 @@
 # Änderungsverlauf
 
+## 0.14.0 – 2026-07-22
+
+- Wissensgraph 2.0 Phase 2 und 3 vollständig materialisiert: interaktive, lokale Cytoscape-Webansicht mit Suche, Filtern, Detailpanel und semantischem No-JS-Fallback
+- geplante, in Arbeit befindliche und veröffentlichte Inhalte durch einen eigenen Lebenszyklusstatus vom Linkstatus getrennt
+- schema-validierten, atomaren Runtime-Status mit Phasen, Dauer, Commit, Metriken, Fehlerklasse und Recovery-Hinweis eingeführt
+- verbindlichen Graphvalidator für Schema, Typen, Kantenendpunkte, interne Links und erwarteten Commit in CI und Veröffentlichungsbuilds integriert
+- JSON, GraphML, Mermaid, Qualitätsberichte und Runtime-Status in Downloadmanifest und SHA-256-Prüfsummen aufgenommen
+- Playwright-Smoke-Tests sowie idempotente PR-Zusammenfassung und Diagnoseartefakte ergänzt
+- Wortzahlvertrag auf harte Grenzen 800–3.000 und Zielbereich 1.200–2.500 vereinheitlicht; Einheiten 1–10 bleiben nur von Zielbereichswarnungen ausgenommen
+- tote Bootstrap-Dateien und die dazugehörigen Einmal-Workflows entfernt
+
 ## 0.13.0 – 2026-07-22
 
 - vollständige plattformübergreifende Sync-Pakete für Linux, Android/Termux, Windows, macOS, BSD und iOS/iSH ergänzt

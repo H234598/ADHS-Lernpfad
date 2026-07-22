@@ -7,7 +7,7 @@ from collections import Counter
 import os
 from pathlib import Path
 import subprocess
-from typing import Any
+from typing import Any, Callable
 
 from content_links import scan_wikilinks
 from content_model import json_compatible
@@ -29,7 +29,40 @@ def _source_revision(root: Path) -> str | None:
         return None
 
 
-def _finalize(builder: GraphBuilder) -> dict[str, Any]:
+PhaseCallback = Callable[[str, dict[str, Any]], None]
+
+
+def graph_metrics(builder: GraphBuilder) -> dict[str, Any]:
+    """Return status metrics without mutating or finalizing the builder."""
+
+    return {
+        "nodes": len(builder.nodes),
+        "node_types": dict(sorted(Counter(
+            str(node.get("type", "unknown")) for node in builder.nodes.values()
+        ).items())),
+        "edges": len(builder.edges),
+        "relations": dict(sorted(Counter(
+            str(edge.get("type", "unknown")) for edge in builder.edges.values()
+        ).items())),
+        "errors": sum(issue.get("severity") == "error" for issue in builder.issues),
+        "warnings": sum(issue.get("severity") == "warning" for issue in builder.issues),
+        "missing_pages": sum(
+            node.get("type") == "placeholder" for node in builder.nodes.values()
+        ),
+        "planned_pages": sum(
+            node.get("type") == "planned" for node in builder.nodes.values()
+        ),
+    }
+
+
+def _emit_phase(
+    callback: PhaseCallback | None, phase: str, builder: GraphBuilder,
+) -> None:
+    if callback is not None:
+        callback(phase, graph_metrics(builder))
+
+
+def finalize_graph(builder: GraphBuilder) -> dict[str, Any]:
     nodes = [builder.nodes[key] for key in sorted(builder.nodes)]
     edges = []
     for key in sorted(builder.edges):
@@ -65,12 +98,19 @@ def _finalize(builder: GraphBuilder) -> dict[str, Any]:
     })
 
 
-def build_graph(builder: GraphBuilder) -> dict[str, Any]:
+def build_nodes(builder: GraphBuilder) -> None:
+    """Create all nodes known before link and metadata resolution."""
+
     for document in sorted(builder.index.documents.values(), key=lambda item: item.id):
         builder.add_document(document)
     for planned in sorted(builder.index.planned_nodes.values(), key=lambda item: item.id):
         builder.add_planned(planned)
     builder.issues.extend(issue.as_dict() for issue in builder.index.model_issues)
+
+
+def build_edges(builder: GraphBuilder) -> None:
+    """Resolve relations; target resolution may add sections/placeholders."""
+
     for document in sorted(builder.index.documents.values(), key=lambda item: item.id):
         for occurrence in scan_wikilinks(document.raw_text, document.path):
             add_link_occurrence(builder, document, occurrence)
@@ -96,4 +136,15 @@ def build_graph(builder: GraphBuilder) -> dict[str, Any]:
                     "roadmap": planned.roadmap,
                 },
             )
-    return _finalize(builder)
+
+
+def build_graph(
+    builder: GraphBuilder, *, phase_callback: PhaseCallback | None = None,
+) -> dict[str, Any]:
+    """Build a deterministic graph while exposing real phase boundaries."""
+
+    build_nodes(builder)
+    _emit_phase(phase_callback, "build_nodes", builder)
+    build_edges(builder)
+    _emit_phase(phase_callback, "build_edges", builder)
+    return finalize_graph(builder)

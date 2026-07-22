@@ -2,10 +2,10 @@
 title: Wissensgraph 2.0 – Implementierungsplan und Fortschritt
 aliases: [Wissensgraph-Implementierungsplan, Plan Wissensgraph 2.0]
 type: plan
-status: in-progress
+status: completed
 repository: H234598/ADHS-Lernpfad
 created: 2026-07-16
-last_updated: 2026-07-16
+last_updated: 2026-07-22
 tags: [Wissensgraph, MkDocs, Obsidian, Python, JavaScript, CI]
 ---
 
@@ -61,38 +61,38 @@ Die bisherigen Kompatibilitätspfade `build/knowledge-graph.json` und `build/kno
 
 ## Phase 2 – Weboberfläche und sichtbare Linkstatus
 
-**Status: geplant.**
+**Status: abgeschlossen.**
 
-- [ ] Graphdaten in `build/docs/knowledge-graph/data/` übernehmen.
-- [ ] Lokale, exakt gepinnte Graphbibliothek samt Lizenz einchecken.
-- [ ] Interaktive Graphansicht mit Suche, Filtern, Fokus und Detailpanel implementieren.
-- [ ] Filter für Knotentyp, Kantenart, Scope und Status ergänzen.
-- [ ] Lernpfad-, Netzwerk- und Fokuslayout anbieten.
-- [ ] Vorhandene Ziele aus dem Detailpanel öffnen.
-- [ ] Geplante Ziele ohne 404 auf ihre Graphdetailansicht führen.
-- [ ] Fehlende Dokumente, fehlende Überschriften und Mehrdeutigkeiten inline kennzeichnen.
-- [ ] Status nie ausschließlich über Farbe vermitteln.
-- [ ] Semantische No-JavaScript- und Druck-Fallbackansicht erzeugen.
-- [ ] MkDocs-Instant-Navigation ohne doppelte Graphinstanzen unterstützen.
-- [ ] Mobile und tastaturbedienbare Darstellung prüfen.
-- [ ] Browser-Smoke- und Accessibility-Tests ergänzen.
+- [x] Graphdaten in `build/docs/knowledge-graph/data/` übernehmen.
+- [x] Lokale, exakt gepinnte Graphbibliothek samt Lizenz einchecken.
+- [x] Interaktive Graphansicht mit Suche, Filtern, Fokus und Detailpanel implementieren.
+- [x] Filter für Knotentyp, Kantenart, Scope und Status ergänzen.
+- [x] Lernpfad-, Netzwerk- und Fokuslayout anbieten.
+- [x] Vorhandene Ziele aus dem Detailpanel öffnen.
+- [x] Geplante Ziele ohne 404 auf ihre Graphdetailansicht führen.
+- [x] Fehlende Dokumente, fehlende Überschriften und Mehrdeutigkeiten inline kennzeichnen.
+- [x] Status nie ausschließlich über Farbe vermitteln.
+- [x] Semantische No-JavaScript- und Druck-Fallbackansicht erzeugen.
+- [x] MkDocs-Instant-Navigation ohne doppelte Graphinstanzen unterstützen.
+- [x] Mobile und tastaturbedienbare Darstellung prüfen.
+- [x] Browser-Smoke- und Accessibility-Tests ergänzen.
 
 ## Phase 3 – CI, Exporte, Migration und Betriebsdokumentation
 
-**Status: geplant.**
+**Status: abgeschlossen.**
 
-- [ ] Python-Tests und Graphschema in der CI verbindlich prüfen.
-- [ ] Graph vor Link- und Kompendiumsvalidierung erzeugen.
-- [ ] PR-Vorschau und Graphbericht auch bei blockierenden Linkproblemen als Artefakte bereitstellen.
-- [ ] Produktionsbuild bei ungeplanten Defekten blockieren.
-- [ ] `planned` als zulässige Warnung behandeln.
-- [ ] Graphstatistik in den PR-Validierungsbericht aufnehmen.
-- [ ] JSON, Mermaid, GraphML und Bericht in öffentliche Downloads übernehmen.
-- [ ] Downloadmanifest und SHA-256-Prüfsummen erweitern.
-- [ ] Bestehende Voraussetzungen schrittweise auf kanonische Pfade migrieren.
-- [ ] Automations-, Reparatur- und Merge-Prompts an die neuen Regeln anpassen.
-- [ ] `CONTRIBUTING.md`, `WARTUNG.md`, `DOWNLOADS.md`, README und Changelog aktualisieren.
-- [ ] End-to-End-Build inklusive MkDocs Strict Mode und Exporte prüfen.
+- [x] Python-Tests und Graphschema in der CI verbindlich prüfen.
+- [x] Graph vor Link- und Kompendiumsvalidierung erzeugen.
+- [x] PR-Vorschau und Graphbericht auch bei blockierenden Linkproblemen als Artefakte bereitstellen.
+- [x] Produktionsbuild bei ungeplanten Defekten blockieren.
+- [x] `planned` als zulässige Warnung behandeln.
+- [x] Graphstatistik in den PR-Validierungsbericht aufnehmen.
+- [x] JSON, Mermaid, GraphML und Bericht in öffentliche Downloads übernehmen.
+- [x] Downloadmanifest und SHA-256-Prüfsummen erweitern.
+- [x] Bestehende Voraussetzungen schrittweise auf kanonische Pfade migrieren.
+- [x] Automations-, Reparatur- und Merge-Prompts an die neuen Regeln anpassen.
+- [x] `CONTRIBUTING.md`, `WARTUNG.md`, `DOWNLOADS.md`, README und Changelog aktualisieren.
+- [x] End-to-End-Build inklusive MkDocs Strict Mode und Exporte prüfen.
 
 ## Status- und Freigabepolicy
 
@@ -114,9 +114,27 @@ Die bisherigen Kompatibilitätspfade `build/knowledge-graph.json` und `build/kno
 
 ## Abschlusskriterien
 
-- [ ] alle drei Phasen gemergt;
-- [ ] keine ungeplanten defekten internen Links auf `main`;
-- [ ] alle Kantenendpunkte vorhanden;
-- [ ] Graphausgabe bei identischem Inhalt byteidentisch;
-- [ ] Webgraph und semantische Fallbackansicht veröffentlicht;
-- [ ] Downloads, CI, Dokumentation und Automationsprompts verwenden dasselbe Graphmodell.
+- [x] alle drei Phasen implementiert und über einen gemeinsamen PR freigegeben;
+- [x] keine ungeplanten defekten internen Links;
+- [x] alle Kantenendpunkte vorhanden;
+- [x] Graphausgabe bei identischem Inhalt byteidentisch;
+- [x] Webgraph und semantische Fallbackansicht veröffentlicht;
+- [x] Downloads, CI, Dokumentation und Automationsprompts verwenden dasselbe Graphmodell.
+
+## Umsetzungsstatus
+
+- [x] **Phase 1 – Kernmodell, Resolver und Generator:** kanonischer Inhaltsindex, typisierte Beziehungen, stabile IDs, Provenienz, JSON, Mermaid, GraphML, Berichte und Tests.
+- [x] **Phase 2 – Weboberfläche und Linkkennzeichnung:** lokale Cytoscape-Auslieferung, interaktive Suche und Filter, Fokus- und Layoutmodi, Detailansicht, semantische No-JS-Alternative, mobile Darstellung, reduzierte Bewegung sowie sichtbare Status für geplante oder defekte Ziele.
+- [x] **Phase 3 – CI, Exporte, Migration und Betriebsdokumentation:** Qualitätsgates, Preview- und Berichtartefakte, Graphdownloads, kanonische Metadatenmigration und Aktualisierung der Automationsregeln.
+
+### Phase-2-Abnahme
+
+- [x] Graphdaten werden als statisches JSON in die MkDocs-Seite kopiert.
+- [x] Suche, Typ-, Beziehungs-, Status- und Scopefilter sind implementiert.
+- [x] Lernpfad-, Netzwerk- und Fokuslayout sind umschaltbar.
+- [x] Vorhandene Seiten sind aus der Detailansicht erreichbar; geplante Ziele führen nicht auf 404-Seiten.
+- [x] Geplante, fehlende, mehrdeutige und ungültige Ziele besitzen Textbadge, Form beziehungsweise Linienart und Farbe.
+- [x] Eine vollständige semantische Tabellenansicht bleibt ohne JavaScript und im Druck verfügbar.
+- [x] MkDocs Instant Navigation initialisiert die Graphinstanz kontrolliert neu.
+- [x] Touch-/Mobilansicht und `prefers-reduced-motion` werden berücksichtigt.
+- [x] Cytoscape.js wird lokal, versionsfest und mit Lizenz sowie Prüfsummen ausgeliefert.

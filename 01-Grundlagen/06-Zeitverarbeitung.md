@@ -3,7 +3,10 @@ title: Zeitverarbeitung
 level: Grundlagen
 estimated_time: 10–20 min
 difficulty: 2
-prerequisites: [Aufmerksamkeit und Stabilität, Arbeitsgedächtnis, Dopamin Belohnung und Motivation]
+prerequisites:
+  - 01-Grundlagen/05-Aufmerksamkeit-und-Stabilitaet
+  - 01-Grundlagen/04-Arbeitsgedaechtnis
+  - 01-Grundlagen/03-Dopamin-Belohnung-und-Motivation
 tags: [ADHS, Zeitwahrnehmung, Delay-Discounting]
 last_reviewed: 2026-07-13
 evidence: high

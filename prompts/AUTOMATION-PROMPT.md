@@ -22,9 +22,10 @@ Ergänze **genau eine** neue fortlaufende Lerneinheit. Bestimme die nächste fre
 Eine Einheit ist eine echte **10- bis 20-minütige Lerneinheit**, nicht nur eine Kurznotiz mit entsprechendem YAML-Etikett.
 
 - Harte Untergrenze: **800 Fließtextwörter** nach Abzug von YAML, Navigation und Diagrammcode.
-- CI-Warnung unter **1.000 Fließtextwörtern**.
+- CI-Warnung außerhalb des Zielbereichs von **1.200–2.500 Fließtextwörtern**.
 - Zielbereich: **1.200–2.500 Fließtextwörter**.
 - Harte Obergrenze: **3.000 Fließtextwörter**.
+- Legacy-Einheiten 1–10 behalten ihre Wortzahlanzeige, erzeugen aber keine Zielbereichswarnung; harte Unter- und Obergrenze gelten weiterhin.
 - Wird mehr Platz benötigt, teile das Thema in mehrere logisch aufeinanderfolgende Einheiten; in diesem Lauf wird dennoch nur die erste Einheit erstellt.
 - Niemals künstlich durch Wiederholung, Füllsätze oder erzwungene Autismus-/Parkinson-Bezüge verlängern.
 

@@ -40,7 +40,7 @@ Die Texte unterscheiden konsequent zwischen:
 - Konsens, wahrscheinlichen Modellen und offenen Fragen,
 - gemeinsamen Mechanismen und einer Gleichsetzung von ADHS, Autismus oder Parkinson.
 
-Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Sie umfasst mindestens **800 Fließtextwörter**, zielt auf **1.000 bis 2.000 Wörter** und bleibt unter **2.500 Wörtern**. Diagramme, Übungen und Review-Fragen ergänzen den Text; künstliche Füllsätze sind ausdrücklich unerwünscht.
+Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Sie umfasst mindestens **800 Fließtextwörter**, zielt auf **1.200 bis 2.500 Wörter** und bleibt bei höchstens **3.000 Wörtern**. Diagramme, Übungen und Review-Fragen ergänzen den Text; künstliche Füllsätze sind ausdrücklich unerwünscht. Die historischen Einheiten 1–10 werden weiterhin gezählt, erzeugen aber keine Zielbereichswarnung.
 
 ## Lernpfad
 

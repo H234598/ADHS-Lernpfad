@@ -16,7 +16,7 @@ jobs:
   export:
     name: Build export artifacts
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
@@ -29,45 +29,86 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-export.txt
 
-      - name: Install Python dependencies
-        run: python -m pip install --disable-pip-version-check -r requirements-export.txt
-
-      - name: Verify installed dependencies
-        run: python -m pip check
-
-      - name: Build Markdown, bibliography and Anki sources
+      - name: Build validated public exports
+        id: build
+        continue-on-error: true
+        shell: bash
+        env:
+          RUNTIME_STATUS_MANAGED: '1'
         run: |
-          python scripts/validate_links.py
+          set -Eeuo pipefail
+          export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+          python scripts/runtime_status_cli.py build/runtime-status.json \
+            --new-run --workflow public-exports \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" --git-sha "$GITHUB_SHA"
+          current_phase=initialization
+          fail_export() {
+            code=$?
+            trap - ERR
+            existing_status="$(python -c 'import json; print(json.load(open("build/runtime-status.json", encoding="utf-8")).get("status", ""))' 2>/dev/null || true)"
+            if [[ "$existing_status" != 'failed' ]]; then
+              python scripts/runtime_status_cli.py build/runtime-status.json \
+                --finish failed --phase "$current_phase" --error-class export_workflow_error \
+                --error-message "Exportworkflow fehlgeschlagen (Exit ${code}); siehe Schrittprotokoll." \
+                --recovery-action reuse_valid_inputs_and_retry_export || true
+            fi
+            exit "$code"
+          }
+          trap fail_export ERR
+
+          python -m pip install --disable-pip-version-check -r requirements-export.txt
+          python -m pip check
+          current_phase=load_content
           python scripts/build_literature.py
           git add --intent-to-add Literatur.md references.bib references.json
-          if ! git diff --quiet -- Literatur.md references.bib references.json; then
-            echo 'Generated bibliography differs from the committed files:'
-            git diff -- Literatur.md references.bib references.json
-            exit 1
-          fi
-          python scripts/build_graph.py
-          python scripts/build_combined.py
+          git diff --exit-code -- Literatur.md references.bib references.json
+          python scripts/build_graph.py --status-file build/runtime-status.json
+          current_phase=validate_graph
+          python scripts/validate_graph.py --expected-revision "$GITHUB_SHA"
+          python scripts/validate_links.py
+          python scripts/validate_compendium.py
+          current_phase=export
+          python scripts/build_combined.py --status-file build/runtime-status.json
           python scripts/build_anki.py
-
-      - name: Install Pandoc and LuaLaTeX
-        run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends \
-            pandoc \
-            texlive-luatex \
-            texlive-latex-recommended \
-            texlive-latex-extra \
-            texlive-fonts-recommended \
-            texlive-lang-german \
-            fonts-dejavu-core
+            pandoc texlive-luatex texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-lang-german fonts-dejavu-core
+          python scripts/build_exports.py --status-file build/runtime-status.json
+          python scripts/runtime_status_cli.py build/runtime-status.json \
+            --finish success --phase success
+          python scripts/validate_runtime_status.py build/runtime-status.json
+          python scripts/build_exports.py --refresh-manifest \
+            --status-file build/runtime-status.json
+          (cd build/artifacts && sha256sum --check SHA256SUMS.txt)
 
-      - name: Build public download bundle
-        run: python scripts/build_exports.py
+      - name: Create graph and runtime summary
+        if: always()
+        run: python scripts/graph_ci_summary.py
 
       - name: Upload export artifacts
+        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
           name: adhs-lernpfad-exports
           path: build/artifacts/
           if-no-files-found: error
           retention-days: 30
+
+      - name: Upload export diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: export-diagnostics-${{ github.run_attempt }}
+          path: |
+            build/runtime-status.json
+            build/runtime-status-validation-report.json
+            build/runtime-status-validation-report.md
+            build/graph-ci-summary.md
+            build/knowledge-graph/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Enforce export result
+        if: always()
+        run: test '${{ steps.build.outcome }}' = 'success'

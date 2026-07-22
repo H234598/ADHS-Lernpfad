@@ -8,9 +8,16 @@ import hashlib
 from pathlib import Path
 import re
 
-from content_model import Document, FENCE_RE, PlannedNode, slugify
+from content_model import (
+    Document, FenceState, PlannedNode, advance_fence_state, slugify,
+)
 
 WIKILINK_RE = re.compile(r"(?P<embed>!)?\[\[(?P<body>[^\]\n]+)\]\]")
+ATX_HEADING_RE = re.compile(r"^ {0,3}#{1,6}(?:[ \t]+|$)")
+BLOCK_PREFIX_RE = re.compile(
+    r"^ {0,3}(?:>|(?:[-+*]|\d{1,9}[.)])[ \t]+|<!--)"
+)
+SETEXT_OR_RULE_RE = re.compile(r"^ {0,3}(?:=+[ \t]*|-{3,}[ \t]*)\r?\n?$")
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".avif"}
 
 
@@ -110,8 +117,11 @@ def split_link(raw: str) -> tuple[str, str | None, str]:
 
 
 def _mask_comments_and_inline_code(
-    line: str, in_comment: bool,
-) -> tuple[str, bool]:
+    line: str,
+    in_comment: bool,
+    inline_ticks: int,
+    following_text: str,
+) -> tuple[str, bool, int]:
     """Mask comments and inline code while preserving source offsets."""
 
     chars = list(line)
@@ -123,12 +133,27 @@ def _mask_comments_and_inline_code(
                 for position in range(index, len(chars)):
                     if chars[position] != "\n":
                         chars[position] = " "
-                return "".join(chars), True
+                return "".join(chars), True, inline_ticks
             for position in range(index, end + 3):
                 if chars[position] != "\n":
                     chars[position] = " "
             index = end + 3
             in_comment = False
+            continue
+        if inline_ticks:
+            if chars[index] == "`":
+                run = 1
+                while index + run < len(chars) and chars[index + run] == "`":
+                    run += 1
+                for position in range(index, index + run):
+                    chars[position] = " "
+                if run == inline_ticks:
+                    inline_ticks = 0
+                index += run
+                continue
+            if chars[index] != "\n":
+                chars[index] = " "
+            index += 1
             continue
         if line.startswith("<!--", index):
             in_comment = True
@@ -137,16 +162,45 @@ def _mask_comments_and_inline_code(
             run = 1
             while index + run < len(chars) and chars[index + run] == "`":
                 run += 1
-            marker = "`" * run
-            end = line.find(marker, index + run)
-            if end != -1:
-                for position in range(index, end + run):
-                    if chars[position] != "\n":
-                        chars[position] = " "
-                index = end + run
+            future = line[index + run:] + following_text
+            if any(len(match.group(0)) == run for match in re.finditer(r"`+", future)):
+                for position in range(index, index + run):
+                    chars[position] = " "
+                inline_ticks = run
+                index += run
                 continue
+            index += run
+            continue
         index += 1
-    return "".join(chars), in_comment
+    return "".join(chars), in_comment, inline_ticks
+
+
+def _inline_block_boundary(line: str) -> bool:
+    """Whether a line starts a new block that an inline span cannot cross."""
+
+    if not line.strip():
+        return True
+    if line.startswith("    ") or line.startswith("\t"):
+        return True
+    if ATX_HEADING_RE.match(line) or BLOCK_PREFIX_RE.match(line):
+        return True
+    if SETEXT_OR_RULE_RE.match(line):
+        return True
+    _, is_fenced = advance_fence_state(line, None)
+    return is_fenced
+
+
+def _inline_block_tail(lines: list[str], index: int) -> str:
+    """Return only following text in the current Markdown inline block."""
+
+    if _inline_block_boundary(lines[index]):
+        return ""
+    tail: list[str] = []
+    for line in lines[index + 1:]:
+        if _inline_block_boundary(line):
+            break
+        tail.append(line)
+    return "".join(tail)
 
 
 def scan_wikilinks(text: str, source: Path) -> list[LinkOccurrence]:
@@ -157,24 +211,52 @@ def scan_wikilinks(text: str, source: Path) -> list[LinkOccurrence]:
     )
     frontmatter_end = frontmatter.end() if frontmatter else 0
     occurrences: list[LinkOccurrence] = []
-    fence: str | None = None
+    lines = text.splitlines(keepends=True)
+    fence: FenceState | None = None
     in_comment = False
+    inline_ticks = 0
     offset = 0
-    for line_number, line in enumerate(text.splitlines(keepends=True), start=1):
+    for line_index, line in enumerate(lines):
+        line_number = line_index + 1
         line_end = offset + len(line)
         if line_end <= frontmatter_end:
             offset = line_end
             continue
-        fence_match = FENCE_RE.match(line)
-        if fence_match:
-            marker = fence_match.group(1)[0]
-            fence = marker if fence is None else (None if fence == marker else fence)
+
+        # While an HTML comment is open, fence-looking or indented text is
+        # still comment content. Only update the comment state; a closing
+        # marker may expose ordinary content later on the same line.
+        if in_comment or inline_ticks:
+            masked, in_comment, inline_ticks = _mask_comments_and_inline_code(
+                line, in_comment, inline_ticks,
+                _inline_block_tail(lines, line_index),
+            )
+            if in_comment or inline_ticks or line.startswith("    ") or line.startswith("\t"):
+                offset = line_end
+                continue
+            for match in WIKILINK_RE.finditer(masked):
+                target, heading, label = split_link(match.group("body"))
+                occurrences.append(LinkOccurrence(
+                    source, match.group(0), target, heading, label,
+                    bool(match.group("embed")), line_number, match.start() + 1,
+                    offset + match.start(), offset + match.end(),
+                ))
             offset = line_end
             continue
-        if fence is not None:
+
+        fence, is_fenced = advance_fence_state(line, fence)
+        if is_fenced:
             offset = line_end
             continue
-        masked, in_comment = _mask_comments_and_inline_code(line, in_comment)
+        # Indented Markdown code is literal source just like fenced and inline
+        # code, and must not create links, graph edges, comment state or build
+        # failures.
+        if line.startswith("    ") or line.startswith("\t"):
+            offset = line_end
+            continue
+        masked, in_comment, inline_ticks = _mask_comments_and_inline_code(
+            line, False, 0, _inline_block_tail(lines, line_index),
+        )
         for match in WIKILINK_RE.finditer(masked):
             target, heading, label = split_link(match.group("body"))
             occurrences.append(LinkOccurrence(

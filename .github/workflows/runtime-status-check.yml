@@ -5,7 +5,17 @@ on:
   pull_request:
     paths:
       - 'automation/**'
+      - 'scripts/automation_run_status.py'
+      - 'scripts/runtime_status_cli.py'
+      - 'scripts/runtime_status_phase.py'
       - 'scripts/validate_runtime_status.py'
+      - 'tests/test_runtime_status_*.py'
+      - 'tests/test_graph_runtime_integration.py'
+      - 'scripts/build_graph.py'
+      - 'scripts/build_combined.py'
+      - 'scripts/build_exports.py'
+      - 'tests/test_build_exports_manifest.py'
+      - 'requirements-docs.txt'
       - '.github/workflows/runtime-status-check.yml'
 
 permissions:
@@ -25,7 +35,35 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
 
-      - name: Validate runtime status implementation
+      - name: Install schema validator
+        run: python -m pip install --disable-pip-version-check -r requirements-docs.txt
+
+      - name: Test and validate runtime contract
         run: |
-          python scripts/validate_runtime_status.py
+          set -Eeuo pipefail
+          python -m pytest -q \
+            tests/test_runtime_status_schema.py \
+            tests/test_runtime_status_cli.py \
+            tests/test_graph_runtime_integration.py \
+            tests/test_build_exports_manifest.py
+          python scripts/runtime_status_cli.py build/runtime-status.json \
+            --new-run --workflow runtime-contract --git-sha "$GITHUB_SHA"
+          python scripts/runtime_status_phase.py build/runtime-status.json \
+            --phase validate_graph --workflow runtime-contract
+          python scripts/runtime_status_cli.py build/runtime-status.json \
+            --finish success --phase success
+          python scripts/validate_runtime_status.py build/runtime-status.json
+
+      - name: Upload validated sample
+        uses: actions/upload-artifact@v7
+        with:
+          name: runtime-status-sample
+          path: |
+            build/runtime-status.json
+            build/runtime-status-validation-report.json
+            build/runtime-status-validation-report.md
+          if-no-files-found: error
+          retention-days: 7
