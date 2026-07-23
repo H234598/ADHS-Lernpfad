@@ -38,6 +38,7 @@ not_in_nav: |
   /CONTRIBUTING.md
   /CHANGELOG.md
   /.github/
+  /automation/
   /prompts/
   /references/*.md
 

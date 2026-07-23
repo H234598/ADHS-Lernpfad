@@ -9,14 +9,26 @@ from pathlib import Path
 from typing import Any
 
 try:  # Support both ``python scripts/...`` and package imports in tests.
-    from .automation_run_status import PHASES, STATUSES, validate_status
+    from .automation_status import (
+        PHASES,
+        SCHEMA_VERSION,
+        STATUSES,
+        WORKFLOWS,
+        validate_status,
+    )
 except ImportError:  # pragma: no cover - exercised by command-line use
-    from automation_run_status import PHASES, STATUSES, validate_status
+    from automation_status import (
+        PHASES,
+        SCHEMA_VERSION,
+        STATUSES,
+        WORKFLOWS,
+        validate_status,
+    )
 
 
 ROOT = Path(__file__).resolve().parents[1]
 STATUS = ROOT / "build" / "runtime-status.json"
-SCHEMA = ROOT / "automation" / "schema" / "run-status.schema.json"
+SCHEMA = ROOT / "automation" / "run-status.schema.json"
 REPORT_JSON = ROOT / "build" / "runtime-status-validation-report.json"
 REPORT_MD = ROOT / "build" / "runtime-status-validation-report.md"
 
@@ -53,7 +65,10 @@ def _schema_contract_errors(schema: dict[str, Any]) -> list[str]:
             "Runtime schema: required fields lack properties: "
             + ", ".join(missing_properties)
         )
-    phase_schema = properties.get("phase")
+    definitions = schema.get("$defs")
+    if not isinstance(definitions, dict):
+        return [*errors, "Runtime schema: $defs must be an object"]
+    phase_schema = definitions.get("phase")
     phase_enum = phase_schema.get("enum") if isinstance(phase_schema, dict) else None
     if (
         not isinstance(phase_enum, list)
@@ -61,7 +76,7 @@ def _schema_contract_errors(schema: dict[str, Any]) -> list[str]:
         or set(phase_enum) != PHASES
     ):
         errors.append("Runtime schema: phase enum differs from the runtime implementation")
-    status_schema = properties.get("status")
+    status_schema = definitions.get("status")
     status_enum = status_schema.get("enum") if isinstance(status_schema, dict) else None
     if (
         not isinstance(status_enum, list)
@@ -69,6 +84,26 @@ def _schema_contract_errors(schema: dict[str, Any]) -> list[str]:
         or set(status_enum) != STATUSES
     ):
         errors.append("Runtime schema: status enum differs from the runtime implementation")
+    workflow_schema = properties.get("workflow")
+    workflow_enum = (
+        workflow_schema.get("enum") if isinstance(workflow_schema, dict) else None
+    )
+    if (
+        not isinstance(workflow_enum, list)
+        or any(not isinstance(item, str) for item in workflow_enum)
+        or set(workflow_enum) != WORKFLOWS
+    ):
+        errors.append(
+            "Runtime schema: workflow enum differs from the runtime implementation"
+        )
+    version_schema = properties.get("schema_version")
+    if (
+        not isinstance(version_schema, dict)
+        or version_schema.get("const") != SCHEMA_VERSION
+    ):
+        errors.append(
+            "Runtime schema: schema_version differs from the runtime implementation"
+        )
     return errors
 
 

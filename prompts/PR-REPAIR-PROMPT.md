@@ -65,3 +65,51 @@ Nimm keine spekulativen Änderungen vor, wenn:
 - ein wiederholter identischer Fehler trotz sachgerechter Reparatur fortbesteht.
 
 Lasse den PR dann offen und benachrichtige den Benutzer mit PR-Nummer, fehlgeschlagenem Check, relevanter Logstelle und dem konkreten Grund, weshalb keine sichere automatische Reparatur möglich war.
+
+## 7. Additive Recovery-Status-Integration
+
+Alle vorstehenden Reparatur-, Wissenschafts-, Quellen-, CI- und
+Infrastrukturschutzregeln bleiben unverändert verbindlich.
+
+1. Lies vor jeder Reparatur den zu diesem PR gehörenden Generatorlauf auf
+   `automation-status`. Verwende dessen `run_id`; lege für die Reparatur keine
+   zweite fachliche Einheit und keinen unabhängigen Laufstatus an.
+2. Prüfe gemeinsam:
+   - Branch- und Head-Commit des PR,
+   - registrierte Branch-, Commit- und PR-Artefakte,
+   - fehlgeschlagene CI-Run- und Job-IDs,
+   - aktuellen Recovery-Level und erwartete `revision`.
+3. Lies unmittelbar vor jeder schreibenden Statusoperation die aktuelle
+   Laufrevision in `REVISION` ein. Verwende sie genau einmal als CAS-Vorbedingung
+   und lies sie nach Erfolg erneut aus. Bei Exitcode `20` oder einer
+   abweichenden Revision brichst du den Reparaturschritt ab, aktualisierst den
+   Statusbranch und bewertest den neuen Zustand; eine fremde Revision wird
+   niemals überschrieben.
+4. Beginne die Wiederaufnahme auf demselben Status:
+
+   ```bash
+   python scripts/automation_status.py recover \
+     --workflow generator --run-id "$RUN_ID" --phase repair \
+     --expected-revision "$REVISION"
+   ```
+
+5. Registriere jeden Reparaturcommit sofort als wiederverwendbares
+   `commit`-Artefakt. Aktualisiere anschließend die Phasen `push`, `verify_pr`
+   und `wait_review`. Jeder einzelne `artifact`-, `phase`-, `recover`-,
+   `fail`- oder `finish`-Befehl benötigt die jeweils frisch gelesene Option
+   `--expected-revision "$REVISION"`.
+6. Nach erfolgreicher lokaler Reparatur markierst du die Recovery als
+   abgeschlossen, setzt den Lauf danach aber wieder auf `running`, Phase
+   `wait_review`; ein Erfolg des Gesamtvorgangs wird erst nach Merge und Cleanup
+   geschrieben.
+7. Bei erneutem Fehler bleibt derselbe Lauf erhalten. Verwende je nach Befund:
+   - `retry_same_phase` für transiente idempotente Schritte,
+   - `resume_from_artifact` für vorhandenen Branch/Commit/PR,
+   - `repair_existing_branch` für CI- oder Reviewkorrekturen,
+   - `manual_intervention` für nicht eindeutige wissenschaftliche oder
+     sicherheitsrelevante Entscheidungen,
+   - `terminal_failure` nur für einen bewusst zu quittierenden Abschluss.
+8. Kann der Statusbranch nicht aktualisiert werden, gib den vollständigen in
+   `prompts/AUTOMATION-PROMPT.md` definierten Diagnoseblock im PR-Kommentar und
+   in der Benutzerbenachrichtigung aus. Der Statusfehler darf die eigentliche
+   CI-Ursache nicht ersetzen.

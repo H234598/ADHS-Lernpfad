@@ -40,6 +40,7 @@ files = [
     "WARTUNG.md",
     "CONTRIBUTING.md",
     "CHANGELOG.md",
+    "automation/README.md",
     ".github/README.md",
     "references/README.md",
     "knowledge-graph/README.md",
@@ -67,7 +68,7 @@ for relative_path in files:
     destination.parent.mkdir(parents=True, exist_ok=True)
     source_text = source.read_text(encoding="utf-8")
     source_text = annotate_special_wikilinks(source_text, source, ROOT)
-    if relative_path == "knowledge-graph/README.md":
+    if relative_path in {"knowledge-graph/README.md", "WARTUNG.md"}:
         source_text = inject_fallback(source_text, ROOT)
     converted = convert_for_web(source_text, source, ROOT)
     converted = convert_obsidian_callouts_for_web(converted)

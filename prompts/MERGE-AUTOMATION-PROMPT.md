@@ -98,3 +98,51 @@ Führe keinen Merge durch, wenn mindestens eine dieser Bedingungen vorliegt:
 - ein vorhandener Review-Hinweis beschreibt einen nachvollziehbaren kritischen Fehler, der noch nicht behoben wurde.
 
 CodeRabbit als solches ist **keine** harte Abbruchbedingung. Sein Fehlen, Schweigen oder mutmaßlich ausgeschöpftes Kontingent verhindert den Merge nicht.
+
+## 8. Additive Statusübergabe für Review, Merge und Cleanup
+
+Alle vorstehenden Zeit-, CI-, Review-, Wissenschafts-, Merge- und
+Sicherheitsregeln bleiben vollständig erhalten.
+
+1. Lies den kanonischen Generatorstatus des eindeutig bestimmten PR vom Branch
+   `automation-status`. Verifiziere `run_id`, Branch, Commit und PR-Nummer gegen
+   den aktuellen GitHub-Zustand.
+2. Schreibe alle Wächteränderungen als neue Revision desselben Vorgangs:
+   - Warten auf erste CI oder Review: `wait_review`
+   - kontrollierter Reparaturzyklus: `repair`
+   - Umwandlung aus Draft: `ready_for_review`
+   - Prüfung der danach gestarteten zweiten CI: `verify_second_ci`
+   - Squash-Merge: `merge`
+   - Merge-Nachweis und Branchbereinigung: `cleanup`
+   - vollständiger Abschluss: `complete`
+3. Lies unmittelbar vor jedem schreibenden Statusbefehl die aktuelle
+   Laufrevision in `REVISION` ein und übergib
+   `--expected-revision "$REVISION"`. Die Revision darf nur für genau einen
+   `phase`-, `artifact`-, `recover`-, `fail`- oder `finish`-Befehl verwendet
+   werden und muss danach frisch eingelesen werden. Exitcode `20` oder eine
+   abweichende Revision beendet den aktuellen Mergeversuch: Statusbranch neu
+   laden, GitHub-Zustand erneut abgleichen und niemals die fremde Revision
+   überschreiben.
+4. Registriere CI-Run, Job, Reparaturcommit, Merge-Commit und PR als
+   strukturierte Artefakte. Branch, Commit oder PR müssen bei Wiederaufnahme
+   weiterverwendet werden; ein neuer Einheitenbranch ist verboten.
+5. Nach `Ready for review` bleibt der Status `running`, bis eine eindeutig
+   zugeordnete zweite CI vollständig abgeschlossen ist.
+6. Ein erfolgreicher Merge allein genügt nicht für `success`. Dokumentiere
+   zuerst Merge-Commit, `main`-Nachweis und Ergebnis der Branchbereinigung.
+7. Erst danach:
+
+   ```bash
+   python scripts/automation_status.py finish \
+     --workflow generator --run-id "$RUN_ID" --phase complete \
+     --expected-revision "$REVISION"
+   ```
+
+8. Bei CI-, Review-, Konflikt-, Berechtigungs- oder API-Fehlern schreibe einen
+   strukturierten Fehler mit Recovery-Level. Ein ungeklärter Fehler blockiert
+   den nächsten Generatorlauf und verhindert dadurch eine zweite Einheit.
+9. Falls `automation-status` nicht beschreibbar ist, gib den vollständigen
+   Diagnoseblock aus `prompts/AUTOMATION-PROMPT.md` aus. Melde insbesondere
+   konkrete Phase, vorhandene Artefakte, GitHub-Run/Job, Ursache und den nächsten
+   sicheren Recovery-Schritt; eine generische Scheduled-Task-Meldung genügt
+   niemals.

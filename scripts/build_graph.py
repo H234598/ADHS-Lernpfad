@@ -199,7 +199,7 @@ def run_build(
         )
         if not managed:
             finish_run(
-                target, success=True, phase="success", metrics=metrics,
+                target, success=True, phase="complete", metrics=metrics,
                 artifacts=_artifacts(root),
             )
         return graph, 0

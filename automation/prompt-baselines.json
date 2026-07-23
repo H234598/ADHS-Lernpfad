@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Geschützte Präfixe vor der additiven Recovery-Integration aus Issue #34.",
+  "prompts": [
+    {
+      "path": "prompts/AUTOMATION-PROMPT.md",
+      "protected_prefix_bytes": 7334,
+      "sha256": "8becd02967ef6b7f3ea18ff4f1aedef647a8c5bf5c14affc24f51ac086ae8ca4"
+    },
+    {
+      "path": "prompts/PR-REPAIR-PROMPT.md",
+      "protected_prefix_bytes": 4106,
+      "sha256": "0efa532a109f52d92d1b003aa162569a2365579c6154d052be242cb660455749"
+    },
+    {
+      "path": "prompts/MERGE-AUTOMATION-PROMPT.md",
+      "protected_prefix_bytes": 6436,
+      "sha256": "8b3d961ad01d6f09bb7c1e6e2a79662c924c1eed59e666026fc27f2b83bbd6b9"
+    }
+  ]
+}

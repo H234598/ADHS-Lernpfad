@@ -1,6 +1,23 @@
 # Änderungsverlauf
 
 
+## 0.16.0 – 2026-07-23
+
+- Automationsstatus auf ein striktes Draft-2020-12-Schema mit Revisionen,
+  Zustandsmatrix, Repository-/PR-/Workflow-Kontext, strukturierten Artefakten,
+  Fehlern und Recovery-Leveln erweitert
+- atomare, parallel sichere Statusbibliothek mit Prozess-Lock,
+  optimistischer Revision, Secret-Redaction, Retention und vollständigem
+  Diagnoseblock eingeführt
+- Generator-, Reparatur- und Mergeprompts additiv an denselben Recovery-Vertrag
+  angebunden und ihre bisherigen Regeln als Golden Prefix geschützt
+- sicheren `workflow_run`-Persistenzpfad auf den append-orientierten orphan
+  Branch `automation-status` samt 90-Tage-Fallbackartefakt ergänzt
+- idempotenten PR-Kommentar und Wartungsseite um konkreten Recovery-Status
+  erweitert
+- Phase-3-Abnahme des Wissensgraphen erneut geprüft und die letzten beiden
+  getrackten Bootstrap-Payloads entfernt
+
 ## 0.15.0 – 2026-07-23
 
 - Einheit 14 „Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung“ ergänzt

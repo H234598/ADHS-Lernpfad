@@ -52,14 +52,19 @@ jobs:
           python scripts/runtime_status_cli.py build/runtime-status.json \
             --new-run --workflow pages-publication \
             --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" --git-sha "$GITHUB_SHA"
-          current_phase=initialization
+          current_phase=initialize
           fail_pages() {
             code=$?
             trap - ERR
             existing_status="$(python -c 'import json; print(json.load(open("build/runtime-status.json", encoding="utf-8")).get("status", ""))' 2>/dev/null || true)"
+            if [[ "$existing_status" == 'success' && -f build/runtime-status-pre-final.json ]]; then
+              python scripts/runtime_status_cli.py build/runtime-status.json \
+                --restore-from build/runtime-status-pre-final.json || true
+              existing_status="$(python -c 'import json; print(json.load(open("build/runtime-status.json", encoding="utf-8")).get("status", ""))' 2>/dev/null || true)"
+            fi
             if [[ "$existing_status" != 'failed' ]]; then
               python scripts/runtime_status_cli.py build/runtime-status.json \
-                --finish failed --phase "$current_phase" --error-class pages_workflow_error \
+                --finish failed --phase "$current_phase" --error-class validation \
                 --error-message "Pages-Build fehlgeschlagen (Exit ${code}); siehe Schrittprotokoll." \
                 --recovery-action inspect_pages_build_and_retry || true
             fi
@@ -75,6 +80,7 @@ jobs:
 
           git diff --check
           python -m compileall -q scripts tests
+          python scripts/validate_prompt_baselines.py
           find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
           pwsh -NoProfile -Command '
             $failed = $false
@@ -113,21 +119,28 @@ jobs:
             pandoc texlive-luatex texlive-latex-recommended texlive-latex-extra \
             texlive-fonts-recommended texlive-lang-german fonts-dejavu-core
           python scripts/build_exports.py --status-file build/runtime-status.json
+          current_phase=persist_status
+          cp build/runtime-status.json build/runtime-status-pre-final.json
           python scripts/runtime_status_cli.py build/runtime-status.json \
-            --finish success --phase success
+            --finish success --phase complete
           python scripts/validate_runtime_status.py build/runtime-status.json
           python scripts/build_exports.py --refresh-manifest \
             --status-file build/runtime-status.json
+          current_phase=generate_outputs
           python scripts/build_docs.py
           mkdocs build --strict
+          current_phase=validate
           npm run test:web
+          current_phase=persist_status
           python scripts/runtime_status_cli.py build/runtime-status.json \
-            --finish success --phase success --artifact site
+            --finish success --phase complete --artifact site
           python scripts/validate_runtime_status.py build/runtime-status.json
           python scripts/build_exports.py --refresh-manifest \
             --status-file build/runtime-status.json
+          current_phase=generate_outputs
           python scripts/build_docs.py
           mkdocs build --strict
+          current_phase=validate
           (cd build/artifacts && sha256sum --check SHA256SUMS.txt)
 
       - name: Create graph and runtime summary

@@ -110,3 +110,189 @@ Alle Prüfungen müssen erfolgreich beendet sein. Die Validierung muss insbesond
 9. Melde abschließend PR-Nummer, PR-Link, Branch, Head-Commit, Wortzahl und Prüfergebnisse.
 
 Falls Push oder PR-Erstellung wegen fehlender Berechtigungen scheitern, dokumentiere Branch, lokalen Commit und die genaue Fehlermeldung. Ein gepushter Branch darf nicht still ohne PR liegen bleiben. Führe keinen direkten Commit auf `main` aus.
+
+## 9. Additiver Lauf-, Recovery- und Duplikatschutz
+
+Alle vorstehenden wissenschaftlichen, bibliografischen, CNAME-, Infrastruktur-,
+CI- und PR-Regeln bleiben vollständig verbindlich. Der Statusmechanismus ergänzt
+sie und darf keinen Abschnitt dieses Prompts ersetzen oder verkürzen.
+
+### 9.1 Kanonischen Vorgängerstatus prüfen
+
+1. Erzeuge vor der ersten Repositoryänderung eine portable, kollisionssichere
+   `run_id`. In GitHub Actions ist sie zwingend aus der unveränderlichen
+   GitHub-Run-ID und dem Run-Attempt zu bilden
+   (`<GITHUB_RUN_ID>-<GITHUB_RUN_ATTEMPT>`); außerhalb von GitHub verwende eine
+   UUIDv4. Der geplante UTC-Zeitpunkt ist nur Kontextmetadatum und niemals
+   alleinige `run_id`. Prüfe vor `start`, dass der kanonische Laufpfad noch
+   nicht existiert. Bei Recovery wird dagegen exakt die bereits vorhandene
+   `run_id` wiederverwendet; eine Kollision darf weder überschrieben noch durch
+   eine neue ID umgangen werden.
+2. Lies auf dem orphan Branch `automation-status`
+   `automation/status/generator/latest.json` und validiere ihn gegen
+   `automation/run-status.schema.json`.
+3. Führe, wenn ein lokaler Checkout verfügbar ist, zusätzlich aus:
+
+   ```bash
+   python scripts/automation_status.py guard --workflow generator
+   ```
+
+4. Ein nicht quittierter Status `failed`, `blocked` oder `recovering`, ein noch
+   laufender Vorgänger sowie ein vorhandener automatischer Einheiten-PR
+   blockieren eine neue Einheit. Führe dann ausschließlich die dokumentierte
+   Recovery desselben Laufs aus.
+5. Ignoriere einen fehlenden oder unlesbaren Status nicht. Melde ihn als
+   `configuration`- oder `repository_state`-Blocker und prüfe GitHub-Branch,
+   offenen PR und vorhandene Artefakte, bevor neuer Inhalt entsteht.
+
+### 9.2 Status desselben Laufs fortschreiben
+
+Der kanonische Pfad lautet:
+
+```text
+automation/status/generator/<run_id>.json
+```
+
+`latest.json` ist die validierte Kopie derselben Revision. Schreibe Statusdateien
+niemals auf den Inhaltsbranch oder direkt nach `main`, sondern ausschließlich
+atomar in einem separaten Checkout des Branches `automation-status`. Verwende
+für jede Aktualisierung dieselbe `run_id` und die erwartete `revision`. Setze
+vor den folgenden CLI-Beispielen den Statuswurzelpfad dieses Checkouts:
+
+```bash
+export AUTOMATION_STATUS_ROOT="$STATUS_WORKTREE/automation/status"
+```
+
+Falls die Umgebung keine Variablenübergabe unterstützt, füge jedem Befehl
+`--root "$STATUS_WORKTREE/automation/status"` hinzu.
+
+Vor jeder schreibenden Statusoperation liest du die aktuelle `revision` der
+Laufdatei in `REVISION` ein und übergibst
+`--expected-revision "$REVISION"`. Direkt nach einem erfolgreichen Übergang
+liest du die neue Revision erneut ein. Exitcode `20` oder eine abweichende
+Revision bedeutet CAS-Konflikt: Statusbranch neu laden, Lauf- und
+`latest.json` erneut prüfen und den Schritt nur auf der neuen Revision
+wiederholen. Überschreibe niemals eine fremde neuere Revision.
+
+Nach jeder kritischen Statusrevision validierst du sowohl
+`automation/status/generator/<run_id>.json` als auch
+`automation/status/generator/latest.json` einzeln mit
+`scripts/validate_runtime_status.py`. Vergleiche danach die geparsten Felder
+`workflow`, `run_id` und `revision`; alle drei müssen identisch sein. Erst dann
+commitest du ausschließlich die betroffene Laufdatei, `latest.json` und ihre
+Diagnoseberichte im Status-Worktree und pushst normal nach
+`automation-status`. Verwende keinen Force-Push.
+
+Vor jedem kritischen Schritt wird die entsprechende Phase gesetzt:
+
+| Bestehender Arbeitsschritt | Statusphase |
+|---|---|
+| aktuellen Hauptbranch laden | `load_main` |
+| Vorgängerlauf prüfen | `check_previous_run` |
+| offenen Einheiten-PR prüfen | `check_existing_pr` |
+| Prompts vollständig lesen | `read_prompts` |
+| Deep Research | `research` |
+| Branch erzeugen | `create_branch` |
+| Einheit und Quellen schreiben | `create_content` |
+| Literatur, Graph, Anki und Dokumentation erzeugen | `generate_outputs` |
+| alle Pflichtprüfungen | `validate` |
+| Commit | `commit` |
+| Push | `push` |
+| Draft-PR erstellen | `create_pr` |
+| Head-Branch, Commit und PR-Zuordnung prüfen | `verify_pr` |
+| erfolgreicher Abschluss dieses Generatorlaufs | `complete` |
+
+Beispiel:
+
+```bash
+python scripts/automation_status.py start \
+  --workflow generator --run-id "$RUN_ID" --phase initialize
+REVISION=1
+python scripts/automation_status.py phase \
+  --workflow generator --run-id "$RUN_ID" --phase load_main \
+  --expected-revision "$REVISION"
+```
+
+Lies anschließend die tatsächlich geschriebene Revision erneut aus der
+Laufdatei; rechne sie nicht lokal hoch.
+
+### 9.3 Wiederverwendbare Artefakte sofort registrieren
+
+Registriere unmittelbar nach ihrer erfolgreichen Entstehung:
+
+```bash
+python scripts/automation_status.py artifact \
+  --workflow generator --run-id "$RUN_ID" \
+  --type branch --value "$BRANCH" --reusable \
+  --expected-revision "$REVISION"
+python scripts/automation_status.py artifact \
+  --workflow generator --run-id "$RUN_ID" \
+  --type commit --value "$COMMIT_SHA" --reusable \
+  --expected-revision "$REVISION"
+python scripts/automation_status.py artifact \
+  --workflow generator --run-id "$RUN_ID" \
+  --type pull_request --value "#$PR_NUMBER" \
+  --url "$PR_URL" --reusable \
+  --expected-revision "$REVISION"
+```
+
+Falls nach dem Push nur die PR-Erstellung scheitert, wiederhole ausschließlich
+`create_pr` mit dem vorhandenen Branch und Commit. Erzeuge niemals wegen eines
+transienten GitHub-Fehlers eine zweite Einheit.
+
+### 9.4 Fehler und Recovery
+
+Erfasse Fehler mit einer der im Schema definierten Klassen und einem konkreten
+Recovery-Level. Beispiele:
+
+```bash
+python scripts/automation_status.py fail \
+  --workflow generator --run-id "$RUN_ID" \
+  --class github_api_transient --code create_pr_failed \
+  --message "PR-Erstellung temporär fehlgeschlagen" \
+  --recovery resume_from_artifact --retryable \
+  --expected-revision "$REVISION"
+
+python scripts/automation_status.py recover \
+  --workflow generator --run-id "$RUN_ID" --phase create_pr \
+  --expected-revision "$REVISION"
+```
+
+Auch zwischen direkt aufeinanderfolgenden Befehlen wird `REVISION` jeweils aus
+der Laufdatei neu gelesen. Eine für zwei Schreibbefehle wiederverwendete
+Revision ist unzulässig.
+
+Zugangsdaten, komplette Prompts, E-Mail-Adressen und medizinische Inhalte dürfen
+nicht im Status stehen. Ein wissenschaftlich oder sicherheitsrelevant nicht
+eindeutig lösbarer Fehler verwendet `manual_intervention`; ein terminaler Fehler
+blockiert neue Generatorläufe bis zur bewussten Quittierung.
+
+### 9.5 Mindestdiagnose bei fehlender Schreibmöglichkeit
+
+Falls der Branch `automation-status` nicht beschrieben werden kann, darf die
+fachliche Fehlermeldung dadurch nicht verdeckt werden. Gib in der Antwort
+mindestens den vollständigen redigierten Diagnoseblock aus:
+
+```text
+ADHS-Automation fehlgeschlagen
+Lauf: <workflow>/<run_id>
+Status: <status>
+Phase: <phase>
+Revision: <revision>
+Erfolgreich: <abgeschlossene Phasen>
+Vorhanden: <Branch, Commit, PR und weitere Artefakte>
+Fehlerklasse: <Klasse>
+Fehlercode: <Code>
+Fehler: <konkrete redigierte Ursache>
+Recovery-Level: <Level>
+Recovery: <nächster sicherer Schritt>
+Neuer Inhalt erforderlich: ja/nein
+Blockiert nächsten Generatorlauf: ja/nein
+```
+
+Beende einen erfolgreichen Generatorlauf erst nach der PR-Zuordnungsprüfung:
+
+```bash
+python scripts/automation_status.py finish \
+  --workflow generator --run-id "$RUN_ID" --phase complete
+```

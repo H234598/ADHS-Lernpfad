@@ -1,6 +1,6 @@
 # Wissensgraph Phase 3 – Vollständiger Umsetzungsplan
 
-Status: completed (2026-07-22)
+Status: completed and re-audited for Issue #32 (2026-07-23)
 
 ## Ziel
 
@@ -28,19 +28,20 @@ Aus dem bisherigen Graphgenerator wird eine überwachte, reproduzierbare Infrast
 
 Buildphasen:
 
-1. started
+1. created
 2. load_content
 3. build_nodes
 4. build_edges
 5. validate_graph
 6. export
-7. success/failed
+7. persist_status
+8. complete mit Status success/failed
 
 Jeder Fehler muss enthalten:
 
 - phase
-- error_class
-- recovery_action
+- strukturiertes `error`-Objekt mit Klasse, Code und redigierter Meldung
+- strukturiertes `recovery`-Objekt mit Level, Aktion und Duplikatblocker
 
 ## Graph Validator
 
@@ -124,5 +125,23 @@ SHA-256-Datei. Der Webgraph zeigt Lauf- und Lebenszyklusstatus, bleibt ohne
 JavaScript als verlinkte Tabelle nutzbar und wird mit Playwright geprüft.
 
 Die gemeinsame CI erzeugt auch im Fehlerfall Diagnoseartefakte und aktualisiert
-einen markierten PR-Kommentar idempotent. Scheduler, zeitgesteuerte Retries und
-automatische Recovery bleiben wie geplant außerhalb von Phase 3.
+einen markierten PR-Kommentar idempotent. Die in Issue #34 ergänzte
+Scheduler-Recovery verwendet denselben Graphstatusvertrag, bleibt jedoch
+architektonisch von Graphmodell und Graphqualitätsgate getrennt.
+
+## Re-Audit zu Issue #32
+
+- [x] `scripts/validate_graph.py` prüft Schema, eindeutige IDs, Kantenendpunkte,
+  erwartete Revision und blockierende Link-/Strukturfehler.
+- [x] Preview und Diagnosebericht entstehen vor dem finalen Fehlergate.
+- [x] `scripts/graph_ci_summary.py` liefert Step Summary und idempotenten
+  PR-Kommentar.
+- [x] Playwright prüft Interaktion, Tastaturbedienung und No-JavaScript-Fallback.
+- [x] JSON, GraphML, Mermaid und beide Berichte sind in Manifest und
+  SHA-256-Prüfsummen enthalten.
+- [x] Voraussetzungen und Planned Nodes verwenden kanonische Ziele.
+- [x] Graph-, Wartungs- und Promptdokumentation sind aktuell.
+- [x] die zwei auf `main` verbliebenen
+  `.graph-web-bootstrap/payload-*.txt` wurden entfernt.
+- [x] ein Regressionstest verbietet alle bekannten Apply-, Bootstrap- und
+  Retry-Dateien sowie selbstmodifizierenden Einmal-Workflows.

@@ -68,6 +68,30 @@ Geprüft werden unter anderem:
 
 Dependabot kontrolliert wöchentlich GitHub Actions und Python-Abhängigkeiten. Einzelheiten stehen in [[.github/README|GitHub-Automation]].
 
+## Automationsstatus und Lauf-Recovery
+
+Generator, Reparaturwächter, Mergewächter und GitHub Actions schreiben einen
+gemeinsamen, streng validierten Laufstatus. Persistente Läufe liegen getrennt
+von `main` auf dem orphan Branch
+[`automation-status`](https://github.com/H234598/ADHS-Lernpfad/tree/automation-status/automation/status).
+Ein ungeklärter Fehler blockiert eine zweite Einheit, bis der vorhandene
+Branch, Commit oder Pull Request weiterverwendet oder der Blocker bewusst
+quittiert wurde.
+
+<!-- knowledge-graph-runtime:start -->
+
+Der Laufstatus wird beim Dokumentationsbuild eingesetzt.
+
+<!-- knowledge-graph-runtime:end -->
+
+Der vollständige Vertrag, Zustandsautomat, CLI, Datenschutz, Retention und
+Recovery-Ablauf stehen unter [[automation/README|Automationsstatus und
+Recovery]]. Eine Benutzerfehlermeldung muss mindestens Lauf, Phase,
+abgeschlossene Schritte, vorhandene Artefakte, Fehlerklasse, Fehlercode,
+Recovery-Level und den nächsten sicheren Schritt enthalten. „There was a
+problem with your scheduled task“ allein ist kein ausreichender
+Diagnosestatus.
+
 ## Wissensgraph
 
 Die öffentliche Seite [[knowledge-graph/README|Wissensgraph]] ist bewusst auf Laufstatus, interaktive Graphdarstellung, Legende und die beim Build erzeugte semantische Fallbackansicht beschränkt. Technische Beschreibung und Betriebsanweisungen stehen ausschließlich hier.
@@ -103,7 +127,8 @@ Die öffentliche Seite lädt den kanonischen Graphen und den Laufstatus dynamisc
 - `knowledge-graph.graphml` – Austauschformat für Gephi und Cytoscape Desktop
 - `knowledge-graph.mmd` – kompakte Mermaid-Diagnoseansicht
 - `graph-report.md` und `graph-report.json` – verständlicher Qualitätsbericht
-- `runtime-status.json` – schema-validierter Laufstatus mit Phase, Dauer, Commit und Recovery-Hinweis
+- `runtime-status.json` – schema-validierter Laufstatus mit Revision, Phase,
+  Branch/Commit/PR, strukturiertem Fehler und Recovery-Hinweis
 
 ### Lokal bauen und prüfen
 
@@ -111,6 +136,7 @@ Die öffentliche Seite lädt den kanonischen Graphen und den Laufstatus dynamisc
 python scripts/build_graph.py
 python scripts/validate_graph.py
 python scripts/validate_runtime_status.py build/runtime-status.json
+python scripts/validate_prompt_baselines.py
 python scripts/build_docs.py
 mkdocs build --strict
 ```
@@ -173,9 +199,11 @@ Die lesefreundliche Übersicht steht unter [[DOWNLOADS|Downloads]]. Die Dateien 
 
 Jeder Eintrag im Downloadmanifest enthält Dateiname, Medientyp, Beschreibung,
 Erzeugungszeit und SHA-256. Der Wissensgraph zeigt den letzten erfolgreichen
-oder fehlgeschlagenen Lauf sichtbar an. `recovery_action` bereitet einen sicheren
-Folgeschritt vor; zeitgesteuerte Retries oder ein eigener Recovery-Scheduler
-gehören nicht zu dieser Ausbaustufe.
+oder fehlgeschlagenen Lauf sichtbar an. Das strukturierte `recovery`-Objekt
+nennt Level, sicheren Folgeschritt und Duplikatblocker. Scheduled Task,
+Reparatur- und Mergewächter schreiben denselben Vorgang weiter; die
+GitHub-Actions-Persistenz überträgt ihre validierten Diagnosen getrennt vom
+fachlichen CI-Ergebnis auf `automation-status`.
 
 ## Branch-Hygiene
 

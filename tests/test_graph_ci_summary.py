@@ -17,10 +17,22 @@ def test_summary_contains_status_duration_phase_and_all_counts() -> None:
         "issues": [],
     }
     runtime = {
-        "run_id": "run-1", "workflow": "graph", "git_sha": "abc123",
+        "run_id": "run-1", "workflow": "knowledge-graph", "revision": 4,
+        "context": {
+            "commit_sha": "abc1234", "branch": "agent/test", "pr_number": 42,
+        },
         "status": "failed", "phase": "validate_graph", "duration_seconds": 4.25,
-        "error_class": "graph_validation_error", "error_message": "Defekter Link",
-        "recovery_action": "fix_graph_and_retry",
+        "completed_phases": ["load_content", "build_nodes", "build_edges"],
+        "artifacts": [],
+        "error": {
+            "class": "validation", "code": "graph_validation_error",
+            "message": "Defekter Link",
+        },
+        "recovery": {
+            "level": "retry_same_phase", "action": "fix_graph_and_retry",
+            "new_content_required": False, "block_next_run": True,
+            "acknowledged": False,
+        },
     }
     summary = build_summary(graph, runtime)
     for expected in (
@@ -28,6 +40,7 @@ def test_summary_contains_status_duration_phase_and_all_counts() -> None:
         "Knoten: **4**", "Kanten: **3**", "Fehler: **1**", "Warnungen: **2**",
         "Geplante Seiten: **1**", "Fehlende Seiten/Abschnitte: **1**",
         "graph_validation_error", "fix_graph_and_retry",
+        "Blockiert den nächsten Generatorlauf: **ja**",
     ):
         assert expected in summary
 

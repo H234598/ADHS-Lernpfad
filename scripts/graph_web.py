@@ -44,11 +44,12 @@ LIFECYCLE_LABELS = {
     "not_applicable": "nicht anwendbar",
 }
 RUN_STATUS_LABELS = {
-    "started": "gestartet",
+    "created": "angelegt",
     "running": "läuft",
     "success": "OK",
     "failed": "fehlgeschlagen",
     "blocked": "blockiert",
+    "recovering": "Wiederherstellung läuft",
     "recovered": "wiederhergestellt",
     "unknown": "unbekannt",
 }
@@ -348,6 +349,13 @@ def render_fallback_markdown(data: dict[str, object]) -> str:
 def render_runtime_markdown(status: dict[str, object]) -> str:
     state = str(status.get("status") or "unknown")
     metrics = status.get("metrics") if isinstance(status.get("metrics"), dict) else {}
+    context = status.get("context") if isinstance(status.get("context"), dict) else {}
+    error = status.get("error") if isinstance(status.get("error"), dict) else {}
+    recovery = (
+        status.get("recovery")
+        if isinstance(status.get("recovery"), dict)
+        else {}
+    )
     duration = status.get("duration_seconds")
     duration_label = "nicht verfügbar" if duration is None else f"{duration} s"
     nodes = metrics.get("nodes", metrics.get("node_count", "—"))
@@ -363,19 +371,32 @@ def render_runtime_markdown(status: dict[str, object]) -> str:
         "|---|---|",
         f"| Zeitpunkt | {escape(_format_timestamp(status.get('ended_at') or status.get('updated_at')))} |",
         f"| Phase | `{escape(str(status.get('phase') or 'unbekannt'))}` |",
-        f"| Git-Commit | `{escape(str(status.get('git_sha') or 'nicht verfügbar'))}` |",
+        f"| Revision | {escape(str(status.get('revision') or 'nicht verfügbar'))} |",
+        f"| Git-Commit | `{escape(str(context.get('commit_sha') or 'nicht verfügbar'))}` |",
+        f"| Branch / PR | `{escape(str(context.get('branch') or '—'))}` / {escape('#' + str(context['pr_number']) if context.get('pr_number') else '—')} |",
         f"| Laufzeit | {escape(duration_label)} |",
         f"| Knoten | {escape(str(nodes))} |",
         f"| Kanten | {escape(str(edges))} |",
         f"| Fehler / Warnungen | {escape(str(errors))} / {escape(str(warnings))} |",
     ]
-    if state == "failed":
+    if state in {"failed", "blocked", "recovering", "recovered"}:
         lines.extend([
             "",
-            "> [!failure] Generatorfehler",
-            f"> **Fehlerklasse:** `{escape(str(status.get('error_class') or 'unbekannt'))}`  ",
-            f"> **Hinweis:** {escape(str(status.get('error_message') or 'Keine Detailmeldung vorhanden.'))}  ",
-            f"> **Recovery:** {escape(str(status.get('recovery_action') or 'Diagnosebericht prüfen.'))}",
+            "> [!failure] Generatorfehler und Recovery",
+            f"> **Fehlerklasse:** `{escape(str(error.get('class') or 'unbekannt'))}`  ",
+            f"> **Fehlercode:** `{escape(str(error.get('code') or 'unknown_error'))}`  ",
+            f"> **Hinweis:** {escape(str(error.get('message') or 'Keine Detailmeldung vorhanden.'))}  ",
+            f"> **Recovery-Level:** `{escape(str(recovery.get('level') or 'unbekannt'))}`  ",
+            f"> **Recovery:** {escape(str(recovery.get('action') or 'Diagnosebericht prüfen.'))}  ",
+            "> **Neuer Inhalt erforderlich:** "
+            + ("ja  " if recovery.get("new_content_required") else "nein  "),
+            "> **Nächster Generatorlauf blockiert:** "
+            + (
+                "ja"
+                if recovery.get("block_next_run")
+                and not recovery.get("acknowledged")
+                else "nein"
+            ),
         ])
     elif state == "unknown":
         lines.extend([
