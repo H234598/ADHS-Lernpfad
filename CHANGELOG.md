@@ -1,5 +1,13 @@
 # Änderungsverlauf
 
+
+## 0.15.0 – 2026-07-23
+
+- Einheit 14 „Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung“ ergänzt
+- diagnostische Kernbereiche, Symptomüberlappung, Masking, diagnostisches Überschatten und gemeinsame Funktionsprofile differenziert eingeordnet
+- vier aktuelle Konsens-, Review- und Primärstudienkarten sowie Glossarbegriffe und Anki-Karte ergänzt
+- Roadmap und Planned-Node-Registry auf den abgeschlossenen Themenblock aktualisiert
+
 ## 0.14.0 – 2026-07-22
 
 - Wissensgraph 2.0 Phase 2 und 3 vollständig materialisiert: interaktive, lokale Cytoscape-Webansicht mit Suche, Filtern, Detailpanel und semantischem No-JS-Fallback
