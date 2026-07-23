@@ -34,7 +34,8 @@ Buildphasen:
 4. build_edges
 5. validate_graph
 6. export
-7. complete mit Status success/failed
+7. persist_status
+8. complete mit Status success/failed
 
 Jeder Fehler muss enthalten:
 

@@ -119,9 +119,15 @@ sie und darf keinen Abschnitt dieses Prompts ersetzen oder verkürzen.
 
 ### 9.1 Kanonischen Vorgängerstatus prüfen
 
-1. Erzeuge vor der ersten Repositoryänderung eine portable `run_id`; verwende
-   bei einem Scheduled Task dessen geplanten UTC-Zeitpunkt oder eine bereits
-   vorhandene GitHub-Run-ID ohne Doppelpunkte.
+1. Erzeuge vor der ersten Repositoryänderung eine portable, kollisionssichere
+   `run_id`. In GitHub Actions ist sie zwingend aus der unveränderlichen
+   GitHub-Run-ID und dem Run-Attempt zu bilden
+   (`<GITHUB_RUN_ID>-<GITHUB_RUN_ATTEMPT>`); außerhalb von GitHub verwende eine
+   UUIDv4. Der geplante UTC-Zeitpunkt ist nur Kontextmetadatum und niemals
+   alleinige `run_id`. Prüfe vor `start`, dass der kanonische Laufpfad noch
+   nicht existiert. Bei Recovery wird dagegen exakt die bereits vorhandene
+   `run_id` wiederverwendet; eine Kollision darf weder überschrieben noch durch
+   eine neue ID umgangen werden.
 2. Lies auf dem orphan Branch `automation-status`
    `automation/status/generator/latest.json` und validiere ihn gegen
    `automation/run-status.schema.json`.
@@ -160,13 +166,22 @@ export AUTOMATION_STATUS_ROOT="$STATUS_WORKTREE/automation/status"
 Falls die Umgebung keine Variablenübergabe unterstützt, füge jedem Befehl
 `--root "$STATUS_WORKTREE/automation/status"` hinzu.
 
-Nach jeder kritischen Statusrevision validierst du die Laufdatei mit
-`scripts/validate_runtime_status.py`, commitest ausschließlich die betroffene
-Laufdatei, `latest.json` und ihre Diagnoseberichte im Status-Worktree und pushst
-normal nach `automation-status`. Verwende keinen Force-Push. Bei einem
-zwischenzeitlichen Statuscommit eines Wächters lädst du den Branch neu, prüfst
-die Revision und führst nur einen zulässigen Folgeübergang aus; du überschreibst
-keine fremde neuere Revision.
+Vor jeder schreibenden Statusoperation liest du die aktuelle `revision` der
+Laufdatei in `REVISION` ein und übergibst
+`--expected-revision "$REVISION"`. Direkt nach einem erfolgreichen Übergang
+liest du die neue Revision erneut ein. Exitcode `20` oder eine abweichende
+Revision bedeutet CAS-Konflikt: Statusbranch neu laden, Lauf- und
+`latest.json` erneut prüfen und den Schritt nur auf der neuen Revision
+wiederholen. Überschreibe niemals eine fremde neuere Revision.
+
+Nach jeder kritischen Statusrevision validierst du sowohl
+`automation/status/generator/<run_id>.json` als auch
+`automation/status/generator/latest.json` einzeln mit
+`scripts/validate_runtime_status.py`. Vergleiche danach die geparsten Felder
+`workflow`, `run_id` und `revision`; alle drei müssen identisch sein. Erst dann
+commitest du ausschließlich die betroffene Laufdatei, `latest.json` und ihre
+Diagnoseberichte im Status-Worktree und pushst normal nach
+`automation-status`. Verwende keinen Force-Push.
 
 Vor jedem kritischen Schritt wird die entsprechende Phase gesetzt:
 
@@ -192,9 +207,14 @@ Beispiel:
 ```bash
 python scripts/automation_status.py start \
   --workflow generator --run-id "$RUN_ID" --phase initialize
+REVISION=1
 python scripts/automation_status.py phase \
-  --workflow generator --run-id "$RUN_ID" --phase load_main
+  --workflow generator --run-id "$RUN_ID" --phase load_main \
+  --expected-revision "$REVISION"
 ```
+
+Lies anschließend die tatsächlich geschriebene Revision erneut aus der
+Laufdatei; rechne sie nicht lokal hoch.
 
 ### 9.3 Wiederverwendbare Artefakte sofort registrieren
 
@@ -203,14 +223,17 @@ Registriere unmittelbar nach ihrer erfolgreichen Entstehung:
 ```bash
 python scripts/automation_status.py artifact \
   --workflow generator --run-id "$RUN_ID" \
-  --type branch --value "$BRANCH" --reusable
+  --type branch --value "$BRANCH" --reusable \
+  --expected-revision "$REVISION"
 python scripts/automation_status.py artifact \
   --workflow generator --run-id "$RUN_ID" \
-  --type commit --value "$COMMIT_SHA" --reusable
+  --type commit --value "$COMMIT_SHA" --reusable \
+  --expected-revision "$REVISION"
 python scripts/automation_status.py artifact \
   --workflow generator --run-id "$RUN_ID" \
   --type pull_request --value "#$PR_NUMBER" \
-  --url "$PR_URL" --reusable
+  --url "$PR_URL" --reusable \
+  --expected-revision "$REVISION"
 ```
 
 Falls nach dem Push nur die PR-Erstellung scheitert, wiederhole ausschließlich
@@ -227,11 +250,17 @@ python scripts/automation_status.py fail \
   --workflow generator --run-id "$RUN_ID" \
   --class github_api_transient --code create_pr_failed \
   --message "PR-Erstellung temporär fehlgeschlagen" \
-  --recovery resume_from_artifact --retryable
+  --recovery resume_from_artifact --retryable \
+  --expected-revision "$REVISION"
 
 python scripts/automation_status.py recover \
-  --workflow generator --run-id "$RUN_ID" --phase create_pr
+  --workflow generator --run-id "$RUN_ID" --phase create_pr \
+  --expected-revision "$REVISION"
 ```
+
+Auch zwischen direkt aufeinanderfolgenden Befehlen wird `REVISION` jeweils aus
+der Laufdatei neu gelesen. Eine für zwei Schreibbefehle wiederverwendete
+Revision ist unzulässig.
 
 Zugangsdaten, komplette Prompts, E-Mail-Adressen und medizinische Inhalte dürfen
 nicht im Status stehen. Ein wissenschaftlich oder sicherheitsrelevant nicht

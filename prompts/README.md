@@ -54,4 +54,9 @@ Die Automationen selbst enthalten nur einen kurzen Startauftrag. Die ausführlic
 Die vor der Recovery-Erweiterung vollständigen Generator-, Reparatur- und
 Mergeprompts sind als kryptografisch geprüfte Golden Prefixes unter
 `automation/prompt-baselines.json` geschützt. Recovery-Regeln werden additiv
-angehängt und dürfen bestehende Anforderungen nicht ersetzen.
+angehängt und dürfen bestehende Anforderungen nicht ersetzen. Der
+Baseline-Validator prüft zusätzlich die feste Manifestversion, das
+JSON-Objektformat und die exakte Menge der drei eindeutigen,
+repository-relativen Promptpfade. Leere, fehlende, doppelte, umbenannte,
+absolute oder pfadtraversierende Einträge können den Schutz deshalb nicht
+umgehen.

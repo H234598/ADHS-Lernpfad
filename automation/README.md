@@ -119,7 +119,7 @@ Graph- und Exportbuilds ergänzen `load_content`, `build_nodes`, `build_edges`,
 ### Lauf starten und Vorgänger blockieren
 
 ```bash
-RUN_ID="20260723T060000Z"
+RUN_ID="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
 
 python scripts/automation_status.py start \
   --workflow generator \
@@ -129,6 +129,8 @@ python scripts/automation_status.py start \
 `start` prüft standardmäßig `latest.json`. Ein ungeklärter Vorgängerlauf führt
 zum Exitcode `20` und erzeugt keinen zweiten Status. `--allow-unresolved` ist
 nur für kontrollierte Migrationen und Tests vorgesehen.
+Außerhalb von GitHub Actions wird eine UUIDv4 verwendet. Ein geplanter
+Zeitpunkt ist nur Metadatum und keine kollisionssichere Lauf-ID.
 
 ### Phase aktualisieren
 
@@ -140,7 +142,9 @@ python scripts/automation_status.py phase \
   --expected-revision 8
 ```
 
-Die optionale erwartete Revision verhindert verlorene parallele Updates.
+Die erwartete Revision verhindert verlorene parallele Updates. Scheduler lesen
+sie vor jedem Schreibbefehl frisch ein, verwenden sie genau einmal und brechen
+bei einem CAS-Konflikt mit Exitcode `20` ab.
 
 ### Wiederverwendbares Artefakt registrieren
 
@@ -227,7 +231,12 @@ Exitcodes:
 `scripts/automation_status.py` verwendet:
 
 - Prozess-Lock neben jeder Statusdatei;
+- workflowweit geteilter Lock für `latest.json`, auch wenn verschiedene
+  Laufdateien parallel aktualisiert werden;
 - monotone optimistische Revision;
+- monotone Auswahl des neuesten Laufs nach Erstellzeit und stabilem
+  Run-ID-Tie-Break; ein später Abschluss eines älteren Laufs kann
+  `latest.json` und `latest.md` nicht zurücksetzen;
 - vollständige Normalisierung vor dem Schreiben;
 - Abweisung unzulässiger Zustandsübergänge;
 - validierte atomare Wiederherstellung der letzten laufenden Revision, falls
@@ -316,7 +325,11 @@ statische textuelle Darstellung bleibt ohne JavaScript verfügbar.
 Generator-, Reparatur- und Mergeprompts vor der Recovery-Erweiterung als
 Golden Prefix. `scripts/validate_prompt_baselines.py` verhindert, dass eine
 spätere Änderung bestehende Wissenschafts-, Quellen-, CNAME-, CI-, PR- oder
-Infrastrukturregeln still kürzt. Additive Erweiterungen bleiben möglich.
+Infrastrukturregeln still kürzt. Der Validator akzeptiert ausschließlich die
+festgelegte Manifestversion und genau diese drei eindeutigen,
+repository-relativen Promptpfade; fehlende, doppelte, umbenannte, absolute oder
+pfadtraversierende Einträge sind Fehler. Additive Erweiterungen bleiben
+möglich.
 
 ## Testabdeckung
 

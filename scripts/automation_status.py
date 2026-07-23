@@ -999,6 +999,47 @@ def _new_status(
     }
 
 
+def _latest_candidate_is_newer(
+    candidate: Mapping[str, Any],
+    current: Mapping[str, Any],
+) -> bool:
+    """Return whether ``candidate`` may advance the canonical latest mirror."""
+
+    if candidate["workflow"] != current["workflow"]:
+        raise AutomationStatusError(
+            "latest.json darf keine Statusläufe verschiedener Workflows mischen"
+        )
+    if candidate["run_id"] == current["run_id"]:
+        candidate_revision = int(candidate["revision"])
+        current_revision = int(current["revision"])
+        if candidate_revision != current_revision:
+            return candidate_revision > current_revision
+        return _timestamp(candidate["updated_at"]) >= _timestamp(current["updated_at"])
+    candidate_created = _timestamp(candidate["created_at"])
+    current_created = _timestamp(current["created_at"])
+    if candidate_created != current_created:
+        return candidate_created > current_created
+    # Millisecond timestamps can collide. A stable run-id tie-break makes all
+    # writers converge on the same mirror instead of depending on lock order.
+    return str(candidate["run_id"]) > str(current["run_id"])
+
+
+def _replace_latest_if_newer(
+    latest_path: Path,
+    payload: Mapping[str, Any],
+) -> bool:
+    """Serialize and monotonically advance a workflow's ``latest.json``."""
+
+    latest_path = Path(latest_path)
+    with file_lock(latest_path):
+        if latest_path.exists():
+            current = read_status(latest_path)
+            if not _latest_candidate_is_newer(payload, current):
+                return False
+        _atomic_dump(latest_path, payload)
+    return True
+
+
 def create_status_file(
     path: Path,
     workflow: str,
@@ -1010,9 +1051,12 @@ def create_status_file(
     latest_path: Path | None = None,
     diagnostic_paths: Sequence[Path] | None = None,
 ) -> dict[str, Any]:
-    """Create a revision-one status and optionally replace ``latest.json``."""
+    """Create a revision-one status and monotonically advance ``latest.json``."""
 
     path = Path(path)
+    resolved_latest = Path(latest_path) if latest_path is not None else None
+    if resolved_latest is not None and resolved_latest.resolve() == path.resolve():
+        raise ValueError("Laufdatei und latest.json müssen verschieden sein")
     payload = _new_status(
         workflow,
         run_id=run_id,
@@ -1026,10 +1070,20 @@ def create_status_file(
         if path.exists() and not force:
             raise AutomationStatusError(f"Status existiert bereits: {path}")
         _atomic_dump(path, payload)
-        if latest_path is not None:
-            _atomic_dump(Path(latest_path), payload)
+        latest_updated = (
+            _replace_latest_if_newer(resolved_latest, payload)
+            if resolved_latest is not None
+            else False
+        )
         for diagnostic_path in diagnostic_paths or ():
-            write_diagnostic(Path(diagnostic_path), payload)
+            diagnostic_path = Path(diagnostic_path)
+            if (
+                resolved_latest is not None
+                and diagnostic_path == resolved_latest.with_suffix(".md")
+                and not latest_updated
+            ):
+                continue
+            write_diagnostic(diagnostic_path, payload)
     return payload
 
 
@@ -1062,6 +1116,9 @@ def transition_status_file(
     """Lock, revision-check, transition, validate and atomically replace."""
 
     path = Path(path)
+    resolved_latest = Path(latest_path) if latest_path is not None else None
+    if resolved_latest is not None and resolved_latest.resolve() == path.resolve():
+        raise ValueError("Laufdatei und latest.json müssen verschieden sein")
     with file_lock(path):
         current = read_status(path)
         if expected_revision is not None and current["revision"] != expected_revision:
@@ -1132,10 +1189,20 @@ def transition_status_file(
         if errors:
             raise AutomationStatusError("Statusupdate ist ungültig: " + "; ".join(errors))
         _atomic_dump(path, payload)
-        if latest_path is not None:
-            _atomic_dump(Path(latest_path), payload)
+        latest_updated = (
+            _replace_latest_if_newer(resolved_latest, payload)
+            if resolved_latest is not None
+            else False
+        )
         for diagnostic_path in diagnostic_paths or ():
-            write_diagnostic(Path(diagnostic_path), payload)
+            diagnostic_path = Path(diagnostic_path)
+            if (
+                resolved_latest is not None
+                and diagnostic_path == resolved_latest.with_suffix(".md")
+                and not latest_updated
+            ):
+                continue
+            write_diagnostic(diagnostic_path, payload)
         return payload
 
 

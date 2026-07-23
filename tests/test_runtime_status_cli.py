@@ -13,6 +13,7 @@ import sys
 
 import pytest
 
+import scripts.automation_status as automation_status
 from scripts.automation_status import (
     ALLOWED_TRANSITIONS,
     DEFAULT_STATUS_PATH,
@@ -507,6 +508,46 @@ def test_older_run_update_cannot_regress_latest_mirror(tmp_path: Path) -> None:
 
     assert read_status(store.latest_path("manual")) == newest
     assert read_status(store.path_for("manual", "older-run"))["revision"] == 4
+
+
+def test_generic_latest_mirror_serializes_different_run_ids(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        automation_status,
+        "utc_now",
+        lambda: "2026-07-23T12:00:00.000Z",
+    )
+    latest = tmp_path / "manual/latest.json"
+    latest_diagnostic = latest.with_suffix(".md")
+
+    def create(index: int) -> None:
+        run_id = f"run-{index:02d}"
+        create_status_file(
+            tmp_path / f"manual/{run_id}.json",
+            "manual",
+            run_id=run_id,
+            latest_path=latest,
+            diagnostic_paths=[latest_diagnostic],
+        )
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        list(executor.map(create, range(20)))
+
+    newest = read_status(latest)
+    assert newest["run_id"] == "run-19"
+    assert "Lauf: manual/run-19" in latest_diagnostic.read_text(encoding="utf-8")
+
+    transition_status_file(
+        tmp_path / "manual/run-00.json",
+        status="running",
+        phase="validate",
+        latest_path=latest,
+        diagnostic_paths=[latest_diagnostic],
+    )
+    assert read_status(latest) == newest
+    assert "Lauf: manual/run-19" in latest_diagnostic.read_text(encoding="utf-8")
 
 
 def test_end_to_end_interruption_reuses_branch_commit_and_pr_until_merge(

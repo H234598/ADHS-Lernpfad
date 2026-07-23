@@ -115,24 +115,33 @@ Sicherheitsregeln bleiben vollständig erhalten.
    - Squash-Merge: `merge`
    - Merge-Nachweis und Branchbereinigung: `cleanup`
    - vollständiger Abschluss: `complete`
-3. Registriere CI-Run, Job, Reparaturcommit, Merge-Commit und PR als
+3. Lies unmittelbar vor jedem schreibenden Statusbefehl die aktuelle
+   Laufrevision in `REVISION` ein und übergib
+   `--expected-revision "$REVISION"`. Die Revision darf nur für genau einen
+   `phase`-, `artifact`-, `recover`-, `fail`- oder `finish`-Befehl verwendet
+   werden und muss danach frisch eingelesen werden. Exitcode `20` oder eine
+   abweichende Revision beendet den aktuellen Mergeversuch: Statusbranch neu
+   laden, GitHub-Zustand erneut abgleichen und niemals die fremde Revision
+   überschreiben.
+4. Registriere CI-Run, Job, Reparaturcommit, Merge-Commit und PR als
    strukturierte Artefakte. Branch, Commit oder PR müssen bei Wiederaufnahme
    weiterverwendet werden; ein neuer Einheitenbranch ist verboten.
-4. Nach `Ready for review` bleibt der Status `running`, bis eine eindeutig
+5. Nach `Ready for review` bleibt der Status `running`, bis eine eindeutig
    zugeordnete zweite CI vollständig abgeschlossen ist.
-5. Ein erfolgreicher Merge allein genügt nicht für `success`. Dokumentiere
+6. Ein erfolgreicher Merge allein genügt nicht für `success`. Dokumentiere
    zuerst Merge-Commit, `main`-Nachweis und Ergebnis der Branchbereinigung.
-6. Erst danach:
+7. Erst danach:
 
    ```bash
    python scripts/automation_status.py finish \
-     --workflow generator --run-id "$RUN_ID" --phase complete
+     --workflow generator --run-id "$RUN_ID" --phase complete \
+     --expected-revision "$REVISION"
    ```
 
-7. Bei CI-, Review-, Konflikt-, Berechtigungs- oder API-Fehlern schreibe einen
+8. Bei CI-, Review-, Konflikt-, Berechtigungs- oder API-Fehlern schreibe einen
    strukturierten Fehler mit Recovery-Level. Ein ungeklärter Fehler blockiert
    den nächsten Generatorlauf und verhindert dadurch eine zweite Einheit.
-8. Falls `automation-status` nicht beschreibbar ist, gib den vollständigen
+9. Falls `automation-status` nicht beschreibbar ist, gib den vollständigen
    Diagnoseblock aus `prompts/AUTOMATION-PROMPT.md` aus. Melde insbesondere
    konkrete Phase, vorhandene Artefakte, GitHub-Run/Job, Ursache und den nächsten
    sicheren Recovery-Schritt; eine generische Scheduled-Task-Meldung genügt
