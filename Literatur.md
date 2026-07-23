@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-22
+last_reviewed: 2026-07-23
 ---
 
 # Literatur
@@ -100,6 +100,14 @@ Metcalfe, K. B., McFeaters, C. D., & Voyer, D. (2024). Time-Perception Deficits 
 - PubMed: [PMID 38145491](https://pubmed.ncbi.nlm.nih.gov/38145491/)
 - Evidenztyp: `meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
+## Micai2023
+
+Micai, M., Fatta, L. M., Gila, L., et al. (2023). Prevalence of co-occurring conditions in children and adults with autism spectrum disorder: A systematic review and meta-analysis. *Neuroscience & Biobehavioral Reviews, 155*, 105436.
+
+- DOI: [https://doi.org/10.1016/j.neubiorev.2023.105436](https://doi.org/10.1016/j.neubiorev.2023.105436)
+- PubMed: [PMID 37913872](https://pubmed.ncbi.nlm.nih.gov/37913872/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
 ## NICE2018
 
 National Institute for Health and Care Excellence (2018). Attention deficit hyperactivity disorder: diagnosis and management (NICE guideline NG87).
@@ -192,6 +200,22 @@ Volkow, N. D., Wang, G.-J., Newcorn, J. H., et al. (2011). Motivation deficit in
 - DOI: [https://doi.org/10.1038/mp.2010.97](https://doi.org/10.1038/mp.2010.97)
 - Evidenztyp: `primary-study` · Evidenzgrad: `moderate` · Status: `probable`
 
+## Waldren2024
+
+Waldren, L. H., Leung, F. Y. N., Hargitai, L. D., Burgoyne, A. P., Liceralde, V. R. T., Livingston, L. A., & Shah, P. (2024). Unpacking the overlap between Autism and ADHD in adults: A multi-method approach. *Cortex, 173*, 120–137.
+
+- DOI: [https://doi.org/10.1016/j.cortex.2023.12.016](https://doi.org/10.1016/j.cortex.2023.12.016)
+- PubMed: [PMID 38387375](https://pubmed.ncbi.nlm.nih.gov/38387375/)
+- Evidenztyp: `preregistered-multi-method-study` · Evidenzgrad: `moderate` · Status: `probable`
+
+## Young2020
+
+Young, S., Hollingdale, J., Absoud, M., et al. (2020). Guidance for identification and treatment of individuals with attention deficit/hyperactivity disorder and autism spectrum disorder based upon expert consensus. *BMC Medicine, 18*, 146.
+
+- DOI: [https://doi.org/10.1186/s12916-020-01585-y](https://doi.org/10.1186/s12916-020-01585-y)
+- PubMed: [PMID 32448170](https://pubmed.ncbi.nlm.nih.gov/32448170/)
+- Evidenztyp: `expert-consensus` · Evidenzgrad: `moderate` · Status: `consensus`
+
 ## Zhang2025
 
 Zhang, Y., Liao, W., Rao, Y., Gao, W., & Yang, R. (2025). Effects of ADHD and ADHD medications on depression and anxiety in children and adolescents: A systematic review and meta-analysis. *Journal of Psychiatric Research, 181*, 623–639.
@@ -199,6 +223,13 @@ Zhang, Y., Liao, W., Rao, Y., Gao, W., & Yang, R. (2025). Effects of ADHD and AD
 - DOI: [https://doi.org/10.1016/j.jpsychires.2024.12.022](https://doi.org/10.1016/j.jpsychires.2024.12.022)
 - PubMed: [PMID 39740618](https://pubmed.ncbi.nlm.nih.gov/39740618/)
 - Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## Zhong2026
+
+Zhong, Q. & Porter, M. (2026). Autism Spectrum Disorder Symptoms in Individuals with a Primary Diagnosis of Attention-Deficit/Hyperactivity Disorder: A Systematic Review. *Review Journal of Autism and Developmental Disorders, 13*, 424–441.
+
+- DOI: [https://doi.org/10.1007/s40489-024-00443-4](https://doi.org/10.1007/s40489-024-00443-4)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## vanDerPlas2026
 

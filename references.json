@@ -362,6 +362,39 @@
     "volume": "49"
   },
   {
+    "DOI": "10.1016/j.neubiorev.2023.105436",
+    "PMID": "37913872",
+    "URL": "https://doi.org/10.1016/j.neubiorev.2023.105436",
+    "author": [
+      {
+        "family": "Micai",
+        "given": "M."
+      },
+      {
+        "family": "Fatta",
+        "given": "L. M."
+      },
+      {
+        "family": "Gila",
+        "given": "L."
+      }
+    ],
+    "container-title": "Neuroscience & Biobehavioral Reviews",
+    "id": "Micai2023",
+    "issued": {
+      "date-parts": [
+        [
+          2023
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "number": "105436",
+    "title": "Prevalence of co-occurring conditions in children and adults with autism spectrum disorder: A systematic review and meta-analysis",
+    "type": "article-journal",
+    "volume": "155"
+  },
+  {
     "author": [
       {
         "literal": "National Institute for Health and Care Excellence"
@@ -776,6 +809,87 @@
     "volume": "16"
   },
   {
+    "DOI": "10.1016/j.cortex.2023.12.016",
+    "PMID": "38387375",
+    "URL": "https://doi.org/10.1016/j.cortex.2023.12.016",
+    "author": [
+      {
+        "family": "Waldren",
+        "given": "L. H."
+      },
+      {
+        "family": "Leung",
+        "given": "F. Y. N."
+      },
+      {
+        "family": "Hargitai",
+        "given": "L. D."
+      },
+      {
+        "family": "Burgoyne",
+        "given": "A. P."
+      },
+      {
+        "family": "Liceralde",
+        "given": "V. R. T."
+      },
+      {
+        "family": "Livingston",
+        "given": "L. A."
+      },
+      {
+        "family": "Shah",
+        "given": "P."
+      }
+    ],
+    "container-title": "Cortex",
+    "id": "Waldren2024",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "page": "120–137",
+    "title": "Unpacking the overlap between Autism and ADHD in adults: A multi-method approach",
+    "type": "article-journal",
+    "volume": "173"
+  },
+  {
+    "DOI": "10.1186/s12916-020-01585-y",
+    "PMID": "32448170",
+    "URL": "https://doi.org/10.1186/s12916-020-01585-y",
+    "author": [
+      {
+        "family": "Young",
+        "given": "S."
+      },
+      {
+        "family": "Hollingdale",
+        "given": "J."
+      },
+      {
+        "family": "Absoud",
+        "given": "M."
+      }
+    ],
+    "container-title": "BMC Medicine",
+    "id": "Young2020",
+    "issued": {
+      "date-parts": [
+        [
+          2020
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "number": "146",
+    "title": "Guidance for identification and treatment of individuals with attention deficit/hyperactivity disorder and autism spectrum disorder based upon expert consensus",
+    "type": "article-journal",
+    "volume": "18"
+  },
+  {
     "DOI": "10.1016/j.jpsychires.2024.12.022",
     "PMID": "39740618",
     "URL": "https://doi.org/10.1016/j.jpsychires.2024.12.022",
@@ -814,6 +928,33 @@
     "title": "Effects of ADHD and ADHD medications on depression and anxiety in children and adolescents: A systematic review and meta-analysis",
     "type": "article-journal",
     "volume": "181"
+  },
+  {
+    "DOI": "10.1007/s40489-024-00443-4",
+    "URL": "https://doi.org/10.1007/s40489-024-00443-4",
+    "author": [
+      {
+        "family": "Zhong",
+        "given": "Q."
+      },
+      {
+        "family": "Porter",
+        "given": "M."
+      }
+    ],
+    "container-title": "Review Journal of Autism and Developmental Disorders",
+    "id": "Zhong2026",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "page": "424–441",
+    "title": "Autism Spectrum Disorder Symptoms in Individuals with a Primary Diagnosis of Attention-Deficit/Hyperactivity Disorder: A Systematic Review",
+    "type": "article-journal",
+    "volume": "13"
   },
   {
     "DOI": "10.1016/j.jaac.2025.04.012",

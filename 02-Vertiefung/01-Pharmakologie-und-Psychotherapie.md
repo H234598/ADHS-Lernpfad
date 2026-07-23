@@ -144,5 +144,5 @@ Weil unterschiedliche Behandlungsbausteine unterschiedliche Ziele adressieren. M
 ## Navigation
 
 - Zurück: [[01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet|Komorbidität, Depression und Suizidalität]]
-- Weiter: [[README|Übersicht]]
+- Weiter: [[02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung|Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]

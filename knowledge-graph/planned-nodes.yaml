@@ -1,13 +1,4 @@
-# Bewusst geplante, noch nicht vorhandene Seiten.
-# Nur hier registrierte fehlende Ziele dürfen als "planned" veröffentlicht werden.
-# Optionaler Lebenszyklus: status: planned (Standard) oder status: in_progress.
 nodes:
-- path: 02-Vertiefung/02-Autismus-ADHS-Ueberlappung
-  title: Autismus-/ADHS-Überlappung
-  type: chapter
-  scope: learning
-  level: Vertiefung
-  roadmap: ROADMAP.md#vertiefung
 - path: 02-Vertiefung/03-Parkinson-mechanistische-Vergleiche
   title: Parkinson – mechanistische Vergleiche und klare Grenzen
   type: chapter

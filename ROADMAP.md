@@ -41,7 +41,7 @@ Ein Themenblock kann mehrere Einheiten erfordern. Er gilt erst dann als abgeschl
 
 ## Aktueller Stand des Lernpfads
 
-Der Lernpfad umfasst derzeit 13 fortlaufende Einheiten:
+Der Lernpfad umfasst derzeit 14 fortlaufende Einheiten:
 
 1. Was ist ADHS?
 2. Inhibition und Handlungssteuerung
@@ -56,6 +56,7 @@ Der Lernpfad umfasst derzeit 13 fortlaufende Einheiten:
 11. Schlaf, Bewegung und körperliche Gesundheit
 12. Komorbidität, Depression und Suizidalität
 13. Pharmakotherapie und Psychotherapie
+14. Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung
 
 Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität sowie einen Behandlungsüberblick gut ab. Die größten fachlichen Lücken liegen nun bei der Breite der Komorbiditäten, spezifischen Lebensphasen und Populationen, Funktions- und Versorgungsthemen, differenzierter Behandlungssicherheit, sozialer Ungleichheit, digitaler Diagnostik sowie dem systematischen Übergang auf Forschungsniveau.
 
@@ -74,7 +75,7 @@ Die folgende Liste erhält sämtliche Themen der bisherigen Roadmap. Bereits vor
 ### Vertiefung
 
 - [x] Pharmakologie und Psychotherapie
-- [ ] Autismus/ADHS-Überlappung
+- [x] Autismus/ADHS-Überlappung
 - [ ] Parkinson: sinnvolle mechanistische Vergleiche und klare Grenzen
 - [ ] Studienmethodik, Effektgrößen, Bias und Kausalität
 
@@ -87,9 +88,9 @@ Die folgende Liste erhält sämtliche Themen der bisherigen Roadmap. Bereits vor
 
 # Priorisierte Ausbauplanung
 
-## Nächste verbindliche Einheit
+## Umgesetzte Priorität A1
 
-- [ ] **A1 · Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung** — **P0; nächste reguläre Einheit 14**
+- [x] **A1 · Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung** — **P0; umgesetzt als Einheit 14**
   - diagnostische Kernbereiche beider Störungen gegenüberstellen;
   - echte Koexistenz von bloßer Symptomähnlichkeit unterscheiden;
   - gemeinsame und unterschiedliche Entwicklungsverläufe, Exekutivfunktionen, Reizverarbeitung und soziale Anforderungen einordnen;

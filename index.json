@@ -1,7 +1,7 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.13.0",
-  "last_reviewed": "2026-07-22",
+  "version": "0.15.0",
+  "last_reviewed": "2026-07-23",
   "chapters": [
     {
       "number": 1,
@@ -67,6 +67,11 @@
       "number": 13,
       "path": "02-Vertiefung/01-Pharmakologie-und-Psychotherapie.md",
       "title": "Pharmakotherapie und Psychotherapie"
+    },
+    {
+      "number": 14,
+      "path": "02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung.md",
+      "title": "Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung"
     }
   ]
 }

@@ -122,3 +122,13 @@ cards:
   - Vertiefung
   - Behandlung
   - Einheit_13
+- id: 1014
+  unit: 14
+  front: Warum bedeutet die sichtbare Überlappung von ADHS und Autismus nicht, dass beide dieselbe Störung sind?
+  back: Weil ähnliche Verhaltensweisen unterschiedliche Funktionen und Entwicklungswege haben können; für jede Diagnose müssen ihre eigenen Kernmerkmale, Entwicklung, Kontexte und Beeinträchtigungen geprüft werden.
+  tags:
+  - ADHS
+  - Autismus
+  - Vertiefung
+  - Differentialdiagnostik
+  - Einheit_14

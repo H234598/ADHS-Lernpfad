@@ -18,6 +18,9 @@ System zur kurzfristigen aktiven Speicherung und Bearbeitung von Information.
 ## Basalganglien
 Subkortikale Kerngebiete, beteiligt an Bewegung, Handlungswahl, Lernen und Motivation.
 
+## Camouflaging / Masking
+Strategien, mit denen eine Person sichtbare autistische oder andere neurodivergente Merkmale bewusst oder unbewusst verdeckt, kompensiert oder an erwartete soziale Regeln anpasst; kein eigenständiger Diagnosenachweis und potenziell mit erheblicher Anstrengung verbunden.
+
 ## Delay Discounting
 Abnahme des subjektiven Werts einer Belohnung mit zunehmender Verzögerung.
 
@@ -75,6 +78,9 @@ Anhaltende Ein- oder Durchschlafstörung trotz ausreichender Schlafgelegenheit, 
 ## Komorbidität
 Zusätzliche Erkrankung oder Störung, die gleichzeitig mit einer anderen Diagnose besteht.
 
+## Koexistenz
+Gleichzeitiges Vorliegen diagnostisch unterscheidbarer Bedingungen, beispielsweise ADHS und Autismus; bedeutet weder Gleichheit noch eine bloße Unterform der jeweils anderen Diagnose.
+
 ## Neuroentwicklung
 Veränderung und Reifung neuronaler Systeme im Zusammenspiel mit Lernen, Umwelt und biologischen Voraussetzungen über die Entwicklung hinweg.
 
@@ -99,6 +105,9 @@ Zusammenfassung vieler genetischer Varianten zu einem statistischen Gruppenrisik
 ## Polygenität
 Eigenschaft eines Merkmals, von sehr vielen genetischen Varianten mit jeweils kleinen Effekten beeinflusst zu werden.
 
+## Restriktive oder repetitive Verhaltensweisen
+Autistische Kernmerkmalsgruppe mit wiederholten Bewegungen oder Sprache, starkem Bedürfnis nach Gleichförmigkeit, fokussierten Interessen oder sensorischen Besonderheiten; einzelne Routinen oder Interessen reichen allein nicht für eine Diagnose.
+
 ## Reaktionszeitvariabilität
 Schwankung der Reaktionsgeschwindigkeit innerhalb einer Person über mehrere Durchgänge.
 
@@ -114,11 +123,17 @@ Zusammenfassender Begriff für Einschlafdauer, nächtliche Wachphasen, Gesamtsch
 ## Schutzfaktor
 Merkmal oder Bedingung, die mit einer geringeren Wahrscheinlichkeit eines ungünstigen Verlaufs verbunden ist; kein einzelner Schutzfaktor garantiert Sicherheit.
 
+## Sensorische Verarbeitung
+Aufnahme, Gewichtung und Integration von Sinnesreizen; Über- oder Unterempfindlichkeiten können bei Autismus, ADHS und weiteren Bedingungen vorkommen und sind für sich allein nicht diagnostisch spezifisch.
+
 ## Shared Decision Making
 Gemeinsame Entscheidungsfindung, bei der Fachperson und betroffene Person Evidenz, Unsicherheit, Ziele, Werte, Belastungen und praktische Umsetzbarkeit einer Behandlung zusammen abwägen.
 
 ## Screening
 Kurze systematische Prüfung, die eine Wahrscheinlichkeit abschätzt, aber keine vollständige Diagnose ersetzt.
+
+## Soziale Kommunikation
+Wechselseitiger Gebrauch verbaler und nonverbaler Signale, sozialer Gegenseitigkeit und kontextangemessener Verständigung; bei der Autismusdiagnostik wird ein entwicklungsbezogenes Gesamtmuster geprüft, nicht ein einzelner sozialer Fehler.
 
 ## Suizidalität
 Spektrum von Todeswünschen und Suizidgedanken über Pläne und Vorbereitungen bis zu Suizidversuchen und Suiziden; die konkrete Dringlichkeit muss individuell beurteilt werden.

@@ -3,8 +3,8 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.13.0
-last_reviewed: 2026-07-22
+version: 0.15.0
+last_reviewed: 2026-07-23
 tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 ---
 
@@ -57,6 +57,7 @@ Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Si
 11. [[01-Grundlagen/11-Schlaf-Bewegung-und-koerperliche-Gesundheit|Schlaf, Bewegung und körperliche Gesundheit]]
 12. [[01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet|Komorbidität, Depression und Suizidalität]]
 13. [[02-Vertiefung/01-Pharmakologie-und-Psychotherapie|Pharmakotherapie und Psychotherapie]]
+14. [[02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung|Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung]]
 
 ## Wissenssystem
 
