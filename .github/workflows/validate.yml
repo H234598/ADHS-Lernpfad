@@ -178,60 +178,6 @@ jobs:
             exit 1
           fi
 
-  comment:
-    name: Update pull-request summary
-    if: always() && github.event_name == 'pull_request'
-    needs: validate
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    permissions:
-      actions: read
-      contents: read
-      issues: write
-
-    steps:
-      - name: Download validation diagnostics
-        continue-on-error: true
-        uses: actions/download-artifact@v8
-        with:
-          name: validation-and-graph-diagnostics-${{ github.run_attempt }}
-          path: build
-
-      - name: Update idempotent summary comment
-        if: always()
-        continue-on-error: true
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          marker='<!-- adhs-graph-ci-summary -->'
-          recovery_marker='<!-- adhs-automation-recovery-status -->'
-          {
-            echo "$marker"
-            echo "$recovery_marker"
-            if [[ -f build/graph-ci-summary.md ]]; then
-              cat build/graph-ci-summary.md
-            else
-              echo '# Wissensgraph CI-Zusammenfassung'
-              echo
-              echo 'Die Diagnosezusammenfassung konnte nicht erzeugt werden.'
-            fi
-          } > build/pr-comment.md
-          comment_id="$(gh api --paginate \
-            "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
-            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"${marker}\"))) | .id" | head -n1)"
-          jq -Rs '{body: .}' build/pr-comment.md > build/pr-comment.json
-          if [[ -n "$comment_id" ]]; then
-            gh api --method PATCH \
-              "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" \
-              --input build/pr-comment.json
-          else
-            gh api --method POST \
-              "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
-              --input build/pr-comment.json
-          fi
-
   export-smoke:
     name: Build all download formats
     if: github.event_name != 'push'

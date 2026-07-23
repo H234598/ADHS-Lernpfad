@@ -286,8 +286,8 @@ in einen Erfolg verwandeln.
 
 ## PR-Kommentar und öffentliche Darstellung
 
-Der Validierungsworkflow aktualisiert genau einen idempotenten Kommentar mit
-den Markern:
+Der getrennte, vertrauenswürdige `workflow_run`-Persistenzworkflow aktualisiert
+nach dem Validierungslauf genau einen idempotenten Kommentar mit den Markern:
 
 ```text
 <!-- adhs-graph-ci-summary -->

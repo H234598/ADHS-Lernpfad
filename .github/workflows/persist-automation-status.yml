@@ -12,6 +12,7 @@ on:
 permissions:
   actions: read
   contents: write
+  issues: write
 
 concurrency:
   group: automation-status
@@ -86,6 +87,45 @@ jobs:
             --input-root build/incoming-status \
             --output-root build/status-snapshot \
             --clean-output | tee build/status-diagnostic.txt
+
+      - name: Update trusted idempotent pull-request summary
+        if: >-
+          steps.prepare.outcome == 'success' &&
+          github.event.workflow_run.name == 'Validate compendium' &&
+          github.event.workflow_run.event == 'pull_request' &&
+          github.event.workflow_run.pull_requests[0].number
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+        run: |
+          set -Eeuo pipefail
+          marker='<!-- adhs-graph-ci-summary -->'
+          recovery_marker='<!-- adhs-automation-recovery-status -->'
+          {
+            echo "$marker"
+            echo "$recovery_marker"
+            if [[ -f build/incoming-status/graph-ci-summary.md ]]; then
+              cat build/incoming-status/graph-ci-summary.md
+            else
+              echo '# Wissensgraph CI-Zusammenfassung'
+              echo
+              cat build/status-diagnostic.txt
+            fi
+          } > build/pr-comment.md
+          comment_id="$(gh api --paginate \
+            "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"${marker}\"))) | .id" | head -n1)"
+          jq -Rs '{body: .}' build/pr-comment.md > build/pr-comment.json
+          if [[ -n "$comment_id" ]]; then
+            gh api --method PATCH \
+              "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" \
+              --input build/pr-comment.json
+          else
+            gh api --method POST \
+              "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              --input build/pr-comment.json
+          fi
 
       - name: Update append-oriented orphan branch
         id: publish

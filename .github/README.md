@@ -44,7 +44,8 @@ lassen die einzelnen Generatoren dessen Phase fortschreiben. Der kanonische
 Status liegt während des Builds in `build/runtime-status.json`.
 `scripts/graph_ci_summary.py` validiert ihn erneut, bevor es
 `build/graph-ci-summary.md` und die GitHub-Actions-Zusammenfassung erzeugt. Der
-PR-Kommentar verwendet gemeinsam die Marker
+Der vertrauenswürdige `workflow_run`-Persistenzworkflow veröffentlicht den
+PR-Kommentar mit den Markern
 `<!-- adhs-graph-ci-summary -->` und
 `<!-- adhs-automation-recovery-status -->`.
 

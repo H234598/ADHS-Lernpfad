@@ -149,3 +149,11 @@ def test_workflow_uses_trusted_main_and_has_fallback_diagnosis() -> None:
     assert "persisted-status-fallback-" in workflow
     assert "cancel-in-progress: false" in workflow
     assert "--snapshot-root build/status-snapshot" in workflow
+    assert "issues: write" in workflow
+    assert "github.event.workflow_run.pull_requests[0].number" in workflow
+    assert "<!-- adhs-automation-recovery-status -->" in workflow
+
+    validation_workflow = (
+        ROOT / ".github/workflows/validate.yml"
+    ).read_text(encoding="utf-8")
+    assert "Update pull-request summary" not in validation_workflow
