@@ -1,0 +1,134 @@
+{
+  "artifacts": [
+    {
+      "path": "build/knowledge-graph/knowledge-graph.json",
+      "recorded_at": "2026-07-23T12:09:31.646Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "graph",
+      "url": null,
+      "value": "build/knowledge-graph/knowledge-graph.json"
+    },
+    {
+      "path": "build/knowledge-graph/knowledge-graph.graphml",
+      "recorded_at": "2026-07-23T12:09:31.646Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "graph",
+      "url": null,
+      "value": "build/knowledge-graph/knowledge-graph.graphml"
+    },
+    {
+      "path": "build/knowledge-graph/knowledge-graph.mmd",
+      "recorded_at": "2026-07-23T12:09:31.646Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "graph",
+      "url": null,
+      "value": "build/knowledge-graph/knowledge-graph.mmd"
+    },
+    {
+      "path": "build/knowledge-graph/graph-report.json",
+      "recorded_at": "2026-07-23T12:09:31.646Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "graph",
+      "url": null,
+      "value": "build/knowledge-graph/graph-report.json"
+    },
+    {
+      "path": "build/knowledge-graph/graph-report.md",
+      "recorded_at": "2026-07-23T12:09:31.646Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "graph",
+      "url": null,
+      "value": "build/knowledge-graph/graph-report.md"
+    },
+    {
+      "path": "build/ADHS-Lernpfad-Gesamtdokument.md",
+      "recorded_at": "2026-07-23T12:09:34.916Z",
+      "reusable": false,
+      "sha256": null,
+      "type": "other",
+      "url": null,
+      "value": "build/ADHS-Lernpfad-Gesamtdokument.md"
+    },
+    {
+      "path": "site",
+      "recorded_at": "2026-07-23T12:10:00.549Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "site",
+      "url": null,
+      "value": "site"
+    }
+  ],
+  "completed_phases": [
+    "load_content",
+    "build_nodes",
+    "build_edges",
+    "validate_graph",
+    "export",
+    "complete"
+  ],
+  "context": {
+    "branch": "main",
+    "commit_sha": "5a239fa996f4d24d7beb75cdf77accc9725ac2e4",
+    "pr_number": null,
+    "pr_url": null,
+    "repository": "H234598/ADHS-Lernpfad",
+    "workflow_run": {
+      "attempt": 1,
+      "id": 30005818345,
+      "job_id": "validate",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30005818345",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30005818345"
+    }
+  },
+  "created_at": "2026-07-23T12:08:50.332Z",
+  "duration_seconds": 70.22,
+  "ended_at": "2026-07-23T12:10:00.552Z",
+  "error": null,
+  "metrics": {
+    "chapters": 14,
+    "documents": 17,
+    "edges": 551,
+    "errors": 0,
+    "missing_pages": 0,
+    "node_types": {
+      "chapter": 14,
+      "concept": 74,
+      "document": 11,
+      "glossary": 1,
+      "intro": 1,
+      "planned": 6,
+      "reference": 30,
+      "section": 24,
+      "technical": 22
+    },
+    "nodes": 183,
+    "planned_pages": 6,
+    "relations": {
+      "cites": 42,
+      "contains": 24,
+      "planned_in": 6,
+      "prerequisite": 32,
+      "sequence": 13,
+      "tagged_with": 264,
+      "wikilink": 170
+    },
+    "sources": 30,
+    "warnings": 0
+  },
+  "phase": "complete",
+  "previous_status": "success",
+  "recovery": null,
+  "retention_until": "2026-08-22T12:10:00.552Z",
+  "revision": 16,
+  "run_id": "30005818345-1",
+  "schema_version": "3.0.0",
+  "status": "success",
+  "updated_at": "2026-07-23T12:10:00.552Z",
+  "workflow": "validate-graph-and-build"
+}
