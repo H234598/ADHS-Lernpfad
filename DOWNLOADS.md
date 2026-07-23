@@ -134,8 +134,8 @@ Wähle das Format, das zu deinem Gerät und deinem Arbeitsstil passt. Alle Datei
 <a class="download-card" href="https://ADHS.telacore.org/artifacts/runtime-status.json" download>
 <span class="download-card__icon">🚦</span>
 <strong>Generator-Laufstatus</strong>
-<span>Letzte Phase, Laufzeit, Commit, Fehlerklasse und vorbereiteter Recovery-Schritt.</span>
-<small>JSON Schema-validiert · pro Veröffentlichung eingefroren</small>
+<span>Revision, Phase, Branch/Commit/PR, strukturierter Fehler und konkreter Recovery-Schritt.</span>
+<small>JSON Schema-validiert · redigiert · pro Veröffentlichung eingefroren</small>
 </a>
 
 </div>

@@ -1,6 +1,7 @@
 site/
 build/
 node_modules/
+automation/status/
 __pycache__/
 *.pyc
 .DS_Store

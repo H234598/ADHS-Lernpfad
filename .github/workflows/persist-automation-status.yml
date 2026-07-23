@@ -1,0 +1,160 @@
+name: Persist automation status
+
+on:
+  workflow_run:
+    workflows:
+      - Validate compendium
+      - Build exports
+      - Publish documentation
+      - Validate runtime status
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: automation-status
+  cancel-in-progress: false
+
+jobs:
+  persist:
+    name: Validate and persist recovery status
+    if: github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out trusted implementation from main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install pinned schema validator
+        run: |
+          python -m pip install --disable-pip-version-check jsonschema==4.26.0
+          python -m pip check
+
+      - name: Select diagnostic artifact
+        id: artifact
+        shell: bash
+        env:
+          SOURCE_WORKFLOW: ${{ github.event.workflow_run.name }}
+        run: |
+          set -Eeuo pipefail
+          case "$SOURCE_WORKFLOW" in
+            'Validate compendium')
+              pattern='validation-and-graph-diagnostics-*'
+              ;;
+            'Build exports')
+              pattern='export-diagnostics-*'
+              ;;
+            'Publish documentation')
+              pattern='pages-graph-diagnostics-*'
+              ;;
+            'Validate runtime status')
+              pattern='runtime-status-sample'
+              ;;
+            *)
+              echo "Nicht freigegebener Quellworkflow: $SOURCE_WORKFLOW" >&2
+              exit 1
+              ;;
+          esac
+          echo "pattern=$pattern" >> "$GITHUB_OUTPUT"
+
+      - name: Download source diagnostics without executing them
+        uses: actions/download-artifact@v8
+        with:
+          pattern: ${{ steps.artifact.outputs.pattern }}
+          path: build/incoming-status
+          merge-multiple: true
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Validate and prepare minimal branch snapshot
+        id: prepare
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python scripts/persist_automation_status.py \
+            --input-root build/incoming-status \
+            --output-root build/status-snapshot \
+            --clean-output | tee build/status-diagnostic.txt
+
+      - name: Update append-oriented orphan branch
+        id: publish
+        shell: bash
+        env:
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+          SOURCE_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+          SOURCE_WORKFLOW: ${{ github.event.workflow_run.name }}
+        run: |
+          set -Eeuo pipefail
+          status_tree="$RUNNER_TEMP/automation-status-tree"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          if git ls-remote --exit-code --heads origin automation-status >/dev/null 2>&1; then
+            git fetch --depth=1 origin automation-status
+            git worktree add --detach "$status_tree" FETCH_HEAD
+          else
+            git worktree add --detach "$status_tree" HEAD
+            git -C "$status_tree" switch --orphan automation-status
+            git -C "$status_tree" rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          python scripts/persist_automation_status.py \
+            --snapshot-root build/status-snapshot \
+            --output-root "$status_tree"
+          python scripts/automation_status.py prune \
+            --root "$status_tree/automation/status" \
+            --max-per-workflow 100
+          git -C "$status_tree" add -A -f \
+            .nojekyll README.md automation/status
+          if git -C "$status_tree" diff --cached --quiet; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git -C "$status_tree" commit \
+            -m "status: ${SOURCE_WORKFLOW} run ${SOURCE_RUN_ID}.${SOURCE_ATTEMPT}"
+          git -C "$status_tree" push origin HEAD:refs/heads/automation-status
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Publish complete fallback diagnosis
+        if: always() && steps.prepare.outcome == 'success'
+        shell: bash
+        env:
+          PUBLISH_OUTCOME: ${{ steps.publish.outcome }}
+        run: |
+          {
+            echo '## Persistenter Automationsstatus'
+            echo
+            if [[ "$PUBLISH_OUTCOME" == 'success' ]]; then
+              echo 'Statusbranch: **aktualisiert oder bereits aktuell**'
+            else
+              echo 'Statusbranch: **Schreibvorgang fehlgeschlagen**'
+              echo
+              echo 'Der vollständige redigierte Diagnoseblock bleibt als Workflow-Artefakt erhalten:'
+            fi
+            echo
+            echo '```text'
+            cat build/status-diagnostic.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload fallback status and diagnosis
+        if: always() && steps.prepare.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: persisted-status-fallback-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+          path: |
+            build/status-snapshot/automation/status/
+            build/status-diagnostic.txt
+          if-no-files-found: error
+          retention-days: 90

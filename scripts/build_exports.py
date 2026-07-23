@@ -283,7 +283,7 @@ def run_build(
             finish_run(
                 status_file,
                 success=True,
-                phase="success",
+                phase="complete",
                 artifacts=artifacts,
             )
         # The status now contains the truthful, existing artifact list. Freeze

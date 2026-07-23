@@ -52,14 +52,19 @@ jobs:
           python scripts/runtime_status_cli.py build/runtime-status.json \
             --new-run --workflow validate-graph-and-build \
             --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" --git-sha "$GITHUB_SHA"
-          current_phase=initialization
+          current_phase=initialize
           fail_pipeline() {
             code=$?
             trap - ERR
             existing_status="$(python -c 'import json; print(json.load(open("build/runtime-status.json", encoding="utf-8")).get("status", ""))' 2>/dev/null || true)"
+            if [[ "$existing_status" == 'success' && -f build/runtime-status-pre-final.json ]]; then
+              python scripts/runtime_status_cli.py build/runtime-status.json \
+                --restore-from build/runtime-status-pre-final.json || true
+              existing_status="$(python -c 'import json; print(json.load(open("build/runtime-status.json", encoding="utf-8")).get("status", ""))' 2>/dev/null || true)"
+            fi
             if [[ "$existing_status" != 'failed' ]]; then
               python scripts/runtime_status_cli.py build/runtime-status.json \
-                --finish failed --phase "$current_phase" --error-class ci_pipeline_error \
+                --finish failed --phase "$current_phase" --error-class validation \
                 --error-message "Validierung fehlgeschlagen (Exit ${code}); siehe Schrittprotokoll." \
                 --recovery-action inspect_validation_logs || true
             fi
@@ -75,6 +80,7 @@ jobs:
 
           git diff --check
           python -m compileall -q scripts tests
+          python scripts/validate_prompt_baselines.py
           find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
           pwsh -NoProfile -Command '
             $failed = $false
@@ -108,14 +114,18 @@ jobs:
           current_phase=export
           python scripts/build_combined.py --status-file build/runtime-status.json
           python scripts/build_anki.py
+          current_phase=generate_outputs
+          cp build/runtime-status.json build/runtime-status-pre-final.json
           python scripts/runtime_status_cli.py build/runtime-status.json \
-            --finish success --phase success
+            --finish success --phase complete
           python scripts/validate_runtime_status.py build/runtime-status.json
           python scripts/build_docs.py
           mkdocs build --strict
+          current_phase=validate
           npm run test:web
+          current_phase=persist_status
           python scripts/runtime_status_cli.py build/runtime-status.json \
-            --finish success --phase success --artifact site
+            --finish success --phase complete --artifact site
           python scripts/validate_runtime_status.py build/runtime-status.json
 
       - name: Build diagnostic web preview after a failed gate
@@ -196,8 +206,10 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           marker='<!-- adhs-graph-ci-summary -->'
+          recovery_marker='<!-- adhs-automation-recovery-status -->'
           {
             echo "$marker"
+            echo "$recovery_marker"
             if [[ -f build/graph-ci-summary.md ]]; then
               cat build/graph-ci-summary.md
             else
@@ -252,14 +264,19 @@ jobs:
           python scripts/runtime_status_cli.py build/runtime-status.json \
             --new-run --workflow export-smoke \
             --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-export" --git-sha "$GITHUB_SHA"
-          current_phase=initialization
+          current_phase=initialize
           fail_export() {
             code=$?
             trap - ERR
             existing_status="$(python -c 'import json; print(json.load(open("build/runtime-status.json", encoding="utf-8")).get("status", ""))' 2>/dev/null || true)"
+            if [[ "$existing_status" == 'success' && -f build/runtime-status-pre-final.json ]]; then
+              python scripts/runtime_status_cli.py build/runtime-status.json \
+                --restore-from build/runtime-status-pre-final.json || true
+              existing_status="$(python -c 'import json; print(json.load(open("build/runtime-status.json", encoding="utf-8")).get("status", ""))' 2>/dev/null || true)"
+            fi
             if [[ "$existing_status" != 'failed' ]]; then
               python scripts/runtime_status_cli.py build/runtime-status.json \
-                --finish failed --phase "$current_phase" --error-class export_ci_error \
+                --finish failed --phase "$current_phase" --error-class validation \
                 --error-message "Exporttest fehlgeschlagen (Exit ${code}); siehe Schrittprotokoll." \
                 --recovery-action inspect_export_logs || true
             fi
@@ -285,8 +302,10 @@ jobs:
             pandoc texlive-luatex texlive-latex-recommended texlive-latex-extra \
             texlive-fonts-recommended texlive-lang-german fonts-dejavu-core
           python scripts/build_exports.py --status-file build/runtime-status.json
+          current_phase=persist_status
+          cp build/runtime-status.json build/runtime-status-pre-final.json
           python scripts/runtime_status_cli.py build/runtime-status.json \
-            --finish success --phase success
+            --finish success --phase complete
           python scripts/validate_runtime_status.py build/runtime-status.json
           python scripts/build_exports.py --refresh-manifest \
             --status-file build/runtime-status.json

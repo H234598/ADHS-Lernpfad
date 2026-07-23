@@ -1,0 +1,625 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ADHS.telacore.org/schemas/automation-run-status-3.0.0.json",
+  "title": "ADHS automation recovery status",
+  "description": "Kanonischer, persistierbarer Lauf- und Recovery-Status einer ADHS-Lernpfad-Automation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "workflow",
+    "revision",
+    "previous_status",
+    "status",
+    "phase",
+    "completed_phases",
+    "created_at",
+    "updated_at",
+    "ended_at",
+    "duration_seconds",
+    "retention_until",
+    "context",
+    "metrics",
+    "artifacts",
+    "error",
+    "recovery"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "3.0.0"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "workflow": {
+      "enum": [
+        "generator",
+        "repair-watcher",
+        "merge-watcher",
+        "knowledge-graph",
+        "combined-document",
+        "download-exports",
+        "validate-graph-and-build",
+        "pages-publication",
+        "public-exports",
+        "export-smoke",
+        "runtime-contract",
+        "status-persistence",
+        "manual"
+      ]
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "previous_status": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/status"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "$ref": "#/$defs/status"
+    },
+    "phase": {
+      "$ref": "#/$defs/phase"
+    },
+    "completed_phases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/phase"
+      },
+      "uniqueItems": true
+    },
+    "created_at": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "updated_at": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "ended_at": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "duration_seconds": {
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retention_until": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "context": {
+      "$ref": "#/$defs/context"
+    },
+    "metrics": {
+      "type": "object",
+      "maxProperties": 128,
+      "additionalProperties": {
+        "$ref": "#/$defs/jsonValue"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      },
+      "maxItems": 256
+    },
+    "error": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/error"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recovery": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/recovery"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "status": {
+      "enum": [
+        "created",
+        "running",
+        "success",
+        "blocked",
+        "failed",
+        "recovering",
+        "recovered"
+      ]
+    },
+    "phase": {
+      "enum": [
+        "initialize",
+        "load_main",
+        "check_previous_run",
+        "check_existing_pr",
+        "read_prompts",
+        "research",
+        "create_branch",
+        "create_content",
+        "generate_outputs",
+        "validate",
+        "commit",
+        "push",
+        "create_pr",
+        "verify_pr",
+        "wait_review",
+        "repair",
+        "ready_for_review",
+        "verify_second_ci",
+        "merge",
+        "cleanup",
+        "complete",
+        "load_content",
+        "build_nodes",
+        "build_edges",
+        "validate_graph",
+        "export",
+        "persist_status"
+      ]
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "branch",
+        "commit_sha",
+        "pr_number",
+        "pr_url",
+        "workflow_run"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+        },
+        "branch": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "commit_sha": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{7,64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pr_number": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pr_url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri",
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workflow_run": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/workflowRun"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "workflowRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "attempt",
+        "job_id",
+        "url",
+        "logs_url"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "job_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 500
+        },
+        "logs_url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri",
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "value",
+        "path",
+        "url",
+        "sha256",
+        "reusable",
+        "recorded_at"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "branch",
+            "commit",
+            "pull_request",
+            "workflow_run",
+            "ci_job",
+            "report",
+            "graph",
+            "export",
+            "site",
+            "diagnostic",
+            "other"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "path": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri",
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sha256": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reusable": {
+          "type": "boolean"
+        },
+        "recorded_at": {
+          "$ref": "#/$defs/utcTimestamp"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "code",
+        "message",
+        "phase",
+        "occurred_at",
+        "retryable",
+        "redacted"
+      ],
+      "properties": {
+        "class": {
+          "enum": [
+            "github_api_transient",
+            "github_api_permission",
+            "repository_state",
+            "branch_conflict",
+            "validation",
+            "scientific_review",
+            "external_service",
+            "timeout",
+            "rate_limit",
+            "configuration",
+            "security_policy",
+            "unknown"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.-]+$"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "phase": {
+          "$ref": "#/$defs/phase"
+        },
+        "occurred_at": {
+          "$ref": "#/$defs/utcTimestamp"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "redacted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "action",
+        "resume_phase",
+        "block_next_run",
+        "new_content_required",
+        "acknowledged"
+      ],
+      "properties": {
+        "level": {
+          "enum": [
+            "retry_same_phase",
+            "resume_from_artifact",
+            "repair_existing_branch",
+            "manual_intervention",
+            "terminal_failure"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "resume_phase": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/phase"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "block_next_run": {
+          "type": "boolean"
+        },
+        "new_content_required": {
+          "type": "boolean"
+        },
+        "acknowledged": {
+          "type": "boolean"
+        }
+      }
+    },
+    "jsonValue": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 2000
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "maxProperties": 128,
+          "additionalProperties": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "success",
+              "blocked",
+              "failed",
+              "recovered"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "ended_at": {
+            "$ref": "#/$defs/utcTimestamp"
+          },
+          "duration_seconds": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "ended_at": {
+            "type": "null"
+          },
+          "duration_seconds": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "failed",
+              "blocked",
+              "recovering",
+              "recovered"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "$ref": "#/$defs/error"
+          },
+          "recovery": {
+            "$ref": "#/$defs/recovery"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "success"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "type": "null"
+          },
+          "recovery": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

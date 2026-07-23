@@ -101,7 +101,7 @@ def run_build(
         update_status(target, metrics=metrics, artifacts=[artifact])
         if not managed:
             finish_run(
-                target, success=True, phase="success", metrics=metrics,
+                target, success=True, phase="complete", metrics=metrics,
                 artifacts=[artifact],
             )
         return 0

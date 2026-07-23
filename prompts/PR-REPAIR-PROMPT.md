@@ -65,3 +65,42 @@ Nimm keine spekulativen Änderungen vor, wenn:
 - ein wiederholter identischer Fehler trotz sachgerechter Reparatur fortbesteht.
 
 Lasse den PR dann offen und benachrichtige den Benutzer mit PR-Nummer, fehlgeschlagenem Check, relevanter Logstelle und dem konkreten Grund, weshalb keine sichere automatische Reparatur möglich war.
+
+## 7. Additive Recovery-Status-Integration
+
+Alle vorstehenden Reparatur-, Wissenschafts-, Quellen-, CI- und
+Infrastrukturschutzregeln bleiben unverändert verbindlich.
+
+1. Lies vor jeder Reparatur den zu diesem PR gehörenden Generatorlauf auf
+   `automation-status`. Verwende dessen `run_id`; lege für die Reparatur keine
+   zweite fachliche Einheit und keinen unabhängigen Laufstatus an.
+2. Prüfe gemeinsam:
+   - Branch- und Head-Commit des PR,
+   - registrierte Branch-, Commit- und PR-Artefakte,
+   - fehlgeschlagene CI-Run- und Job-IDs,
+   - aktuellen Recovery-Level und erwartete `revision`.
+3. Beginne die Wiederaufnahme auf demselben Status:
+
+   ```bash
+   python scripts/automation_status.py recover \
+     --workflow generator --run-id "$RUN_ID" --phase repair
+   ```
+
+4. Registriere jeden Reparaturcommit sofort als wiederverwendbares
+   `commit`-Artefakt. Aktualisiere anschließend die Phasen `push`, `verify_pr`
+   und `wait_review`.
+5. Nach erfolgreicher lokaler Reparatur markierst du die Recovery als
+   abgeschlossen, setzt den Lauf danach aber wieder auf `running`, Phase
+   `wait_review`; ein Erfolg des Gesamtvorgangs wird erst nach Merge und Cleanup
+   geschrieben.
+6. Bei erneutem Fehler bleibt derselbe Lauf erhalten. Verwende je nach Befund:
+   - `retry_same_phase` für transiente idempotente Schritte,
+   - `resume_from_artifact` für vorhandenen Branch/Commit/PR,
+   - `repair_existing_branch` für CI- oder Reviewkorrekturen,
+   - `manual_intervention` für nicht eindeutige wissenschaftliche oder
+     sicherheitsrelevante Entscheidungen,
+   - `terminal_failure` nur für einen bewusst zu quittierenden Abschluss.
+7. Kann der Statusbranch nicht aktualisiert werden, gib den vollständigen in
+   `prompts/AUTOMATION-PROMPT.md` definierten Diagnoseblock im PR-Kommentar und
+   in der Benutzerbenachrichtigung aus. Der Statusfehler darf die eigentliche
+   CI-Ursache nicht ersetzen.

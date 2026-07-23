@@ -13,7 +13,8 @@ Dieser Ordner ist die zentrale Quelle für sämtliche Agentenprompts des ADHS-Le
 
 ```mermaid
 flowchart TD
-  A[06:00 Erzeugungsautomation] --> B[Deep Research]
+  A[06:00 Erzeugungsautomation] --> S[Status und Vorgängerlauf prüfen]
+  S --> B
   B --> C[Einheit, Quellen, Karten und Navigation]
   C --> D[Lokale Pflichtprüfungen]
   D --> E[Push und Draft-PR]
@@ -25,6 +26,7 @@ flowchart TD
   H --> I[Neue ready_for_review-CI]
   I -->|CI rot| R
   I -->|zweite CI grün| J[Squash-Merge nach main]
+  J --> K[Merge prüfen, Cleanup, Status success]
 ```
 
 CodeRabbit ist kein Pflicht-Gate. Sichtbare, nachvollziehbare Hinweise werden berücksichtigt; ein fehlendes Review oder ausgeschöpftes Kontingent blockiert nach Ablauf der Zweistundenfrist nicht.
@@ -38,7 +40,18 @@ CodeRabbit ist kein Pflicht-Gate. Sichtbare, nachvollziehbare Hinweise werden be
 - Erwartbare Inhalts- und Navigationsdateien wie Kapitel, Quellen, Karten, `README.md`, `index.json`, `Glossar.md`, `Literatur.md` und `mkdocs.yml` dürfen im Einheiten-PR geändert werden.
 - Keine Umgehung von Branchschutz, Reviews oder Konflikten.
 - Ein offener täglicher Einheiten-PR blockiert die Erzeugung eines weiteren PR.
+- Ein ungeklärter persistenter Laufstatus blockiert ebenfalls eine zweite
+  Einheit; vorhandene Branches, Commits und PRs werden wiederverwendet.
+- Alle Statusrevisionen verwenden dieselbe `run_id`; Fehlerausgaben nennen
+  Phase, Artefakte, Ursache und konkreten Recovery-Schritt.
+- Der Statusbranch enthält keine Prompts, medizinischen Inhalte, E-Mail-Adressen
+  oder Zugangsdaten.
 - Jeder Nicht-`main`-Branch muss einem Pull Request oder einer ausdrücklich dokumentierten Aufräumaktion zugeordnet sein.
 - Nach Merge oder partieller Übernahme wird geprüft, ob auf dem Quellbranch noch einzigartige Änderungen verbleiben. Solche Änderungen dürfen nicht still liegen bleiben.
 
 Die Automationen selbst enthalten nur einen kurzen Startauftrag. Die ausführlichen Regeln werden bei jedem Lauf frisch aus diesen Dateien gelesen.
+
+Die vor der Recovery-Erweiterung vollständigen Generator-, Reparatur- und
+Mergeprompts sind als kryptografisch geprüfte Golden Prefixes unter
+`automation/prompt-baselines.json` geschützt. Recovery-Regeln werden additiv
+angehängt und dürfen bestehende Anforderungen nicht ersetzen.

@@ -11,8 +11,10 @@ from pathlib import Path
 from typing import Any
 
 try:  # Support direct script execution and package imports.
+    from .automation_status import blocks_new_run, render_diagnostic
     from .validate_runtime_status import validate_file as validate_runtime_status_file
 except ImportError:  # pragma: no cover - direct command-line use
+    from automation_status import blocks_new_run, render_diagnostic
     from validate_runtime_status import validate_file as validate_runtime_status_file
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,7 +78,7 @@ def _duration_seconds(runtime: dict[str, Any]) -> float | None:
     value = runtime.get("duration_seconds")
     if isinstance(value, (int, float)) and not isinstance(value, bool) and value >= 0:
         return float(value)
-    started = runtime.get("started_at")
+    started = runtime.get("created_at") or runtime.get("started_at")
     completed = runtime.get("completed_at") or runtime.get("ended_at") or runtime.get("updated_at")
     if not isinstance(started, str) or not isinstance(completed, str):
         return None
@@ -122,6 +124,7 @@ def build_summary(
 
     status = str(runtime.get("status") or "unknown")
     phase = str(runtime.get("phase") or "unknown")
+    context = runtime.get("context") if isinstance(runtime.get("context"), dict) else {}
     lines = [
         "# Wissensgraph CI-Zusammenfassung", "",
         "## Laufstatus", "",
@@ -130,7 +133,10 @@ def build_summary(
         f"- Laufzeit: **{_format_duration(_duration_seconds(runtime))}**",
         f"- Run-ID: `{runtime.get('run_id') or 'nicht verfügbar'}`",
         f"- Workflow: `{runtime.get('workflow') or 'nicht verfügbar'}`",
-        f"- Git-Commit: `{runtime.get('git_sha') or runtime.get('git_commit') or 'nicht verfügbar'}`",
+        f"- Revision: **{runtime.get('revision') or 'nicht verfügbar'}**",
+        f"- Git-Commit: `{context.get('commit_sha') or 'nicht verfügbar'}`",
+        f"- Branch: `{context.get('branch') or 'nicht verfügbar'}`",
+        f"- Pull Request: **{('#' + str(context['pr_number'])) if context.get('pr_number') else 'nicht verfügbar'}**",
         "", "## Graphqualität", "",
         f"- Knoten: **{counts['nodes']}**",
         f"- Kanten: **{counts['edges']}**",
@@ -139,14 +145,41 @@ def build_summary(
         f"- Geplante Seiten: **{counts['planned']}**",
         f"- Fehlende Seiten/Abschnitte: **{counts['missing']}**",
     ]
-    if runtime.get("error_class") or runtime.get("error_message") or runtime.get("recovery_action"):
+    error = runtime.get("error") if isinstance(runtime.get("error"), dict) else {}
+    recovery = (
+        runtime.get("recovery")
+        if isinstance(runtime.get("recovery"), dict)
+        else {}
+    )
+    if error or recovery:
         lines.extend(["", "## Fehler und Recovery", ""])
-        if runtime.get("error_class"):
-            lines.append(f"- Fehlerklasse: `{runtime['error_class']}`")
-        if runtime.get("error_message"):
-            lines.append(f"- Meldung: {runtime['error_message']}")
-        if runtime.get("recovery_action"):
-            lines.append(f"- Empfohlene Aktion: **{runtime['recovery_action']}**")
+        if error:
+            lines.append(f"- Fehlerklasse: `{error.get('class', 'unknown')}`")
+            lines.append(f"- Fehlercode: `{error.get('code', 'unknown_error')}`")
+            lines.append(f"- Meldung: {error.get('message', 'Keine Detailmeldung.')}")
+        if recovery:
+            lines.append(f"- Recovery-Level: `{recovery.get('level', 'unbekannt')}`")
+            lines.append(
+                f"- Empfohlene Aktion: **{recovery.get('action', 'Diagnose prüfen.')}**"
+            )
+            lines.append(
+                "- Neuer Inhalt erforderlich: "
+                + ("**ja**" if recovery.get("new_content_required") else "**nein**")
+            )
+            lines.append(
+                "- Blockiert den nächsten Generatorlauf: "
+                + ("**ja**" if blocks_new_run(runtime) else "**nein**")
+            )
+        lines.extend(
+            [
+                "",
+                "### Vollständiger Diagnoseblock",
+                "",
+                "```text",
+                render_diagnostic(runtime).rstrip(),
+                "```",
+            ]
+        )
     if input_problems:
         lines.extend(["", "## Unvollständige Diagnoseeingaben", ""])
         lines.extend(f"- {problem}" for problem in input_problems)

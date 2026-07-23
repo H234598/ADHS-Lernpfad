@@ -41,13 +41,14 @@ def test_standalone_graph_build_tracks_every_result_and_artifact(tmp_path: Path,
     graph, exit_code = run_graph(root=tmp_path, status_file=status_file, scope="all")
     assert exit_code == 0 and graph is not None
     status = json.loads(status_file.read_text(encoding="utf-8"))
-    assert status["status"] == status["phase"] == "success"
-    assert status["git_sha"] == "b" * 40
+    assert status["status"] == "success"
+    assert status["phase"] == "complete"
+    assert status["context"]["commit_sha"] == "b" * 40
     assert status["metrics"]["documents"] == 4
     assert status["metrics"]["chapters"] == 1
     assert status["metrics"]["nodes"] == graph["stats"]["node_count"]
     assert status["metrics"]["edges"] == graph["stats"]["edge_count"]
-    assert set(status["artifacts"]) == {
+    assert {artifact["path"] for artifact in status["artifacts"]} == {
         "build/knowledge-graph/knowledge-graph.json",
         "build/knowledge-graph/knowledge-graph.graphml",
         "build/knowledge-graph/knowledge-graph.mmd",
@@ -59,14 +60,19 @@ def test_standalone_graph_build_tracks_every_result_and_artifact(tmp_path: Path,
 def test_managed_graph_build_preserves_outer_run_identity(tmp_path: Path, monkeypatch) -> None:
     _graph_fixture(tmp_path)
     status_file = tmp_path / "build" / "runtime-status.json"
-    outer = start_run(status_file, "outer", run_id="outer-run", git_sha="a" * 40)
+    outer = start_run(
+        status_file,
+        "knowledge-graph",
+        run_id="outer-run",
+        git_sha="a" * 40,
+    )
     monkeypatch.setenv("RUNTIME_STATUS_MANAGED", "1")
     graph, exit_code = run_graph(root=tmp_path, status_file=status_file)
     assert exit_code == 0 and graph is not None
     status = json.loads(status_file.read_text(encoding="utf-8"))
     assert status["run_id"] == outer["run_id"] == "outer-run"
-    assert status["started_at"] == outer["started_at"]
-    assert status["workflow"] == "outer"
+    assert status["created_at"] == outer["created_at"]
+    assert status["workflow"] == "knowledge-graph"
     assert status["status"] == "running"
     assert status["phase"] == "export"
 
@@ -80,8 +86,9 @@ def test_graph_validation_failure_records_recovery_and_reports(tmp_path: Path, m
     status = json.loads(status_file.read_text(encoding="utf-8"))
     assert status["status"] == "failed"
     assert status["phase"] == "validate_graph"
-    assert status["error_class"] == "graph_validation_error"
-    assert status["recovery_action"] == "fix_graph_and_retry_validation"
+    assert status["error"]["class"] == "validation"
+    assert status["error"]["code"] == "graph_validation_error"
+    assert status["recovery"]["action"] == "fix_graph_and_retry_validation"
     assert status["metrics"]["errors"] == graph["stats"]["error_count"] == 1
     report = json.loads(
         (tmp_path / "build" / "knowledge-graph" / "graph-report.json").read_text(encoding="utf-8")
@@ -106,6 +113,9 @@ def test_combined_builder_tracks_load_export_and_success(tmp_path: Path, monkeyp
     status_file = tmp_path / "build" / "runtime-status.json"
     assert run_combined(root=tmp_path, status_file=status_file) == 0
     status = json.loads(status_file.read_text(encoding="utf-8"))
-    assert status["status"] == status["phase"] == "success"
+    assert status["status"] == "success"
+    assert status["phase"] == "complete"
     assert status["metrics"] == {"documents": 4, "chapters": 1, "sources": 1}
-    assert status["artifacts"] == ["build/ADHS-Lernpfad-Gesamtdokument.md"]
+    assert [artifact["path"] for artifact in status["artifacts"]] == [
+        "build/ADHS-Lernpfad-Gesamtdokument.md"
+    ]

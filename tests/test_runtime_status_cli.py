@@ -1,67 +1,92 @@
-"""Regression tests for runtime status helper interfaces.
+"""Unit and integration tests for the automation recovery implementation."""
 
-These tests intentionally verify the contract of the runtime status layer without
-requiring a full GitHub Actions environment.
-"""
+from __future__ import annotations
 
-from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
 import json
 import os
+from pathlib import Path
+import re
 import subprocess
 import sys
 
-from scripts.automation_run_status import (
+import pytest
+
+from scripts.automation_status import (
+    ALLOWED_TRANSITIONS,
     DEFAULT_STATUS_PATH,
+    EXIT_BLOCKED,
+    EXIT_SUCCESS,
+    PHASES,
+    InvalidTransition,
+    RevisionConflict,
+    StatusStore,
+    UnresolvedPreviousRun,
+    blocks_new_run,
+    create_status_file,
     finish_run,
+    make_artifact,
+    make_error,
+    make_recovery,
+    prune_statuses,
+    read_status,
+    recovery_from_artifacts,
+    render_diagnostic,
+    restore_status_file,
     start_run,
     status_is_managed,
+    transition_status_file,
     update_status,
     validate_status,
     write_status,
 )
-from scripts.validate_runtime_status import validate_file
 from scripts.runtime_status_phase import runtime_phase
+from scripts.validate_runtime_status import validate_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
+CLI = ROOT / "scripts" / "automation_status.py"
 
 
-def test_runtime_status_schema_exists():
-    schema = ROOT / "automation" / "schema" / "run-status.schema.json"
-    assert schema.exists()
-    data = json.loads(schema.read_text(encoding="utf-8"))
-    assert data["type"] == "object"
-
-
-def test_default_status_is_an_ignored_build_artifact():
+def test_required_tools_and_canonical_paths_exist() -> None:
     assert DEFAULT_STATUS_PATH == Path("build/runtime-status.json")
+    for relative in (
+        "automation/run-status.schema.json",
+        "scripts/automation_status.py",
+        "scripts/automation_run_status.py",
+        "scripts/runtime_status_cli.py",
+        "scripts/runtime_status_phase.py",
+        "scripts/validate_runtime_status.py",
+    ):
+        assert (ROOT / relative).is_file()
 
 
-def test_runtime_status_tools_exist():
-    expected = [
-        ROOT / "scripts" / "automation_run_status.py",
-        ROOT / "scripts" / "runtime_status_cli.py",
-        ROOT / "scripts" / "runtime_status_phase.py",
-        ROOT / "scripts" / "validate_runtime_status.py",
-    ]
-    assert all(path.exists() for path in expected)
+def test_build_workflows_restore_pre_final_status_before_recording_late_failure() -> None:
+    for relative in (
+        ".github/workflows/export.yml",
+        ".github/workflows/pages.yml",
+        ".github/workflows/validate.yml",
+    ):
+        workflow = (ROOT / relative).read_text(encoding="utf-8")
+        assert "cp build/runtime-status.json build/runtime-status-pre-final.json" in workflow
+        assert "--restore-from build/runtime-status-pre-final.json" in workflow
 
 
-def test_runtime_status_cli_help():
-    result = subprocess.run(
-        [sys.executable, str(ROOT / "scripts" / "runtime_status_cli.py"), "--help"],
-        capture_output=True,
-        text=True,
-    )
-    assert result.returncode == 0
-    assert "status" in result.stdout.lower()
+def test_all_workflow_failure_phases_are_schema_values() -> None:
+    for path in (ROOT / ".github/workflows").glob("*.yml"):
+        workflow = path.read_text(encoding="utf-8")
+        phases = set(re.findall(r"current_phase=([a-z_]+)", workflow))
+        assert phases <= PHASES, f"{path}: {sorted(phases - PHASES)}"
 
 
-def test_start_update_finish_preserves_identity_and_merges_data(tmp_path):
+def test_start_update_finish_preserves_identity_and_increments_revisions(
+    tmp_path: Path,
+) -> None:
     target = tmp_path / "runtime-status.json"
     started = start_run(
         target,
-        "graph-test",
+        "knowledge-graph",
         run_id="run-42",
         git_sha="0123456789abcdef",
     )
@@ -72,164 +97,694 @@ def test_start_update_finish_preserves_identity_and_merges_data(tmp_path):
         metrics={"documents": 4},
         artifacts=["build/source-index.json"],
     )
+    exporting = update_status(
+        target,
+        status="running",
+        phase="export",
+        metrics={"nodes": 12},
+        artifacts=["build/knowledge-graph/knowledge-graph.json"],
+    )
     finished = finish_run(
         target,
         success=True,
-        metrics={"nodes": 12},
-        artifacts=["build/knowledge-graph.json"],
+        phase="complete",
     )
 
-    assert running["run_id"] == started["run_id"] == finished["run_id"]
-    assert running["started_at"] == started["started_at"] == finished["started_at"]
-    assert finished["status"] == finished["phase"] == "success"
+    assert started["revision"] == 1
+    assert running["revision"] == 2
+    assert exporting["revision"] == 3
+    assert finished["revision"] == 4
+    assert finished["run_id"] == started["run_id"]
+    assert finished["created_at"] == started["created_at"]
+    assert finished["status"] == "success"
+    assert finished["phase"] == "complete"
+    assert finished["previous_status"] == "running"
     assert finished["duration_seconds"] >= 0
     assert finished["metrics"] == {"documents": 4, "nodes": 12}
-    assert finished["artifacts"] == [
+    assert finished["completed_phases"] == ["load_content", "export", "complete"]
+    assert {artifact["path"] for artifact in finished["artifacts"]} == {
         "build/source-index.json",
-        "build/knowledge-graph.json",
-    ]
+        "build/knowledge-graph/knowledge-graph.json",
+    }
     assert validate_status(finished) == []
+    assert validate_file(target) == []
 
 
-def test_failed_finish_supplies_recovery_fields_for_partial_input(tmp_path):
+def test_failed_finish_replaces_corrupt_input_with_complete_safe_status(
+    tmp_path: Path,
+) -> None:
     target = tmp_path / "runtime-status.json"
-    # A missing/corrupt predecessor must not result in a partial status file.
     target.write_text("not-json", encoding="utf-8")
-    failed = finish_run(target, success=False, phase="validate_graph")
+    failed = finish_run(
+        target,
+        success=False,
+        phase="validate_graph",
+        error_class="graph_validation_error",
+        error_message="token=top-secret link target missing",
+        recovery_action="repair existing graph",
+    )
 
     assert failed["status"] == "failed"
     assert failed["phase"] == "validate_graph"
-    assert failed["error_class"] == "unknown_error"
-    assert failed["error_message"]
-    assert failed["recovery_action"] == "inspect_logs"
+    assert failed["error"]["class"] == "validation"
+    assert failed["error"]["code"] == "graph_validation_error"
+    assert "top-secret" not in failed["error"]["message"]
+    assert failed["recovery"]["action"] == "repair existing graph"
+    assert blocks_new_run(failed)
     assert validate_status(failed) == []
 
 
-def test_write_status_is_atomic_and_leaves_no_temporary_file(tmp_path):
+def test_atomic_write_leaves_no_partial_or_lock_file(tmp_path: Path) -> None:
     target = tmp_path / "nested" / "runtime-status.json"
-    payload = write_status(target, {"workflow": "partial-input"})
-
+    payload = write_status(target, {"workflow": "knowledge-graph"})
     assert json.loads(target.read_text(encoding="utf-8")) == payload
     assert list(target.parent.glob(f".{target.name}.*.tmp")) == []
+    assert not target.with_name(f".{target.name}.lock").exists()
 
 
-def test_partial_input_with_wrong_scalar_types_is_normalised(tmp_path, monkeypatch):
-    # GitHub Actions sets this globally; this unit test exercises the
-    # dependency-free local fallback and therefore isolates that environment.
-    monkeypatch.delenv("GITHUB_WORKFLOW", raising=False)
-    target = tmp_path / "wrong-types.json"
-    payload = write_status(
+def test_pre_finalization_revision_can_be_restored_and_failed_atomically(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "runtime-status.json"
+    backup = tmp_path / "runtime-status-pre-final.json"
+    start_run(target, "manual", run_id="finalization-rollback")
+    running = transition_status_file(
         target,
-        {
-            "run_id": None,
-            "workflow": None,
-            "git_sha": 42,
-            "status": ["running"],
-            "phase": {"unexpected": True},
-            "metrics": None,
-            "artifacts": None,
+        status="running",
+        phase="validate",
+    )
+    backup.write_bytes(target.read_bytes())
+    transition_status_file(target, status="success", phase="complete")
+
+    restored = restore_status_file(target, backup)
+    failed = finish_run(
+        target,
+        success=False,
+        phase="validate",
+        error_class="validation",
+        error_message="post-finalization gate failed",
+    )
+
+    assert restored == running
+    assert failed["run_id"] == "finalization-rollback"
+    assert failed["status"] == "failed"
+    assert failed["previous_status"] == "running"
+    assert validate_status(failed) == []
+
+
+def test_explicit_state_matrix_and_forbidden_transition(tmp_path: Path) -> None:
+    assert ALLOWED_TRANSITIONS == {
+        "created": {"created", "running", "blocked", "failed"},
+        "running": {"running", "success", "blocked", "failed"},
+        "success": {"success"},
+        "blocked": {"blocked", "recovering", "failed"},
+        "failed": {"failed", "recovering"},
+        "recovering": {"recovering", "recovered", "blocked", "failed"},
+        "recovered": {"recovered", "running", "success", "blocked", "failed"},
+    }
+    target = tmp_path / "status.json"
+    start_run(target, "manual", run_id="transition-test")
+    transition_status_file(target, status="running")
+    transition_status_file(target, status="success", phase="complete")
+    with pytest.raises(InvalidTransition):
+        transition_status_file(target, status="running")
+
+
+def _status_at(path: Path, state: str) -> dict:
+    current = start_run(path, "manual", run_id=path.stem)
+    if state == "created":
+        return current
+    current = transition_status_file(path, status="running")
+    if state == "running":
+        return current
+    if state == "success":
+        return transition_status_file(path, status="success", phase="complete")
+    error = make_error(
+        "validation",
+        "controlled transition test",
+        phase="validate",
+    )
+    recovery = make_recovery(
+        "retry_same_phase",
+        "controlled retry",
+        resume_phase="validate",
+    )
+    current = transition_status_file(
+        path,
+        status="blocked" if state == "blocked" else "failed",
+        phase="validate",
+        error=error,
+        recovery=recovery,
+    )
+    if state in {"blocked", "failed"}:
+        return current
+    current = transition_status_file(
+        path,
+        status="recovering",
+        phase="validate",
+    )
+    if state == "recovering":
+        return current
+    return transition_status_file(
+        path,
+        status="recovered",
+        phase="validate",
+    )
+
+
+def test_every_allowed_and_forbidden_state_transition(tmp_path: Path) -> None:
+    for origin in sorted(ALLOWED_TRANSITIONS):
+        for target_state in sorted(ALLOWED_TRANSITIONS):
+            target = tmp_path / f"{origin}-to-{target_state}.json"
+            current = _status_at(target, origin)
+            error = current["error"]
+            recovery = current["recovery"]
+            if target_state in {"blocked", "failed"} and error is None:
+                error = make_error(
+                    "validation",
+                    "controlled transition test",
+                    phase="validate",
+                )
+                recovery = make_recovery(
+                    "retry_same_phase",
+                    "controlled retry",
+                    resume_phase="validate",
+                )
+            changes = {
+                "status": target_state,
+                "phase": "complete" if target_state == "success" else current["phase"],
+                "error": error,
+                "recovery": recovery,
+            }
+            if target_state in ALLOWED_TRANSITIONS[origin]:
+                transitioned = transition_status_file(target, **changes)
+                assert transitioned["status"] == target_state
+            else:
+                with pytest.raises(InvalidTransition):
+                    transition_status_file(target, **changes)
+
+
+def test_optimistic_revision_prevents_lost_update(tmp_path: Path) -> None:
+    target = tmp_path / "status.json"
+    start_run(target, "manual", run_id="revision-test")
+    running = transition_status_file(target, status="running")
+    transition_status_file(
+        target,
+        metrics={"first": True},
+        expected_revision=running["revision"],
+    )
+    with pytest.raises(RevisionConflict):
+        transition_status_file(
+            target,
+            metrics={"stale": True},
+            expected_revision=running["revision"],
+        )
+    assert read_status(target)["metrics"] == {"first": True}
+
+
+def test_parallel_writers_are_locked_and_one_stale_revision_is_rejected(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "status.json"
+    start_run(target, "manual", run_id="parallel-test")
+    running = transition_status_file(target, status="running")
+
+    def update(key: str) -> str:
+        try:
+            transition_status_file(
+                target,
+                metrics={key: True},
+                expected_revision=running["revision"],
+            )
+        except RevisionConflict:
+            return "conflict"
+        return "written"
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        results = sorted(executor.map(update, ("alpha", "beta")))
+    assert results == ["conflict", "written"]
+    assert read_status(target)["revision"] == running["revision"] + 1
+
+
+def test_redaction_removes_credentials_email_and_signed_url_query(
+    tmp_path: Path,
+) -> None:
+    store = StatusStore(tmp_path / "status")
+    store.start("generator", run_id="redaction-run")
+    store.update(
+        "generator",
+        "redaction-run",
+        status="running",
+        phase="create_branch",
+        metrics={
+            "nested": {
+                "contact": "metric-owner@example.org",
+                "credential": "token=metric-secret",
+            }
         },
     )
-    assert payload["run_id"]
-    assert payload["workflow"] == "knowledge-graph"
-    assert payload["git_sha"] == "unknown"
-    assert payload["status"] == "running"
-    assert payload["phase"] == "initialization"
-    assert validate_status(payload) == []
+    store.artifact(
+        "generator",
+        "redaction-run",
+        make_artifact(
+            "branch",
+            "agent/einheit-15",
+            url="https://github.com/H234598/ADHS-Lernpfad/tree/branch?sig=secret",
+            reusable=True,
+        ),
+    )
+    failed = store.fail(
+        "generator",
+        "redaction-run",
+        error_class="github_api_transient",
+        code="create_pr_failed",
+        message=(
+            "Authorization: Bearer ghp_abcdefghijklmnopqrstuvwxyz "
+            "user@example.org token=abc123"
+        ),
+        retryable=True,
+    )
+    serialized = json.dumps(failed)
+    assert "abcdefghijklmnopqrstuvwxyz" not in serialized
+    assert "user@example.org" not in serialized
+    assert "abc123" not in serialized
+    assert "metric-owner@example.org" not in serialized
+    assert "metric-secret" not in serialized
+    assert "?sig=" not in serialized
+    assert failed["error"]["redacted"] is True
 
 
-def test_managed_flag_accepts_only_explicit_truthy_values():
+def test_run_id_rejects_secret_shaped_values(tmp_path: Path) -> None:
+    store = StatusStore(tmp_path / "status")
+    with pytest.raises(ValueError, match="Zugangsdaten"):
+        store.start(
+            "manual",
+            run_id="ghp_abcdefghijklmnopqrstuvwxyz",
+        )
+
+
+@pytest.mark.parametrize(
+    ("artifact_type", "expected_level", "action_fragment"),
+    [
+        ("branch", "resume_from_artifact", "Branch"),
+        ("commit", "resume_from_artifact", "Commit"),
+        ("pull_request", "resume_from_artifact", "Pull Request"),
+    ],
+)
+def test_recovery_detects_reusable_branch_commit_or_pr(
+    tmp_path: Path,
+    artifact_type: str,
+    expected_level: str,
+    action_fragment: str,
+) -> None:
+    target = tmp_path / f"{artifact_type}.json"
+    start_run(target, "generator", run_id=f"{artifact_type}-run")
+    transition_status_file(target, status="running", phase="create_pr")
+    transition_status_file(
+        target,
+        artifacts=[
+            make_artifact(
+                artifact_type,
+                {
+                    "branch": "agent/einheit-15",
+                    "commit": "a" * 40,
+                    "pull_request": "#123",
+                }[artifact_type],
+                reusable=True,
+            )
+        ],
+    )
+    level, action, new_content = recovery_from_artifacts(read_status(target))
+    assert level == expected_level
+    assert action_fragment in action
+    assert new_content is False
+
+
+def test_generator_recovery_reuses_same_run_and_blocks_duplicate(
+    tmp_path: Path,
+) -> None:
+    store = StatusStore(tmp_path / "automation" / "status")
+    store.start("generator", run_id="generator-1")
+    store.update(
+        "generator",
+        "generator-1",
+        status="running",
+        phase="create_branch",
+    )
+    store.artifact(
+        "generator",
+        "generator-1",
+        make_artifact(
+            "branch",
+            "agent/einheit-15",
+            reusable=True,
+        ),
+    )
+    failed = store.fail(
+        "generator",
+        "generator-1",
+        error_class="github_api_transient",
+        code="push_timeout",
+        message="Push timed out",
+        retryable=True,
+    )
+    with pytest.raises(UnresolvedPreviousRun):
+        store.start("generator", run_id="generator-2")
+
+    recovering = store.begin_recovery(
+        "generator",
+        "generator-1",
+        phase="push",
+    )
+    recovered = store.mark_recovered(
+        "generator",
+        "generator-1",
+        phase="push",
+    )
+    resumed = store.update(
+        "generator",
+        "generator-1",
+        status="running",
+        phase="create_pr",
+    )
+    success = store.update(
+        "generator",
+        "generator-1",
+        status="success",
+        phase="complete",
+    )
+
+    assert failed["recovery"]["level"] == "resume_from_artifact"
+    assert recovering["run_id"] == recovered["run_id"] == resumed["run_id"] == "generator-1"
+    assert success["status"] == "success"
+    assert len(list((tmp_path / "automation/status/generator").glob("generator-*.json"))) == 1
+    assert read_status(store.latest_path("generator")) == success
+    assert store.latest_path("generator").with_suffix(".md").is_file()
+
+
+def test_older_run_update_cannot_regress_latest_mirror(tmp_path: Path) -> None:
+    store = StatusStore(tmp_path / "status")
+    store.start("manual", run_id="older-run")
+    store.update(
+        "manual",
+        "older-run",
+        status="running",
+        phase="validate",
+    )
+    store.update(
+        "manual",
+        "older-run",
+        status="success",
+        phase="complete",
+    )
+    newest = store.start("manual", run_id="newest-run")
+
+    store.artifact(
+        "manual",
+        "older-run",
+        make_artifact("report", "late-report", reusable=True),
+    )
+
+    assert read_status(store.latest_path("manual")) == newest
+    assert read_status(store.path_for("manual", "older-run"))["revision"] == 4
+
+
+def test_end_to_end_interruption_reuses_branch_commit_and_pr_until_merge(
+    tmp_path: Path,
+) -> None:
+    store = StatusStore(tmp_path / "status")
+    run_id = "e2e-recovery-run"
+    store.start("generator", run_id=run_id)
+    for phase in (
+        "load_main",
+        "check_previous_run",
+        "check_existing_pr",
+        "read_prompts",
+        "research",
+        "create_branch",
+    ):
+        store.update("generator", run_id, status="running", phase=phase)
+    for artifact in (
+        make_artifact("branch", "agent/einheit-15", reusable=True),
+        make_artifact("commit", "b" * 40, reusable=True),
+        make_artifact(
+            "pull_request",
+            "#123",
+            url="https://github.com/H234598/ADHS-Lernpfad/pull/123",
+            reusable=True,
+        ),
+    ):
+        store.artifact("generator", run_id, artifact)
+    store.update("generator", run_id, status="running", phase="wait_review")
+    failed = store.fail(
+        "generator",
+        run_id,
+        error_class="validation",
+        code="ci_red",
+        message="Validate and build failed",
+        recovery_level="repair_existing_branch",
+        recovery_action="PR #123 auf demselben Branch reparieren",
+    )
+    assert failed["recovery"]["new_content_required"] is False
+    assert len(failed["artifacts"]) == 3
+
+    store.begin_recovery("generator", run_id, phase="repair")
+    store.artifact(
+        "generator",
+        run_id,
+        make_artifact("commit", "c" * 40, reusable=True),
+    )
+    store.mark_recovered("generator", run_id, phase="repair")
+    for phase in (
+        "wait_review",
+        "ready_for_review",
+        "verify_second_ci",
+        "merge",
+        "cleanup",
+    ):
+        store.update("generator", run_id, status="running", phase=phase)
+    store.artifact(
+        "generator",
+        run_id,
+        make_artifact("commit", "d" * 40, reusable=True),
+    )
+    completed = store.update(
+        "generator",
+        run_id,
+        status="success",
+        phase="complete",
+    )
+
+    assert completed["run_id"] == run_id
+    assert completed["status"] == "success"
+    assert completed["completed_phases"][-4:] == [
+        "verify_second_ci",
+        "merge",
+        "cleanup",
+        "complete",
+    ]
+    assert {
+        artifact["value"]
+        for artifact in completed["artifacts"]
+        if artifact["type"] == "pull_request"
+    } == {"#123"}
+    assert len(list((tmp_path / "status/generator").glob("*run.json"))) == 1
+
+
+def test_manual_terminal_blocker_requires_acknowledgement(tmp_path: Path) -> None:
+    store = StatusStore(tmp_path / "status")
+    store.start("generator", run_id="terminal-run")
+    store.update(
+        "generator",
+        "terminal-run",
+        status="running",
+        phase="research",
+    )
+    blocked = store.fail(
+        "generator",
+        "terminal-run",
+        error_class="scientific_review",
+        code="evidence_ambiguous",
+        message="Scientific assessment needs a human decision",
+        recovery_level="manual_intervention",
+        recovery_action="Quellenlage manuell prüfen",
+    )
+    assert blocked["status"] == "blocked"
+    assert blocks_new_run(blocked)
+    acknowledged = store.acknowledge("generator", "terminal-run")
+    assert acknowledged["recovery"]["acknowledged"] is True
+    assert not blocks_new_run(acknowledged)
+
+
+def test_retention_removes_run_but_never_latest(tmp_path: Path) -> None:
+    root = tmp_path / "status"
+    store = StatusStore(root)
+    store.start("manual", run_id="retention-run")
+    store.update(
+        "manual",
+        "retention-run",
+        status="running",
+        phase="validate",
+    )
+    store.update(
+        "manual",
+        "retention-run",
+        status="success",
+        phase="complete",
+    )
+    removed = prune_statuses(
+        root,
+        retention_days=0,
+        now=datetime.now(timezone.utc) + timedelta(seconds=1),
+    )
+    assert store.path_for("manual", "retention-run") in removed
+    assert store.latest_path("manual").is_file()
+
+
+def test_diagnostic_contains_phase_artifacts_error_and_recovery(
+    tmp_path: Path,
+) -> None:
+    store = StatusStore(tmp_path / "status")
+    store.start("generator", run_id="diagnostic-run")
+    store.update(
+        "generator",
+        "diagnostic-run",
+        status="running",
+        phase="commit",
+    )
+    store.artifact(
+        "generator",
+        "diagnostic-run",
+        make_artifact("commit", "a" * 40, reusable=True),
+    )
+    failed = store.fail(
+        "generator",
+        "diagnostic-run",
+        error_class="github_api_transient",
+        code="push_failed",
+        message="GitHub temporarily unavailable",
+        retryable=True,
+    )
+    rendered = render_diagnostic(failed)
+    for expected in (
+        "ADHS-Automation fehlgeschlagen",
+        "Lauf: generator/diagnostic-run",
+        "Phase: commit",
+        "Commit:",
+        "Fehlerklasse: github_api_transient",
+        "Recovery-Level: resume_from_artifact",
+        "Neuer Inhalt erforderlich: nein",
+        "Blockiert nächsten Generatorlauf: ja",
+    ):
+        assert expected in rendered
+
+
+def test_cli_end_to_end_and_exit_codes(tmp_path: Path) -> None:
+    status_root = tmp_path / "status"
+    environment = dict(os.environ, GITHUB_SHA="a" * 40)
+
+    def run(*arguments: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [sys.executable, str(CLI), *arguments],
+            cwd=ROOT,
+            env=environment,
+            capture_output=True,
+            text=True,
+        )
+
+    assert run(
+        "start",
+        "--root",
+        str(status_root),
+        "--workflow",
+        "generator",
+        "--run-id",
+        "cli-run",
+    ).returncode == EXIT_SUCCESS
+    assert run(
+        "phase",
+        "--root",
+        str(status_root),
+        "--workflow",
+        "generator",
+        "--run-id",
+        "cli-run",
+        "--phase",
+        "validate",
+    ).returncode == EXIT_SUCCESS
+    assert run(
+        "artifact",
+        "--root",
+        str(status_root),
+        "--workflow",
+        "generator",
+        "--run-id",
+        "cli-run",
+        "--type",
+        "branch",
+        "--value",
+        "agent/einheit-15",
+        "--reusable",
+    ).returncode == EXIT_SUCCESS
+    failed = run(
+        "fail",
+        "--root",
+        str(status_root),
+        "--workflow",
+        "generator",
+        "--run-id",
+        "cli-run",
+        "--class",
+        "validation",
+        "--message",
+        "Link validation failed",
+        "--recovery",
+        "repair_existing_branch",
+    )
+    assert failed.returncode == EXIT_SUCCESS
+    inspected = run(
+        "inspect",
+        "--root",
+        str(status_root),
+        "--workflow",
+        "generator",
+        "--latest",
+    )
+    assert inspected.returncode == EXIT_BLOCKED
+    assert "repair_existing_branch" in inspected.stdout
+
+
+def test_managed_phase_context_finishes_only_standalone_run(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("RUNTIME_STATUS_MANAGED", raising=False)
+    standalone = tmp_path / "standalone.json"
+    with runtime_phase(standalone, "build_nodes") as metrics:
+        metrics["nodes"] = 7
+    standalone_payload = read_status(standalone)
+    assert standalone_payload["status"] == "success"
+    assert standalone_payload["metrics"]["nodes"] == 7
+
+    managed = tmp_path / "managed.json"
+    initial = start_run(managed, "knowledge-graph", run_id="outer-run")
+    monkeypatch.setenv("RUNTIME_STATUS_MANAGED", "1")
+    with runtime_phase(managed, "build_edges") as metrics:
+        metrics["edges"] = 6
+    managed_payload = read_status(managed)
+    assert managed_payload["run_id"] == initial["run_id"]
+    assert managed_payload["status"] == "running"
+    assert managed_payload["phase"] == "build_edges"
+
+
+def test_managed_flag_accepts_only_explicit_truthy_values() -> None:
     assert status_is_managed({"RUNTIME_STATUS_MANAGED": "true"})
     assert status_is_managed({"RUNTIME_STATUS_MANAGED": "1"})
     assert not status_is_managed({"RUNTIME_STATUS_MANAGED": "0"})
     assert not status_is_managed({})
 
 
-def test_phase_context_finishes_standalone_but_not_managed_run(tmp_path, monkeypatch):
-    monkeypatch.delenv("RUNTIME_STATUS_MANAGED", raising=False)
-    standalone = tmp_path / "standalone.json"
-    with runtime_phase(standalone, "build_nodes") as metrics:
-        metrics["nodes"] = 7
-    standalone_payload = json.loads(standalone.read_text(encoding="utf-8"))
-    assert standalone_payload["status"] == "success"
-    assert standalone_payload["metrics"]["nodes"] == 7
-
-    managed = tmp_path / "managed.json"
-    initial = start_run(managed, "outer-workflow", run_id="outer-run")
-    previous = os.environ.get("RUNTIME_STATUS_MANAGED")
-    os.environ["RUNTIME_STATUS_MANAGED"] = "1"
-    try:
-        with runtime_phase(managed, "build_edges") as metrics:
-            metrics["edges"] = 6
-    finally:
-        if previous is None:
-            os.environ.pop("RUNTIME_STATUS_MANAGED", None)
-        else:
-            os.environ["RUNTIME_STATUS_MANAGED"] = previous
-    managed_payload = json.loads(managed.read_text(encoding="utf-8"))
-    assert managed_payload["run_id"] == initial["run_id"] == "outer-run"
-    assert managed_payload["started_at"] == initial["started_at"]
-    assert managed_payload["status"] == "running"
-    assert managed_payload["phase"] == "build_edges"
-    assert managed_payload["metrics"]["edges"] == 6
-
-
-def test_cli_records_metrics_artifacts_and_failure(tmp_path):
-    target = tmp_path / "cli-status.json"
-    environment = dict(os.environ, GITHUB_SHA="a" * 40)
-    start = subprocess.run(
-        [
-            sys.executable,
-            str(ROOT / "scripts" / "runtime_status_cli.py"),
-            str(target),
-            "--new-run",
-            "--workflow",
-            "cli-test",
-            "--run-id",
-            "cli-run",
-        ],
-        cwd=ROOT,
-        env=environment,
-        capture_output=True,
-        text=True,
-    )
-    finish = subprocess.run(
-        [
-            sys.executable,
-            str(ROOT / "scripts" / "runtime_status_cli.py"),
-            str(target),
-            "--finish",
-            "failed",
-            "--phase",
-            "build_edges",
-            "--metric",
-            "edges=8",
-            "--artifact",
-            "build/partial.json",
-            "--error-class",
-            "ValueError",
-            "--error-message",
-            "edge target missing",
-            "--recovery-action",
-            "retry_validation",
-        ],
-        cwd=ROOT,
-        env=environment,
-        capture_output=True,
-        text=True,
-    )
-
-    assert start.returncode == 0, start.stderr
-    assert finish.returncode == 0, finish.stderr
-    payload = json.loads(target.read_text(encoding="utf-8"))
-    assert payload["run_id"] == "cli-run"
-    assert payload["phase"] == "build_edges"
-    assert payload["metrics"]["edges"] == 8
-    assert payload["error_class"] == "ValueError"
-    assert validate_file(target) == []
-
-
-def test_validator_reports_invalid_json_without_traceback(tmp_path):
+def test_validator_reports_invalid_json_without_traceback(tmp_path: Path) -> None:
     target = tmp_path / "broken.json"
     report_json = tmp_path / "runtime-report.json"
     report_md = tmp_path / "runtime-report.md"
@@ -252,54 +807,19 @@ def test_validator_reports_invalid_json_without_traceback(tmp_path):
     assert "ungültig" in result.stdout
     assert "Traceback" not in result.stderr
     assert report_json.is_file() and report_md.is_file()
-    payload = json.loads(report_json.read_text(encoding="utf-8"))
-    assert payload["valid"] is False
-    assert payload["error_count"] > 0
-    original_report = report_md.read_text(encoding="utf-8")
-    assert "gültiges UTF-8-JSON" in original_report
-
-    # A workflow ERR trap may replace the invalid status with a normalized
-    # failed status, but the validator's original diagnosis remains intact.
-    finish_run(target, success=False, phase="validate_graph")
-    assert report_md.read_text(encoding="utf-8") == original_report
+    assert json.loads(report_json.read_text(encoding="utf-8"))["valid"] is False
 
 
-def test_validator_rejects_a_parseable_but_broken_schema(tmp_path):
+def test_validator_rejects_reversed_timestamps_and_nonfinite_metrics(
+    tmp_path: Path,
+) -> None:
     target = tmp_path / "status.json"
-    schema = tmp_path / "schema.json"
-    start_run(target, "schema-check")
-    schema.write_text('{"type": "object"}', encoding="utf-8")
-    errors = validate_file(target, schema)
-    assert any("schema" in error.lower() for error in errors)
-
-
-def test_validator_always_runs_semantic_checks_with_jsonschema_installed(tmp_path):
-    target = tmp_path / "status.json"
-    payload = finish_run(
-        tmp_path / "seed.json",
-        success=True,
-    )
+    create_status_file(target, "manual", run_id="semantic-test")
+    payload = transition_status_file(target, status="running")
+    payload["created_at"] = "2026-07-22T12:00:00Z"
+    payload["updated_at"] = "2026-07-22T11:00:00Z"
     payload["metrics"]["non_finite"] = float("nan")
     target.write_text(json.dumps(payload, allow_nan=True), encoding="utf-8")
-
     errors = validate_file(target)
-    assert any("JSON-compatible" in error for error in errors)
-
-
-def test_validator_rejects_reversed_timestamps_and_stale_success_errors(tmp_path):
-    target = tmp_path / "status.json"
-    payload = finish_run(tmp_path / "seed.json", success=True)
-    payload.update({
-        "started_at": "2026-07-22T12:00:00Z",
-        "ended_at": "2026-07-22T10:00:00Z",
-        "updated_at": "2026-07-22T11:00:00Z",
-        "error_class": "stale_error",
-        "error_message": "stale message",
-        "recovery_action": "stale_action",
-    })
-    target.write_text(json.dumps(payload), encoding="utf-8")
-
-    errors = validate_file(target)
-    assert any("ended_at must not be before started_at" in error for error in errors)
-    assert any("updated_at must not be before started_at" in error for error in errors)
-    assert any("must be null for a successful status" in error for error in errors)
+    assert any("updated_at darf nicht vor created_at" in error for error in errors)
+    assert any("reinen JSON-Werte" in error for error in errors)

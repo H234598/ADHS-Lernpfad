@@ -177,9 +177,18 @@ class GraphWebTests(unittest.TestCase):
         rendered = render_runtime_markdown({
             "status": "failed",
             "phase": "validate_graph",
-            "error_class": "schema_error",
-            "error_message": "Schema ungültig",
-            "recovery_action": "Validierung erneut ausführen",
+            "error": {
+                "class": "validation",
+                "code": "schema_error",
+                "message": "Schema ungültig",
+            },
+            "recovery": {
+                "level": "retry_same_phase",
+                "action": "Validierung erneut ausführen",
+                "new_content_required": False,
+                "block_next_run": True,
+                "acknowledged": False,
+            },
         })
         self.assertIn("fehlgeschlagen", rendered)
         self.assertIn("schema_error", rendered)
@@ -188,8 +197,9 @@ class GraphWebTests(unittest.TestCase):
     def test_runtime_uses_canonical_schema_fields_and_metrics(self) -> None:
         rendered = render_runtime_markdown({
             "status": "success",
-            "phase": "success",
-            "git_sha": "abc1234",
+            "phase": "complete",
+            "revision": 4,
+            "context": {"commit_sha": "abc1234", "branch": None, "pr_number": None},
             "ended_at": "2026-07-22T10:45:00Z",
             "duration_seconds": 0,
             "metrics": {"nodes": 170, "edges": 492, "errors": 0, "warnings": 0},
