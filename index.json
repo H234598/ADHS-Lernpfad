@@ -1,77 +1,22 @@
 {
   "project": "ADHS-Lernpfad",
   "version": "0.15.0",
-  "last_reviewed": "2026-07-23",
+  "last_reviewed": "2026-07-24",
   "chapters": [
-    {
-      "number": 1,
-      "path": "01-Grundlagen/01-Was-ist-ADHS.md",
-      "title": "Was ist ADHS?"
-    },
-    {
-      "number": 2,
-      "path": "01-Grundlagen/02-Inhibition-und-Handlungssteuerung.md",
-      "title": "Inhibition und Handlungssteuerung"
-    },
-    {
-      "number": 3,
-      "path": "01-Grundlagen/03-Dopamin-Belohnung-und-Motivation.md",
-      "title": "Dopamin, Belohnung und Motivation"
-    },
-    {
-      "number": 4,
-      "path": "01-Grundlagen/04-Arbeitsgedaechtnis.md",
-      "title": "Arbeitsgedächtnis"
-    },
-    {
-      "number": 5,
-      "path": "01-Grundlagen/05-Aufmerksamkeit-und-Stabilitaet.md",
-      "title": "Aufmerksamkeit und Stabilität"
-    },
-    {
-      "number": 6,
-      "path": "01-Grundlagen/06-Zeitverarbeitung.md",
-      "title": "Zeitverarbeitung"
-    },
-    {
-      "number": 7,
-      "path": "01-Grundlagen/07-Emotionsregulation.md",
-      "title": "Emotionsregulation"
-    },
-    {
-      "number": 8,
-      "path": "01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne.md",
-      "title": "Neuroentwicklung und Lebensspanne"
-    },
-    {
-      "number": 9,
-      "path": "01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik.md",
-      "title": "Diagnostische Kriterien und Differentialdiagnostik"
-    },
-    {
-      "number": 10,
-      "path": "01-Grundlagen/10-Genetik-und-Umwelt.md",
-      "title": "Genetik und Umwelt"
-    },
-    {
-      "number": 11,
-      "path": "01-Grundlagen/11-Schlaf-Bewegung-und-koerperliche-Gesundheit.md",
-      "title": "Schlaf, Bewegung und körperliche Gesundheit"
-    },
-    {
-      "number": 12,
-      "path": "01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet.md",
-      "title": "Komorbidität, Depression und Suizidalität"
-    },
-    {
-      "number": 13,
-      "path": "02-Vertiefung/01-Pharmakologie-und-Psychotherapie.md",
-      "title": "Pharmakotherapie und Psychotherapie"
-    },
-    {
-      "number": 14,
-      "path": "02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung.md",
-      "title": "Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung"
-    }
+    {"number": 1, "path": "01-Grundlagen/01-Was-ist-ADHS.md", "title": "Was ist ADHS?"},
+    {"number": 2, "path": "01-Grundlagen/02-Inhibition-und-Handlungssteuerung.md", "title": "Inhibition und Handlungssteuerung"},
+    {"number": 3, "path": "01-Grundlagen/03-Dopamin-Belohnung-und-Motivation.md", "title": "Dopamin, Belohnung und Motivation"},
+    {"number": 4, "path": "01-Grundlagen/04-Arbeitsgedaechtnis.md", "title": "Arbeitsgedächtnis"},
+    {"number": 5, "path": "01-Grundlagen/05-Aufmerksamkeit-und-Stabilitaet.md", "title": "Aufmerksamkeit und Stabilität"},
+    {"number": 6, "path": "01-Grundlagen/06-Zeitverarbeitung.md", "title": "Zeitverarbeitung"},
+    {"number": 7, "path": "01-Grundlagen/07-Emotionsregulation.md", "title": "Emotionsregulation"},
+    {"number": 8, "path": "01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne.md", "title": "Neuroentwicklung und Lebensspanne"},
+    {"number": 9, "path": "01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik.md", "title": "Diagnostische Kriterien und Differentialdiagnostik"},
+    {"number": 10, "path": "01-Grundlagen/10-Genetik-und-Umwelt.md", "title": "Genetik und Umwelt"},
+    {"number": 11, "path": "01-Grundlagen/11-Schlaf-Bewegung-und-koerperliche-Gesundheit.md", "title": "Schlaf, Bewegung und körperliche Gesundheit"},
+    {"number": 12, "path": "01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet.md", "title": "Komorbidität, Depression und Suizidalität"},
+    {"number": 13, "path": "02-Vertiefung/01-Pharmakologie-und-Psychotherapie.md", "title": "Pharmakotherapie und Psychotherapie"},
+    {"number": 14, "path": "02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung.md", "title": "Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung"},
+    {"number": 15, "path": "02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md", "title": "Parkinson, ADHS und mechanistische Vergleiche"}
   ]
 }
