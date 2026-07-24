@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "workflow": "repair",
+  "status": "initialized",
+  "phase": {
+    "current": "bootstrap",
+    "completed": ["repository_state_restored"]
+  }
+}
