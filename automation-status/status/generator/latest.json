@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "workflow": "generator",
+  "run_id": "recovery-bootstrap-2026-07-24T05:00:00Z",
+  "status": "recovered",
+  "phase": {
+    "current": "bootstrap",
+    "completed": [
+      "repository_state_restored"
+    ]
+  },
+  "failed_step": null,
+  "artifacts": {},
+  "retry": {
+    "allowed": true,
+    "recommended_action": "rerun_generator"
+  },
+  "message": {
+    "user": "Automation-Status wurde wiederhergestellt. Der nächste Generierungslauf darf fortgesetzt werden.",
+    "technical": "Initialisierung nach fehlendem automation-status Branch."
+  }
+}
