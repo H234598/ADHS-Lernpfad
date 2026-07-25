@@ -1,4 +1,26 @@
++ git fetch origin main
+From https://github.com/H234598/ADHS-Lernpfad
+ * branch            main       -> FETCH_HEAD
++ git merge --no-edit origin/main
+Committer identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: empty ident name (for <runner@runnervmvrwv9.bs0b5lstmaiuho1adin4c0mwvd.gx.internal.cloudapp.net>) not allowed
 Traceback (most recent call last):
-  File "/home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/.automation-repair/repair_unit15.py", line 9, in <module>
-    import yaml
-ModuleNotFoundError: No module named 'yaml'
+  File "/home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/.automation-repair/repair_unit15.py", line 45, in <module>
+    run("git", "merge", "--no-edit", "origin/main")
+  File "/home/runner/work/ADHS-Lernpfad/ADHS-Lernpfad/.automation-repair/repair_unit15.py", line 19, in run
+    return subprocess.run(args, cwd=ROOT, check=check, text=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '('git', 'merge', '--no-edit', 'origin/main')' returned non-zero exit status 128.
