@@ -41,7 +41,7 @@ Systematische, PROSPERO-registrierte Übersicht von sieben Kohorten- oder Fall-K
 
 ## Einschränkungen
 
-Die Studien unterschieden sich stark hinsichtlich Diagnosedaten, Kovariaten, Risikomaßen und Endpunkten; deshalb wurde keine Meta-Analyse durchgeführt. Krankenaktenkodierung, Komorbiditäten, Überwachungseffekte und mögliche Fehlklassifikation können die beobachteten Zusammenhänge verzerren.
+Die Studien unterschieden sich stark hinsichtlich Diagnosedaten, Kovariaten, Risikomaßen und Endpunkten; deshalb wurde keine Meta-Analyse durchgeführt. Krankenaktenkodierung, Komorbiditäten, Überwachungseffekte und mögliche Fehlklassifikation können die beobachteten Zusammenhänge verzerren. Die zusammengefassten Endpunkte dürfen zudem nicht als ein einheitlicher neurodegenerativer Verlauf interpretiert werden.
 
 ## Verhältnis zum bisherigen Konsens
 
