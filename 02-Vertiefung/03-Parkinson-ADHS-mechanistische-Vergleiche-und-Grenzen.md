@@ -1,17 +1,19 @@
 ---
-title: Parkinson, ADHS und mechanistische Vergleiche
+title: "Parkinson, ADHS und mechanistische Vergleiche"
 level: Vertiefung
-difficulty: 3
 estimated_time: 10–20 min
+difficulty: 3
 prerequisites:
+  - 01-Grundlagen/03-Dopamin-Belohnung-und-Motivation
   - 01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne
+  - 01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik
   - 01-Grundlagen/10-Genetik-und-Umwelt
   - 02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung
-tags: [ADHS, Parkinson, Neuroentwicklung, Neurodegeneration, Differentialdiagnostik]
-last_reviewed: 2026-07-24
+tags: [ADHS, Parkinson, Neuroentwicklung, Neurodegeneration, Dopamin, Differentialdiagnostik, Lebensspanne]
+last_reviewed: 2026-07-25
 evidence: high
 status: consensus
-references: [Faraone2021, Bloem2021]
+references: [Faraone2021, Bloem2021, Becker2023, Dobrosavljevic2020]
 minimum_reading_minutes: 10
 maximum_reading_minutes: 20
 ---
@@ -20,74 +22,149 @@ maximum_reading_minutes: 20
 
 ## Lernziel
 
-Du kannst erklären, warum ADHS und Parkinson trotz einiger gemeinsamer Forschungsbegriffe nicht dieselbe Art von Erkrankung sind. Du verstehst den Unterschied zwischen einer lebenslangen Neuroentwicklungsstörung und einer neurodegenerativen Erkrankung und kannst einordnen, warum Dopamin in beiden Forschungsfeldern relevant ist, aber unterschiedliche biologische Rollen spielt.
+Du kannst erklären, warum ADHS und die Parkinson-Erkrankung trotz gemeinsamer Forschungsbegriffe nicht dieselbe Art von Erkrankung sind. Du unterscheidest Neuroentwicklung von Neurodegeneration, ordnest die unterschiedlichen Rollen dopaminerger Systeme ein und erkennst, welche Vergleiche wissenschaftlich sinnvoll sind. Außerdem kannst du unsichere Beobachtungsbefunde zu einem möglichen späteren Neurodegenerationsrisiko bewerten, ohne daraus eine persönliche Prognose oder die Behauptung abzuleiten, ADHS sei eine Vorstufe von Parkinson.
 
-## 1. Ähnliche Wörter bedeuten nicht gleiche Erkrankungen
+## 1. Der wichtigste Unterschied: Entwicklungsprofil oder fortschreitender Zellverlust
 
-ADHS und Parkinson werden in populären Darstellungen manchmal miteinander verbunden, weil beide mit Dopamin, Motivation, Bewegung oder exekutiven Funktionen in Verbindung gebracht werden. Diese Gemeinsamkeiten beziehen sich jedoch auf einzelne biologische Systeme und nicht auf identische Krankheitsmechanismen.
+ADHS wird als heterogene **Neuroentwicklungsstörung** eingeordnet. Die diagnostisch relevanten Muster beginnen in der Entwicklung und betreffen insbesondere Unaufmerksamkeit und/oder Hyperaktivität-Impulsivität. Ihre Sichtbarkeit kann sich über die Lebensspanne verändern: Anforderungen steigen oder sinken, Strategien werden aufgebaut, Unterstützung fällt weg, und Begleiterkrankungen können das Funktionsniveau beeinflussen. Eine Veränderung der Symptome bedeutet deshalb nicht automatisch, dass ein fortschreitender krankhafter Abbau im Gehirn stattfindet.
 
-ADHS wird heute überwiegend als Neuroentwicklungsstörung verstanden. Die zugrunde liegenden Unterschiede entstehen während der Entwicklung des Nervensystems und beeinflussen unter anderem Aufmerksamkeit, Impulskontrolle, Belohnungsverarbeitung und Selbststeuerung. Parkinson ist dagegen primär eine neurodegenerative Erkrankung, bei der Nervenzellen im Verlauf des Lebens geschädigt werden und bestimmte neuronale Systeme zunehmend ausfallen.
+Die Parkinson-Erkrankung ist dagegen eine **neurodegenerative Erkrankung**. Bei ihr verändern sich im Laufe des Lebens mehrere neuronale Systeme. Besonders bekannt ist der Verlust dopaminerger Nervenzellen in der Substantia nigra mit Folgen für die Signalverarbeitung in den Basalganglien. Parkinson umfasst jedoch mehr als ein motorisches Dopaminproblem: Neben Bradykinese, Rigor und häufig Tremor können Schlaf, autonome Funktionen, Stimmung, Motivation und Kognition betroffen sein. Die Erkrankung beginnt nicht erst am Tag der Diagnose, verläuft aber typischerweise fortschreitend und weist eine andere Pathophysiologie sowie einen anderen klinischen Zeitverlauf als ADHS auf.
 
 > [!evidence] Evidenz: Konsens / hoch
-> ADHS und Parkinson teilen einzelne Forschungsbereiche, sind aber unterschiedliche Erkrankungsgruppen mit verschiedenen zeitlichen Verläufen und biologischen Grundlagen.
+> ADHS ist primär eine Neuroentwicklungsstörung; Parkinson ist eine neurodegenerative Erkrankung. Einzelne gemeinsame Symptome, Hirnnetzwerke oder Botenstoffe heben diesen grundlegenden Unterschied nicht auf.
 
-## 2. Die Rolle von Dopamin
+Die Zeitachse ist diagnostisch entscheidend. Eine seit Kindheit bestehende, situationsübergreifende Unaufmerksamkeit mit wechselnder Ausprägung spricht für einen anderen Verlauf als eine im höheren Lebensalter neu auftretende Verlangsamung, motorische Veränderung oder deutliche kognitive Verschlechterung. Umgekehrt schließt ein höheres Alter ADHS nicht aus: Systematische Übersichten zeigen, dass klinisch relevante ADHS-Symptome auch bei älteren Erwachsenen vorkommen. Die Diagnostik ist dort allerdings anspruchsvoll, weil Erinnerungen an die Kindheit unvollständig sein können und Depression, Schlafstörungen, Medikamente, Hör- oder Sehprobleme sowie neurokognitive Erkrankungen ähnliche Beschwerden erzeugen können.
 
-Dopamin ist weder ein einzelner Schalter für Motivation noch eine einfache Erklärung für komplexe Symptome. In ADHS-Forschung wird Dopamin unter anderem im Zusammenhang mit Belohnungsverarbeitung, Lernsignalen und der Regulation von Aufmerksamkeit untersucht.
+## 2. Dopamin ist kein einheitlicher Krankheitspegel
 
-Bei Parkinson entsteht ein wesentlicher Teil der motorischen Symptomatik durch den Verlust dopaminerger Nervenzellen in bestimmten Bereichen des Mittelhirns. Dadurch verändert sich die Signalverarbeitung in Netzwerken, die Bewegung steuern.
+Der Satz „Beide haben etwas mit Dopamin zu tun“ klingt zunächst nach einer starken Verbindung, ist aber biologisch viel zu grob. Dopamin wirkt in mehreren Bahnen, Hirnregionen, Zelltypen und Rezeptorsystemen. Es beeinflusst unter anderem Lernen aus Rückmeldung, Anreizbewertung, Handlungswahl, Bewegung und die Anpassung von Verhalten an Ziele. Die Bedeutung eines dopaminergen Signals hängt davon ab, **wo**, **wann** und in welchem Netzwerk es wirkt.
 
-Der gleiche Botenstoff kann also in unterschiedlichen Systemen und Erkrankungen unterschiedliche Bedeutungen haben. Ein Vergleich über einen einzelnen Neurotransmitter reicht nicht aus, um Krankheiten biologisch gleichzusetzen.
+Bei ADHS werden Unterschiede in katecholaminergen Systemen, einschließlich Dopamin und Noradrenalin, als Teil komplexer Modelle untersucht. Diese Modelle erklären nicht die gesamte Störung und bedeuten keinen einfachen, messbaren „Dopaminmangel“. Die Wirkung von Stimulanzien beweist ebenfalls keine einzelne Ursache: Ein Medikament kann ein Netzwerk funktionell beeinflussen, ohne dass die behandelte Störung durch einen simplen Mangel desselben Botenstoffs entstanden sein muss.
+
+Bei Parkinson steht ein klarer beschriebener neurodegenerativer Prozess in nigrostriatalen Systemen im Vordergrund. Der Verlust dopaminerger Projektionen verändert die Aktivität motorischer Regelkreise. Dopaminerge Medikamente können motorische Symptome wirksam lindern, ersetzen aber nicht alle verlorenen Funktionen und stoppen die gesamte Erkrankung nicht. Auch bei Parkinson sind nichtmotorische Symptome nicht auf einen einzigen Botenstoff reduzierbar.
 
 ```mermaid
-flowchart LR
-A[ADHS] --> B[Neuroentwicklung]
-B --> C[Aufmerksamkeit und Selbststeuerung]
-D[Parkinson] --> E[Neurodegeneration]
-E --> F[Motorische und nichtmotorische Symptome]
-G[Dopamin] --> C
-G --> F
+flowchart TD
+  A[ADHS] --> B[Neuroentwicklung]
+  B --> C[Aufmerksamkeit, Impulskontrolle, Motivation]
+  P[Parkinson] --> N[Neurodegeneration]
+  N --> M[motorische und nichtmotorische Symptome]
+  D[Dopaminerge Systeme] --> C
+  D --> M
+  C --> G[teilweise gemeinsame Forschungsbegriffe]
+  M --> G
+  G --> X[keine Gleichsetzung der Erkrankungen]
 ```
 
-## 3. Entwicklungsverlauf als entscheidender Unterschied
+Das Diagramm zeigt die korrekte Logik: Derselbe Oberbegriff kann in zwei verschiedenen Kausalmodellen vorkommen. Aus „Dopamin ist beteiligt“ folgt weder „identische Ursache“ noch „gleiche Behandlung“ noch „gleicher Verlauf“.
 
-Ein zentraler Unterschied liegt in der Zeitachse. ADHS beginnt typischerweise in der Kindheit und begleitet viele Menschen über verschiedene Lebensphasen. Die Ausprägung kann sich verändern, weil Anforderungen, Strategien und Umweltbedingungen wechseln.
+## 3. Was mechanistische Vergleiche leisten können
 
-Parkinson tritt überwiegend im höheren Erwachsenenalter auf und ist durch eine fortschreitende Veränderung neuronaler Strukturen gekennzeichnet. Symptome entstehen häufig erst, wenn bestimmte biologische Reserven bereits deutlich reduziert sind.
+Vergleiche zwischen ADHS- und Parkinson-Forschung sind nicht grundsätzlich falsch. Sie werden dann nützlich, wenn die Frage eng formuliert ist. Forschende können beispielsweise untersuchen, wie Basalganglien und frontostriatale Netzwerke Handlungswahl, Reaktionshemmung, Belohnungslernen oder den Wechsel zwischen Handlungen unterstützen. Auch Motivation, Aufwandsschätzung und zeitliche Organisation hängen von verteilten Netzwerken ab, die in mehreren Erkrankungen untersucht werden.
 
-Diese Unterschiede sind diagnostisch wichtig. Konzentrationsprobleme im Alter können viele Ursachen haben, darunter Depression, Schlafstörungen, Medikamente, neurodegenerative Erkrankungen oder eine seit Kindheit bestehende ADHS. Eine sorgfältige Entwicklungsgeschichte bleibt deshalb entscheidend.
+Solche Vergleiche können allgemeine Prinzipien sichtbar machen:
 
-## 4. Gemeinsame Forschungsfragen und klare Grenzen
+- Wie verändern dopaminerge Signale die Gewichtung möglicher Handlungen?
+- Wie arbeiten kortikale und subkortikale Netzwerke bei Planung und Bewegung zusammen?
+- Warum kann dieselbe Testaufgabe durch unterschiedliche Mechanismen beeinträchtigt werden?
+- Wie unterscheiden sich stabile Entwicklungsunterschiede von einem erworbenen Funktionsverlust?
 
-Trotz der Unterschiede können Vergleiche wissenschaftlich sinnvoll sein. Beide Forschungsfelder untersuchen beispielsweise:
+Die Antwort auf eine gemeinsame Testauffälligkeit bleibt dabei offen. Langsamere Reaktionen können beispielsweise mit motorischer Verlangsamung, depressiver Symptomatik, Müdigkeit, Medikamentenwirkung, geringer Motivation, Verständnisproblemen oder Aufmerksamkeitsschwankungen zusammenhängen. Ein Testwert benennt deshalb zunächst eine Leistung unter bestimmten Bedingungen, nicht automatisch die zugrunde liegende Krankheit.
 
-- neuronale Netzwerke der Handlungssteuerung,
-- Selbstregulation und Motivation,
-- genetische Risikofaktoren,
-- Zusammenhänge zwischen Gehirn, Verhalten und Umwelt.
+Mechanistische Forschung wird problematisch, wenn ein gemeinsamer Begriff ohne Zwischenschritte zu einer Diagnosebehauptung wird. „Frontostriatal“, „exekutiv“ oder „dopaminerg“ sind keine Diagnosen. Sehr viele psychische und neurologische Zustände betreffen überlappende Netzwerke. Die klinische Einordnung benötigt zusätzlich Beginn, Verlauf, Symptomqualität, neurologische Untersuchung, Beeinträchtigung und mögliche Alternativerklärungen.
 
-Solche Überschneidungen helfen, allgemeine Prinzipien des Gehirns besser zu verstehen. Sie bedeuten jedoch nicht, dass ADHS eine frühe Form von Parkinson ist oder Parkinson eine spätere Form von ADHS.
+## 4. Bedeutet ADHS ein erhöhtes Parkinson- oder Demenzrisiko?
 
-## 5. Alltag und klinische Einordnung
+Einige Register- und Krankenaktenstudien berichteten Zusammenhänge zwischen einer ADHS-Diagnose und später dokumentierten neurodegenerativen Erkrankungen. Diese Beobachtungen haben verständlicherweise Aufmerksamkeit erzeugt. Sie beweisen aber weder, dass ADHS Parkinson verursacht, noch dass eine betroffene Person wahrscheinlich erkranken wird.
 
-Für Betroffene ist besonders wichtig, zwischen Symptomen und Ursachen zu unterscheiden. Vergesslichkeit, Konzentrationsschwierigkeiten oder verlangsamtes Arbeiten können in vielen Situationen auftreten.
+Eine systematische Übersicht von Becker und Kolleg:innen aus dem Jahr 2023 fand nur sieben geeignete Beobachtungsstudien zu ADHS und späteren neurodegenerativen oder neurokognitiven Diagnosen. Die untersuchten Endpunkte waren sehr unterschiedlich: Demenz insgesamt, Alzheimer-Erkrankung, Parkinson- oder Lewy-Körper-Erkrankungen, vaskuläre Demenz und leichte kognitive Beeinträchtigung. Wegen der methodischen Heterogenität war keine gemeinsame Meta-Analyse sinnvoll. Die Autor:innen bewerteten die Literatur als begrenzt und betonten, dass Größe und Mechanismus eines möglichen direkten Effekts ungeklärt bleiben.
 
-Eine Diagnose entsteht nicht aus einem einzelnen Merkmal, sondern aus Verlauf, Kontext, Funktionsbeeinträchtigung und Ausschluss anderer Erklärungen.
+Mehrere Verzerrungen sind möglich:
+
+1. **Diagnosefehler:** Ältere Krankenakten können ADHS übersehen oder unspezifische Symptome fälschlich als ADHS kodieren.
+2. **Überwachungseffekt:** Menschen mit psychiatrischer oder neurologischer Behandlung haben mehr Kontakt zum Gesundheitssystem; dadurch werden weitere Diagnosen eher dokumentiert.
+3. **Komorbiditäten:** Depression, Substanzgebrauch, Schlafstörungen, kardiovaskuläre Risiken oder andere Faktoren können mit ADHS und späteren Gesundheitsproblemen zusammenhängen.
+4. **Medikamenten- und Indikationsverzerrung:** Ein Zusammenhang mit verschriebenen Stimulanzien kann durch Schweregrad, Behandlungszugang und Begleiterkrankungen beeinflusst sein. Verordnete Stimulanzien dürfen nicht mit hochdosiertem illegalem Stimulanzienkonsum gleichgesetzt werden.
+5. **Umgekehrte oder überlappende Erklärung:** Frühe unspezifische Beschwerden einer späteren Erkrankung könnten rückblickend als ADHS interpretiert werden; zugleich kann echtes lebenslanges ADHS im Alter fälschlich als beginnende Neurodegeneration erscheinen.
+
+> [!important] Assoziation ist keine persönliche Prognose
+> Die bisherige Literatur rechtfertigt nicht die Aussage „ADHS führt zu Parkinson“ und erlaubt keine individuelle Risikoberechnung. Sie begründet weitere Forschung und eine sorgfältige Differentialdiagnostik, nicht Alarmismus.
+
+Für die Praxis ist deshalb ein ausgewogener Satz angemessen: Mögliche Langzeitassoziationen werden untersucht, die Evidenz ist aber zu begrenzt und zu anfällig für Konfundierung, um daraus einen gesicherten kausalen Pfad abzuleiten.
+
+## 5. Differentialdiagnostik im höheren Lebensalter
+
+Bei einer älteren Person mit Konzentrationsproblemen sollte nicht automatisch zwischen „ADHS“ und „Demenz oder Parkinson“ gewählt werden, als könnten beide nicht koexistieren. Die sinnvollere Frage lautet: Welche Beschwerden bestehen seit wann, wie haben sie sich verändert, und welche zusätzlichen Merkmale sind vorhanden?
+
+Hinweise, die eine erneute medizinische oder neurologische Abklärung nahelegen, sind beispielsweise:
+
+- eine klar neue oder fortschreitende Verlangsamung,
+- neu auftretender Ruhetremor, Rigor oder auffällige Gangveränderungen,
+- deutliche Verschlechterung zuvor beherrschter Alltagsfertigkeiten,
+- neue visuell-räumliche Probleme, Halluzinationen oder starke kognitive Schwankungen,
+- Veränderungen von Geruchssinn, REM-Schlaf-Verhalten oder autonomen Funktionen im passenden Gesamtbild,
+- akute oder subakute Veränderungen, die auch durch Medikamente, Infektionen oder Stoffwechselprobleme verursacht sein können.
+
+Keines dieser Merkmale ist allein beweisend. Ebenso wenig beweist eine seit langem bestehende Vergesslichkeit automatisch ADHS. Für eine ADHS-Diagnose bleibt ein entwicklungsbezogenes Muster wichtig, auch wenn der Nachweis im höheren Alter schwieriger sein kann. Schulzeugnisse, frühere Berichte, Fremdanamnese und lebenslange Beispiele können hilfreich sein, sind aber nicht immer verfügbar. Fehlende Dokumente dürfen nicht durch erfundene Sicherheit ersetzt werden.
+
+ADHS kann außerdem die Bewältigung einer später hinzukommenden neurologischen Erkrankung erschweren: komplexe Medikamentenpläne, Terminorganisation oder das Beobachten schwankender Symptome können höhere exekutive Anforderungen stellen. Dann müssen beide Ebenen berücksichtigt werden, statt jede Schwierigkeit nur einer Diagnose zuzuschreiben.
+
+## 6. Behandlung: ähnliche Wirkstoffklassen bedeuten keine Austauschbarkeit
+
+Stimulanzien bei ADHS und dopaminerge Medikamente bei Parkinson haben unterschiedliche Indikationen, Dosierungen, Zielsysteme und Evidenzgrundlagen. Ein Medikament aus dem einen Bereich ist keine allgemeine Behandlung für den anderen. Veränderungen dürfen deshalb nicht eigenständig aus einem mechanistischen Vergleich abgeleitet werden.
+
+Bei ADHS werden Behandlungseffekte an Kernsymptomen und alltagsbezogenen Zielen geprüft; Nutzen, Nebenwirkungen, Wirkdauer und Begleiterkrankungen werden überwacht. Bei Parkinson richtet sich die Therapie nach motorischen und nichtmotorischen Symptomen, Erkrankungsphase, Nebenwirkungen und individuellen Zielen. Dopaminerge Behandlung kann unter anderem Impulskontrollstörungen oder Halluzinationen beeinflussen; auch deshalb ist „mehr Dopamin“ kein sinnvolles universelles Therapieziel.
+
+Forschungsbefunde über mögliche Langzeitrisiken sind kein Grund, eine wirksame verordnete ADHS-Behandlung ohne fachliche Rücksprache abzusetzen. Ebenso darf eine Parkinson-Medikation nicht als Test verwendet werden, ob Konzentrationsprobleme „dopaminbedingt“ sind. Diagnostik und Behandlung folgen klinischen Kriterien, nicht einem Neurotransmitter-Selbstexperiment.
+
+## 7. Mini-Übung: Gleiches Wort, andere Aussageebene
+
+Wähle einen gemeinsamen Begriff, zum Beispiel „Dopamin“, „Basalganglien“, „Motivation“ oder „exekutive Funktionen“. Erstelle vier kurze Spalten:
+
+1. **Beobachtung:** Was wurde tatsächlich gemessen oder beschrieben?
+2. **Mechanismus:** Welche biologische Erklärung wird vorgeschlagen?
+3. **Diagnose:** Welche zusätzlichen Kriterien wären für eine klinische Zuordnung nötig?
+4. **Grenze:** Welche alternative Erklärung oder Unsicherheit bleibt?
+
+Beispiel: „Eine Gruppe zeigt langsamere Reaktionen“ ist eine Beobachtung. Daraus folgt noch nicht, dass dieselbe dopaminerge Störung, dieselbe Diagnose oder dieselbe Behandlung vorliegt. Die Übung trainiert, zwischen Daten, Modell und klinischer Schlussfolgerung zu unterscheiden.
+
+## 8. Wissenschaftliche Einordnung und Grenzen
+
+**Konsens:** ADHS und Parkinson sind unterschiedliche Erkrankungsklassen. ADHS beginnt als Neuroentwicklungsstörung; Parkinson ist neurodegenerativ. Dopamin und frontostriatale Netzwerke sind in beiden Forschungsfeldern relevant, aber nicht auf dieselbe Weise.
+
+**Wahrscheinlich:** Eng formulierte Vergleiche zu Handlungssteuerung, Motivation und Basalganglienfunktionen können allgemeine neurobiologische Prinzipien verdeutlichen. Im höheren Lebensalter ist eine sorgfältige Verlaufserhebung wichtig, weil ADHS-Symptome, Depression, Schlafprobleme, Medikamenteneffekte und neurokognitive Erkrankungen sich teilweise ähneln können.
+
+**Umstritten:** Ob ADHS unabhängig und kausal das Risiko bestimmter neurodegenerativer Erkrankungen erhöht, wie groß ein möglicher Effekt wäre und welche Rolle Komorbiditäten oder Behandlung spielen. Die vorhandenen Beobachtungsstudien sind heterogen und erlauben keine sichere Individualprognose.
+
+**Experimentell:** Biomarker oder kombinierte genetische, bildgebende und digitale Modelle, die bei einer Einzelperson zwischen lebenslangem ADHS, normalem Altern und früher Neurodegeneration unterscheiden. Solche Verfahren sind derzeit kein Ersatz für klinische Diagnostik.
 
 ## Review-Frage
 
-<details>
-<summary>Warum bedeutet die Beteiligung von Dopamin nicht, dass ADHS und Parkinson dieselbe Erkrankung sind?</summary>
+**Warum ist die Aussage „ADHS ist eine frühe Form von Parkinson, weil beide mit Dopamin zusammenhängen“ wissenschaftlich falsch?**
 
-Weil Dopamin in unterschiedlichen neuronalen Netzwerken unterschiedliche Funktionen erfüllt. Außerdem unterscheiden sich Ursache, Entwicklungsverlauf und betroffene biologische Prozesse deutlich.
+<details>
+<summary>Antwort</summary>
+
+Weil ADHS und Parkinson unterschiedliche Erkrankungsklassen, Zeitverläufe und Pathophysiologien haben. Dopamin wirkt in mehreren Netzwerken und erfüllt unterschiedliche Funktionen. Ein gemeinsamer Botenstoff oder eine ähnliche Testauffälligkeit beweist weder identische Ursache noch gleiche Behandlung oder einen zwangsläufigen Übergang von ADHS zu Parkinson.
 
 </details>
 
+## Wissenschaftliche Quelle
+
+[[references/Faraone2021|Faraone et al. 2021]] – internationales Konsensuspapier zur evidenzbasierten Einordnung von ADHS als heterogene Neuroentwicklungsstörung.
+
+[[references/Bloem2021|Bloem et al. 2021]] – umfassende Lancet-Übersicht zu Pathophysiologie, klinischem Verlauf und Behandlung der Parkinson-Erkrankung.
+
+[[references/Becker2023|Becker et al. 2023]] – systematische Übersicht zu Beobachtungsstudien über ADHS und spätere neurodegenerative beziehungsweise neurokognitive Diagnosen; betont die begrenzte und heterogene Evidenz.
+
+[[references/Dobrosavljevic2020|Dobrosavljevic et al. 2020]] – systematische Übersicht und Meta-Analyse zur Prävalenz von ADHS bei älteren Erwachsenen und zu starken Unterschieden zwischen Erhebungsmethoden.
+
 ## Merksatz
 
-Gemeinsame biologische Begriffe bedeuten keine gleiche Erkrankung: ADHS ist primär eine Neuroentwicklungsstörung, Parkinson eine neurodegenerative Erkrankung.
+> Gemeinsame Forschungsbegriffe sind keine gemeinsame Krankheit: ADHS ist neuroentwicklungsbezogen, Parkinson neurodegenerativ, und mögliche Langzeitassoziationen sind bislang keine kausale oder persönliche Prognose.
 
 ## Navigation
 
-- Vorherige Einheit: [[02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung|Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung]]
-- Nächste Einheit: [[02-Vertiefung/04-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet|Studienmethodik, Effektgrößen, Bias und Kausalität]]
+- Zurück: [[02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung|Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung]]
+- Weiter: [[ROADMAP#Milestone A – Klinische Heterogenität und Lebensspanne|Nächste Themen laut Roadmap]]
+- [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]

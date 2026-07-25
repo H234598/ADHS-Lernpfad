@@ -1,10 +1,4 @@
 nodes:
-- path: 02-Vertiefung/03-Parkinson-mechanistische-Vergleiche
-  title: Parkinson – mechanistische Vergleiche und klare Grenzen
-  type: chapter
-  scope: learning
-  level: Vertiefung
-  roadmap: ROADMAP.md#vertiefung
 - path: 02-Vertiefung/04-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet
   title: Studienmethodik, Effektgrößen, Bias und Kausalität
   type: chapter
