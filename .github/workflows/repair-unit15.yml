@@ -30,4 +30,16 @@ jobs:
           node-version: '24'
           cache: npm
       - name: Repair, validate, and commit existing unit
-        run: python3 .automation-repair/repair_unit15.py
+        shell: bash
+        run: |
+          set +e
+          python3 .automation-repair/repair_unit15.py 2>&1 | tee automation-repair-unit15.log
+          rc=${PIPESTATUS[0]}
+          if [[ $rc -ne 0 ]]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add automation-repair-unit15.log
+            git commit -m 'chore: persist unit 15 repair failure diagnostics' || true
+            git push origin HEAD:agent/einheit-15-parkinson-adhs-grenzen-vergleiche || true
+          fi
+          exit $rc
