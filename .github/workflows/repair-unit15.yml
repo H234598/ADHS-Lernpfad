@@ -29,6 +29,8 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - name: Install recovery bootstrap dependency
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
       - name: Repair, validate, and commit existing unit
         shell: bash
         run: |
