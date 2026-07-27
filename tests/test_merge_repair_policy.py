@@ -60,6 +60,11 @@ class MergeRepairPolicyTests(unittest.TestCase):
         self.assertEqual(result.action, "repair_existing_branch")
         self.assertTrue(result.repair_allowed)
 
+    def test_pending_coderabbit_waits_when_ci_is_green(self) -> None:
+        result = self.evaluate(21, ci_state="success", coderabbit_state="pending")
+        self.assertEqual(result.action, "wait_coderabbit")
+        self.assertTrue(result.hard_blocker)
+
     def test_missing_coderabbit_is_hard_blocker_when_ci_is_green(self) -> None:
         result = self.evaluate(21, ci_state="success", coderabbit_state="missing")
         self.assertEqual(result.action, "wait_coderabbit")
