@@ -192,11 +192,10 @@ env = dict(__import__("os").environ)
 env["REMARK_BASE_SHA"] = "origin/main"
 env["REMARK_HEAD_SHA"] = "HEAD"
 run("npm", "run", "lint:markdown:changed", env=env)
-remark_bin = ROOT / "node_modules" / ".bin" / "remark"
 run(
-    str(remark_bin),
-    "--frail",
-    "--no-stdout",
+    "node",
+    "scripts/remark_lint.mjs",
+    "--files",
     "WARTUNG.md",
     "CONTRIBUTING.md",
     "CHANGELOG.md",
