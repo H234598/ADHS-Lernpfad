@@ -32,7 +32,7 @@ Baiamonte, L., Bellante, G., Allegra, P., et al. (2026). Attention Deficit/Hyper
 
 ## Kernaussage
 
-Vier Kohortenstudien mit insgesamt 3.703.877 Personen ergaben für ADHS und Demenz aller Ursachen einen gepoolten Hazard-Ratio von 2,52 bei einem 95-Prozent-Konfidenzintervall von 1,51 bis 4,22. Die statistische Heterogenität war mit I² = 87,7 Prozent sehr hoch. Für einzelne Demenzformen lagen zu wenige vergleichbare Studien für belastbare gepoolte Schätzungen vor.
+Vier Kohortenstudien mit insgesamt 3.703.877 Personen ergaben für ADHS und Demenz aller Ursachen einen gepoolten Hazard-Ratio von 2,52 bei einem 95-Prozent-Konfidenzintervall von 1,51 bis 4,22. Die statistische Heterogenität war mit I² = 87,7 Prozent sehr hoch. Für einzelne Demenzformen lagen zu wenige vergleichbare Studien für belastbare gepoolte Schätzungen vor. Die Auswertung betrifft Demenzdiagnosen und liefert keinen gepoolten Schätzer für die Inzidenz der Parkinson-Erkrankung.
 
 ## Population und Design
 
