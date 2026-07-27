@@ -49,6 +49,18 @@ def is_coderabbit_signal(name: str, app_name: str = "") -> bool:
     return bool(CODERABBIT_RE.search(combined)) and not bool(SELF_GATE_RE.search(combined))
 
 
+def _mapping(value: Any) -> dict[str, Any]:
+    """Ungeprüfte API-Werte defensiv als Mapping behandeln."""
+
+    return value if isinstance(value, dict) else {}
+
+
+def _items(value: Any) -> list[Any]:
+    """Ungeprüfte API-Werte defensiv als Liste behandeln."""
+
+    return value if isinstance(value, list) else []
+
+
 def _request_json(url: str, token: str, *, data: dict[str, Any] | None = None) -> Any:
     body = None if data is None else json.dumps(data).encode("utf-8")
     request = Request(url, data=body)
@@ -66,13 +78,35 @@ def _request_json(url: str, token: str, *, data: dict[str, Any] | None = None) -
         raise RuntimeError(f"GitHub API {exc.code} für {url}: {detail[:500]}") from exc
 
 
-def _latest_coderabbit_signals(repository: str, head_sha: str, token: str) -> list[dict[str, str]]:
-    statuses = _request_json(f"{API}/repos/{repository}/commits/{head_sha}/status", token)
-    checks = _request_json(
-        f"{API}/repos/{repository}/commits/{head_sha}/check-runs?per_page=100", token
+def _latest_coderabbit_signals(
+    repository: str,
+    head_sha: str,
+    token: str,
+) -> list[dict[str, str]]:
+    """Alle aktuellen CodeRabbit-Status- und Check-Signale des Heads lesen."""
+
+    statuses = _mapping(
+        _request_json(f"{API}/repos/{repository}/commits/{head_sha}/status", token)
     )
+    checks: list[Any] = []
+    page = 1
+    while True:
+        batch = _mapping(
+            _request_json(
+                f"{API}/repos/{repository}/commits/{head_sha}/check-runs"
+                f"?per_page=100&page={page}",
+                token,
+            )
+        )
+        batch_checks = _items(batch.get("check_runs"))
+        checks.extend(batch_checks)
+        if len(batch_checks) < 100:
+            break
+        page += 1
+
     collected: list[dict[str, str]] = []
-    for status in statuses.get("statuses", []):
+    for raw_status in _items(statuses.get("statuses")):
+        status = _mapping(raw_status)
         context = str(status.get("context") or "")
         if is_coderabbit_signal(context):
             collected.append(
@@ -80,13 +114,17 @@ def _latest_coderabbit_signals(repository: str, head_sha: str, token: str) -> li
                     "key": f"status:{context.casefold()}",
                     "name": context,
                     "state": str(status.get("state") or "missing"),
-                    "updated_at": str(status.get("updated_at") or status.get("created_at") or ""),
+                    "updated_at": str(
+                        status.get("updated_at") or status.get("created_at") or ""
+                    ),
                     "url": str(status.get("target_url") or ""),
                 }
             )
-    for check in checks.get("check_runs", []):
+
+    for raw_check in checks:
+        check = _mapping(raw_check)
         name = str(check.get("name") or "")
-        app_name = str((check.get("app") or {}).get("name") or "")
+        app_name = str(_mapping(check.get("app")).get("name") or "")
         if is_coderabbit_signal(name, app_name):
             state = str(check.get("conclusion") or check.get("status") or "missing")
             collected.append(
@@ -94,7 +132,9 @@ def _latest_coderabbit_signals(repository: str, head_sha: str, token: str) -> li
                     "key": f"check:{app_name.casefold()}:{name.casefold()}",
                     "name": f"{app_name}: {name}".strip(": "),
                     "state": state,
-                    "updated_at": str(check.get("completed_at") or check.get("started_at") or ""),
+                    "updated_at": str(
+                        check.get("completed_at") or check.get("started_at") or ""
+                    ),
                     "url": str(check.get("html_url") or ""),
                 }
             )
@@ -131,34 +171,50 @@ def _review_threads(repository: str, number: int, token: str) -> list[dict[str, 
     after: str | None = None
     result: list[dict[str, Any]] = []
     while True:
-        payload = _request_json(
-            GRAPHQL,
-            token,
-            data={
-                "query": query,
-                "variables": {"owner": owner, "name": name, "number": number, "after": after},
-            },
+        payload = _mapping(
+            _request_json(
+                GRAPHQL,
+                token,
+                data={
+                    "query": query,
+                    "variables": {
+                        "owner": owner,
+                        "name": name,
+                        "number": number,
+                        "after": after,
+                    },
+                },
+            )
         )
         if payload.get("errors"):
             raise RuntimeError(f"GitHub GraphQL: {payload['errors']}")
-        pull = payload["data"]["repository"]["pullRequest"]
-        if pull is None:
+        data = _mapping(payload.get("data"))
+        repository_data = _mapping(data.get("repository"))
+        pull = repository_data.get("pullRequest")
+        if not isinstance(pull, dict):
             raise RuntimeError(f"Pull Request #{number} wurde nicht gefunden")
-        connection = pull["reviewThreads"]
-        result.extend(connection["nodes"])
-        if not connection["pageInfo"]["hasNextPage"]:
+        connection = _mapping(pull.get("reviewThreads"))
+        result.extend(
+            item for item in _items(connection.get("nodes")) if isinstance(item, dict)
+        )
+        page_info = _mapping(connection.get("pageInfo"))
+        if not page_info.get("hasNextPage"):
             return result
-        after = connection["pageInfo"]["endCursor"]
+        after = str(page_info.get("endCursor") or "") or None
 
 
 def _issue_comments(repository: str, number: int, token: str) -> list[dict[str, Any]]:
     comments: list[dict[str, Any]] = []
     page = 1
     while True:
-        batch = _request_json(
-            f"{API}/repos/{repository}/issues/{number}/comments?per_page=100&page={page}", token
+        batch = _items(
+            _request_json(
+                f"{API}/repos/{repository}/issues/{number}/comments"
+                f"?per_page=100&page={page}",
+                token,
+            )
         )
-        comments.extend(batch)
+        comments.extend(item for item in batch if isinstance(item, dict))
         if len(batch) < 100:
             return comments
         page += 1
@@ -175,13 +231,17 @@ def evaluate_gate(
 
     reasons: list[str] = []
     states = [signal.get("state", "missing").casefold() for signal in signals]
-    successful = {"success", "neutral"}
+    successful = {"success", "neutral", "skipped"}
+    pending = {"", "missing", "pending", "queued", "in_progress", "requested", "waiting"}
     if not signals:
         coderabbit_state = "missing"
         reasons.append("Kein CodeRabbit-Signal für den aktuellen Head vorhanden.")
-    elif any(state not in successful for state in states):
+    elif any(state not in successful | pending for state in states):
         coderabbit_state = "failure"
-        reasons.append("Mindestens ein aktuelles CodeRabbit-Signal ist nicht erfolgreich.")
+        reasons.append("Mindestens ein aktuelles CodeRabbit-Signal ist fehlgeschlagen.")
+    elif any(state in pending for state in states):
+        coderabbit_state = "pending"
+        reasons.append("Mindestens ein aktuelles CodeRabbit-Signal läuft noch.")
     else:
         coderabbit_state = "success"
 
@@ -189,22 +249,27 @@ def evaluate_gate(
     for thread in threads:
         if thread.get("isResolved"):
             continue
+        thread_comments = _mapping(thread.get("comments"))
         authors = [
-            str((comment.get("author") or {}).get("login") or "")
-            for comment in (thread.get("comments") or {}).get("nodes", [])
+            str(_mapping(_mapping(comment).get("author")).get("login") or "")
+            for comment in _items(thread_comments.get("nodes"))
         ]
         if any(CODERABBIT_RE.search(author) for author in authors):
             unresolved.append(str(thread.get("id")))
     if unresolved:
         reasons.append(
-            f"{len(unresolved)} CodeRabbit-Review-Thread(s) sind ungelöst; auch veraltete Threads müssen begründet abgeschlossen werden."
+            f"{len(unresolved)} CodeRabbit-Review-Thread(s) sind ungelöst; auch "
+            "veraltete Threads müssen begründet abgeschlossen werden."
         )
 
     disagreements: dict[str, datetime] = {}
     resolutions: dict[str, datetime] = {}
     for comment in comments:
         body = str(comment.get("body") or "")
-        created = datetime.fromisoformat(str(comment.get("created_at")).replace("Z", "+00:00"))
+        raw_created = str(comment.get("created_at") or "")
+        if not raw_created:
+            continue
+        created = datetime.fromisoformat(raw_created.replace("Z", "+00:00"))
         for marked_head in DISAGREEMENT_RE.findall(body):
             disagreements[marked_head] = max(disagreements.get(marked_head, created), created)
         for marked_head in DISAGREEMENT_RESOLVED_RE.findall(body):
@@ -219,8 +284,8 @@ def evaluate_gate(
     if disagreement_open:
         scope = "aktuellen Head" if head_sha in open_disagreement_heads else "aktuellen oder früheren Head"
         reasons.append(
-            f"Ein dokumentierter Agent-CodeRabbit-Konflikt für den {scope} ist ungeklärt: "
-            + ", ".join(open_disagreement_heads)
+            f"Ein dokumentierter Agent-CodeRabbit-Konflikt für den {scope} ist "
+            "ungeklärt: " + ", ".join(open_disagreement_heads)
         )
 
     return coderabbit_state, unresolved, reasons, disagreement_open
@@ -261,13 +326,15 @@ def main() -> int:
     if not args.repository or not args.token or not args.pr_number:
         parser.error("repository, token und pr-number sind erforderlich")
 
-    pull = _request_json(
-        f"{API}/repos/{args.repository}/pulls/{args.pr_number}", args.token
+    pull = _mapping(
+        _request_json(
+            f"{API}/repos/{args.repository}/pulls/{args.pr_number}", args.token
+        )
     )
     if pull.get("state") != "open":
         print(f"PR #{args.pr_number} ist nicht offen; Gate wird übersprungen.")
         return 0
-    head_sha = str((pull.get("head") or {}).get("sha") or "")
+    head_sha = str(_mapping(pull.get("head")).get("sha") or "")
     if not re.fullmatch(r"[0-9a-f]{40}", head_sha):
         raise RuntimeError("Aktueller PR-Head konnte nicht bestimmt werden")
 
