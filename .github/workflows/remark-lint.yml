@@ -35,6 +35,9 @@ jobs:
       - name: Install pinned lint dependencies
         run: npm ci
 
+      - name: Audit pinned npm dependencies
+        run: npm run audit:dependencies
+
       - name: Lint changed Markdown files
         env:
           REMARK_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
