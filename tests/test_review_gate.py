@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from review_gate import evaluate_gate, is_coderabbit_signal
 
 HEAD = "a" * 40
+OLD_HEAD = "b" * 40
 
 
 class ReviewGateTests(unittest.TestCase):
@@ -91,6 +92,21 @@ class ReviewGateTests(unittest.TestCase):
         )
         self.assertTrue(disagreement)
         self.assertTrue(any("Konflikt" in reason for reason in reasons))
+
+    def test_open_disagreement_from_prior_head_survives_new_commit(self) -> None:
+        state, unresolved, reasons, disagreement = evaluate_gate(
+            signals=self.success_signal(),
+            threads=[],
+            comments=[
+                self.comment(
+                    f"<!-- coderabbit-disagreement head={OLD_HEAD} -->",
+                    "2026-07-27T12:00:00Z",
+                )
+            ],
+            head_sha=HEAD,
+        )
+        self.assertTrue(disagreement)
+        self.assertTrue(any(OLD_HEAD in reason for reason in reasons))
 
     def test_resolved_disagreement_no_longer_blocks(self) -> None:
         state, unresolved, reasons, disagreement = evaluate_gate(
