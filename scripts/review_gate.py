@@ -10,7 +10,6 @@ import json
 import os
 from pathlib import Path
 import re
-import sys
 from typing import Any
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
@@ -18,6 +17,9 @@ from urllib.request import Request, urlopen
 API = "https://api.github.com"
 GRAPHQL = "https://api.github.com/graphql"
 CODERABBIT_RE = re.compile(r"coderabbit", re.IGNORECASE)
+SELF_GATE_RE = re.compile(
+    r"(?:coderabbit.*review\s*gate|review\s*gate.*coderabbit)", re.IGNORECASE
+)
 DISAGREEMENT_RE = re.compile(r"<!--\s*coderabbit-disagreement\s+head=([0-9a-f]{40})\s*-->")
 DISAGREEMENT_RESOLVED_RE = re.compile(
     r"<!--\s*coderabbit-disagreement-resolved\s+head=([0-9a-f]{40})\s*-->"
@@ -38,6 +40,13 @@ class GateResult:
     passed: bool
     reasons: list[str]
     checked_at: str
+
+
+def is_coderabbit_signal(name: str, app_name: str = "") -> bool:
+    """Echte CodeRabbit-Signale erkennen, ohne das eigene Gate zu zählen."""
+
+    combined = " ".join(part for part in (app_name, name) if part).strip()
+    return bool(CODERABBIT_RE.search(combined)) and not bool(SELF_GATE_RE.search(combined))
 
 
 def _request_json(url: str, token: str, *, data: dict[str, Any] | None = None) -> Any:
@@ -65,7 +74,7 @@ def _latest_coderabbit_signals(repository: str, head_sha: str, token: str) -> li
     collected: list[dict[str, str]] = []
     for status in statuses.get("statuses", []):
         context = str(status.get("context") or "")
-        if CODERABBIT_RE.search(context):
+        if is_coderabbit_signal(context):
             collected.append(
                 {
                     "key": f"status:{context.casefold()}",
@@ -78,7 +87,7 @@ def _latest_coderabbit_signals(repository: str, head_sha: str, token: str) -> li
     for check in checks.get("check_runs", []):
         name = str(check.get("name") or "")
         app_name = str((check.get("app") or {}).get("name") or "")
-        if CODERABBIT_RE.search(name) or CODERABBIT_RE.search(app_name):
+        if is_coderabbit_signal(name, app_name):
             state = str(check.get("conclusion") or check.get("status") or "missing")
             collected.append(
                 {
