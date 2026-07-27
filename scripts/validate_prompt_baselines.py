@@ -135,6 +135,14 @@ def validate_baselines(
 def main() -> int:
     errors = validate_baselines()
     if errors:
+        report = ROOT / "build" / "validation-report.txt"
+        report.parent.mkdir(parents=True, exist_ok=True)
+        report.write_text(
+            "# Prompt-Baseline-Validierung\n\n"
+            + "\n".join(f"- {error}" for error in errors)
+            + "\n",
+            encoding="utf-8",
+        )
         for error in errors:
             print(f"Prompt-Schutzfehler: {error}")
         return 1
