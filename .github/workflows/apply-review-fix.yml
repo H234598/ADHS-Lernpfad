@@ -6,6 +6,12 @@ on:
     paths:
       - '.review-fix/**'
       - '.github/workflows/apply-review-fix.yml'
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+    paths:
+      - '.review-fix/**'
+      - '.github/workflows/apply-review-fix.yml'
 
 permissions:
   contents: write
@@ -16,6 +22,7 @@ concurrency:
 
 jobs:
   apply:
+    if: github.head_ref == 'feat/hard-review-repair-policy' || github.ref_name == 'feat/hard-review-repair-policy'
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
