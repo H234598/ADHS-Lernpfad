@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import json
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -66,6 +68,18 @@ def test_remark_lint_sanitizes_project_specific_obsidian_syntax() -> None:
     assert "sanitizeObsidianMarkdown" in script
     assert "remarkPresetLintRecommended" in script
     assert "--files" in script
+
+
+def test_gate_workflows_are_valid_yaml_and_read_only() -> None:
+    for relative in (
+        ".github/workflows/remark-lint.yml",
+        ".github/workflows/coderabbit-hard-gate.yml",
+    ):
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        parsed = yaml.safe_load(text)
+        assert isinstance(parsed, dict)
+        assert "jobs" in parsed
+        assert "write" not in text
 
 
 def test_coderabbit_gate_uses_trusted_main_checkout() -> None:
