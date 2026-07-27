@@ -56,6 +56,8 @@ REMARK_BASE_SHA=origin/main REMARK_HEAD_SHA=HEAD \
   npm run lint:markdown:changed
 ```
 
+Codacys eigener Remark-lint-Lauf versteht die projektspezifische Obsidian-Syntax nicht zuverlässig und erzeugte dadurch wiederholt falsche Referenzlinkbefunde. `.codacy.yml` schließt deshalb ausschließlich Markdown aus dem Codacy-Engine-Lauf `remark-lint` aus. Sicherheits- und Pythonanalysen von Codacy bleiben aktiv. Die Markdown-Qualität wird nicht abgeschwächt, sondern durch den reproduzierbaren projektinternen Pflichtcheck und die separate Obsidian-Linkvalidierung strenger und nachvollziehbarer geprüft.
+
 Der Codacy-SARIF-Workflow bleibt eine zusätzliche Analyse. Sein erfolgreicher Upload ersetzt weder den blockierenden Remark-lint-Check noch das npm-Abhängigkeitsaudit.
 
 ## Reproduzierbare Policyentscheidung
