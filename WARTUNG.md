@@ -28,9 +28,14 @@ Diese Seite bündelt den technischen Betrieb des Lernkompendiums. Sie gehört ni
           ↓
 ab 08:00 regelmäßiger Merge-Wächter
           ↓
-vor 20:00 rote Gates → Diagnose sammeln und weiter prüfen
+        Reparaturfenster = max(PR-Erstellung + 2 Stunden,
+                               20:00 am Erstellungstag)
           ↓
-ab 20:00 rote Gates → sicherer Reparaturzyklus auf bestehendem Branch
+        vor dem Reparaturfenster rote Gates
+          → Diagnose sammeln und weiter prüfen
+          ↓
+        ab dem Reparaturfenster rote Gates
+          → sicherer Reparaturzyklus auf bestehendem Branch
           ↓
         erste CI + Remark-lint + CodeRabbit grün → Ready for review
           ↓
