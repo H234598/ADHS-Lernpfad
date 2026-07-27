@@ -43,4 +43,22 @@ jobs:
           node-version: '24'
 
       - name: Finalize, validate, commit, and push policy
-        run: python .policy-bootstrap/apply.py
+        id: finalizer
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          python .policy-bootstrap/apply.py 2>&1 | tee "$RUNNER_TEMP/policy-finalizer.log"
+
+      - name: Upload policy finalizer diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: policy-finalizer-diagnostics-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/policy-finalizer.log
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce finalizer result
+        if: always()
+        run: test '${{ steps.finalizer.outcome }}' = 'success'
