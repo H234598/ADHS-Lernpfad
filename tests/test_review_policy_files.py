@@ -17,6 +17,15 @@ def test_prompts_define_coderabbit_as_hard_gate() -> None:
     assert "coderabbit-disagreement" in repair
 
 
+def test_generator_runs_remark_lint_before_draft_creation() -> None:
+    generator = (ROOT / "prompts/AUTOMATION-PROMPT.md").read_text(encoding="utf-8")
+    lint_position = generator.index("npm run lint:markdown:changed")
+    branch_position = generator.index("## 8. Git-Arbeitsweise")
+    assert "npm run audit:dependencies" in generator
+    assert lint_position < branch_position
+    assert "Eine Remark-lint-Meldung darf nicht" in generator
+
+
 def test_repair_deadline_and_no_two_failure_cap_are_explicit() -> None:
     merge = (ROOT / "prompts/MERGE-AUTOMATION-PROMPT.md").read_text(encoding="utf-8")
     repair = (ROOT / "prompts/PR-REPAIR-PROMPT.md").read_text(encoding="utf-8")
