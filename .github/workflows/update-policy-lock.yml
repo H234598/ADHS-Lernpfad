@@ -1,0 +1,39 @@
+name: Update policy lockfile
+
+on:
+  push:
+    branches: [feat/hard-review-repair-policy]
+    paths:
+      - '.policy-lock/**'
+      - '.github/workflows/update-policy-lock.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-policy-lock
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout policy branch
+        uses: actions/checkout@v7
+        with:
+          ref: feat/hard-review-repair-policy
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Update lockfile, audit, validate, and commit
+        run: python .policy-lock/update.py
