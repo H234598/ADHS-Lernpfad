@@ -8,9 +8,9 @@ const ROOT = resolve(import.meta.dirname, '..')
 const SANITIZED_ROOT = resolve(ROOT, 'build', 'remark-lint', 'sanitized')
 const EXCLUDED_PARTS = new Set(['.git', 'build', 'site', 'node_modules', '__pycache__'])
 const FENCE_RE = /^\s*(```+|~~~+)/
-const WIKILINK_RE = /\[\[([^\]\n]+)\]\]/g
-const EMBED_RE = /!\[\[([^\]\n]+)\]\]/g
-const CALLOUT_RE = /^(\s*>\s*)\[!([A-Za-z0-9_-]+)\](.*)$/
+const WIKILINK_RE = /\[\[([\s\S]*?)\]\]/g
+const EMBED_RE = /!\[\[([\s\S]*?)\]\]/g
+const CALLOUT_RE = /^(\s*>\s*)\[!([A-Za-z0-9_-]+)\](.*)$/gm
 
 function git(args, {allowFailure = false} = {}) {
   const result = spawnSync('git', args, {
@@ -94,7 +94,8 @@ function requestedFiles() {
 }
 
 function visibleLabel(raw) {
-  const [targetPart, aliasPart] = raw.split('|', 2)
+  const normalized = raw.replace(/\s+/g, ' ').trim()
+  const [targetPart, aliasPart] = normalized.split('|', 2)
   const target = targetPart.trim()
   const alias = aliasPart?.trim()
   if (alias) return alias
@@ -102,34 +103,48 @@ function visibleLabel(raw) {
   return heading || target || 'interner Link'
 }
 
-function sanitizeObsidianMarkdown(content) {
-  let fence = null
-  return content
-    .split(/(?<=\n)/)
-    .map((line) => {
-      const fenceMatch = line.match(FENCE_RE)
-      if (fenceMatch) {
-        const marker = fenceMatch[1][0]
-        fence = fence === null ? marker : fence === marker ? null : fence
-        return line
-      }
-      if (fence !== null) return line
+function sanitizeTextBlock(value) {
+  let sanitized = value.replace(
+    CALLOUT_RE,
+    (_match, prefix, kind, rest) => `${prefix}**${kind}**${rest}`,
+  )
+  sanitized = sanitized.replace(
+    EMBED_RE,
+    (_match, raw) => `![${visibleLabel(raw)}](https://example.invalid/obsidian-embed)`,
+  )
+  sanitized = sanitized.replace(
+    WIKILINK_RE,
+    (_match, raw) => `[${visibleLabel(raw)}](https://example.invalid/obsidian-link)`,
+  )
+  return sanitized
+}
 
-      const callout = line.match(CALLOUT_RE)
-      let sanitized = callout
-        ? `${callout[1]}**${callout[2]}**${callout[3]}`
-        : line
-      sanitized = sanitized.replace(
-        EMBED_RE,
-        (_match, raw) => `![${visibleLabel(raw)}](https://example.invalid/obsidian-embed)`,
-      )
-      sanitized = sanitized.replace(
-        WIKILINK_RE,
-        (_match, raw) => `[${visibleLabel(raw)}](https://example.invalid/obsidian-link)`,
-      )
-      return sanitized
-    })
-    .join('')
+function sanitizeObsidianMarkdown(content) {
+  const output = []
+  let prose = []
+  let fence = null
+
+  function flushProse() {
+    if (prose.length === 0) return
+    output.push(sanitizeTextBlock(prose.join('')))
+    prose = []
+  }
+
+  for (const line of content.split(/(?<=\n)/)) {
+    const fenceMatch = line.match(FENCE_RE)
+    if (fenceMatch) {
+      flushProse()
+      const marker = fenceMatch[1][0]
+      fence = fence === null ? marker : fence === marker ? null : fence
+      output.push(line)
+    } else if (fence === null) {
+      prose.push(line)
+    } else {
+      output.push(line)
+    }
+  }
+  flushProse()
+  return output.join('')
 }
 
 function sanitizedCopies(files) {
