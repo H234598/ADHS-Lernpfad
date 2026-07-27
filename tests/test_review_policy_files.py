@@ -37,6 +37,14 @@ def test_remark_lint_is_pinned_and_blocking() -> None:
     assert "npm run lint:markdown:changed" in workflow
 
 
+def test_remark_lint_sanitizes_project_specific_obsidian_syntax() -> None:
+    script = (ROOT / "scripts/remark_lint.mjs").read_text(encoding="utf-8")
+    assert "const WIKILINK_RE = /\\[\\[([\\s\\S]*?)\\]\\]/g" in script
+    assert "const EMBED_RE = /!\\[\\[([\\s\\S]*?)\\]\\]/g" in script
+    assert "sanitizeObsidianMarkdown" in script
+    assert "--files" in script
+
+
 def test_coderabbit_gate_uses_trusted_main_checkout() -> None:
     workflow = (ROOT / ".github/workflows/coderabbit-hard-gate.yml").read_text(
         encoding="utf-8"
