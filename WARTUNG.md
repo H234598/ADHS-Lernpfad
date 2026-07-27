@@ -41,7 +41,7 @@ CodeRabbit ist ein verpflichtendes hartes Gate. Für den aktuellen Head müssen 
 
 Der Reparaturzyklus startet frühestens zu `max(PR-Erstellung + 2 Stunden, 20:00 Uhr Europe/Berlin am Erstellungstag)`. Bis dahin bleibt der Wächter aktiv, sammelt Diagnosen und prüft weiter. Es gibt keinen Abbruch nach dem zweiten roten CI-Lauf. Ab dem Reparaturfenster ist pro Wächterlauf genau ein sicherer, idempotenter Zyklus zulässig; neue Ursachen können in späteren Läufen erneut repariert werden.
 
-Die vollständige technische Policy steht unter [[automation/MERGE-REPAIR-POLICY|Merge- und Reparaturpolicy]].
+Die vollständige technische Policy steht unter [Merge- und Reparaturpolicy](automation/MERGE-REPAIR-POLICY.md).
 
 ## Automationsprompts
 
