@@ -1,5 +1,13 @@
 # Änderungsverlauf
 
+## 0.18.0 – 2026-07-27
+
+- CodeRabbit für automatische Einheiten zum verpflichtenden harten Gate gemacht
+- ungelöste und auch veraltete CodeRabbit-Threads sowie dokumentierte Dissense als Mergeblocker verankert
+- Reparaturfenster auf frühestens 20:00 Uhr Europe/Berlin am PR-Erstellungstag verschoben und starre Zwei-Fehler-Grenze entfernt
+- deterministische Zeit- und Reparaturentscheidung samt Regressionstests ergänzt
+- reproduzierbares, gepinntes Remark-lint für geänderte Markdown-Dateien als blockierenden CI-Check eingeführt
+- Reparaturprompt um aktuelle Evidenzrecherche, Thread-Matrix, sichere Stagingregeln und inkrementelle Re-Reviews gehärtet
 
 ## 0.16.0 – 2026-07-23
 

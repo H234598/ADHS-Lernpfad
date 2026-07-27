@@ -1,21 +1,21 @@
 {
   "schema_version": "1.0.0",
-  "description": "Geschützte Präfixe vor der additiven Recovery-Integration aus Issue #34.",
+  "description": "Vollständige geschützte Automationsprompts nach Einführung von CodeRabbit-Hard-Gate, Remark-lint und verzögertem Reparaturfenster.",
   "prompts": [
     {
       "path": "prompts/AUTOMATION-PROMPT.md",
-      "protected_prefix_bytes": 7334,
-      "sha256": "8becd02967ef6b7f3ea18ff4f1aedef647a8c5bf5c14affc24f51ac086ae8ca4"
+      "protected_prefix_bytes": 14813,
+      "sha256": "dadad3754d0d340a49a988c605e6ed3cbeb305e555da035a35a9780bda0e67b8"
     },
     {
       "path": "prompts/PR-REPAIR-PROMPT.md",
-      "protected_prefix_bytes": 4106,
-      "sha256": "0efa532a109f52d92d1b003aa162569a2365579c6154d052be242cb660455749"
+      "protected_prefix_bytes": 10411,
+      "sha256": "d7420f691c4dfeef94199d8050e9814aee30f33b0e16f86fbfedae076820ef44"
     },
     {
       "path": "prompts/MERGE-AUTOMATION-PROMPT.md",
-      "protected_prefix_bytes": 6436,
-      "sha256": "8b3d961ad01d6f09bb7c1e6e2a79662c924c1eed59e666026fc27f2b83bbd6b9"
+      "protected_prefix_bytes": 10922,
+      "sha256": "0648c700b47d91ea0e929f8c1f6fcc76343568d9d8280c72e8d64f0b8bdebdd0"
     }
   ]
 }

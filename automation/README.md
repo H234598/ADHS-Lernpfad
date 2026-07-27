@@ -350,3 +350,9 @@ Die Tests decken unter anderem ab:
   Schreibberechtigungs-Fallback;
 - Prompt-Golden-Prefixe;
 - Graph-, Export-, Browser- und No-JavaScript-Integration.
+
+## Hartes Review-Gate und verzögertes Reparaturfenster
+
+Die verbindliche Merge- und Reparaturpolicy ist unter [[automation/MERGE-REPAIR-POLICY|Merge- und Reparaturpolicy]] dokumentiert. `scripts/merge_repair_policy.py` berechnet die Fristen in `Europe/Berlin`; `scripts/review_gate.py` prüft das CodeRabbit-Signal des aktuellen Heads, ungelöste Threads und dokumentierte Dissense.
+
+Review- und Lintberichte werden als strukturierte Artefakte registriert. Ein fehlendes CodeRabbit-Signal, ein ungelöster Thread, ein offener Dissens oder ein roter Remark-lint-Check blockiert die Statusphasen `ready_for_review` und `merge`.
