@@ -1,0 +1,66 @@
+name: Regenerate unit 15 literature
+
+on:
+  push:
+    branches:
+      - agent/einheit-15-parkinson-adhs-grenzen-vergleiche
+    paths:
+      - 02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md
+      - references/Carr2024.md
+      - references/Baiamonte2026.md
+      - .github/workflows/regenerate-unit15-literature.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: regenerate-unit15-literature
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-15-parkinson-adhs-grenzen-vergleiche
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements-docs.txt
+            requirements-export.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -r requirements-docs.txt -r requirements-export.txt
+          python -m pip check
+
+      - name: Regenerate and validate
+        run: |
+          python scripts/build_literature.py
+          python scripts/validate_links.py
+          python scripts/build_graph.py
+          python scripts/validate_graph.py
+          python scripts/validate_compendium.py
+          python scripts/build_combined.py
+          python scripts/build_anki.py
+          python scripts/build_docs.py
+          mkdocs build --strict
+          git diff --check
+
+      - name: Commit generated literature and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Literatur.md references.bib references.json
+          git rm .github/workflows/regenerate-unit15-literature.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "docs: synchronisiere Literatur für aktuelle Langzeitrisiko-Evidenz"
+          git push origin HEAD:agent/einheit-15-parkinson-adhs-grenzen-vergleiche
