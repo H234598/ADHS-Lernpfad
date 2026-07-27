@@ -74,6 +74,7 @@ Lokal beziehungsweise im Reparaturzyklus:
 
 ```bash
 npm ci
+npm run audit:dependencies
 REMARK_BASE_SHA="origin/main" REMARK_HEAD_SHA="HEAD" \
   npm run lint:markdown:changed
 ```
