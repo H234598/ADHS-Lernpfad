@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 
-import {existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
-import {dirname, relative, resolve, sep} from 'node:path'
+import {existsSync, readFileSync} from 'node:fs'
+import {relative, resolve, sep} from 'node:path'
 import {spawnSync} from 'node:child_process'
+import {remark} from 'remark'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkGfm from 'remark-gfm'
+import remarkPresetLintRecommended from 'remark-preset-lint-recommended'
 
 const ROOT = resolve(import.meta.dirname, '..')
-const SANITIZED_ROOT = resolve(ROOT, 'build', 'remark-lint', 'sanitized')
 const EXCLUDED_PARTS = new Set(['.git', 'build', 'site', 'node_modules', '__pycache__'])
 const FENCE_RE = /^\s*(```+|~~~+)/
 const WIKILINK_RE = /\[\[([\s\S]*?)\]\]/g
@@ -147,23 +150,11 @@ function sanitizeObsidianMarkdown(content) {
   return output.join('')
 }
 
-function sanitizedCopies(files) {
-  rmSync(SANITIZED_ROOT, {recursive: true, force: true})
-  const result = []
-  for (const input of files) {
-    const repoRelative = safeRelativePath(input)
-    const source = resolve(ROOT, repoRelative)
-    if (!existsSync(source)) continue
-    const destination = resolve(SANITIZED_ROOT, repoRelative)
-    mkdirSync(dirname(destination), {recursive: true})
-    writeFileSync(
-      destination,
-      sanitizeObsidianMarkdown(readFileSync(source, 'utf8')),
-      'utf8',
-    )
-    result.push(relative(ROOT, destination).split(sep).join('/'))
-  }
-  return result
+function formatMessage(path, message) {
+  const line = message.line || message.place?.start?.line || 1
+  const column = message.column || message.place?.start?.column || 1
+  const rule = [message.source, message.ruleId].filter(Boolean).join(':')
+  return `${path}:${line}:${column} ${message.reason}${rule ? ` [${rule}]` : ''}`
 }
 
 const explicit = requestedFiles()
@@ -181,11 +172,35 @@ if (sourceFiles.length === 0) {
 console.log(`Remark-lint (${mode}): ${sourceFiles.length} Datei(en)`)
 for (const file of sourceFiles) console.log(`- ${file}`)
 
-const lintFiles = sanitizedCopies(sourceFiles)
-const binary = resolve(ROOT, 'node_modules', '.bin', process.platform === 'win32' ? 'remark.cmd' : 'remark')
-const result = spawnSync(binary, ['--frail', '--no-stdout', ...lintFiles], {
-  cwd: ROOT,
-  stdio: 'inherit',
-})
-rmSync(SANITIZED_ROOT, {recursive: true, force: true})
-process.exit(result.status ?? 1)
+const processor = remark()
+  .use(remarkFrontmatter)
+  .use(remarkGfm)
+  .use(remarkPresetLintRecommended)
+  .freeze()
+
+let issueCount = 0
+for (const path of sourceFiles) {
+  try {
+    const file = await processor.process({
+      path,
+      value: sanitizeObsidianMarkdown(readFileSync(resolve(ROOT, path), 'utf8')),
+    })
+    if (file.messages.length === 0) {
+      console.log(`${path}: no issues found`)
+      continue
+    }
+    for (const message of file.messages) {
+      console.error(formatMessage(path, message))
+      issueCount += 1
+    }
+  } catch (error) {
+    console.error(`${path}: Remark-Verarbeitung fehlgeschlagen: ${error.stack || error}`)
+    issueCount += 1
+  }
+}
+
+if (issueCount > 0) {
+  console.error(`Remark-lint: ${issueCount} blockierende Meldung(en).`)
+  process.exit(1)
+}
+console.log('Remark-lint: alle geprüften Dateien sind sauber.')
