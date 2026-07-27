@@ -53,7 +53,7 @@ class ReviewGateTests(unittest.TestCase):
         )
         self.assertEqual(state, "success")
         self.assertEqual(unresolved, ["thread-1"])
-        self.assertTrue(any("outdated" in reason for reason in reasons))
+        self.assertTrue(any("veraltete Threads" in reason for reason in reasons))
         self.assertFalse(disagreement)
 
     def test_non_coderabbit_thread_does_not_block_gate(self) -> None:
