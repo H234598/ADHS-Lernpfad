@@ -85,6 +85,7 @@ Vor einem Inhalts-PR beziehungsweise nach einer Reparatur müssen die geänderte
 
 ```bash
 npm ci
+npm run audit:dependencies
 REMARK_BASE_SHA=origin/main REMARK_HEAD_SHA=HEAD \
   npm run lint:markdown:changed
 ```
