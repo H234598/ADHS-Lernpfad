@@ -55,7 +55,12 @@ class MergeRepairPolicyTests(unittest.TestCase):
         self.assertEqual(result.action, "repair_existing_branch")
         self.assertTrue(result.repair_allowed)
 
-    def test_missing_coderabbit_is_hard_blocker(self) -> None:
+    def test_red_ci_after_deadline_repairs_even_if_coderabbit_is_pending(self) -> None:
+        result = self.evaluate(21, coderabbit_state="pending")
+        self.assertEqual(result.action, "repair_existing_branch")
+        self.assertTrue(result.repair_allowed)
+
+    def test_missing_coderabbit_is_hard_blocker_when_ci_is_green(self) -> None:
         result = self.evaluate(21, ci_state="success", coderabbit_state="missing")
         self.assertEqual(result.action, "wait_coderabbit")
         self.assertTrue(result.hard_blocker)
@@ -67,6 +72,17 @@ class MergeRepairPolicyTests(unittest.TestCase):
         self.assertFalse(early.repair_allowed)
         self.assertEqual(late.action, "repair_existing_branch")
         self.assertTrue(late.repair_allowed)
+
+    def test_red_second_ci_repairs_after_deadline_despite_pending_review(self) -> None:
+        result = self.evaluate(
+            21,
+            ci_state="success",
+            coderabbit_state="pending",
+            draft=False,
+            second_ci_state="failure",
+        )
+        self.assertEqual(result.action, "repair_existing_branch")
+        self.assertTrue(result.repair_allowed)
 
     def test_disagreement_is_manual_hard_blocker(self) -> None:
         result = self.evaluate(21, ci_state="success", disagreement=True)
