@@ -14,6 +14,10 @@ Automatische Einheiten dürfen nur freigegeben und gemergt werden, wenn alle Pr�
 
 CodeRabbit ist ein hartes Gate. Schweigen, ausstehende Prüfung, Limiterschöpfung oder ein fehlendes Signal werden nicht als Zustimmung interpretiert.
 
+## Durchsetzung
+
+Der Merge-Wächter behandelt die genannten Checks als nicht umgehbare Voraussetzungen und führt ohne sie weder `Ready for review` noch einen automatischen Merge aus. Die Workflows liefern dafür stabile Checknamen, die zusätzlich in einem GitHub-Ruleset als erforderliche Statuschecks eingetragen werden können. Ein administrativer manueller Bypass der Repositoryregeln liegt außerhalb der Agentenautomation und wird von ihr weder verwendet noch empfohlen.
+
 ## Zeitmodell
 
 Für einen PR mit Erstellungszeit `created_at` gelten in `Europe/Berlin`:
