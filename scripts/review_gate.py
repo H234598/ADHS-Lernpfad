@@ -231,8 +231,18 @@ def evaluate_gate(
 
     reasons: list[str] = []
     states = [signal.get("state", "missing").casefold() for signal in signals]
-    successful = {"success", "neutral", "skipped"}
-    pending = {"", "missing", "pending", "queued", "in_progress", "requested", "waiting"}
+    successful = {"success"}
+    pending = {
+        "",
+        "missing",
+        "pending",
+        "queued",
+        "in_progress",
+        "requested",
+        "waiting",
+        "neutral",
+        "skipped",
+    }
     if not signals:
         coderabbit_state = "missing"
         reasons.append("Kein CodeRabbit-Signal für den aktuellen Head vorhanden.")
