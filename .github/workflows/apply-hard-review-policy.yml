@@ -1,0 +1,39 @@
+name: Apply hard review policy
+
+on:
+  push:
+    branches: [feat/hard-review-repair-policy]
+    paths:
+      - '.policy-bootstrap/**'
+      - '.github/workflows/apply-hard-review-policy.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-hard-review-policy
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout policy branch
+        uses: actions/checkout@v7
+        with:
+          ref: feat/hard-review-repair-policy
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Finalize, validate, commit, and push policy
+        run: python .policy-bootstrap/apply.py
