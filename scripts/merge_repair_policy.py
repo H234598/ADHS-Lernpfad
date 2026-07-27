@@ -93,7 +93,8 @@ def evaluate_policy(
     if disagreement:
         return decision(
             "manual_intervention",
-            "Agent und CodeRabbit sind fachlich oder technisch nicht zu einer belastbaren Einigung gekommen.",
+            "Agent und CodeRabbit sind fachlich oder technisch nicht zu einer "
+            "belastbaren Einigung gekommen.",
             blocker=True,
             repair=False,
         )
@@ -109,7 +110,8 @@ def evaluate_policy(
     if repairable_failure and local_now < repair_at:
         return decision(
             "wait_until_repair_window",
-            "CI oder Review ist rot; vor dem Reparaturfenster wird noch kein Reparaturzyklus gestartet.",
+            "CI oder Review ist rot; vor dem Reparaturfenster wird noch kein "
+            "Reparaturzyklus gestartet.",
             blocker=review_failed,
             repair=False,
         )
@@ -117,12 +119,13 @@ def evaluate_policy(
     if repairable_failure:
         return decision(
             "repair_existing_branch",
-            "Nach Beginn des Reparaturfensters ist ein sicherer Zyklus auf dem bestehenden PR-Branch erforderlich.",
+            "Nach Beginn des Reparaturfensters ist ein sicherer Zyklus auf dem "
+            "bestehenden PR-Branch erforderlich.",
             blocker=review_failed,
             repair=True,
         )
 
-    if coderabbit_state in {"missing", "pending"}:
+    if coderabbit_state != "success":
         return decision(
             "wait_coderabbit",
             "Eine erfolgreiche CodeRabbit-Prüfung des aktuellen Heads fehlt noch.",
@@ -130,15 +133,7 @@ def evaluate_policy(
             repair=False,
         )
 
-    if coderabbit_state != "success" or unresolved_threads:
-        return decision(
-            "hard_block_review",
-            "Das verpflichtende CodeRabbit-Gate ist nicht vollständig grün.",
-            blocker=True,
-            repair=False,
-        )
-
-    if ci_state in {"missing", "pending"}:
+    if ci_state != "success":
         return decision(
             "wait_ci",
             "Die CI des aktuellen Heads fehlt oder läuft noch.",
@@ -146,18 +141,11 @@ def evaluate_policy(
             repair=False,
         )
 
-    if ci_state != "success":
-        return decision(
-            "wait_ci",
-            "Die erste CI ist nicht vollständig erfolgreich.",
-            blocker=False,
-            repair=False,
-        )
-
     if draft:
         return decision(
             "ready_for_review",
-            "Erste CI und CodeRabbit-Gate sind grün; der Draft darf umgewandelt, aber noch nicht gemergt werden.",
+            "Erste CI und CodeRabbit-Gate sind grün; der Draft darf umgewandelt, "
+            "aber noch nicht gemergt werden.",
             blocker=False,
             repair=False,
         )
@@ -172,7 +160,8 @@ def evaluate_policy(
 
     return decision(
         "merge",
-        "Zweite CI, Remark-lint und verpflichtendes CodeRabbit-Gate sind vollständig grün.",
+        "Zweite CI, Remark-lint und verpflichtendes CodeRabbit-Gate sind "
+        "vollständig grün.",
         blocker=False,
         repair=False,
     )
