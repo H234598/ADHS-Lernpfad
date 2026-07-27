@@ -51,6 +51,20 @@ class ReviewGateTests(unittest.TestCase):
         self.assertTrue(any("läuft noch" in reason for reason in reasons))
         self.assertFalse(disagreement)
 
+    def test_neutral_and_skipped_signals_do_not_pass(self) -> None:
+        for signal_state in ("neutral", "skipped"):
+            with self.subTest(state=signal_state):
+                state, unresolved, reasons, disagreement = evaluate_gate(
+                    signals=[{"name": "CodeRabbit", "state": signal_state}],
+                    threads=[],
+                    comments=[],
+                    head_sha=HEAD,
+                )
+                self.assertEqual(state, "pending")
+                self.assertEqual(unresolved, [])
+                self.assertTrue(any("läuft noch" in reason for reason in reasons))
+                self.assertFalse(disagreement)
+
     def test_failure_takes_precedence_over_pending_signal(self) -> None:
         state, unresolved, reasons, disagreement = evaluate_gate(
             signals=[
