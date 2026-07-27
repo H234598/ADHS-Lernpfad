@@ -41,6 +41,7 @@ files = [
     "CONTRIBUTING.md",
     "CHANGELOG.md",
     "automation/README.md",
+    "automation/MERGE-REPAIR-POLICY.md",
     ".github/README.md",
     "references/README.md",
     "knowledge-graph/README.md",
