@@ -3,11 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from review_gate import evaluate_gate, is_coderabbit_signal
+from review_gate import _latest_coderabbit_signals, evaluate_gate, is_coderabbit_signal
 
 HEAD = "a" * 40
 OLD_HEAD = "b" * 40
@@ -37,6 +38,70 @@ class ReviewGateTests(unittest.TestCase):
         self.assertFalse(
             is_coderabbit_signal("CodeRabbit review gate (blocking)", "GitHub Actions")
         )
+
+    def test_in_progress_signal_is_pending_not_failure(self) -> None:
+        state, unresolved, reasons, disagreement = evaluate_gate(
+            signals=[{"name": "CodeRabbit", "state": "in_progress"}],
+            threads=[],
+            comments=[],
+            head_sha=HEAD,
+        )
+        self.assertEqual(state, "pending")
+        self.assertEqual(unresolved, [])
+        self.assertTrue(any("läuft noch" in reason for reason in reasons))
+        self.assertFalse(disagreement)
+
+    def test_failure_takes_precedence_over_pending_signal(self) -> None:
+        state, unresolved, reasons, disagreement = evaluate_gate(
+            signals=[
+                {"name": "CodeRabbit", "state": "queued"},
+                {"name": "CodeRabbit review", "state": "failure"},
+            ],
+            threads=[],
+            comments=[],
+            head_sha=HEAD,
+        )
+        self.assertEqual(state, "failure")
+        self.assertEqual(unresolved, [])
+        self.assertTrue(any("fehlgeschlagen" in reason for reason in reasons))
+        self.assertFalse(disagreement)
+
+    def test_check_runs_are_paginated_before_signal_selection(self) -> None:
+        def fake_request(url: str, token: str, *, data=None):
+            del token, data
+            if url.endswith("/status"):
+                return {"statuses": []}
+            if "page=1" in url:
+                return {
+                    "check_runs": [
+                        {
+                            "name": f"unrelated-{index}",
+                            "app": {"name": "GitHub Actions"},
+                        }
+                        for index in range(100)
+                    ]
+                }
+            if "page=2" in url:
+                return {
+                    "check_runs": [
+                        {
+                            "name": "CodeRabbit",
+                            "app": {"name": "coderabbitai"},
+                            "status": "completed",
+                            "conclusion": "success",
+                            "completed_at": "2026-07-27T20:00:00Z",
+                            "html_url": "https://example.invalid/check",
+                        }
+                    ]
+                }
+            raise AssertionError(f"Unerwartete URL: {url}")
+
+        with patch("review_gate._request_json", side_effect=fake_request):
+            signals = _latest_coderabbit_signals("owner/repo", HEAD, "token")
+
+        self.assertEqual(len(signals), 1)
+        self.assertEqual(signals[0]["state"], "success")
+        self.assertIn("CodeRabbit", signals[0]["name"])
 
     def test_success_requires_signal_and_no_open_threads(self) -> None:
         state, unresolved, reasons, disagreement = evaluate_gate(
