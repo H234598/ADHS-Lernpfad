@@ -10,10 +10,10 @@ prerequisites:
   - 01-Grundlagen/10-Genetik-und-Umwelt
   - 02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung
 tags: [ADHS, Parkinson, Neuroentwicklung, Neurodegeneration, Dopamin, Differentialdiagnostik, Lebensspanne]
-last_reviewed: 2026-07-25
+last_reviewed: 2026-07-27
 evidence: high
 status: consensus
-references: [Faraone2021, Bloem2021, Becker2023, Dobrosavljevic2020]
+references: [Faraone2021, Bloem2021, Becker2023, Carr2024, Baiamonte2026, Dobrosavljevic2020]
 minimum_reading_minutes: 10
 maximum_reading_minutes: 20
 ---
@@ -75,9 +75,15 @@ Mechanistische Forschung wird problematisch, wenn ein gemeinsamer Begriff ohne Z
 
 ## 4. Bedeutet ADHS ein erhöhtes Parkinson- oder Demenzrisiko?
 
-Einige Register- und Krankenaktenstudien berichteten Zusammenhänge zwischen einer ADHS-Diagnose und später dokumentierten neurodegenerativen Erkrankungen. Diese Beobachtungen haben verständlicherweise Aufmerksamkeit erzeugt. Sie beweisen aber weder, dass ADHS Parkinson verursacht, noch dass eine betroffene Person wahrscheinlich erkranken wird.
+Einige Register- und Krankenaktenstudien berichteten Zusammenhänge zwischen einer ADHS-Diagnose und später dokumentierten neurodegenerativen oder neurokognitiven Erkrankungen. Diese Beobachtungen haben verständlicherweise Aufmerksamkeit erzeugt. Sie beweisen aber weder, dass ADHS Parkinson verursacht, noch dass eine betroffene Person wahrscheinlich erkranken wird.
 
-Eine systematische Übersicht von Becker und Kolleg:innen aus dem Jahr 2023 fand nur sieben geeignete Beobachtungsstudien zu ADHS und späteren neurodegenerativen oder neurokognitiven Diagnosen. Die untersuchten Endpunkte waren sehr unterschiedlich: Demenz insgesamt, Alzheimer-Erkrankung, Parkinson- oder Lewy-Körper-Erkrankungen, vaskuläre Demenz und leichte kognitive Beeinträchtigung. Wegen der methodischen Heterogenität war keine gemeinsame Meta-Analyse sinnvoll. Die Autor:innen bewerteten die Literatur als begrenzt und betonten, dass Größe und Mechanismus eines möglichen direkten Effekts ungeklärt bleiben.
+Die systematische Übersicht von Becker und Kolleg:innen aus dem Jahr 2023 identifizierte sieben geeignete Beobachtungsstudien zu ADHS und späteren neurodegenerativen oder neurokognitiven Diagnosen. Die Endpunkte reichten von Demenz insgesamt über Alzheimer- und Lewy-Körper-Erkrankungen bis zu Parkinson, vaskulärer Demenz und leichter kognitiver Beeinträchtigung. Wegen der starken methodischen Heterogenität war keine gemeinsame Meta-Analyse sinnvoll. Diese Übersicht bleibt besonders wichtig für die breite Frage nach verschiedenen Diagnosen, liefert aber keinen belastbaren gepoolten Parkinson-Risikowert.
+
+Eine umfassendere systematische Übersicht von Carr und Kolleg:innen aus dem Jahr 2024 schloss 16 Studien ein. Sieben berichteten positive Zusammenhänge mit mindestens einem neurokognitiven Endpunkt, vier fanden keinen Zusammenhang, und fünf untersuchten mögliche Mechanismen. Die Autor:innen bewerteten die Evidenzbasis weiterhin als begrenzt und die absolute Risikoerhöhung als klein. Auch diese Übersicht bündelte unterschiedliche neurokognitive Endpunkte und erlaubt keine kausale oder Parkinson-spezifische Schlussfolgerung.
+
+Eine 2026 veröffentlichte systematische Übersicht und Meta-Analyse von Baiamonte und Kolleg:innen fokussierte enger auf Demenz. Vier Kohortenstudien mit insgesamt 3.703.877 Personen gingen in die Meta-Analyse zur **Demenz aller Ursachen** ein. Der gepoolte Hazard-Ratio betrug 2,52 bei einem 95-Prozent-Konfidenzintervall von 1,51 bis 4,22. Die statistische Heterogenität war mit I² = 87,7 Prozent jedoch sehr hoch, und eine einzelne Studie beeinflusste den Gesamtschätzer deutlich. Für Alzheimer-Erkrankung, vaskuläre Demenz und Lewy-Körper-Demenz waren zu wenige vergleichbare Studien vorhanden, um belastbare gepoolte Schätzungen zu berechnen.
+
+Diese neuere Meta-Analyse verschiebt die Einordnung, aber nicht bis zu einem Kausalbeweis: Es gibt nun einen quantitativen Gruppenbefund für eine Assoziation mit Demenz aller Ursachen. Der Schätzer ist ein **relatives** Maß und keine absolute persönliche Wahrscheinlichkeit. Er sagt zudem nichts Belastbares über das spätere Auftreten der Parkinson-Erkrankung aus. Parkinson-spezifische Evidenz bleibt deutlich dünner und muss getrennt von Demenz aller Ursachen beurteilt werden.
 
 Mehrere Verzerrungen sind möglich:
 
@@ -86,11 +92,12 @@ Mehrere Verzerrungen sind möglich:
 3. **Komorbiditäten:** Depression, Substanzgebrauch, Schlafstörungen, kardiovaskuläre Risiken oder andere Faktoren können mit ADHS und späteren Gesundheitsproblemen zusammenhängen.
 4. **Medikamenten- und Indikationsverzerrung:** Ein Zusammenhang mit verschriebenen Stimulanzien kann durch Schweregrad, Behandlungszugang und Begleiterkrankungen beeinflusst sein. Verordnete Stimulanzien dürfen nicht mit hochdosiertem illegalem Stimulanzienkonsum gleichgesetzt werden.
 5. **Umgekehrte oder überlappende Erklärung:** Frühe unspezifische Beschwerden einer späteren Erkrankung könnten rückblickend als ADHS interpretiert werden; zugleich kann echtes lebenslanges ADHS im Alter fälschlich als beginnende Neurodegeneration erscheinen.
+6. **Unterschiedliche Endpunkte und Basisrisiken:** „Demenz aller Ursachen“, einzelne Demenzformen und Parkinson sind keine austauschbaren Endpunkte. Ein relatives Risiko lässt sich ohne das jeweilige Ausgangsrisiko nicht in eine persönliche Wahrscheinlichkeit übersetzen.
 
 > [!important] Assoziation ist keine persönliche Prognose
-> Die bisherige Literatur rechtfertigt nicht die Aussage „ADHS führt zu Parkinson“ und erlaubt keine individuelle Risikoberechnung. Sie begründet weitere Forschung und eine sorgfältige Differentialdiagnostik, nicht Alarmismus.
+> Die aktuelle Literatur unterstützt einen Gruppenbefund für eine Assoziation zwischen ADHS und Demenz aller Ursachen. Sie rechtfertigt weder die Aussage „ADHS führt zu Parkinson“ noch eine individuelle Risikoberechnung. Sie begründet weitere Forschung und eine sorgfältige Differentialdiagnostik, nicht Alarmismus.
 
-Für die Praxis ist deshalb ein ausgewogener Satz angemessen: Mögliche Langzeitassoziationen werden untersucht, die Evidenz ist aber zu begrenzt und zu anfällig für Konfundierung, um daraus einen gesicherten kausalen Pfad abzuleiten.
+Für die Praxis ist deshalb ein ausgewogener Satz angemessen: Ein Zusammenhang mit Demenz aller Ursachen wird inzwischen durch eine Meta-Analyse gestützt, bleibt aber beobachtungsbasiert, heterogen und kausal ungeklärt. Für einzelne Demenzformen und insbesondere für Parkinson sind die Daten wesentlich unsicherer.
 
 ## 5. Differentialdiagnostik im höheren Lebensalter
 
@@ -132,9 +139,9 @@ Beispiel: „Eine Gruppe zeigt langsamere Reaktionen“ ist eine Beobachtung. Da
 
 **Konsens:** ADHS und Parkinson sind unterschiedliche Erkrankungsklassen. ADHS beginnt als Neuroentwicklungsstörung; Parkinson ist neurodegenerativ. Dopamin und frontostriatale Netzwerke sind in beiden Forschungsfeldern relevant, aber nicht auf dieselbe Weise.
 
-**Wahrscheinlich:** Eng formulierte Vergleiche zu Handlungssteuerung, Motivation und Basalganglienfunktionen können allgemeine neurobiologische Prinzipien verdeutlichen. Im höheren Lebensalter ist eine sorgfältige Verlaufserhebung wichtig, weil ADHS-Symptome, Depression, Schlafprobleme, Medikamenteneffekte und neurokognitive Erkrankungen sich teilweise ähneln können.
+**Wahrscheinlich:** Eng formulierte Vergleiche zu Handlungssteuerung, Motivation und Basalganglienfunktionen können allgemeine neurobiologische Prinzipien verdeutlichen. Im höheren Lebensalter ist eine sorgfältige Verlaufserhebung wichtig, weil ADHS-Symptome, Depression, Schlafprobleme, Medikamenteneffekte und neurokognitive Erkrankungen sich teilweise ähneln können. Beobachtungsdaten und eine aktuelle Meta-Analyse stützen eine Assoziation zwischen ADHS und Demenz aller Ursachen auf Gruppenebene.
 
-**Umstritten:** Ob ADHS unabhängig und kausal das Risiko bestimmter neurodegenerativer Erkrankungen erhöht, wie groß ein möglicher Effekt wäre und welche Rolle Komorbiditäten oder Behandlung spielen. Die vorhandenen Beobachtungsstudien sind heterogen und erlauben keine sichere Individualprognose.
+**Umstritten:** Ob dieser Zusammenhang unabhängig und kausal ist, wie groß die absolute Risikoerhöhung ausfällt und welche Rolle Komorbiditäten oder Behandlung spielen. Für einzelne Demenzformen und die Parkinson-Erkrankung ist die Evidenz wesentlich dünner als für Demenz aller Ursachen. Eine sichere Individualprognose ist nicht möglich.
 
 **Experimentell:** Biomarker oder kombinierte genetische, bildgebende und digitale Modelle, die bei einer Einzelperson zwischen lebenslangem ADHS, normalem Altern und früher Neurodegeneration unterscheiden. Solche Verfahren sind derzeit kein Ersatz für klinische Diagnostik.
 
@@ -145,7 +152,7 @@ Beispiel: „Eine Gruppe zeigt langsamere Reaktionen“ ist eine Beobachtung. Da
 <details>
 <summary>Antwort</summary>
 
-Weil ADHS und Parkinson unterschiedliche Erkrankungsklassen, Zeitverläufe und Pathophysiologien haben. Dopamin wirkt in mehreren Netzwerken und erfüllt unterschiedliche Funktionen. Ein gemeinsamer Botenstoff oder eine ähnliche Testauffälligkeit beweist weder identische Ursache noch gleiche Behandlung oder einen zwangsläufigen Übergang von ADHS zu Parkinson.
+Weil ADHS und Parkinson unterschiedliche Erkrankungsklassen, Zeitverläufe und Pathophysiologien haben. Dopamin wirkt in mehreren Netzwerken und erfüllt unterschiedliche Funktionen. Ein gemeinsamer Botenstoff oder eine ähnliche Testauffälligkeit beweist weder identische Ursache noch gleiche Behandlung oder einen zwangsläufigen Übergang von ADHS zu Parkinson. Auch ein Gruppenbefund zu Demenz aller Ursachen ist kein Nachweis eines Parkinson-Risikos bei einer einzelnen Person.
 
 </details>
 
@@ -157,11 +164,15 @@ Weil ADHS und Parkinson unterschiedliche Erkrankungsklassen, Zeitverläufe und P
 
 [[references/Becker2023|Becker et al. 2023]] – systematische Übersicht zu Beobachtungsstudien über ADHS und spätere neurodegenerative beziehungsweise neurokognitive Diagnosen; betont die begrenzte und heterogene Evidenz.
 
+[[references/Carr2024|Carr et al. 2024]] – systematische Übersicht von 16 Studien zu ADHS als möglichem Risikofaktor für Demenz und andere neurokognitive Störungen; betont begrenzte Evidenz und kleine absolute Risiken.
+
+[[references/Baiamonte2026|Baiamonte et al. 2026]] – systematische Übersicht und Meta-Analyse zur Assoziation zwischen ADHS und Demenz aller Ursachen; keine belastbare quantitative Aussage zur Parkinson-Erkrankung.
+
 [[references/Dobrosavljevic2020|Dobrosavljevic et al. 2020]] – systematische Übersicht und Meta-Analyse zur Prävalenz von ADHS bei älteren Erwachsenen und zu starken Unterschieden zwischen Erhebungsmethoden.
 
 ## Merksatz
 
-> Gemeinsame Forschungsbegriffe sind keine gemeinsame Krankheit: ADHS ist neuroentwicklungsbezogen, Parkinson neurodegenerativ, und mögliche Langzeitassoziationen sind bislang keine kausale oder persönliche Prognose.
+> Gemeinsame Forschungsbegriffe sind keine gemeinsame Krankheit: ADHS ist neuroentwicklungsbezogen, Parkinson neurodegenerativ, und beobachtete Langzeitassoziationen sind weder ein Kausalbeweis noch eine persönliche Prognose.
 
 ## Navigation
 
