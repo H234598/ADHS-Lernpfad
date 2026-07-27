@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - name: Download and print tail of cancelled validation job
+      - name: Download and print cancellation evidence
         env:
           GH_TOKEN: ${{ github.token }}
           JOB_ID: '90125492492'
@@ -27,11 +27,12 @@ jobs:
             -H 'Accept: application/vnd.github+json' \
             -H 'X-GitHub-Api-Version: 2022-11-28' \
             "$url" -o /tmp/job-logs.bin
-          file /tmp/job-logs.bin
           if unzip -t /tmp/job-logs.bin >/dev/null 2>&1; then
             unzip -p /tmp/job-logs.bin > /tmp/job-logs.txt
           else
             cp /tmp/job-logs.bin /tmp/job-logs.txt
           fi
-          echo '--- last 200 lines of cancelled job ---'
-          tail -n 200 /tmp/job-logs.txt
+          echo '--- cancellation/error markers ---'
+          grep -Ei 'cancel|timed out|timeout|signal|error|playwright|chromium' /tmp/job-logs.txt | tail -n 40 || true
+          echo '--- final 45 lines ---'
+          tail -n 45 /tmp/job-logs.txt
