@@ -1,23 +1,5 @@
 # Änderungsverlauf
 
-## 0.18.0 – 2026-07-27
-
-- CodeRabbit für automatische Einheiten zum verpflichtenden harten Gate gemacht
-- ungelöste und auch veraltete CodeRabbit-Threads sowie dokumentierte Dissense als Mergeblocker verankert
-- Reparaturfenster auf frühestens 20:00 Uhr Europe/Berlin am PR-Erstellungstag verschoben und starre Zwei-Fehler-Grenze entfernt
-- deterministische Zeit- und Reparaturentscheidung samt Regressionstests ergänzt
-- reproduzierbares, gepinntes Remark-lint für geänderte Markdown-Dateien als blockierenden CI-Check eingeführt
-- Reparaturprompt um aktuelle Evidenzrecherche, Thread-Matrix, sichere Stagingregeln und inkrementelle Re-Reviews gehärtet
-- CodeRabbit-Checkpagination, Pending-Zustände, Abhängigkeitsaudit und exakte Reparaturfensterdarstellung nach Review zusätzlich abgesichert
-- einmalige Review-Helfer und temporäre Trigger vor dem finalen Merge vollständig aus dem Diff entfernt
-
-## 0.17.0 – 2026-07-25
-
-- Einheit 15 „Parkinson, ADHS und mechanistische Vergleiche“ ergänzt
-- Neuroentwicklung und Neurodegeneration sowie unterschiedliche Rollen dopaminerger Systeme klar voneinander abgegrenzt
-- unsichere Beobachtungsbefunde zu möglichen späteren neurodegenerativen Diagnosen ohne kausale oder individuelle Prognose eingeordnet
-- drei strukturierte Studienkarten, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung aktualisiert
-- versehentlich verkürzte Index-, Glossar- und Anki-Dateien vollständig aus `main` wiederhergestellt
 
 ## 0.16.0 – 2026-07-23
 
