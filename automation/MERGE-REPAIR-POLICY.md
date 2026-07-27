@@ -43,15 +43,16 @@ Betrifft ein Hinweis Aktualität, Risiko, Kausalität, Leitlinien oder das Revie
 
 ## Remark-lint
 
-Markdown wird mit exakt gepinnten npm-Abhängigkeiten und `npm ci` geprüft. Auf Pull Requests werden die gegenüber `main` geänderten Markdown-Dateien mit `--frail` gelintet; jede Warnung blockiert den Check.
+Markdown wird über den exakt gepinnten direkten `remark`-Prozessor geprüft; die veraltete CLI-Abhängigkeitskette wird nicht verwendet. Der Lintlauf sanitisiert ausschließlich Obsidian-spezifische Wikilink-, Embed- und Callout-Syntax für den Parser, während die eigentliche interne Linkvalidierung unverändert durch die Projektvalidatoren erfolgt. Auf Pull Requests werden die gegenüber `main` geänderten Markdown-Dateien geprüft; jede Remark-lint-Meldung blockiert den Check. Zusätzlich muss das npm-Abhängigkeitsaudit ohne hohe oder kritische Befunde bestehen.
 
 ```bash
 npm ci
+npm run audit:dependencies
 REMARK_BASE_SHA=origin/main REMARK_HEAD_SHA=HEAD \
   npm run lint:markdown:changed
 ```
 
-Der Codacy-SARIF-Workflow bleibt eine zusätzliche Analyse. Sein erfolgreicher Upload ersetzt den lokalen blockierenden Remark-lint-Check nicht.
+Der Codacy-SARIF-Workflow bleibt eine zusätzliche Analyse. Sein erfolgreicher Upload ersetzt weder den blockierenden Remark-lint-Check noch das npm-Abhängigkeitsaudit.
 
 ## Reproduzierbare Policyentscheidung
 
