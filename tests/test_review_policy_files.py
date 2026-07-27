@@ -25,15 +25,18 @@ def test_repair_deadline_and_no_two_failure_cap_are_explicit() -> None:
     assert "keine starre Grenze von zwei roten CI-Läufen" in repair
 
 
-def test_remark_lint_is_pinned_and_blocking() -> None:
+def test_remark_lint_is_pinned_audited_and_blocking() -> None:
     package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
     dependencies = package["devDependencies"]
-    assert dependencies["remark-cli"] == "12.0.1"
+    assert dependencies["remark"] == "15.0.1"
+    assert "remark-cli" not in dependencies
     assert dependencies["remark-preset-lint-recommended"] == "7.0.1"
+    assert package["scripts"]["audit:dependencies"] == "npm audit --audit-level=high"
     assert package["scripts"]["lint:markdown:changed"]
     workflow = (ROOT / ".github/workflows/remark-lint.yml").read_text(encoding="utf-8")
     assert "Remark lint (blocking)" in workflow
     assert "npm ci" in workflow
+    assert "npm run audit:dependencies" in workflow
     assert "npm run lint:markdown:changed" in workflow
 
 
@@ -42,6 +45,7 @@ def test_remark_lint_sanitizes_project_specific_obsidian_syntax() -> None:
     assert "const WIKILINK_RE = /\\[\\[([\\s\\S]*?)\\]\\]/g" in script
     assert "const EMBED_RE = /!\\[\\[([\\s\\S]*?)\\]\\]/g" in script
     assert "sanitizeObsidianMarkdown" in script
+    assert "remarkPresetLintRecommended" in script
     assert "--files" in script
 
 
