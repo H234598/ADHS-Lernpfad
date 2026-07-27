@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from scripts import validate_prompt_baselines as baseline_validator
 from scripts.validate_prompt_baselines import EXPECTED_PROMPTS, validate_baselines
 
 
@@ -89,3 +90,19 @@ def test_validator_rejects_manifest_tampering(
     manifest.write_text(json.dumps(payload), encoding="utf-8")
 
     assert validate_baselines(tmp_path, manifest)
+
+
+def test_main_preserves_failure_when_report_writing_fails(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    not_a_directory = tmp_path / "not-a-directory"
+    not_a_directory.write_text("file", encoding="utf-8")
+    monkeypatch.setattr(baseline_validator, "ROOT", not_a_directory)
+    monkeypatch.setattr(baseline_validator, "validate_baselines", lambda: ["Testfehler"])
+
+    assert baseline_validator.main() == 1
+    captured = capsys.readouterr()
+    assert "Prompt-Schutzfehler: Testfehler" in captured.out
+    assert "Warnung: Prompt-Baseline-Bericht" in captured.err
