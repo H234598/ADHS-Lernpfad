@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 
-import {existsSync} from 'node:fs'
-import {resolve} from 'node:path'
+import {existsSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs'
+import {dirname, relative, resolve, sep} from 'node:path'
 import {spawnSync} from 'node:child_process'
 
 const ROOT = resolve(import.meta.dirname, '..')
+const SANITIZED_ROOT = resolve(ROOT, 'build', 'remark-lint', 'sanitized')
 const EXCLUDED_PARTS = new Set(['.git', 'build', 'site', 'node_modules', '__pycache__'])
+const FENCE_RE = /^\s*(```+|~~~+)/
+const WIKILINK_RE = /\[\[([^\]\n]+)\]\]/g
+const EMBED_RE = /!\[\[([^\]\n]+)\]\]/g
+const CALLOUT_RE = /^(\s*>\s*)\[!([A-Za-z0-9_-]+)\](.*)$/
 
 function git(args, {allowFailure = false} = {}) {
   const result = spawnSync('git', args, {
@@ -22,6 +27,20 @@ function git(args, {allowFailure = false} = {}) {
 
 function splitNull(value) {
   return value.split('\0').filter(Boolean)
+}
+
+function safeRelativePath(path) {
+  const absolute = resolve(ROOT, path)
+  const repoRelative = relative(ROOT, absolute)
+  if (
+    repoRelative === '' ||
+    repoRelative === '..' ||
+    repoRelative.startsWith(`..${sep}`) ||
+    repoRelative.split(sep).some((part) => EXCLUDED_PARTS.has(part))
+  ) {
+    throw new Error(`Unzulässiger Markdownpfad: ${path}`)
+  }
+  return repoRelative.split(sep).join('/')
 }
 
 function relevant(path) {
@@ -66,19 +85,92 @@ function allFiles() {
   return splitNull(git(['ls-files', '-z', '--', '*.md']).stdout).filter(relevant)
 }
 
-const mode = process.argv.includes('--all') ? 'all' : 'changed'
-const files = (mode === 'all' ? allFiles() : changedFiles()).filter((path) => existsSync(resolve(ROOT, path)))
-if (files.length === 0) {
+function requestedFiles() {
+  const index = process.argv.indexOf('--files')
+  if (index < 0) return null
+  const values = process.argv.slice(index + 1)
+  if (values.length === 0) throw new Error('--files benötigt mindestens einen Pfad')
+  return values.filter(relevant)
+}
+
+function visibleLabel(raw) {
+  const [targetPart, aliasPart] = raw.split('|', 2)
+  const target = targetPart.trim()
+  const alias = aliasPart?.trim()
+  if (alias) return alias
+  const heading = target.includes('#') ? target.split('#', 2)[1].trim() : ''
+  return heading || target || 'interner Link'
+}
+
+function sanitizeObsidianMarkdown(content) {
+  let fence = null
+  return content
+    .split(/(?<=\n)/)
+    .map((line) => {
+      const fenceMatch = line.match(FENCE_RE)
+      if (fenceMatch) {
+        const marker = fenceMatch[1][0]
+        fence = fence === null ? marker : fence === marker ? null : fence
+        return line
+      }
+      if (fence !== null) return line
+
+      const callout = line.match(CALLOUT_RE)
+      let sanitized = callout
+        ? `${callout[1]}**${callout[2]}**${callout[3]}`
+        : line
+      sanitized = sanitized.replace(
+        EMBED_RE,
+        (_match, raw) => `![${visibleLabel(raw)}](https://example.invalid/obsidian-embed)`,
+      )
+      sanitized = sanitized.replace(
+        WIKILINK_RE,
+        (_match, raw) => `[${visibleLabel(raw)}](https://example.invalid/obsidian-link)`,
+      )
+      return sanitized
+    })
+    .join('')
+}
+
+function sanitizedCopies(files) {
+  rmSync(SANITIZED_ROOT, {recursive: true, force: true})
+  const result = []
+  for (const input of files) {
+    const repoRelative = safeRelativePath(input)
+    const source = resolve(ROOT, repoRelative)
+    if (!existsSync(source)) continue
+    const destination = resolve(SANITIZED_ROOT, repoRelative)
+    mkdirSync(dirname(destination), {recursive: true})
+    writeFileSync(
+      destination,
+      sanitizeObsidianMarkdown(readFileSync(source, 'utf8')),
+      'utf8',
+    )
+    result.push(relative(ROOT, destination).split(sep).join('/'))
+  }
+  return result
+}
+
+const explicit = requestedFiles()
+const mode = explicit ? 'files' : process.argv.includes('--all') ? 'all' : 'changed'
+const sourceFiles = (explicit || (mode === 'all' ? allFiles() : changedFiles()))
+  .map(safeRelativePath)
+  .filter((path, index, values) => values.indexOf(path) === index)
+  .filter((path) => existsSync(resolve(ROOT, path)))
+
+if (sourceFiles.length === 0) {
   console.log('Remark-lint: keine relevanten Markdown-Dateien.')
   process.exit(0)
 }
 
-console.log(`Remark-lint (${mode}): ${files.length} Datei(en)`)
-for (const file of files) console.log(`- ${file}`)
+console.log(`Remark-lint (${mode}): ${sourceFiles.length} Datei(en)`)
+for (const file of sourceFiles) console.log(`- ${file}`)
 
+const lintFiles = sanitizedCopies(sourceFiles)
 const binary = resolve(ROOT, 'node_modules', '.bin', process.platform === 'win32' ? 'remark.cmd' : 'remark')
-const result = spawnSync(binary, ['--frail', '--no-stdout', ...files], {
+const result = spawnSync(binary, ['--frail', '--no-stdout', ...lintFiles], {
   cwd: ROOT,
   stdio: 'inherit',
 })
+rmSync(SANITIZED_ROOT, {recursive: true, force: true})
 process.exit(result.status ?? 1)
