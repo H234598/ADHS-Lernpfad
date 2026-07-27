@@ -9,6 +9,7 @@
 - reproduzierbares, gepinntes Remark-lint für geänderte Markdown-Dateien als blockierenden CI-Check eingeführt
 - Reparaturprompt um aktuelle Evidenzrecherche, Thread-Matrix, sichere Stagingregeln und inkrementelle Re-Reviews gehärtet
 - CodeRabbit-Checkpagination, Pending-Zustände, Abhängigkeitsaudit und exakte Reparaturfensterdarstellung nach Review zusätzlich abgesichert
+- einmalige Review-Helfer und temporäre Trigger vor dem finalen Merge vollständig aus dem Diff entfernt
 
 ## 0.16.0 – 2026-07-23
 
