@@ -17,6 +17,80 @@
     "type": "report"
   },
   {
+    "DOI": "10.3390/brainsci16060646",
+    "PMID": "42352655",
+    "URL": "https://doi.org/10.3390/brainsci16060646",
+    "author": [
+      {
+        "family": "Baiamonte",
+        "given": "L."
+      },
+      {
+        "family": "Bellante",
+        "given": "G."
+      },
+      {
+        "family": "Allegra",
+        "given": "P."
+      }
+    ],
+    "container-title": "Brain Sciences",
+    "id": "Baiamonte2026",
+    "issue": "6",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "number": "646",
+    "title": "Attention Deficit/Hyperactivity Disorder and Risk of Dementia: A Systematic Review and Meta-Analysis",
+    "type": "article-journal",
+    "volume": "16"
+  },
+  {
+    "DOI": "10.3389/fpsyt.2023.1158546",
+    "PMID": "37663597",
+    "URL": "https://doi.org/10.3389/fpsyt.2023.1158546",
+    "author": [
+      {
+        "family": "Becker",
+        "given": "S."
+      },
+      {
+        "family": "Chowdhury",
+        "given": "M."
+      },
+      {
+        "family": "Tavilsup",
+        "given": "P."
+      },
+      {
+        "family": "Seitz",
+        "given": "D."
+      },
+      {
+        "family": "Callahan",
+        "given": "B. L."
+      }
+    ],
+    "container-title": "Frontiers in Psychiatry",
+    "id": "Becker2023",
+    "issued": {
+      "date-parts": [
+        [
+          2023
+        ]
+      ]
+    },
+    "number": "1158546",
+    "title": "Risk of neurodegenerative disease or dementia in adults with attention-deficit/hyperactivity disorder: a systematic review",
+    "type": "article-journal",
+    "volume": "14"
+  },
+  {
     "DOI": "10.1186/s12888-020-2442-7",
     "PMID": "32164655",
     "URL": "https://doi.org/10.1186/s12888-020-2442-7",
@@ -47,6 +121,72 @@
     "title": "Emotion dysregulation in adults with attention deficit hyperactivity disorder: a meta-analysis",
     "type": "article-journal",
     "volume": "20"
+  },
+  {
+    "DOI": "10.1016/S0140-6736(21)00218-X",
+    "PMID": "33848468",
+    "URL": "https://doi.org/10.1016/S0140-6736(21)00218-X",
+    "author": [
+      {
+        "family": "Bloem",
+        "given": "B. R."
+      },
+      {
+        "family": "Okun",
+        "given": "M. S."
+      },
+      {
+        "family": "Klein",
+        "given": "C."
+      }
+    ],
+    "container-title": "The Lancet",
+    "id": "Bloem2021",
+    "issue": "10291",
+    "issued": {
+      "date-parts": [
+        [
+          2021
+        ]
+      ]
+    },
+    "page": "2284–2303",
+    "title": "Parkinson's disease",
+    "type": "article-journal",
+    "volume": "397"
+  },
+  {
+    "DOI": "10.3233/JAD-230904",
+    "PMID": "38461502",
+    "URL": "https://doi.org/10.3233/JAD-230904",
+    "author": [
+      {
+        "family": "Carr",
+        "given": "R. H."
+      },
+      {
+        "family": "Eom",
+        "given": "G. D."
+      },
+      {
+        "family": "Brown",
+        "given": "E. E."
+      }
+    ],
+    "container-title": "Journal of Alzheimer's Disease",
+    "id": "Carr2024",
+    "issue": "3",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "page": "773–792",
+    "title": "Attention-Deficit/Hyperactivity Disorder as a Potential Risk Factor for Dementia and Other Neurocognitive Disorders: A Systematic Review",
+    "type": "article-journal",
+    "volume": "98"
   },
   {
     "DOI": "10.1016/j.tics.2006.01.011",
@@ -151,6 +291,46 @@
     "title": "Genome-wide analyses of ADHD identify 27 risk loci, refine the genetic architecture and implicate several cognitive domains",
     "type": "article-journal",
     "volume": "55"
+  },
+  {
+    "DOI": "10.1016/j.neubiorev.2020.07.042",
+    "PMID": "32798966",
+    "URL": "https://doi.org/10.1016/j.neubiorev.2020.07.042",
+    "author": [
+      {
+        "family": "Dobrosavljevic",
+        "given": "M."
+      },
+      {
+        "family": "Solares",
+        "given": "C."
+      },
+      {
+        "family": "Cortese",
+        "given": "S."
+      },
+      {
+        "family": "Andershed",
+        "given": "H."
+      },
+      {
+        "family": "Larsson",
+        "given": "H."
+      }
+    ],
+    "container-title": "Neuroscience & Biobehavioral Reviews",
+    "id": "Dobrosavljevic2020",
+    "issued": {
+      "date-parts": [
+        [
+          2020
+        ]
+      ]
+    },
+    "page": "282–289",
+    "title": "Prevalence of attention-deficit/hyperactivity disorder in older adults: A systematic review and meta-analysis",
+    "type": "article-journal",
+    "volume": "118"
   },
   {
     "DOI": "10.1016/j.neubiorev.2021.01.022",

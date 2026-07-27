@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-22
+last_reviewed: 2026-07-25
 ---
 
 # Glossar
@@ -81,11 +81,17 @@ Zusätzliche Erkrankung oder Störung, die gleichzeitig mit einer anderen Diagno
 ## Koexistenz
 Gleichzeitiges Vorliegen diagnostisch unterscheidbarer Bedingungen, beispielsweise ADHS und Autismus; bedeutet weder Gleichheit noch eine bloße Unterform der jeweils anderen Diagnose.
 
+## Neurodegeneration
+Fortschreitende Schädigung oder Verlust von Nervenzellen und neuronalen Funktionen; nicht gleichbedeutend mit einer seit der Entwicklung bestehenden Neuroentwicklungsstörung.
+
 ## Neuroentwicklung
 Veränderung und Reifung neuronaler Systeme im Zusammenspiel mit Lernen, Umwelt und biologischen Voraussetzungen über die Entwicklung hinweg.
 
 ## Nichtsuizidale Selbstverletzung
 Absichtliche Verletzung des eigenen Körpergewebes ohne die Absicht zu sterben; von einem Suizidversuch zu unterscheiden, aber als Zeichen relevanter psychischer Belastung ernst zu nehmen.
+
+## Parkinson-Erkrankung
+Neurodegenerative Erkrankung mit motorischen und nichtmotorischen Symptomen; sie ist keine späte Form von ADHS und wird nicht durch einen einfachen allgemeinen Dopaminmangel erklärt.
 
 ## Pharmakotherapie
 Behandlung mit Medikamenten; bei ADHS umfasst sie fachlich ausgewählte, überwachte und regelmäßig überprüfte Wirkstoffe.

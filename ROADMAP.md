@@ -1,7 +1,7 @@
 ---
 title: Fachliche Roadmap
 tags: [ADHS, Roadmap, Wissenschaft, Lernpfad, Diagnostik, Behandlung, Versorgung, Forschung]
-last_reviewed: 2026-07-22
+last_reviewed: 2026-07-25
 status: fortlaufend
 ---
 
@@ -41,7 +41,7 @@ Ein Themenblock kann mehrere Einheiten erfordern. Er gilt erst dann als abgeschl
 
 ## Aktueller Stand des Lernpfads
 
-Der Lernpfad umfasst derzeit 14 fortlaufende Einheiten:
+Der Lernpfad umfasst derzeit 15 fortlaufende Einheiten:
 
 1. Was ist ADHS?
 2. Inhibition und Handlungssteuerung
@@ -57,6 +57,7 @@ Der Lernpfad umfasst derzeit 14 fortlaufende Einheiten:
 12. Komorbidität, Depression und Suizidalität
 13. Pharmakotherapie und Psychotherapie
 14. Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung
+15. Parkinson, ADHS und mechanistische Vergleiche
 
 Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität sowie einen Behandlungsüberblick gut ab. Die größten fachlichen Lücken liegen nun bei der Breite der Komorbiditäten, spezifischen Lebensphasen und Populationen, Funktions- und Versorgungsthemen, differenzierter Behandlungssicherheit, sozialer Ungleichheit, digitaler Diagnostik sowie dem systematischen Übergang auf Forschungsniveau.
 
@@ -76,7 +77,7 @@ Die folgende Liste erhält sämtliche Themen der bisherigen Roadmap. Bereits vor
 
 - [x] Pharmakologie und Psychotherapie
 - [x] Autismus/ADHS-Überlappung
-- [ ] Parkinson: sinnvolle mechanistische Vergleiche und klare Grenzen
+- [x] Parkinson: sinnvolle mechanistische Vergleiche und klare Grenzen
 - [ ] Studienmethodik, Effektgrößen, Bias und Kausalität
 
 ### Forschungsniveau

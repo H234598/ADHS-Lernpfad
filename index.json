@@ -1,7 +1,7 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.15.0",
-  "last_reviewed": "2026-07-23",
+  "version": "0.17.0",
+  "last_reviewed": "2026-07-25",
   "chapters": [
     {
       "number": 1,
@@ -72,6 +72,11 @@
       "number": 14,
       "path": "02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung.md",
       "title": "Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung"
+    },
+    {
+      "number": 15,
+      "path": "02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md",
+      "title": "Parkinson, ADHS und mechanistische Vergleiche"
     }
   ]
 }

@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-23
+last_reviewed: 2026-07-27
 ---
 
 # Literatur
@@ -16,6 +16,22 @@ Australasian ADHD Professionals Association (2022). Australian evidence-based cl
 
 - Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
 
+## Baiamonte2026
+
+Baiamonte, L., Bellante, G., Allegra, P., et al. (2026). Attention Deficit/Hyperactivity Disorder and Risk of Dementia: A Systematic Review and Meta-Analysis. *Brain Sciences, 16*(6), 646.
+
+- DOI: [https://doi.org/10.3390/brainsci16060646](https://doi.org/10.3390/brainsci16060646)
+- PubMed: [PMID 42352655](https://pubmed.ncbi.nlm.nih.gov/42352655/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `disputed`
+
+## Becker2023
+
+Becker, S., Chowdhury, M., Tavilsup, P., Seitz, D., & Callahan, B. L. (2023). Risk of neurodegenerative disease or dementia in adults with attention-deficit/hyperactivity disorder: a systematic review. *Frontiers in Psychiatry, 14*, 1158546.
+
+- DOI: [https://doi.org/10.3389/fpsyt.2023.1158546](https://doi.org/10.3389/fpsyt.2023.1158546)
+- PubMed: [PMID 37663597](https://pubmed.ncbi.nlm.nih.gov/37663597/)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `disputed`
+
 ## Beheshti2020
 
 Beheshti, A., Chavanon, M.-L., & Christiansen, H. (2020). Emotion dysregulation in adults with attention deficit hyperactivity disorder: a meta-analysis. *BMC Psychiatry, 20*, 120.
@@ -23,6 +39,22 @@ Beheshti, A., Chavanon, M.-L., & Christiansen, H. (2020). Emotion dysregulation 
 - DOI: [https://doi.org/10.1186/s12888-020-2442-7](https://doi.org/10.1186/s12888-020-2442-7)
 - PubMed: [PMID 32164655](https://pubmed.ncbi.nlm.nih.gov/32164655/)
 - Evidenztyp: `meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## Bloem2021
+
+Bloem, B. R., Okun, M. S., & Klein, C. (2021). Parkinson's disease. *The Lancet, 397*(10291), 2284–2303.
+
+- DOI: [https://doi.org/10.1016/S0140-6736(21)00218-X](https://doi.org/10.1016/S0140-6736(21)00218-X)
+- PubMed: [PMID 33848468](https://pubmed.ncbi.nlm.nih.gov/33848468/)
+- Evidenztyp: `review` · Evidenzgrad: `high` · Status: `consensus`
+
+## Carr2024
+
+Carr, R. H., Eom, G. D., & Brown, E. E. (2024). Attention-Deficit/Hyperactivity Disorder as a Potential Risk Factor for Dementia and Other Neurocognitive Disorders: A Systematic Review. *Journal of Alzheimer's Disease, 98*(3), 773–792.
+
+- DOI: [https://doi.org/10.3233/JAD-230904](https://doi.org/10.3233/JAD-230904)
+- PubMed: [PMID 38461502](https://pubmed.ncbi.nlm.nih.gov/38461502/)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `disputed`
 
 ## Castellanos2006
 
@@ -46,6 +78,14 @@ Demontis, D., Walters, G. B., Athanasiadis, G., et al. (2023). Genome-wide analy
 - DOI: [https://doi.org/10.1038/s41588-022-01285-8](https://doi.org/10.1038/s41588-022-01285-8)
 - PubMed: [PMID 36702997](https://pubmed.ncbi.nlm.nih.gov/36702997/)
 - Evidenztyp: `genome-wide-association-study` · Evidenzgrad: `high` · Status: `consensus`
+
+## Dobrosavljevic2020
+
+Dobrosavljevic, M., Solares, C., Cortese, S., Andershed, H., & Larsson, H. (2020). Prevalence of attention-deficit/hyperactivity disorder in older adults: A systematic review and meta-analysis. *Neuroscience & Biobehavioral Reviews, 118*, 282–289.
+
+- DOI: [https://doi.org/10.1016/j.neubiorev.2020.07.042](https://doi.org/10.1016/j.neubiorev.2020.07.042)
+- PubMed: [PMID 32798966](https://pubmed.ncbi.nlm.nih.gov/32798966/)
+- Evidenztyp: `systematic-review-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Faraone2021
 
