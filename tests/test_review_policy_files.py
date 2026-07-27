@@ -49,6 +49,16 @@ def test_remark_lint_is_pinned_audited_and_blocking() -> None:
     assert "npm run lint:markdown:changed" in workflow
 
 
+def test_codacy_delegates_only_remark_markdown_analysis() -> None:
+    config = (ROOT / ".codacy.yml").read_text(encoding="utf-8")
+    assert "engines:" in config
+    assert "remark-lint:" in config
+    assert '- "**/*.md"' in config
+    assert "bandit:" not in config
+    assert "prospector:" not in config
+    assert "pylint" not in config
+
+
 def test_remark_lint_sanitizes_project_specific_obsidian_syntax() -> None:
     script = (ROOT / "scripts/remark_lint.mjs").read_text(encoding="utf-8")
     assert "const WIKILINK_RE = /\\[\\[([\\s\\S]*?)\\]\\]/g" in script
