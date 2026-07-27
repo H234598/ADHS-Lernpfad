@@ -9,7 +9,7 @@ Dieser Ordner ist die zentrale Quelle für sämtliche Agentenprompts des ADHS-Le
 - `MERGE-AUTOMATION-PROMPT.md`: prüft den Draft wiederholt, erzwingt CodeRabbit und Remark-lint als harte Gates, wartet mit Reparaturen bis 20:00 Uhr Europe/Berlin am Erstellungstag und merged erst nach erneut grüner zweiter CI.
 - `PR-REPAIR-PROMPT.md`: sicherer Reparaturzyklus auf dem bestehenden Einheiten-Branch mit Evidenzaktualisierung, Thread-Matrix, Remark-lint und inkrementeller CodeRabbit-Prüfung.
 
-Die technische Referenz steht unter [[automation/MERGE-REPAIR-POLICY|Merge- und Reparaturpolicy]].
+Die technische Referenz steht unter [Merge- und Reparaturpolicy](../automation/MERGE-REPAIR-POLICY.md).
 
 ## Ablauf
 
