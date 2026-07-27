@@ -98,6 +98,7 @@ python -m pip install --disable-pip-version-check \
   -r requirements-docs.txt -r requirements-export.txt
 python -m pip check
 npm ci
+npm run audit:dependencies
 
 REMARK_BASE_SHA="origin/main" REMARK_HEAD_SHA="HEAD" \
   npm run lint:markdown:changed
