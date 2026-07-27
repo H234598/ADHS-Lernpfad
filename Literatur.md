@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-25
+last_reviewed: 2026-07-27
 ---
 
 # Literatur
@@ -15,6 +15,14 @@ last_reviewed: 2026-07-25
 Australasian ADHD Professionals Association (2022). Australian evidence-based clinical practice guideline for attention deficit hyperactivity disorder.
 
 - Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
+
+## Baiamonte2026
+
+Baiamonte, L., Bellante, G., Allegra, P., et al. (2026). Attention Deficit/Hyperactivity Disorder and Risk of Dementia: A Systematic Review and Meta-Analysis. *Brain Sciences, 16*(6), 646.
+
+- DOI: [https://doi.org/10.3390/brainsci16060646](https://doi.org/10.3390/brainsci16060646)
+- PubMed: [PMID 42352655](https://pubmed.ncbi.nlm.nih.gov/42352655/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `disputed`
 
 ## Becker2023
 
@@ -39,6 +47,14 @@ Bloem, B. R., Okun, M. S., & Klein, C. (2021). Parkinson's disease. *The Lancet,
 - DOI: [https://doi.org/10.1016/S0140-6736(21)00218-X](https://doi.org/10.1016/S0140-6736(21)00218-X)
 - PubMed: [PMID 33848468](https://pubmed.ncbi.nlm.nih.gov/33848468/)
 - Evidenztyp: `review` · Evidenzgrad: `high` · Status: `consensus`
+
+## Carr2024
+
+Carr, R. H., Eom, G. D., & Brown, E. E. (2024). Attention-Deficit/Hyperactivity Disorder as a Potential Risk Factor for Dementia and Other Neurocognitive Disorders: A Systematic Review. *Journal of Alzheimer's Disease, 98*(3), 773–792.
+
+- DOI: [https://doi.org/10.3233/JAD-230904](https://doi.org/10.3233/JAD-230904)
+- PubMed: [PMID 38461502](https://pubmed.ncbi.nlm.nih.gov/38461502/)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `disputed`
 
 ## Castellanos2006
 

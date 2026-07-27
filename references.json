@@ -17,6 +17,40 @@
     "type": "report"
   },
   {
+    "DOI": "10.3390/brainsci16060646",
+    "PMID": "42352655",
+    "URL": "https://doi.org/10.3390/brainsci16060646",
+    "author": [
+      {
+        "family": "Baiamonte",
+        "given": "L."
+      },
+      {
+        "family": "Bellante",
+        "given": "G."
+      },
+      {
+        "family": "Allegra",
+        "given": "P."
+      }
+    ],
+    "container-title": "Brain Sciences",
+    "id": "Baiamonte2026",
+    "issue": "6",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "number": "646",
+    "title": "Attention Deficit/Hyperactivity Disorder and Risk of Dementia: A Systematic Review and Meta-Analysis",
+    "type": "article-journal",
+    "volume": "16"
+  },
+  {
     "DOI": "10.3389/fpsyt.2023.1158546",
     "PMID": "37663597",
     "URL": "https://doi.org/10.3389/fpsyt.2023.1158546",
@@ -120,6 +154,39 @@
     "title": "Parkinson's disease",
     "type": "article-journal",
     "volume": "397"
+  },
+  {
+    "DOI": "10.3233/JAD-230904",
+    "PMID": "38461502",
+    "URL": "https://doi.org/10.3233/JAD-230904",
+    "author": [
+      {
+        "family": "Carr",
+        "given": "R. H."
+      },
+      {
+        "family": "Eom",
+        "given": "G. D."
+      },
+      {
+        "family": "Brown",
+        "given": "E. E."
+      }
+    ],
+    "container-title": "Journal of Alzheimer's Disease",
+    "id": "Carr2024",
+    "issue": "3",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "page": "773–792",
+    "title": "Attention-Deficit/Hyperactivity Disorder as a Potential Risk Factor for Dementia and Other Neurocognitive Disorders: A Systematic Review",
+    "type": "article-journal",
+    "volume": "98"
   },
   {
     "DOI": "10.1016/j.tics.2006.01.011",
