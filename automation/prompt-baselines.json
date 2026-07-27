@@ -9,13 +9,13 @@
     },
     {
       "path": "prompts/PR-REPAIR-PROMPT.md",
-      "protected_prefix_bytes": 10411,
-      "sha256": "d7420f691c4dfeef94199d8050e9814aee30f33b0e16f86fbfedae076820ef44"
+      "protected_prefix_bytes": 10438,
+      "sha256": "290b084c0a54b60fe66be405fac09182f4ebd275f8a8c1c413e59aa03b7c4f60"
     },
     {
       "path": "prompts/MERGE-AUTOMATION-PROMPT.md",
-      "protected_prefix_bytes": 10922,
-      "sha256": "0648c700b47d91ea0e929f8c1f6fcc76343568d9d8280c72e8d64f0b8bdebdd0"
+      "protected_prefix_bytes": 10949,
+      "sha256": "103ed853b921fd1559bc2fb448727e8a4f1fcf56411c8c86b81c53e90533b02a"
     }
   ]
 }
