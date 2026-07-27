@@ -7,12 +7,13 @@
   "devDependencies": {
     "@playwright/test": "1.61.1",
     "cytoscape": "3.34.0",
-    "remark-cli": "12.0.1",
+    "remark": "15.0.1",
     "remark-frontmatter": "5.0.0",
     "remark-gfm": "4.0.1",
     "remark-preset-lint-recommended": "7.0.1"
   },
   "scripts": {
+    "audit:dependencies": "npm audit --audit-level=high",
     "check:graph-js": "node --check assets/javascripts/knowledge-graph.js",
     "lint:markdown:changed": "node scripts/remark_lint.mjs --changed",
     "lint:markdown:all": "node scripts/remark_lint.mjs --all",
