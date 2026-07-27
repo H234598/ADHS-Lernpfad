@@ -7,7 +7,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from review_gate import evaluate_gate
+from review_gate import evaluate_gate, is_coderabbit_signal
 
 HEAD = "a" * 40
 
@@ -26,6 +26,16 @@ class ReviewGateTests(unittest.TestCase):
 
     def comment(self, body: str, created_at: str):
         return {"body": body, "created_at": created_at}
+
+    def test_real_coderabbit_signal_is_detected(self) -> None:
+        self.assertTrue(is_coderabbit_signal("CodeRabbit"))
+        self.assertTrue(is_coderabbit_signal("Review", "coderabbitai"))
+
+    def test_hard_gate_does_not_count_itself_as_coderabbit(self) -> None:
+        self.assertFalse(is_coderabbit_signal("CodeRabbit review gate (blocking)"))
+        self.assertFalse(
+            is_coderabbit_signal("CodeRabbit review gate (blocking)", "GitHub Actions")
+        )
 
     def test_success_requires_signal_and_no_open_threads(self) -> None:
         state, unresolved, reasons, disagreement = evaluate_gate(
