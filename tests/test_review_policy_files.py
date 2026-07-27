@@ -28,6 +28,16 @@ def test_generator_runs_remark_lint_before_draft_creation() -> None:
     assert "Eine Remark-lint-Meldung darf nicht" in generator
 
 
+def test_dependency_audit_is_required_in_all_documented_gate_sequences() -> None:
+    for relative in (
+        "CONTRIBUTING.md",
+        "prompts/MERGE-AUTOMATION-PROMPT.md",
+        "prompts/PR-REPAIR-PROMPT.md",
+    ):
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        assert "npm run audit:dependencies" in text
+
+
 def test_repair_deadline_and_no_two_failure_cap_are_explicit() -> None:
     merge = (ROOT / "prompts/MERGE-AUTOMATION-PROMPT.md").read_text(encoding="utf-8")
     repair = (ROOT / "prompts/PR-REPAIR-PROMPT.md").read_text(encoding="utf-8")
