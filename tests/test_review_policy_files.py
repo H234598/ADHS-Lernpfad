@@ -55,6 +55,7 @@ def test_codacy_delegates_only_remark_markdown_analysis() -> None:
     config = (ROOT / ".codacy.yml").read_text(encoding="utf-8")
     assert "engines:" in config
     assert "remark-lint:" in config
+    assert '- "**.md"' in config
     assert '- "**/*.md"' in config
     assert "bandit:" not in config
     assert "prospector:" not in config
