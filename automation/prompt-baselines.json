@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "description": "Vollständige geschützte Automationsprompts nach Einführung von CodeRabbit-Hard-Gate, Remark-lint und verzögertem Reparaturfenster.",
+  "description": "Vollständige geschützte Automationsprompts mit generatorseitigem Remark-lint, CodeRabbit-Hard-Gate und verzögertem Reparaturfenster.",
   "prompts": [
     {
       "path": "prompts/AUTOMATION-PROMPT.md",
-      "protected_prefix_bytes": 14813,
-      "sha256": "dadad3754d0d340a49a988c605e6ed3cbeb305e555da035a35a9780bda0e67b8"
+      "protected_prefix_bytes": 15303,
+      "sha256": "e50205f86d376b1a4b49533ad327c0232542d4d9c34bd849227615d1ebfc3088"
     },
     {
       "path": "prompts/PR-REPAIR-PROMPT.md",

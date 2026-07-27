@@ -75,10 +75,19 @@ Jede Einheit enthält mindestens:
 Führe aus:
 
 ```bash
+python -m pip install --disable-pip-version-check \
+  -r requirements-docs.txt -r requirements-export.txt
+python -m pip check
+npm ci
+npm run audit:dependencies
+REMARK_BASE_SHA=origin/main REMARK_HEAD_SHA=HEAD \
+  npm run lint:markdown:changed
+
 python3 scripts/build_literature.py
 git diff --exit-code -- Literatur.md references.bib references.json
 python3 scripts/validate_links.py
 python3 scripts/build_graph.py
+python3 scripts/validate_graph.py
 python3 scripts/validate_compendium.py
 python3 scripts/build_combined.py
 python3 scripts/build_anki.py
@@ -86,7 +95,7 @@ python3 scripts/build_docs.py
 mkdocs build --strict
 ```
 
-Alle Prüfungen müssen erfolgreich beendet sein. Die Validierung muss insbesondere Mindest- und Maximallänge, Pflichtabschnitte, Quellen, Obsidian-Wikilinks, Bibliografiekonsistenz und fortlaufende Nummerierung prüfen.
+Alle Prüfungen müssen erfolgreich beendet sein. Die Validierung muss insbesondere Remark-lint, npm-Abhängigkeitsaudit, Mindest- und Maximallänge, Pflichtabschnitte, Quellen, Obsidian-Wikilinks, Bibliografiekonsistenz, Wissensgraph und fortlaufende Nummerierung prüfen. Eine Remark-lint-Meldung darf nicht bis zum späteren Reparaturfenster verschleppt werden, wenn sie bereits vor dem ersten Commit reproduzierbar erkennbar ist.
 
 ## 8. Git-Arbeitsweise
 
