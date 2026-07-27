@@ -5,6 +5,7 @@
   "description": "Reproduzierbare Web-, Review- und Markdown-Prüfungen für den ADHS-Lernpfad",
   "license": "MIT",
   "devDependencies": {
+    "@flowershow/remark-wiki-link": "4.0.0",
     "@playwright/test": "1.61.1",
     "cytoscape": "3.34.0",
     "remark-cli": "12.0.1",
