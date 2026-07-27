@@ -200,20 +200,28 @@ def evaluate_gate(
             f"{len(unresolved)} CodeRabbit-Review-Thread(s) sind ungelöst; auch veraltete Threads müssen begründet abgeschlossen werden."
         )
 
-    disagreement_at: datetime | None = None
-    resolved_at: datetime | None = None
+    disagreements: dict[str, datetime] = {}
+    resolutions: dict[str, datetime] = {}
     for comment in comments:
         body = str(comment.get("body") or "")
         created = datetime.fromisoformat(str(comment.get("created_at")).replace("Z", "+00:00"))
-        if any(match == head_sha for match in DISAGREEMENT_RE.findall(body)):
-            disagreement_at = max(disagreement_at or created, created)
-        if any(match == head_sha for match in DISAGREEMENT_RESOLVED_RE.findall(body)):
-            resolved_at = max(resolved_at or created, created)
-    disagreement_open = disagreement_at is not None and (
-        resolved_at is None or disagreement_at > resolved_at
+        for marked_head in DISAGREEMENT_RE.findall(body):
+            disagreements[marked_head] = max(disagreements.get(marked_head, created), created)
+        for marked_head in DISAGREEMENT_RESOLVED_RE.findall(body):
+            resolutions[marked_head] = max(resolutions.get(marked_head, created), created)
+
+    open_disagreement_heads = sorted(
+        marked_head
+        for marked_head, marked_at in disagreements.items()
+        if marked_head not in resolutions or marked_at > resolutions[marked_head]
     )
+    disagreement_open = bool(open_disagreement_heads)
     if disagreement_open:
-        reasons.append("Ein dokumentierter Agent-CodeRabbit-Konflikt für den aktuellen Head ist ungeklärt.")
+        scope = "aktuellen Head" if head_sha in open_disagreement_heads else "aktuellen oder früheren Head"
+        reasons.append(
+            f"Ein dokumentierter Agent-CodeRabbit-Konflikt für den {scope} ist ungeklärt: "
+            + ", ".join(open_disagreement_heads)
+        )
 
     return coderabbit_state, unresolved, reasons, disagreement_open
 
