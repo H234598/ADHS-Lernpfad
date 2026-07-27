@@ -98,6 +98,30 @@ def evaluate_policy(
             repair=False,
         )
 
+    review_failed = coderabbit_state == "failure" or unresolved_threads > 0
+    first_ci_failed = ci_state == "failure"
+    second_ci_failed = not draft and second_ci_state == "failure"
+    repairable_failure = first_ci_failed or second_ci_failed or review_failed
+
+    # Eine rote CI oder ein konkreter Reviewbefund bleibt reparierbar, auch wenn
+    # CodeRabbit für denselben Head noch läuft. Das fehlende Review verhindert
+    # Ready/Merge, darf aber eine nach 20:00 nötige CI-Reparatur nicht blockieren.
+    if repairable_failure and local_now < repair_at:
+        return decision(
+            "wait_until_repair_window",
+            "CI oder Review ist rot; vor dem Reparaturfenster wird noch kein Reparaturzyklus gestartet.",
+            blocker=review_failed,
+            repair=False,
+        )
+
+    if repairable_failure:
+        return decision(
+            "repair_existing_branch",
+            "Nach Beginn des Reparaturfensters ist ein sicherer Zyklus auf dem bestehenden PR-Branch erforderlich.",
+            blocker=review_failed,
+            repair=True,
+        )
+
     if coderabbit_state in {"missing", "pending"}:
         return decision(
             "wait_coderabbit",
@@ -106,38 +130,19 @@ def evaluate_policy(
             repair=False,
         )
 
-    review_failed = coderabbit_state == "failure" or unresolved_threads > 0
-    ci_failed = ci_state == "failure"
+    if coderabbit_state != "success" or unresolved_threads:
+        return decision(
+            "hard_block_review",
+            "Das verpflichtende CodeRabbit-Gate ist nicht vollständig grün.",
+            blocker=True,
+            repair=False,
+        )
 
     if ci_state in {"missing", "pending"}:
         return decision(
             "wait_ci",
             "Die CI des aktuellen Heads fehlt oder läuft noch.",
             blocker=False,
-            repair=False,
-        )
-
-    if (ci_failed or review_failed) and local_now < repair_at:
-        return decision(
-            "wait_until_repair_window",
-            "CI oder Review ist rot; vor 20:00 Uhr Europe/Berlin wird noch kein Reparaturzyklus gestartet.",
-            blocker=review_failed,
-            repair=False,
-        )
-
-    if ci_failed or review_failed:
-        return decision(
-            "repair_existing_branch",
-            "Nach Beginn des Reparaturfensters ist ein sicherer Zyklus auf dem bestehenden PR-Branch erforderlich.",
-            blocker=review_failed,
-            repair=True,
-        )
-
-    if coderabbit_state != "success" or unresolved_threads:
-        return decision(
-            "hard_block_review",
-            "Das verpflichtende CodeRabbit-Gate ist nicht vollständig grün.",
-            blocker=True,
             repair=False,
         )
 
@@ -163,21 +168,6 @@ def evaluate_policy(
             "Die nach Ready for review gestartete zweite CI fehlt oder läuft noch.",
             blocker=False,
             repair=False,
-        )
-
-    if second_ci_state == "failure":
-        if local_now < repair_at:
-            return decision(
-                "wait_until_repair_window",
-                "Die zweite CI ist rot; der Reparaturzyklus beginnt frühestens im Reparaturfenster.",
-                blocker=False,
-                repair=False,
-            )
-        return decision(
-            "repair_existing_branch",
-            "Die zweite CI ist nach Beginn des Reparaturfensters weiterhin rot.",
-            blocker=False,
-            repair=True,
         )
 
     return decision(
