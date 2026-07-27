@@ -11,6 +11,14 @@
 - CodeRabbit-Checkpagination, Pending-Zustände, Abhängigkeitsaudit und exakte Reparaturfensterdarstellung nach Review zusätzlich abgesichert
 - einmalige Review-Helfer und temporäre Trigger vor dem finalen Merge vollständig aus dem Diff entfernt
 
+## 0.17.0 – 2026-07-25
+
+- Einheit 15 „Parkinson, ADHS und mechanistische Vergleiche“ ergänzt
+- Neuroentwicklung und Neurodegeneration sowie unterschiedliche Rollen dopaminerger Systeme klar voneinander abgegrenzt
+- unsichere Beobachtungsbefunde zu möglichen späteren neurodegenerativen Diagnosen ohne kausale oder individuelle Prognose eingeordnet
+- drei strukturierte Studienkarten, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung aktualisiert
+- versehentlich verkürzte Index-, Glossar- und Anki-Dateien vollständig aus `main` wiederhergestellt
+
 ## 0.16.0 – 2026-07-23
 
 - Automationsstatus auf ein striktes Draft-2020-12-Schema mit Revisionen,
