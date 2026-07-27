@@ -116,15 +116,18 @@ def validate_baselines(
         except OSError as exc:
             errors.append(f"{relative} ist nicht lesbar: {exc}")
             continue
+        full_actual = hashlib.sha256(content).hexdigest()
         if len(content) < length:
             errors.append(
-                f"{relative} wurde verkürzt: {len(content)} < {length} Byte"
+                f"{relative} wurde verkürzt: {len(content)} < {length} Byte; "
+                f"full_sha256={full_actual}"
             )
             continue
         actual = hashlib.sha256(content[:length]).hexdigest()
         if actual != expected:
             errors.append(
-                f"{relative}: geschützter Prompt-Präfix wurde verändert"
+                f"{relative}: geschützter Prompt-Präfix wurde verändert; "
+                f"file_bytes={len(content)} full_sha256={full_actual}"
             )
     return errors
 
