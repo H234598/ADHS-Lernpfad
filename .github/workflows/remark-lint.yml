@@ -1,0 +1,42 @@
+name: Remark lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: remark-lint-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  remark-lint:
+    name: Remark lint (blocking)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository with history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install pinned lint dependencies
+        run: npm ci
+
+      - name: Lint changed Markdown files
+        env:
+          REMARK_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          REMARK_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run lint:markdown:changed
