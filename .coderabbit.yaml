@@ -1,8 +1,10 @@
-# CodeRabbit erhält vor dem automatischen Merge eine zweistündige Gelegenheit,
-# den frisch erzeugten Draft-Pull-Request zu prüfen.
+# CodeRabbit ist für automatische Einheiten ein verpflichtendes hartes Gate.
+# Der Merge-Wächter verlangt ein erfolgreiches Signal des aktuellen Heads und
+# vollständig gelöste Review-Threads. Schweigen, Limiterschöpfung oder ein
+# ungeklärter Dissens blockieren Ready for review und Merge.
 #
-# Incremental Reviews nach jedem Reparatur-Push bleiben deaktiviert, damit das
-# begrenzte Review-Kontingent nicht durch automatische Wiederholungen verbraucht wird.
+# Inkrementelle Reviews bleiben aktiviert, damit jeder Reparaturpush erneut
+# gegen den aktuellen Head geprüft wird.
 reviews:
   auto_review:
     enabled: true

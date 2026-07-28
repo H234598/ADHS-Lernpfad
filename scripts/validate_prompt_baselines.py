@@ -116,15 +116,18 @@ def validate_baselines(
         except OSError as exc:
             errors.append(f"{relative} ist nicht lesbar: {exc}")
             continue
+        full_actual = hashlib.sha256(content).hexdigest()
         if len(content) < length:
             errors.append(
-                f"{relative} wurde verkürzt: {len(content)} < {length} Byte"
+                f"{relative} wurde verkürzt: {len(content)} < {length} Byte; "
+                f"full_sha256={full_actual}"
             )
             continue
         actual = hashlib.sha256(content[:length]).hexdigest()
         if actual != expected:
             errors.append(
-                f"{relative}: geschützter Prompt-Präfix wurde verändert"
+                f"{relative}: geschützter Prompt-Präfix wurde verändert; "
+                f"file_bytes={len(content)} full_sha256={full_actual}"
             )
     return errors
 
@@ -132,6 +135,20 @@ def validate_baselines(
 def main() -> int:
     errors = validate_baselines()
     if errors:
+        report = ROOT / "build" / "validation-report.txt"
+        try:
+            report.parent.mkdir(parents=True, exist_ok=True)
+            report.write_text(
+                "# Prompt-Baseline-Validierung\n\n"
+                + "\n".join(f"- {error}" for error in errors)
+                + "\n",
+                encoding="utf-8",
+            )
+        except OSError as exc:
+            print(
+                f"Warnung: Prompt-Baseline-Bericht konnte nicht geschrieben werden: {exc}",
+                file=sys.stderr,
+            )
         for error in errors:
             print(f"Prompt-Schutzfehler: {error}")
         return 1

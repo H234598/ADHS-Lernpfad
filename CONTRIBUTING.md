@@ -78,3 +78,16 @@ Normale Einheiten-, Quellen-, Karten-, Glossar-, Index- und Navigationsänderung
 - Evidenzgrad und Konsensstatus getrennt angeben.
 - ADHS, Autismus und Parkinson nicht gleichsetzen.
 - Bestehende Aussagen bei neuer Evidenz korrigieren und im Changelog dokumentieren.
+
+## Verbindliche Markdown- und Review-Gates
+
+Vor einem Inhalts-PR beziehungsweise nach einer Reparatur müssen die geänderten Markdown-Dateien reproduzierbar geprüft werden:
+
+```bash
+npm ci
+npm run audit:dependencies
+REMARK_BASE_SHA=origin/main REMARK_HEAD_SHA=HEAD \
+  npm run lint:markdown:changed
+```
+
+Jede Remark-lint-Warnung ist blockierend. CodeRabbit ist für automatische Einheiten ebenfalls ein hartes Gate: Alle Threads werden behoben oder mit überprüfbarer Begründung abgeschlossen. Ein fachlicher oder technischer Dissens wird nicht einseitig aufgelöst, sondern als manueller Blocker dokumentiert.

@@ -1,0 +1,6 @@
+---
+engines:
+  remark-lint:
+    exclude_paths:
+      - "**.md"
+      - "**/*.md"

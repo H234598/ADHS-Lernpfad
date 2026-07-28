@@ -1,0 +1,81 @@
+name: CodeRabbit hard gate
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  pull_request_review_comment:
+    types: [created, edited, deleted]
+  issue_comment:
+    types: [created, edited, deleted]
+  workflow_run:
+    workflows: ["Validate compendium", "Remark lint"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull-Request-Nummer
+        required: true
+        type: number
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+  checks: read
+  statuses: read
+
+concurrency:
+  group: coderabbit-gate-${{ github.event.pull_request.number || github.event.issue.number || github.event.workflow_run.pull_requests[0].number || inputs.pr_number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  review-gate:
+    name: CodeRabbit review gate (blocking)
+    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout trusted gate implementation from main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Determine pull request
+        id: pr
+        shell: bash
+        env:
+          INPUT_PR: ${{ inputs.pr_number }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+          ISSUE_PR: ${{ github.event.issue.number }}
+          WORKFLOW_PR: ${{ github.event.workflow_run.pull_requests[0].number }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER="${INPUT_PR:-${EVENT_PR:-${ISSUE_PR:-${WORKFLOW_PR:-}}}}"
+          if [[ -z "$PR_NUMBER" ]]; then
+            echo 'skip=true' >> "$GITHUB_OUTPUT"
+            echo 'Kein Pull Request im Ereignis; Gate wird übersprungen.'
+          else
+            echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+            echo 'skip=false' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Evaluate current-head CodeRabbit gate
+        if: steps.pr.outputs.skip != 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/review_gate.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --pr-number "${{ steps.pr.outputs.number }}"
+
+      - name: Upload review-gate report
+        if: always() && steps.pr.outputs.skip != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: coderabbit-review-gate-${{ steps.pr.outputs.number }}-${{ github.run_attempt }}
+          path: build/review-gate/
+          if-no-files-found: warn
+          retention-days: 30

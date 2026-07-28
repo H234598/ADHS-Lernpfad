@@ -1,7 +1,7 @@
 ---
 title: Wartung und Automatisierung
 tags: [Wartung, Automatisierung, CI]
-last_reviewed: 2026-07-22
+last_reviewed: 2026-07-27
 hide: [navigation]
 ---
 
@@ -20,22 +20,33 @@ Diese Seite bündelt den technischen Betrieb des Lernkompendiums. Sie gehört ni
 ```text
 06:00  neue Einheit recherchieren und erstellen
           ↓
-        lokale Pflichtprüfungen
+        lokale Pflichtprüfungen einschließlich Remark-lint
           ↓
         Branch, Push und Draft-Pull-Request
           ↓
-        mindestens zwei Stunden Prüfzeit
+        mindestens zwei Stunden Reviewfrist
           ↓
-ab 08:00 stündlicher Prüf-, Reparatur- und Merge-Wächter
+ab 08:00 regelmäßiger Merge-Wächter
           ↓
-        erste CI grün → Ready for review
+        Reparaturfenster = max(PR-Erstellung + 2 Stunden,
+                               20:00 am Erstellungstag)
           ↓
-        zweite CI grün → Squash-Merge nach main
+        vor dem Reparaturfenster rote Gates
+          → Diagnose sammeln und weiter prüfen
+          ↓
+        ab dem Reparaturfenster rote Gates
+          → sicherer Reparaturzyklus auf bestehendem Branch
+          ↓
+        erste CI + Remark-lint + CodeRabbit grün → Ready for review
+          ↓
+        zweite CI + Remark-lint + CodeRabbit grün → Squash-Merge
 ```
 
-CodeRabbit bekommt während der zweistündigen Draft-Phase Gelegenheit zur Prüfung. Eine fehlende Prüfung oder ein ausgeschöpftes Kontingent ist nach Ablauf der Frist kein harter Blocker. Nachvollziehbare kritische Hinweise werden dennoch berücksichtigt.
+CodeRabbit ist ein verpflichtendes hartes Gate. Für den aktuellen Head müssen ein erfolgreicher CodeRabbit-Status, vollständig gelöste Review-Threads und der erfolgreiche Check `CodeRabbit review gate (blocking)` vorliegen. Schweigen, Limiterschöpfung oder ein ungeklärter Dissens gelten nicht als Zustimmung.
 
-Fehlgeschlagene CI wird nicht einfach liegen gelassen: Der Wächter führt auf dem bestehenden Einheiten-Branch genau einen sicheren Reparaturzyklus aus und wartet anschließend auf die neu gestartete CI. Nicht sicher automatisch lösbare Fehler bleiben offen und werden gemeldet.
+Der Reparaturzyklus startet frühestens zu `max(PR-Erstellung + 2 Stunden, 20:00 Uhr Europe/Berlin am Erstellungstag)`. Bis dahin bleibt der Wächter aktiv, sammelt Diagnosen und prüft weiter. Es gibt keinen Abbruch nach dem zweiten roten CI-Lauf. Ab dem Reparaturfenster ist pro Wächterlauf genau ein sicherer, idempotenter Zyklus zulässig; neue Ursachen können in späteren Läufen erneut repariert werden.
+
+Die vollständige technische Policy steht unter [Merge- und Reparaturpolicy](automation/MERGE-REPAIR-POLICY.md).
 
 ## Automationsprompts
 
@@ -54,6 +65,8 @@ Die CI verwendet aktuelle GitHub-Actions-Majors mit Node-24-Runtime, feste Ubunt
 Geprüft werden unter anderem:
 
 - Python-Syntax und Whitespace,
+- reproduzierbares Remark-lint für geänderte Markdown-Dateien,
+- verpflichtendes CodeRabbit-Gate mit Thread- und Dissensprüfung,
 - Quellen- und Kapitelstruktur,
 - Mindest-, Warn- und Maximallänge,
 - Obsidian-Wikilinks einschließlich Aliasen, Unterordnern und Überschriftenankern,
@@ -161,7 +174,7 @@ Die im Studienkartentext sichtbare vollständige Zitation muss exakt aus den str
 
 ## Schutzregeln für automatische Merges
 
-Normale neue Lerneinheiten dürfen nach zwei grünen CI-Phasen automatisch gemergt werden. Pull Requests mit Änderungen an folgenden Bereichen benötigen dagegen eine bewusste manuelle Prüfung:
+Normale neue Lerneinheiten dürfen nur nach zwei grünen CI-Phasen, grünem Remark-lint und vollständig grünem CodeRabbit-Gate automatisch gemergt werden. Pull Requests mit Änderungen an folgenden Bereichen benötigen dagegen eine bewusste manuelle Prüfung:
 
 - `.github/` und Workflows,
 - `prompts/`,
