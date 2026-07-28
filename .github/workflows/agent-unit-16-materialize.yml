@@ -1,0 +1,223 @@
+name: Materialize unit 16 integration
+
+on:
+  push:
+    branches:
+      - agent/einheit-16-angst-zwang-differentialdiagnostik
+    paths:
+      - .github/workflows/agent-unit-16-materialize.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: materialize-unit-16
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout unit branch
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-16-angst-zwang-differentialdiagnostik
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
+
+      - name: Install validation dependency set
+        run: |
+          python -m pip install --disable-pip-version-check -r requirements-docs.txt
+          python -m pip check
+
+      - name: Integrate unit into navigation and metadata
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          from pathlib import Path
+
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              target = Path(path)
+              text = target.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(
+                      f"{path}: erwartete genau einen Treffer, gefunden: {count}\n{old}"
+                  )
+              target.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+
+          replace_once(
+              "02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md",
+              "- Weiter: [[ROADMAP#Milestone A – Klinische Heterogenität und Lebensspanne|Nächste Themen laut Roadmap]]",
+              "- Weiter: [[02-Vertiefung/04-ADHS-Angst-und-Zwang|ADHS, Angst und Zwang: Komorbidität und Differentialdiagnostik]]",
+          )
+
+          replace_once("README.md", "version: 0.17.0", "version: 0.18.0")
+          replace_once(
+              "README.md",
+              "last_reviewed: 2026-07-25",
+              "last_reviewed: 2026-07-28",
+          )
+          replace_once(
+              "README.md",
+              "tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]",
+              "tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angst, Zwang, Lernpfad]",
+          )
+          replace_once(
+              "README.md",
+              "15. [[02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen|Parkinson, ADHS und mechanistische Vergleiche]]",
+              "15. [[02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen|Parkinson, ADHS und mechanistische Vergleiche]]\n16. [[02-Vertiefung/04-ADHS-Angst-und-Zwang|ADHS, Angst und Zwang: Komorbidität und Differentialdiagnostik]]",
+          )
+
+          index_path = Path("index.json")
+          index = json.loads(index_path.read_text(encoding="utf-8"))
+          if index.get("version") != "0.17.0":
+              raise SystemExit(f"Unerwartete index.json-Version: {index.get('version')}")
+          if any(item.get("number") == 16 for item in index.get("chapters", [])):
+              raise SystemExit("Einheit 16 ist bereits in index.json vorhanden")
+          index["version"] = "0.18.0"
+          index["last_reviewed"] = "2026-07-28"
+          index["chapters"].append(
+              {
+                  "number": 16,
+                  "path": "02-Vertiefung/04-ADHS-Angst-und-Zwang.md",
+                  "title": "ADHS, Angst und Zwang: Komorbidität und Differentialdiagnostik",
+              }
+          )
+          index_path.write_text(
+              json.dumps(index, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          replace_once(
+              "mkdocs.yml",
+              "      - Parkinson, ADHS und mechanistische Vergleiche: 02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md",
+              "      - Parkinson, ADHS und mechanistische Vergleiche: 02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md\n      - ADHS, Angst und Zwang: 02-Vertiefung/04-ADHS-Angst-und-Zwang.md",
+          )
+
+          replace_once(
+              "Glossar.md",
+              "last_reviewed: 2026-07-25",
+              "last_reviewed: 2026-07-28",
+          )
+          replace_once(
+              "Glossar.md",
+              "## Aktigrafie\nVerfahren zur längerfristigen Schätzung von Aktivitäts- und Ruhephasen mit einem tragbaren Bewegungssensor; nützlich für Alltagsmuster, aber kein vollständiger Ersatz für eine Schlaflaboruntersuchung.\n\n",
+              "## Aktigrafie\nVerfahren zur längerfristigen Schätzung von Aktivitäts- und Ruhephasen mit einem tragbaren Bewegungssensor; nützlich für Alltagsmuster, aber kein vollständiger Ersatz für eine Schlaflaboruntersuchung.\n\n## Angststörung\nAnhaltendes Muster aus übermäßiger Furcht, Sorgen, körperlicher Aktivierung oder Vermeidung, das deutlich beeinträchtigt; Konzentrationsprobleme können daraus entstehen, beweisen aber weder eine Angststörung noch ADHS.\n\n",
+          )
+          glossary_path = Path("Glossar.md")
+          glossary = glossary_path.read_text(encoding="utf-8").rstrip()
+          if "## Zwangsgedanke" in glossary or "## Zwangshandlung" in glossary:
+              raise SystemExit("Zwangsbegriffe sind bereits im Glossar vorhanden")
+          glossary += (
+              "\n\n## Zwangsgedanke\n"
+              "Wiederkehrender, aufdringlicher und meist unerwünschter Gedanke, Impuls oder inneres Bild, der beziehungsweise das Angst oder Anspannung auslösen kann; einzelne intrusive Gedanken sind häufig und allein kein Diagnosenachweis.\n\n"
+              "## Zwangshandlung\n"
+              "Wiederholte sichtbare oder mentale Handlung, die Angst oder Anspannung senken oder ein gefürchtetes Ereignis verhindern soll; Gewohnheiten, Checklisten oder kompensatorische Ordnungssysteme sind nicht automatisch zwanghaft.\n"
+          )
+          glossary_path.write_text(glossary, encoding="utf-8")
+
+          cards_path = Path("cards/cards.yaml")
+          cards = cards_path.read_text(encoding="utf-8").rstrip()
+          if "id: 1016" in cards or "unit: 16" in cards:
+              raise SystemExit("Einheit-16-Karte ist bereits vorhanden")
+          cards += """
+          
+          - id: 1016
+            unit: 16
+            front: Warum kann wiederholtes Kontrollieren bei ADHS und Zwangsstörung ähnlich aussehen, aber unterschiedlich funktionieren?
+            back: Bei ADHS kann es aus unsicher gespeicherten Handlungsschritten entstehen; bei Zwang dient es häufig der Neutralisierung aufdringlicher Zweifel oder befürchteter Gefahr. Funktion, Drang, Entlastung und Verlauf entscheiden.
+            tags:
+            - ADHS
+            - Angst
+            - Zwang
+            - Vertiefung
+            - Differentialdiagnostik
+            - Einheit_16
+          """
+          cards_path.write_text(cards.lstrip("\n"), encoding="utf-8")
+
+          replace_once(
+              "knowledge-graph/planned-nodes.yaml",
+              "- path: 02-Vertiefung/04-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet\n  title: Studienmethodik, Effektgrößen, Bias und Kausalität\n  type: chapter\n  scope: learning\n  level: Vertiefung\n  roadmap: ROADMAP.md#vertiefung",
+              "- path: 02-Vertiefung/05-Trauma-PTBS-und-ADHS\n  title: Trauma, PTBS und ADHS\n  type: chapter\n  scope: learning\n  level: Vertiefung\n  roadmap: ROADMAP.md#a2-angst-zwang-trauma-und-episodische-storungen-p0\n- path: 02-Vertiefung/06-Bipolare-Stoerungen-Psychosen-und-ADHS\n  title: Bipolare Störungen, Psychosen und ADHS\n  type: chapter\n  scope: learning\n  level: Vertiefung\n  roadmap: ROADMAP.md#a2-angst-zwang-trauma-und-episodische-storungen-p0\n- path: 02-Vertiefung/07-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet\n  title: Studienmethodik, Effektgrößen, Bias und Kausalität\n  type: chapter\n  scope: learning\n  level: Vertiefung\n  roadmap: ROADMAP.md#vertiefung",
+          )
+
+          replace_once(
+              "CHANGELOG.md",
+              "# Änderungsverlauf\n\n",
+              "# Änderungsverlauf\n\n## 0.18.0 – 2026-07-28\n\n- Einheit 16 „ADHS, Angst und Zwang: Komorbidität und Differentialdiagnostik“ ergänzt\n- ähnliche sichtbare Beschwerden anhand von Funktion, Verlauf, Kontext und Beeinträchtigung differenziert\n- aktuelle Meta-Analyse zu Angstkomorbidität sowie methodisch begrenzte Evidenz zu sozialer Angst und Zwang eingeordnet\n- drei strukturierte Studienkarten, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung aktualisiert\n\n",
+          )
+
+          replace_once(
+              "ROADMAP.md",
+              "last_reviewed: 2026-07-25",
+              "last_reviewed: 2026-07-28",
+          )
+          replace_once(
+              "ROADMAP.md",
+              "Der Lernpfad umfasst derzeit 15 fortlaufende Einheiten:",
+              "Der Lernpfad umfasst derzeit 16 fortlaufende Einheiten:",
+          )
+          replace_once(
+              "ROADMAP.md",
+              "15. Parkinson, ADHS und mechanistische Vergleiche",
+              "15. Parkinson, ADHS und mechanistische Vergleiche\n16. ADHS, Angst und Zwang: Komorbidität und Differentialdiagnostik",
+          )
+          replace_once(
+              "ROADMAP.md",
+              "Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität sowie einen Behandlungsüberblick gut ab.",
+              "Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität, einen Behandlungsüberblick sowie erste vertiefte Differentialdiagnostik zu Angst und Zwang gut ab.",
+          )
+          replace_once(
+              "ROADMAP.md",
+              "- [ ] **Angststörungen und ADHS**",
+              "- [x] **Angststörungen und ADHS** — umgesetzt als Einheit 16",
+          )
+          replace_once(
+              "ROADMAP.md",
+              "- [ ] **Zwangssymptome und Zwangsstörung**",
+              "- [x] **Zwangssymptome und Zwangsstörung** — umgesetzt als Einheit 16",
+          )
+          replace_once(
+              "ROADMAP.md",
+              "> Dieser Block ist wegen Umfang und unterschiedlicher Evidenz in mindestens zwei, wahrscheinlich drei reguläre Einheiten zu teilen. Keine Unterfrage darf aus Platzgründen entfallen.",
+              "> Die ersten beiden Unterblöcke sind als Einheit 16 umgesetzt. Trauma/PTBS sowie bipolare, psychotische und andere episodische Veränderungen folgen in getrennten regulären Einheiten. Keine Unterfrage darf aus Platzgründen entfallen.",
+          )
+          PY
+
+      - name: Regenerate deterministic literature outputs
+        run: python scripts/build_literature.py
+
+      - name: Run focused validation
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git diff --check
+          python scripts/validate_links.py
+          python scripts/validate_compendium.py
+
+      - name: Commit integrated unit and remove transient workflow
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          rm .github/workflows/agent-unit-16-materialize.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "feat: integrate unit 16 across the compendium"
+          git push origin HEAD:agent/einheit-16-angst-zwang-differentialdiagnostik
