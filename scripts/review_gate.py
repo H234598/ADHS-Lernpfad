@@ -17,6 +17,7 @@ from urllib.request import Request, urlopen
 API = "https://api.github.com"
 GRAPHQL = "https://api.github.com/graphql"
 CODERABBIT_RE = re.compile(r"coderabbit", re.IGNORECASE)
+CODERABBIT_AUTHOR_RE = re.compile(r"^coderabbitai(?:\[bot\])?$", re.IGNORECASE)
 SELF_GATE_RE = re.compile(
     r"(?:coderabbit.*review\s*gate|review\s*gate.*coderabbit)", re.IGNORECASE
 )
@@ -47,6 +48,20 @@ def is_coderabbit_signal(name: str, app_name: str = "") -> bool:
 
     combined = " ".join(part for part in (app_name, name) if part).strip()
     return bool(CODERABBIT_RE.search(combined)) and not bool(SELF_GATE_RE.search(combined))
+
+
+def is_coderabbit_author(login: str) -> bool:
+    """Nur die bekannten CodeRabbit-Kommentaridentitäten akzeptieren."""
+
+    return bool(CODERABBIT_AUTHOR_RE.fullmatch(login.strip()))
+
+
+def is_trusted_resolution_author(login: str, trusted_authors: set[str]) -> bool:
+    """Dissensauflösungen nur CodeRabbit oder explizit vertrauten Menschen erlauben."""
+
+    normalized = login.strip().casefold()
+    trusted = {author.strip().casefold() for author in trusted_authors if author.strip()}
+    return is_coderabbit_author(login) or normalized in trusted
 
 
 def _mapping(value: Any) -> dict[str, Any]:
@@ -226,9 +241,11 @@ def evaluate_gate(
     threads: list[dict[str, Any]],
     comments: list[dict[str, Any]],
     head_sha: str,
+    trusted_resolution_authors: set[str] | None = None,
 ) -> tuple[str, list[str], list[str], bool]:
     """GitHub-Rohdaten ohne Seiteneffekte zu einer Gateentscheidung verdichten."""
 
+    trusted_authors = trusted_resolution_authors or set()
     reasons: list[str] = []
     states = [signal.get("state", "missing").casefold() for signal in signals]
     successful = {"success"}
@@ -264,7 +281,7 @@ def evaluate_gate(
             str(_mapping(_mapping(comment).get("author")).get("login") or "")
             for comment in _items(thread_comments.get("nodes"))
         ]
-        if any(CODERABBIT_RE.search(author) for author in authors):
+        if any(is_coderabbit_author(author) for author in authors):
             unresolved.append(str(thread.get("id")))
     if unresolved:
         reasons.append(
@@ -274,7 +291,9 @@ def evaluate_gate(
 
     disagreements: dict[str, datetime] = {}
     resolutions: dict[str, datetime] = {}
-    for comment in comments:
+    ignored_resolution_authors: set[str] = set()
+    for raw_comment in comments:
+        comment = _mapping(raw_comment)
         body = str(comment.get("body") or "")
         raw_created = str(comment.get("created_at") or "")
         if not raw_created:
@@ -282,8 +301,22 @@ def evaluate_gate(
         created = datetime.fromisoformat(raw_created.replace("Z", "+00:00"))
         for marked_head in DISAGREEMENT_RE.findall(body):
             disagreements[marked_head] = max(disagreements.get(marked_head, created), created)
-        for marked_head in DISAGREEMENT_RESOLVED_RE.findall(body):
+
+        resolution_heads = DISAGREEMENT_RESOLVED_RE.findall(body)
+        if not resolution_heads:
+            continue
+        author = str(_mapping(comment.get("user")).get("login") or "")
+        if not is_trusted_resolution_author(author, trusted_authors):
+            ignored_resolution_authors.add(author or "<unbekannt>")
+            continue
+        for marked_head in resolution_heads:
             resolutions[marked_head] = max(resolutions.get(marked_head, created), created)
+
+    if ignored_resolution_authors:
+        reasons.append(
+            "Nicht vertrauenswürdige Dissensauflösung ignoriert von: "
+            + ", ".join(sorted(ignored_resolution_authors))
+        )
 
     open_disagreement_heads = sorted(
         marked_head
@@ -332,6 +365,12 @@ def main() -> int:
     parser.add_argument("--pr-number", type=int)
     parser.add_argument("--token", default=os.getenv("GITHUB_TOKEN"))
     parser.add_argument("--output-dir", type=Path, default=Path("build/review-gate"))
+    parser.add_argument(
+        "--trusted-resolver",
+        action="append",
+        default=[],
+        help="Zusätzlicher GitHub-Login, der einen Dissens ausdrücklich auflösen darf.",
+    )
     args = parser.parse_args()
     if not args.repository or not args.token or not args.pr_number:
         parser.error("repository, token und pr-number sind erforderlich")
@@ -351,8 +390,14 @@ def main() -> int:
     signals = _latest_coderabbit_signals(args.repository, head_sha, args.token)
     threads = _review_threads(args.repository, args.pr_number, args.token)
     comments = _issue_comments(args.repository, args.pr_number, args.token)
+    repository_owner = args.repository.split("/", 1)[0]
+    trusted_resolution_authors = {repository_owner, *args.trusted_resolver}
     state, unresolved, reasons, disagreement = evaluate_gate(
-        signals=signals, threads=threads, comments=comments, head_sha=head_sha
+        signals=signals,
+        threads=threads,
+        comments=comments,
+        head_sha=head_sha,
+        trusted_resolution_authors=trusted_resolution_authors,
     )
     passed = state == "success" and not unresolved and not disagreement
     result = GateResult(
