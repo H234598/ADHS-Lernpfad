@@ -12,26 +12,36 @@ import sys
 
 @dataclass(frozen=True, order=True)
 class SafetyIssue:
+    """One actionable mutation-safety finding in a workflow file."""
+
     path: str
     line: int
     code: str
     message: str
 
     def render(self) -> str:
+        """Render the finding in compiler-style path/line form."""
+
         return f"{self.path}:{self.line}: {self.code} {self.message}"
 
 
 @dataclass(frozen=True)
 class StepBlock:
+    """A single immediate list item below a GitHub Actions ``steps:`` key."""
+
     start_line: int
     end_line: int
     lines: tuple[str, ...]
 
     @property
     def text(self) -> str:
+        """Return the complete YAML text of the step."""
+
         return "\n".join(self.lines)
 
     def active_lines(self) -> list[tuple[int, str]]:
+        """Return non-comment lines paired with their one-based line numbers."""
+
         return [
             (self.start_line + offset, line)
             for offset, line in enumerate(self.lines)
@@ -62,6 +72,8 @@ NONZERO_EXIT = re.compile(
 
 
 def workflow_files(root: Path) -> list[Path]:
+    """Return all YAML workflow files below ``.github/workflows``."""
+
     directory = root / ".github" / "workflows"
     if not directory.is_dir():
         return []
@@ -69,6 +81,8 @@ def workflow_files(root: Path) -> list[Path]:
 
 
 def _indent(line: str) -> int:
+    """Return the number of leading whitespace characters in ``line``."""
+
     return len(line) - len(line.lstrip())
 
 
@@ -133,6 +147,8 @@ def workflow_step_blocks(text: str) -> list[StepBlock]:
 
 
 def line_has_staged_diff(line: str, *, quiet: bool) -> bool:
+    """Return whether ``line`` contains the required staged diff form."""
+
     return (
         bool(GIT_DIFF.search(line))
         and ("--cached" in line or "--staged" in line)
@@ -166,6 +182,8 @@ def logical_shell_lines(step: StepBlock) -> list[tuple[int, str]]:
 
 
 def _payload_signature(text: str) -> bool:
+    """Return whether a step appears to verify a fragmented payload."""
+
     lower = text.lower()
     return bool(
         re.search(
@@ -177,6 +195,8 @@ def _payload_signature(text: str) -> bool:
 
 
 def validate_step(step: StepBlock, relative: str) -> list[SafetyIssue]:
+    """Validate one workflow step against all Variant-B requirements."""
+
     active = step.active_lines()
     raw = [line for _, line in active]
     text = step.text
@@ -184,6 +204,8 @@ def validate_step(step: StepBlock, relative: str) -> list[SafetyIssue]:
     issues: list[SafetyIssue] = []
 
     def add(code: str, line: int, message: str) -> None:
+        """Append one finding for the currently validated workflow step."""
+
         issues.append(SafetyIssue(relative, line, code, message))
 
     mutations = [number for number, line in active if GIT_MUTATION.search(line)]
@@ -296,6 +318,8 @@ def validate_step(step: StepBlock, relative: str) -> list[SafetyIssue]:
 
 
 def validate_workflow(path: Path, root: Path) -> list[SafetyIssue]:
+    """Validate one workflow file and report all findings with line numbers."""
+
     text = path.read_text(encoding="utf-8")
     relative = path.relative_to(root).as_posix()
     steps = workflow_step_blocks(text)
@@ -328,6 +352,8 @@ def validate_workflow(path: Path, root: Path) -> list[SafetyIssue]:
 
 
 def validate_repository(root: Path) -> list[SafetyIssue]:
+    """Validate all workflows in ``root`` and return a stable sorted result."""
+
     root = root.resolve()
     return sorted(
         issue
@@ -337,6 +363,8 @@ def validate_repository(root: Path) -> list[SafetyIssue]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Run the command-line validator and return a process exit code."""
+
     parser = argparse.ArgumentParser(
         description="Prüft GitHub-Actions-Workflows auf Variante-B-Sicherheit."
     )
