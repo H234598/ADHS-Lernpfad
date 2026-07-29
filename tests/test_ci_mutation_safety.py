@@ -31,7 +31,10 @@ jobs:
             printf '%s bytes  ' "$(wc -c < "$fragment")"
             sha256sum "$fragment"
           done
-          tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true
+          if [[ "$actual_payload_checksum" != "$expected_payload_checksum" ]]; then
+            tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true
+            exit 1
+          fi
           npm run audit:dependencies
           git add generated/
           git status --short
@@ -62,7 +65,10 @@ class MutationSafetyTests(unittest.TestCase):
     def test_read_only_workflow_needs_no_writer_guard(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            write_workflow(root, "name: Read only\non: workflow_dispatch\npermissions:\n  contents: read\n")
+            write_workflow(
+                root,
+                "name: Read only\non: workflow_dispatch\npermissions:\n  contents: read\n",
+            )
             self.assertEqual(validate_repository(root), [])
 
     def test_unguarded_writer_is_rejected(self) -> None:
@@ -82,6 +88,23 @@ jobs:
             codes = {issue.code for issue in validate_repository(root)}
             self.assertTrue({"CIW001", "CIW002", "CIW003"}.issubset(codes))
 
+    def test_each_writer_step_requires_its_own_guard_and_diagnostics(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            second_writer = """      - name: Unsafe second writer
+        run: |
+          git add other/
+          git commit -m unsafe
+          git push origin HEAD:other
+"""
+            write_workflow(root, SAFE_WRITER + second_writer)
+            issues = validate_repository(root)
+            codes = [issue.code for issue in issues]
+            self.assertIn("CIW001", codes)
+            self.assertIn("CIW002", codes)
+            self.assertIn("CIW003", codes)
+            self.assertTrue(all(issue.line >= 31 for issue in issues))
+
     def test_opaque_payload_checksum_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -90,7 +113,27 @@ jobs:
             opaque = "          test \"$(sha256sum payload.b64)\" = abc123\n"
             write_workflow(root, SAFE_WRITER[:start] + opaque + SAFE_WRITER[end:])
             codes = {issue.code for issue in validate_repository(root)}
-            self.assertTrue({"CIW004", "CIW005", "CIW006", "CIW007"}.issubset(codes))
+            self.assertTrue(
+                {"CIW004", "CIW005", "CIW006", "CIW007", "CIW010"}.issubset(codes)
+            )
+
+    def test_printed_checksums_without_enforced_comparison_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            comparison = """          if [[ "$actual_payload_checksum" != "$expected_payload_checksum" ]]; then
+            tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true
+            exit 1
+          fi
+"""
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    comparison,
+                    "          tar -tzf \"$RUNNER_TEMP/payload.tar.gz\" || true\n",
+                ),
+            )
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW010", codes)
 
     def test_audit_bypasses_are_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -110,8 +153,16 @@ jobs:
                 ),
                 "step.yml",
             )
-            codes = {issue.code for issue in validate_repository(root)}
-            self.assertIn("CIW008", codes)
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    "npm run audit:dependencies",
+                    "npm run audit:dependencies \\\n            || true",
+                ),
+                "multiline.yml",
+            )
+            codes = [issue.code for issue in validate_repository(root)]
+            self.assertGreaterEqual(codes.count("CIW008"), 2)
             self.assertIn("CIW009", codes)
 
 
