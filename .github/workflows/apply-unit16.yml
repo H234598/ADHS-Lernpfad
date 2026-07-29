@@ -1,0 +1,216 @@
+name: Apply unit 16 payload
+
+on:
+  push:
+    branches:
+      - agent/einheit-16-angststoerungen-adhs
+    paths:
+      - .automation-repair/unit16.payload.*
+      - .github/workflows/apply-unit16.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-unit16-payload
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-16-angststoerungen-adhs
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements-docs.txt
+            requirements-export.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Verify and extract payload
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          payload="$RUNNER_TEMP/unit16.tar.gz"
+          cat .automation-repair/unit16.payload.* > "$RUNNER_TEMP/unit16.payload.b64"
+          test "$(sha256sum "$RUNNER_TEMP/unit16.payload.b64" | cut -d' ' -f1)" = \
+            '05f2646418b408b93cc85b0c9184c0fb358d565263e197cd1ac8eadcabc17fd5'
+          base64 --decode "$RUNNER_TEMP/unit16.payload.b64" > "$payload"
+          python - "$payload" <<'PY'
+          from pathlib import Path, PurePosixPath
+          import sys
+          import tarfile
+
+          archive = Path(sys.argv[1])
+          expected = {
+              '02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md',
+              '02-Vertiefung/04-Angststoerungen-und-ADHS.md',
+              'README.md',
+              'ROADMAP.md',
+              'Glossar.md',
+              'cards/cards.yaml',
+              'index.json',
+              'knowledge-graph/planned-nodes.yaml',
+              'mkdocs.yml',
+              'references/Hoskins2026.md',
+              'references/Njardvik2025.md',
+          }
+          with tarfile.open(archive, 'r:gz') as handle:
+              members = handle.getmembers()
+              names = {member.name for member in members}
+              if names != expected:
+                  raise SystemExit(f'Unerwartete Payload-Dateien: {sorted(names ^ expected)}')
+              for member in members:
+                  path = PurePosixPath(member.name)
+                  if path.is_absolute() or '..' in path.parts or not member.isfile():
+                      raise SystemExit(f'Unsicherer Archiveintrag: {member.name}')
+              handle.extractall('.', filter='data')
+          PY
+
+      - name: Update changelog
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('CHANGELOG.md')
+          text = path.read_text(encoding='utf-8')
+          heading = '## 0.18.0 – 2026-07-29'
+          if heading not in text:
+              entry = '''## 0.18.0 – 2026-07-29
+
+- Einheit 16 „Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen“ ergänzt
+- Angstsymptome, diagnostizierte Angststörungen und ADHS-bezogene Regulationsprobleme methodisch getrennt
+- bidirektionale Verstärkung, Differentialdiagnostik, Sicherheitsverhalten und Vermeidung ohne pauschale Kausalbehauptung eingeordnet
+- zwei aktuelle systematische Reviews, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung ergänzt
+
+'''
+              text = text.replace('# Änderungsverlauf\n\n', '# Änderungsverlauf\n\n' + entry, 1)
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Install pinned dependencies
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python -m pip install --disable-pip-version-check \
+            -r requirements-docs.txt -r requirements-export.txt
+          python -m pip check
+          npm ci
+          npm run audit:dependencies
+          npx playwright install --with-deps chromium
+
+      - name: Generate and validate all outputs
+        shell: bash
+        env:
+          RUNTIME_STATUS_MANAGED: '0'
+        run: |
+          set -Eeuo pipefail
+          git diff --check
+          python -m compileall -q scripts tests
+          python scripts/validate_prompt_baselines.py
+          find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
+          pwsh -NoProfile -Command '
+            $failed = $false
+            Get-ChildItem Sync -Recurse -Filter *.ps1 | ForEach-Object {
+              $tokens = $null
+              $errors = $null
+              [System.Management.Automation.Language.Parser]::ParseFile(
+                $_.FullName, [ref]$tokens, [ref]$errors
+              ) | Out-Null
+              if ($errors.Count -gt 0) {
+                $failed = $true
+                $errors | ForEach-Object { Write-Host $_.Message }
+              }
+            }
+            if ($failed) { exit 1 }
+          '
+          bash Sync/tests/test-posix-sync.sh
+          python -m pytest -q
+          npm test
+          python scripts/build_literature.py
+          python scripts/build_graph.py
+          python scripts/validate_graph.py
+          python scripts/validate_links.py
+          python scripts/validate_compendium.py
+          python scripts/build_combined.py
+          python scripts/build_anki.py
+          python scripts/build_docs.py
+          mkdocs build --strict
+          node scripts/remark_lint.mjs --files \
+            02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md \
+            02-Vertiefung/04-Angststoerungen-und-ADHS.md \
+            README.md ROADMAP.md Glossar.md CHANGELOG.md \
+            references/Hoskins2026.md references/Njardvik2025.md
+          npm run test:web
+
+      - name: Commit validated unit and remove transient machinery
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git rm .github/workflows/apply-unit16.yml .automation-repair/unit16.payload.*
+          git add \
+            02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md \
+            02-Vertiefung/04-Angststoerungen-und-ADHS.md \
+            README.md ROADMAP.md Glossar.md CHANGELOG.md \
+            cards/cards.yaml index.json knowledge-graph/planned-nodes.yaml mkdocs.yml \
+            references/Hoskins2026.md references/Njardvik2025.md \
+            Literatur.md references.bib references.json
+
+          allowed="$RUNNER_TEMP/allowed.txt"
+          actual="$RUNNER_TEMP/actual.txt"
+          cat > "$allowed" <<'EOF'
+          .automation-repair/unit16.payload.00
+          .automation-repair/unit16.payload.01
+          .automation-repair/unit16.payload.02
+          .automation-repair/unit16.payload.03
+          .automation-repair/unit16.payload.04
+          .automation-repair/unit16.payload.05
+          .github/workflows/apply-unit16.yml
+          02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md
+          02-Vertiefung/04-Angststoerungen-und-ADHS.md
+          CHANGELOG.md
+          Glossar.md
+          Literatur.md
+          README.md
+          ROADMAP.md
+          cards/cards.yaml
+          index.json
+          knowledge-graph/planned-nodes.yaml
+          mkdocs.yml
+          references.bib
+          references.json
+          references/Hoskins2026.md
+          references/Njardvik2025.md
+          EOF
+          sed -i 's/^          //' "$allowed"
+          git diff --cached --name-only | sort -u > "$actual"
+          sort -u -o "$allowed" "$allowed"
+          diff -u "$allowed" "$actual"
+          git diff --cached --check
+          git status --short
+          git commit -m 'feat: ergänze Einheit 16 zu Angststörungen und ADHS'
+
+          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
+            push origin HEAD:agent/einheit-16-angststoerungen-adhs
