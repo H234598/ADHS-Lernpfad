@@ -45,8 +45,8 @@ Die Workflows verwenden aktuelle GitHub-Actions-Majors mit Node-24-Runtime. Depe
 
 `scripts/validate_ci_mutation_safety.py` ist ein blockierender, nur mit der
 Python-Standardbibliothek arbeitender Vertragscheck. Er verändert keine
-Berechtigungen und macht keinen read-only Workflow schreibend. Sobald ein
-Workflow `git commit` oder `git push` ausführt, verlangt er jedoch vollständig:
+Berechtigungen und macht keinen read-only Workflow schreibend. Jeder einzelne
+Workflow-Schritt mit `git commit` oder `git push` muss vollständig enthalten:
 
 - einen No-op-Guard mit `git diff --cached --quiet` oder
   `git diff --staged --quiet`;
@@ -55,12 +55,15 @@ Workflow `git commit` oder `git push` ausführt, verlangt er jedoch vollständig
 - bei fragmentierten Payloads explizite Ist-/Soll-SHA-256-Ausgaben,
   Fragmentgrößen und Fragmentprüfsummen sowie eine bestmögliche
   `tar -tzf`-Diagnose im Fehlerfall;
-- weiterhin blockierende Audits: weder Shell-Bypässe wie `|| true` noch
-  `continue-on-error: true` sind für Audit-Schritte zulässig.
+- einen tatsächlichen Ist-/Soll-Prüfsummenvergleich, der bei Abweichung mit
+  einem von null verschiedenen Exitcode endet;
+- weiterhin blockierende Audits: weder ein- noch mehrzeilige Shell-Bypässe wie
+  `|| true` noch `continue-on-error: true` sind für Audit-Schritte zulässig.
 
-Die Regeln sind durch synthetische Negativ- und Positivtests abgesichert. Der
-bestehende Persistenzworkflow erfüllt denselben Vertrag und beendet einen
-idempotenten Lauf ohne Commit oder Push erfolgreich.
+Die Regeln sind durch synthetische Negativ- und Positivtests einschließlich
+eines Zwei-Writer-Angriffs abgesichert. Der bestehende Persistenzworkflow erfüllt
+denselben Vertrag und beendet einen idempotenten Lauf ohne Commit oder Push
+erfolgreich.
 
 ## Laufstatus und Graphdiagnose
 
