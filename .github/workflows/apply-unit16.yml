@@ -6,8 +6,6 @@ on:
     paths:
       - .automation-repair/unit16.payload.*
       - .github/workflows/apply-unit16.yml
-  pull_request:
-    types: [opened, reopened, synchronize]
 
 permissions:
   contents: write
@@ -18,7 +16,6 @@ concurrency:
 
 jobs:
   apply:
-    if: github.event_name == 'push' || github.head_ref == 'agent/einheit-16-angststoerungen-adhs'
     runs-on: ubuntu-24.04
     timeout-minutes: 50
     steps:
@@ -48,7 +45,58 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          cat .automation-repair/unit16.payload.* > "$RUNNER_TEMP/unit16.payload.b64"
+          python - "$RUNNER_TEMP/unit16.payload.b64" <<'PY'
+          from pathlib import Path
+          import sys
+
+          expected_fragments = [
+              f'unit16.payload.{index:02d}'
+              for index in range(6)
+          ]
+          fragment_paths = sorted(Path('.automation-repair').glob('unit16.payload.*'))
+          if [path.name for path in fragment_paths] != expected_fragments:
+              raise SystemExit(
+                  'Unerwartete Payload-Fragmente: '
+                  f'{[path.name for path in fragment_paths]}'
+              )
+
+          def longest_suffix_prefix_overlap(left: str, right: str) -> int:
+              candidate = right + '\0' + left[-len(right):]
+              prefix = [0] * len(candidate)
+              for index in range(1, len(candidate)):
+                  match = prefix[index - 1]
+                  while match and candidate[index] != candidate[match]:
+                      match = prefix[match - 1]
+                  if candidate[index] == candidate[match]:
+                      match += 1
+                  prefix[index] = match
+              return prefix[-1]
+
+          payload = fragment_paths[0].read_text(encoding='ascii').strip()
+          repaired_overlaps: list[tuple[str, int]] = []
+          for fragment_path in fragment_paths[1:]:
+              fragment = fragment_path.read_text(encoding='ascii').strip()
+              overlap = longest_suffix_prefix_overlap(payload, fragment)
+              if overlap >= 256:
+                  repaired_overlaps.append((fragment_path.name, overlap))
+                  fragment = fragment[overlap:]
+              payload += fragment
+
+          if len(repaired_overlaps) != 1 or repaired_overlaps[0][0] != 'unit16.payload.01':
+              raise SystemExit(
+                  'Unerwartetes Fragment-Überlappungsmuster: '
+                  f'{repaired_overlaps}'
+              )
+          if len(payload) % 4:
+              raise SystemExit('Rekonstruierte Base64-Payload ist nicht 4-Byte-ausgerichtet')
+
+          output = Path(sys.argv[1])
+          output.write_text(payload, encoding='ascii')
+          print(
+              'Doppelten Bereich entfernt: '
+              f'{repaired_overlaps[0][1]} Zeichen aus {repaired_overlaps[0][0]}'
+          )
+          PY
           test "$(sha256sum "$RUNNER_TEMP/unit16.payload.b64" | cut -d' ' -f1)" = \
             '05f2646418b408b93cc85b0c9184c0fb358d565263e197cd1ac8eadcabc17fd5'
           base64 --decode "$RUNNER_TEMP/unit16.payload.b64" > "$RUNNER_TEMP/unit16.tar.gz"
