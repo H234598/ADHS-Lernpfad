@@ -97,8 +97,29 @@ jobs:
               f'{repaired_overlaps[0][1]} Zeichen aus {repaired_overlaps[0][0]}'
           )
           PY
-          test "$(sha256sum "$RUNNER_TEMP/unit16.payload.b64" | cut -d' ' -f1)" = \
-            '05f2646418b408b93cc85b0c9184c0fb358d565263e197cd1ac8eadcabc17fd5'
+
+          echo '=== Payload-Fragmente ==='
+          for fragment in .automation-repair/unit16.payload.*; do
+            printf '%s bytes  ' "$(wc -c < "$fragment")"
+            sha256sum "$fragment"
+          done
+
+          expected_payload_checksum='05f2646418b408b93cc85b0c9184c0fb358d565263e197cd1ac8eadcabc17fd5'
+          actual_payload_checksum="$(sha256sum "$RUNNER_TEMP/unit16.payload.b64" | cut -d' ' -f1)"
+          printf 'Computed payload checksum: %s\n' "$actual_payload_checksum"
+          printf 'Expected payload checksum: %s\n' "$expected_payload_checksum"
+          if [[ "$actual_payload_checksum" != "$expected_payload_checksum" ]]; then
+            echo 'Payload checksum mismatch. Bestmögliche Archivdiagnose folgt.' >&2
+            if base64 --decode "$RUNNER_TEMP/unit16.payload.b64" \
+              > "$RUNNER_TEMP/unit16.tar.gz"; then
+              echo '=== Rekonstruierte Archivmitglieder ===' >&2
+              tar -tzf "$RUNNER_TEMP/unit16.tar.gz" >&2 || true
+            else
+              echo 'Die rekonstruierte Payload ist kein gültiges Base64.' >&2
+            fi
+            exit 1
+          fi
+
           base64 --decode "$RUNNER_TEMP/unit16.payload.b64" > "$RUNNER_TEMP/unit16.tar.gz"
           python - "$RUNNER_TEMP/unit16.tar.gz" <<'PY'
           from pathlib import Path, PurePosixPath
@@ -190,7 +211,9 @@ jobs:
           set -Eeuo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git rm .github/workflows/apply-unit16.yml .automation-repair/unit16.payload.*
+          git rm --ignore-unmatch \
+            .github/workflows/apply-unit16.yml \
+            .automation-repair/unit16.payload.*
           git add \
             02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md \
             02-Vertiefung/04-Angststoerungen-und-ADHS.md \
@@ -199,8 +222,18 @@ jobs:
             references/Hoskins2026.md references/Njardvik2025.md \
             Literatur.md references.bib references.json
           git diff --cached --check
+          echo '=== Git status ==='
           git status --short
+          echo '=== Staged files ==='
+          git diff --cached --name-status
+          echo '=== Staged diff statistics ==='
+          git diff --cached --stat
+          if git diff --cached --quiet; then
+            echo 'No validated content changes to commit; push is skipped.'
+            exit 0
+          fi
           git commit -m 'feat: ergänze Einheit 16 zu Angststörungen und ADHS'
           auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          echo 'Push target: origin/agent/einheit-16-angststoerungen-adhs'
           git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
             push origin HEAD:agent/einheit-16-angststoerungen-adhs
