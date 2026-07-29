@@ -47,22 +47,32 @@ jobs:
 
 
 def write_workflow(root: Path, content: str, name: str = "writer.yml") -> None:
+    """Write one synthetic workflow into a temporary repository."""
+
     path = root / ".github" / "workflows" / name
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
 
 
 class MutationSafetyTests(unittest.TestCase):
+    """Exercise positive, negative, and adversarial Variant-B contracts."""
+
     def test_repository_workflows_follow_variant_b(self) -> None:
+        """Require every real workflow in this repository to pass."""
+
         self.assertEqual(validate_repository(ROOT), [])
 
     def test_safe_writer_passes(self) -> None:
+        """Accept a writer with complete diagnostics and enforced checksums."""
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             write_workflow(root, SAFE_WRITER)
             self.assertEqual(validate_repository(root), [])
 
     def test_read_only_workflow_needs_no_writer_guard(self) -> None:
+        """Avoid imposing writer requirements on a read-only workflow."""
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             write_workflow(
@@ -72,6 +82,8 @@ class MutationSafetyTests(unittest.TestCase):
             self.assertEqual(validate_repository(root), [])
 
     def test_unguarded_writer_is_rejected(self) -> None:
+        """Reject a writer lacking a guard, status, and staged diagnostics."""
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             write_workflow(root, """name: Unsafe
@@ -89,6 +101,8 @@ jobs:
             self.assertTrue({"CIW001", "CIW002", "CIW003"}.issubset(codes))
 
     def test_each_writer_step_requires_its_own_guard_and_diagnostics(self) -> None:
+        """Prevent a safe writer from masking an unsafe sibling step."""
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             second_writer = """      - name: Unsafe second writer
@@ -106,6 +120,8 @@ jobs:
             self.assertTrue(all(issue.line >= 31 for issue in issues))
 
     def test_opaque_payload_checksum_is_rejected(self) -> None:
+        """Reject an opaque checksum assertion without useful diagnostics."""
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             start = SAFE_WRITER.index("          expected_payload_checksum")
@@ -118,6 +134,8 @@ jobs:
             )
 
     def test_printed_checksums_without_enforced_comparison_are_rejected(self) -> None:
+        """Reject checksums that are merely printed but never enforced."""
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             comparison = """          if [[ "$actual_payload_checksum" != "$expected_payload_checksum" ]]; then
@@ -136,6 +154,8 @@ jobs:
             self.assertIn("CIW010", codes)
 
     def test_audit_bypasses_are_rejected(self) -> None:
+        """Reject shell and workflow-level attempts to soften audit failures."""
+
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             write_workflow(
