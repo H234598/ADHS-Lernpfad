@@ -1,3 +1,5 @@
+"""Tests for the GitHub Actions mutation-safety contract."""
+
 from pathlib import Path
 import tempfile
 import unittest
@@ -71,7 +73,8 @@ class MutationSafetyTests(unittest.TestCase):
             root = Path(directory)
             write_workflow(
                 root,
-                "name: Read only\non: workflow_dispatch\npermissions:\n  contents: read\n",
+                "name: Read only\non: workflow_dispatch\n"
+                "permissions:\n  contents: read\n",
             )
             self.assertEqual(validate_repository(root), [])
 
@@ -92,7 +95,8 @@ jobs:
           git push origin HEAD:generated
 """)
             codes = {issue.code for issue in validate_repository(root)}
-            self.assertTrue({"CIW001", "CIW002", "CIW003"}.issubset(codes))
+            required = {"CIW001", "CIW002", "CIW003"}
+            self.assertTrue(required.issubset(codes))
 
     def test_each_writer_step_requires_its_own_guard_and_diagnostics(self) -> None:
         """Prevent a safe writer from masking an unsafe sibling step."""
@@ -123,25 +127,33 @@ jobs:
             opaque = "          test \"$(sha256sum payload.b64)\" = abc123\n"
             write_workflow(root, SAFE_WRITER[:start] + opaque + SAFE_WRITER[end:])
             codes = {issue.code for issue in validate_repository(root)}
-            self.assertTrue(
-                {"CIW004", "CIW005", "CIW006", "CIW007", "CIW010"}.issubset(codes)
-            )
+            required = {
+                "CIW004",
+                "CIW005",
+                "CIW006",
+                "CIW007",
+                "CIW010",
+            }
+            self.assertTrue(required.issubset(codes))
 
     def test_printed_checksums_without_enforced_comparison_are_rejected(self) -> None:
         """Reject checksums that are merely printed but never enforced."""
 
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            comparison = """          if [[ "$actual_payload_checksum" != "$expected_payload_checksum" ]]; then
-            tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true
-            exit 1
-          fi
-"""
+            comparison = (
+                '          if [[ "$actual_payload_checksum" '
+                '!= "$expected_payload_checksum" ]]; then\n'
+                '            tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true\n'
+                '            exit 1\n'
+                '          fi\n'
+            )
             write_workflow(
                 root,
                 SAFE_WRITER.replace(
                     comparison,
-                    "          tar -tzf \"$RUNNER_TEMP/payload.tar.gz\" || true\n",
+                    "          tar -tzf \"$RUNNER_TEMP/payload.tar.gz\" "
+                    "|| true\n",
                 ),
             )
             codes = {issue.code for issue in validate_repository(root)}
@@ -155,7 +167,8 @@ jobs:
             write_workflow(
                 root,
                 SAFE_WRITER.replace(
-                    "npm run audit:dependencies", "npm run audit:dependencies || true"
+                    "npm run audit:dependencies",
+                    "npm run audit:dependencies || true",
                 ),
                 "shell.yml",
             )
@@ -163,7 +176,8 @@ jobs:
                 root,
                 SAFE_WRITER.replace(
                     "      - name: Apply verified payload\n",
-                    "      - name: Apply verified payload\n        continue-on-error: true\n",
+                    "      - name: Apply verified payload\n"
+                    "        continue-on-error: true\n",
                 ),
                 "step.yml",
             )
