@@ -1,7 +1,7 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.17.0",
-  "last_reviewed": "2026-07-25",
+  "version": "0.18.0",
+  "last_reviewed": "2026-07-30",
   "chapters": [
     {
       "number": 1,
@@ -77,6 +77,11 @@
       "number": 15,
       "path": "02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md",
       "title": "Parkinson, ADHS und mechanistische Vergleiche"
+    },
+    {
+      "number": 16,
+      "path": "02-Vertiefung/04-Angststoerungen-und-ADHS.md",
+      "title": "Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen"
     }
   ]
 }

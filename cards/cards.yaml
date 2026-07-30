@@ -142,3 +142,14 @@ cards:
   - Vertiefung
   - Differentialdiagnostik
   - Einheit_15
+
+- id: 1016
+  unit: 16
+  front: Warum kann Aufschieben bei ADHS und einer Angststörung ähnlich aussehen, obwohl unterschiedliche Mechanismen beteiligt sein können?
+  back: Bei ADHS können unklare Schritte, geringe unmittelbare Rückmeldung oder instabile Zielaktivierung den Start erschweren; bei Angst kann Aufschub erwartete Fehler, Bewertung oder körperliche Aktivierung vermeiden. Beide Mechanismen können gleichzeitig vorkommen.
+  tags:
+  - ADHS
+  - Angststörungen
+  - Vertiefung
+  - Differentialdiagnostik
+  - Einheit_16

@@ -177,5 +177,5 @@ Weil ADHS und Parkinson unterschiedliche Erkrankungsklassen, Zeitverläufe und P
 ## Navigation
 
 - Zurück: [[02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung|Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung]]
-- Weiter: [[ROADMAP#Milestone A – Klinische Heterogenität und Lebensspanne|Nächste Themen laut Roadmap]]
+- Weiter: [[02-Vertiefung/04-Angststoerungen-und-ADHS|Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]
