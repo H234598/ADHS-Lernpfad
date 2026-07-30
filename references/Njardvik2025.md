@@ -45,7 +45,7 @@ Für Angststörungen ergab sich eine gepoolte Prävalenz von 18,4 Prozent. Psych
 
 ## Einschränkungen
 
-Die eingeschlossenen Studien unterschieden sich hinsichtlich Stichprobenrekrutierung, Diagnostik, Altersbereich und untersuchten Störungen. Eine gepoolte Prävalenz kann lokale Versorgung, Erhebungsmethode und Selektionsprozesse nicht vollständig abbilden. Komorbidität belegt keine eindeutige Kausalrichtung zwischen ADHS und Angststörungen.
+Die eingeschlossenen Studien unterschieden sich hinsichtlich Stichprobenrekrutierung, Diagnostik, Altersbereich und untersuchten Störungen. Eine gepoolte Prävalenz kann lokale Versorgung, Erhebungsmethode und Selektionsprozesse nicht vollständig abbilden. Sie darf insbesondere nicht als allgemeine Bevölkerungsprävalenz oder individuelle Erkrankungswahrscheinlichkeit gelesen werden. Komorbidität belegt keine eindeutige Kausalrichtung zwischen ADHS und Angststörungen.
 
 ## Verhältnis zum bisherigen Konsens
 
