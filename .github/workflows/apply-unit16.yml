@@ -41,24 +41,25 @@ jobs:
           node-version: '24'
           cache: npm
 
-      - name: Verify and extract exact payload
+      - name: Reconstruct and safely extract payload
         shell: bash
         run: |
           set -Eeuo pipefail
-          python - "$RUNNER_TEMP/unit16.payload.b64" <<'PY'
-          from pathlib import Path
-          import sys
+          python - "$RUNNER_TEMP/unit16.tar.gz" <<'PY'
+          from __future__ import annotations
 
-          expected_fragments = [
-              f'unit16.payload.{index:02d}'
-              for index in range(6)
-          ]
-          fragment_paths = sorted(Path('.automation-repair').glob('unit16.payload.*'))
-          if [path.name for path in fragment_paths] != expected_fragments:
-              raise SystemExit(
-                  'Unerwartete Payload-Fragmente: '
-                  f'{[path.name for path in fragment_paths]}'
-              )
+          import base64
+          import hashlib
+          from pathlib import Path, PurePosixPath
+          import sys
+          import tarfile
+
+          fragment_root = Path('.automation-repair')
+          expected_fragments = [f'unit16.payload.{index:02d}' for index in range(6)]
+          fragment_paths = sorted(fragment_root.glob('unit16.payload.*'))
+          actual_fragments = [path.name for path in fragment_paths]
+          if actual_fragments != expected_fragments:
+              raise SystemExit(f'Unerwartete Payload-Fragmente: {actual_fragments}')
 
           def longest_suffix_prefix_overlap(left: str, right: str) -> int:
               candidate = right + '\0' + left[-len(right):]
@@ -82,58 +83,38 @@ jobs:
                   fragment = fragment[overlap:]
               payload += fragment
 
+          if repaired_overlaps != [('unit16.payload.01', repaired_overlaps[0][1])] if repaired_overlaps else True:
+              raise SystemExit(f'Unerwartetes Fragment-Überlappungsmuster: {repaired_overlaps}')
           if len(repaired_overlaps) != 1 or repaired_overlaps[0][0] != 'unit16.payload.01':
-              raise SystemExit(
-                  'Unerwartetes Fragment-Überlappungsmuster: '
-                  f'{repaired_overlaps}'
-              )
+              raise SystemExit(f'Unerwartetes Fragment-Überlappungsmuster: {repaired_overlaps}')
           if len(payload) % 4:
               raise SystemExit('Rekonstruierte Base64-Payload ist nicht 4-Byte-ausgerichtet')
 
-          output = Path(sys.argv[1])
-          output.write_text(payload, encoding='ascii')
-          print(
-              'Doppelten Bereich entfernt: '
-              f'{repaired_overlaps[0][1]} Zeichen aus {repaired_overlaps[0][0]}'
-          )
-          PY
+          try:
+              archive_bytes = base64.b64decode(payload, validate=True)
+          except ValueError as exc:
+              raise SystemExit(f'Rekonstruierte Payload ist kein gültiges Base64: {exc}') from exc
 
-          echo '=== Payload-Fragmente ==='
-          for fragment in .automation-repair/unit16.payload.*; do
-            printf '%s bytes  ' "$(wc -c < "$fragment")"
-            sha256sum "$fragment"
-          done
-
-          expected_payload_checksum='05f2646418b408b93cc85b0c9184c0fb358d565263e197cd1ac8eadcabc17fd5'
-          actual_payload_checksum="$(sha256sum "$RUNNER_TEMP/unit16.payload.b64" | cut -d' ' -f1)"
-          printf 'Computed payload checksum: %s\n' "$actual_payload_checksum"
-          printf 'Expected payload checksum: %s\n' "$expected_payload_checksum"
-          if [[ "$actual_payload_checksum" != "$expected_payload_checksum" ]]; then
-            echo 'Payload checksum mismatch. Bestmögliche Archivdiagnose folgt.' >&2
-            if base64 --decode "$RUNNER_TEMP/unit16.payload.b64" \
-              > "$RUNNER_TEMP/unit16.tar.gz"; then
-              echo '=== Rekonstruierte Archivmitglieder ===' >&2
-              tar -tzf "$RUNNER_TEMP/unit16.tar.gz" >&2 || true
-            else
-              echo 'Die rekonstruierte Payload ist kein gültiges Base64.' >&2
-            fi
-            exit 1
-          fi
-
-          base64 --decode "$RUNNER_TEMP/unit16.payload.b64" > "$RUNNER_TEMP/unit16.tar.gz"
-          python - "$RUNNER_TEMP/unit16.tar.gz" <<'PY'
-          from pathlib import Path, PurePosixPath
-          import sys
-          import tarfile
+          archive_path = Path(sys.argv[1])
+          archive_path.write_bytes(archive_bytes)
+          print(f'Entfernter Überlapp: {repaired_overlaps[0][1]} Zeichen aus unit16.payload.01')
+          print(f'Rekonstruiertes Archiv: {len(archive_bytes)} Bytes')
+          print(f'Archiv-SHA-256: {hashlib.sha256(archive_bytes).hexdigest()}')
 
           expected = {
               '02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md',
               '02-Vertiefung/04-Angststoerungen-und-ADHS.md',
-              'README.md', 'ROADMAP.md', 'Glossar.md', 'cards/cards.yaml',
-              'index.json', 'knowledge-graph/planned-nodes.yaml', 'mkdocs.yml',
-              'references/Hoskins2026.md', 'references/Njardvik2025.md',
+              'README.md',
+              'ROADMAP.md',
+              'Glossar.md',
+              'cards/cards.yaml',
+              'index.json',
+              'knowledge-graph/planned-nodes.yaml',
+              'mkdocs.yml',
+              'references/Hoskins2026.md',
+              'references/Njardvik2025.md',
           }
-          with tarfile.open(Path(sys.argv[1]), 'r:gz') as archive:
+          with tarfile.open(archive_path, 'r:gz') as archive:
               members = archive.getmembers()
               names = {member.name for member in members}
               if names != expected:
@@ -149,6 +130,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+
           path = Path('CHANGELOG.md')
           text = path.read_text(encoding='utf-8')
           heading = '## 0.18.0 – 2026-07-29'
@@ -222,18 +204,13 @@ jobs:
             references/Hoskins2026.md references/Njardvik2025.md \
             Literatur.md references.bib references.json
           git diff --cached --check
-          echo '=== Git status ==='
           git status --short
-          echo '=== Staged files ==='
           git diff --cached --name-status
-          echo '=== Staged diff statistics ==='
-          git diff --cached --stat
           if git diff --cached --quiet; then
             echo 'No validated content changes to commit; push is skipped.'
             exit 0
           fi
           git commit -m 'feat: ergänze Einheit 16 zu Angststörungen und ADHS'
           auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
-          echo 'Push target: origin/agent/einheit-16-angststoerungen-adhs'
           git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
             push origin HEAD:agent/einheit-16-angststoerungen-adhs
