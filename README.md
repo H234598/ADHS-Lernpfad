@@ -3,9 +3,9 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.17.0
-last_reviewed: 2026-07-25
-tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
+version: 0.18.0
+last_reviewed: 2026-07-30
+tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Lernpfad]
 ---
 
 [🛠️](WARTUNG.md "Wartung, Automatisierung und CI")
@@ -16,7 +16,7 @@ tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]
 
 Ein quelloffenes, Obsidian-taugliches Lernkompendium zu ADHS. Es beginnt bei den Grundlagen und wächst schrittweise bis zum Lesen, Bewerten und Einordnen aktueller Forschung.
 
-**Webfassung:** https://ADHS.telacore.org/
+**Webfassung:** [ADHS.telacore.org](https://ADHS.telacore.org/)
 
 > [!important]
 > Das Kompendium ersetzt keine ärztliche oder psychotherapeutische Diagnostik oder Behandlung. Gruppenbefunde werden nicht als sichere Aussagen über einzelne Personen dargestellt.
@@ -59,6 +59,7 @@ Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Si
 13. [[02-Vertiefung/01-Pharmakologie-und-Psychotherapie|Pharmakotherapie und Psychotherapie]]
 14. [[02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung|Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung]]
 15. [[02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen|Parkinson, ADHS und mechanistische Vergleiche]]
+16. [[02-Vertiefung/04-Angststoerungen-und-ADHS|Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen]]
 
 ## Wissenssystem
 

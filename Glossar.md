@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-25
+last_reviewed: 2026-07-30
 ---
 
 # Glossar
@@ -11,6 +11,9 @@ Verfahren zur längerfristigen Schätzung von Aktivitäts- und Ruhephasen mit ei
 
 ## Anhedonie
 Deutlich vermindertes Interesse oder verminderte Fähigkeit, Freude an gewöhnlich angenehmen Aktivitäten zu erleben; ein mögliches Kernmerkmal depressiver Episoden.
+
+## Angststörung
+Psychische Störung mit anhaltender oder wiederkehrender Furcht, Sorge oder einem klaren Angst- beziehungsweise Bedrohungsbezug, die über eine vorübergehende angemessene Angstreaktion hinausgeht und relevante Beeinträchtigung verursacht; körperliche Aktivierung und Vermeidung können Begleitmerkmale sein.
 
 ## Arbeitsgedächtnis
 System zur kurzfristigen aktiven Speicherung und Bearbeitung von Information.
@@ -135,6 +138,9 @@ Aufnahme, Gewichtung und Integration von Sinnesreizen; Über- oder Unterempfindl
 ## Shared Decision Making
 Gemeinsame Entscheidungsfindung, bei der Fachperson und betroffene Person Evidenz, Unsicherheit, Ziele, Werte, Belastungen und praktische Umsetzbarkeit einer Behandlung zusammen abwägen.
 
+## Sicherheitsverhalten
+Handlung zur kurzfristigen Verringerung einer befürchteten Gefahr oder Unsicherheit, etwa Rückversicherung oder wiederholte Kontrolle; kann eine realistische Kompensation sein, bei Angst aber auch korrigierende Erfahrungen verhindern.
+
 ## Screening
 Kurze systematische Prüfung, die eine Wahrscheinlichkeit abschätzt, aber keine vollständige Diagnose ersetzt.
 
@@ -143,6 +149,9 @@ Wechselseitiger Gebrauch verbaler und nonverbaler Signale, sozialer Gegenseitigk
 
 ## Suizidalität
 Spektrum von Todeswünschen und Suizidgedanken über Pläne und Vorbereitungen bis zu Suizidversuchen und Suiziden; die konkrete Dringlichkeit muss individuell beurteilt werden.
+
+## Vermeidung
+Nichtausführen oder Verlassen einer gefürchteten Situation, Aufgabe oder inneren Erfahrung; vermindert Belastung oft kurzfristig, kann Angst und Funktionsbeeinträchtigung langfristig jedoch aufrechterhalten.
 
 ## Zirkadianer Rhythmus
 Ungefähr 24-stündiger biologischer Zeitrhythmus, der unter anderem Schlafneigung, Wachheit, Körpertemperatur und Hormonausschüttung beeinflusst.

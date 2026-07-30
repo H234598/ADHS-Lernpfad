@@ -1,5 +1,12 @@
 # Änderungsverlauf
 
+## 0.18.0 – 2026-07-30
+
+- Einheit 16 „Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen“ ergänzt
+- Angstsymptome, diagnostizierte Angststörungen und ADHS-bezogene Regulationsprobleme methodisch getrennt
+- wechselseitige Verstärkung, Differentialdiagnostik, Sicherheitsverhalten und Vermeidung ohne pauschale Kausalbehauptung eingeordnet
+- zwei aktuelle Meta-Analysen ergänzt und Symptomwerte, Diagnosen sowie Gruppenbefunde klar getrennt; außerdem Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung aktualisiert
+
 ## 0.17.0 – 2026-07-25
 
 - Einheit 15 „Parkinson, ADHS und mechanistische Vergleiche“ ergänzt

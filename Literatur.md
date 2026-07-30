@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-27
+last_reviewed: 2026-07-30
 ---
 
 # Literatur
@@ -103,6 +103,14 @@ Garas, P., Takacs, Z. K., & Balázs, J. (2025). Longitudinal Suicide Risk in Chi
 - PubMed: [PMID 40534226](https://pubmed.ncbi.nlm.nih.gov/40534226/)
 - Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
+## Hoskins2026
+
+Hoskins, Jessica I., Gooch, Debbie, & Gilligan-Lee, Katie A. (2026). Symptoms of Anxiety in Adults with ADHD: A Systematic Review and Meta-Analysis of Case-Control Studies. *Journal of Attention Disorders*, 10870547261459712.
+
+- DOI: [https://doi.org/10.1177/10870547261459712](https://doi.org/10.1177/10870547261459712)
+- PubMed: [PMID 42400277](https://pubmed.ncbi.nlm.nih.gov/42400277/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Kofler2020
 
 Kofler, M. J., et al. (2020). Working memory and short-term memory deficits in ADHD: A bifactor modeling approach.
@@ -160,6 +168,14 @@ Nikolas, M. A. & Burt, S. A. (2010). Genetic and environmental influences on ADH
 
 - DOI: [https://doi.org/10.1037/a0018010](https://doi.org/10.1037/a0018010)
 - Evidenztyp: `twin-study-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## Njardvik2025
+
+Njardvik, Urdur, Wergeland, Gro Janne, Riise, Eili N., Hannesdottir, Dagmar Kr., & Öst, Lars-Göran (2025). Psychiatric comorbidity in children and adolescents with ADHD: A systematic review and meta-analysis. *Clinical Psychology Review, 118*, 102571.
+
+- DOI: [https://doi.org/10.1016/j.cpr.2025.102571](https://doi.org/10.1016/j.cpr.2025.102571)
+- PubMed: [PMID 40245462](https://pubmed.ncbi.nlm.nih.gov/40245462/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Nourredine2026
 
