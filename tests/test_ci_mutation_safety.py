@@ -1,17 +1,11 @@
-from __future__ import annotations
-
 from pathlib import Path
-import sys
 import tempfile
 import unittest
 
+from scripts.validate_ci_mutation_safety import validate_repository
+
+
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "scripts"
-if str(SCRIPTS) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS))
-
-from validate_ci_mutation_safety import validate_repository
-
 
 SAFE_WRITER = """name: Safe writer
 on: workflow_dispatch
