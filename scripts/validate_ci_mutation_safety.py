@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Block unsafe Git writers, opaque payload checks, and softened audits in CI."""
 
-from __future__ import annotations
-
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
 import re
 import sys
+from typing import List, Optional, Sequence, Tuple
 
 
 @dataclass(frozen=True, order=True)
@@ -31,7 +30,7 @@ class StepBlock:
 
     start_line: int
     end_line: int
-    lines: tuple[str, ...]
+    lines: Tuple[str, ...]
 
     @property
     def text(self) -> str:
@@ -39,7 +38,7 @@ class StepBlock:
 
         return "\n".join(self.lines)
 
-    def active_lines(self) -> list[tuple[int, str]]:
+    def active_lines(self) -> List[Tuple[int, str]]:
         """Return non-comment lines paired with their one-based line numbers."""
 
         return [
@@ -47,6 +46,17 @@ class StepBlock:
             for offset, line in enumerate(self.lines)
             if not line.lstrip().startswith("#")
         ]
+
+
+@dataclass(frozen=True)
+class PayloadEvidence:
+    """Boolean evidence collected from one payload-verification step."""
+
+    actual_checksum: bool
+    expected_checksum: bool
+    fragment_diagnostics: bool
+    archive_diagnostics: bool
+    enforced_comparison: bool
 
 
 GIT_MUTATION = re.compile(r"\bgit\b[^\n#]*(?:\bcommit\b|\bpush\b)")
@@ -71,7 +81,7 @@ NONZERO_EXIT = re.compile(
 )
 
 
-def workflow_files(root: Path) -> list[Path]:
+def workflow_files(root: Path) -> List[Path]:
     """Return all YAML workflow files below ``.github/workflows``."""
 
     directory = root / ".github" / "workflows"
@@ -86,11 +96,11 @@ def _indent(line: str) -> int:
     return len(line) - len(line.lstrip())
 
 
-def workflow_step_blocks(text: str) -> list[StepBlock]:
+def workflow_step_blocks(text: str) -> List[StepBlock]:
     """Return immediate list items under every workflow ``steps:`` mapping."""
 
     lines = text.splitlines()
-    blocks: list[StepBlock] = []
+    blocks: List[StepBlock] = []
     index = 0
     while index < len(lines):
         header = STEPS_HEADER.match(lines[index])
@@ -99,7 +109,7 @@ def workflow_step_blocks(text: str) -> list[StepBlock]:
             continue
 
         steps_indent = len(header.group("indent"))
-        item_indent: int | None = None
+        item_indent: Optional[int] = None
         index += 1
         while index < len(lines):
             line = lines[index]
@@ -156,10 +166,10 @@ def line_has_staged_diff(line: str, *, quiet: bool) -> bool:
     )
 
 
-def logical_shell_lines(step: StepBlock) -> list[tuple[int, str]]:
+def logical_shell_lines(step: StepBlock) -> List[Tuple[int, str]]:
     """Join common shell continuations so bypasses cannot hide on the next line."""
 
-    result: list[tuple[int, str]] = []
+    result: List[Tuple[int, str]] = []
     buffer = ""
     start_line = step.start_line
     for number, line in step.active_lines():
@@ -194,130 +204,197 @@ def _payload_signature(text: str) -> bool:
     )
 
 
-def validate_step(step: StepBlock, relative: str) -> list[SafetyIssue]:
-    """Validate one workflow step against all Variant-B requirements."""
+def _new_issue(relative: str, line: int, code: str, message: str) -> SafetyIssue:
+    """Create one consistently structured workflow finding."""
+
+    return SafetyIssue(relative, line, code, message)
+
+
+def _validate_writer_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
+    """Require a complete no-op guard and diagnostics in one writer step."""
 
     active = step.active_lines()
-    raw = [line for _, line in active]
-    text = step.text
-    lower = text.lower()
-    issues: list[SafetyIssue] = []
+    mutation_lines = [
+        number for number, line in active if GIT_MUTATION.search(line)
+    ]
+    if not mutation_lines:
+        return []
 
-    def add(code: str, line: int, message: str) -> None:
-        """Append one finding for the currently validated workflow step."""
-
-        issues.append(SafetyIssue(relative, line, code, message))
-
-    mutations = [number for number, line in active if GIT_MUTATION.search(line)]
-    if mutations:
-        anchor = mutations[0]
-        if not any(line_has_staged_diff(line, quiet=True) for line in raw):
-            add(
-                "CIW001",
+    raw_lines = [line for _, line in active]
+    anchor = mutation_lines[0]
+    issues: List[SafetyIssue] = []
+    if not any(line_has_staged_diff(line, quiet=True) for line in raw_lines):
+        issues.append(
+            _new_issue(
+                relative,
                 anchor,
+                "CIW001",
                 "Jeder Git-Writer-Schritt benötigt einen staged No-op-Guard mit --quiet.",
             )
-        if not any(
-            GIT_STATUS.search(line)
-            and ("--short" in line or "--porcelain" in line)
-            for line in raw
-        ):
-            add(
-                "CIW002",
+        )
+    if not any(
+        GIT_STATUS.search(line) and ("--short" in line or "--porcelain" in line)
+        for line in raw_lines
+    ):
+        issues.append(
+            _new_issue(
+                relative,
                 anchor,
+                "CIW002",
                 "Jeder Git-Writer-Schritt muss git status --short/--porcelain ausgeben.",
             )
-        if not any(
-            line_has_staged_diff(line, quiet=False)
-            and ("--name-status" in line or "--stat" in line)
-            for line in raw
-        ):
-            add(
-                "CIW003",
+        )
+    if not any(
+        line_has_staged_diff(line, quiet=False)
+        and ("--name-status" in line or "--stat" in line)
+        for line in raw_lines
+    ):
+        issues.append(
+            _new_issue(
+                relative,
                 anchor,
+                "CIW003",
                 "Jeder Git-Writer-Schritt muss einen staged --name-status/--stat-Diff ausgeben.",
             )
-
-    if _payload_signature(text):
-        checksum_line = next(
-            (number for number, line in active if "sha256sum" in line),
-            step.start_line,
         )
-        actual = bool(
-            re.search(
-                r"(?:actual|computed)(?:_payload)?_?checksum[^\n]*sha256sum",
-                lower,
-            )
-            and re.search(
-                r"(?:computed|actual)[^\n]*payload[^\n]*checksum",
-                lower,
-            )
-        )
-        expected = bool(
-            re.search(r"expected(?:_payload)?_?checksum", lower)
-            and re.search(r"expected[^\n]*payload[^\n]*checksum", lower)
-        )
-        fragments = bool(
-            re.search(r"\bfragment\w*\b", lower)
-            and re.search(r"\bwc\s+-c\b|\bstat\b[^\n]*(?:%s|size)", lower)
-            and re.search(r"sha256sum[^\n]*\$\{?fragment", lower)
-        )
-        archive = bool(re.search(r"\btar\b[^\n]*-tzf", text))
-        enforced = bool(
-            CHECKSUM_COMPARISON.search(text) and NONZERO_EXIT.search(text)
-        )
-        if not actual:
-            add(
-                "CIW004",
-                checksum_line,
-                "Payload muss die berechnete SHA-256 ausgeben.",
-            )
-        if not expected:
-            add(
-                "CIW005",
-                checksum_line,
-                "Payload muss die erwartete SHA-256 ausgeben.",
-            )
-        if not fragments:
-            add(
-                "CIW006",
-                checksum_line,
-                "Payload muss Größe und SHA-256 jedes Fragments ausgeben.",
-            )
-        if not archive:
-            add(
-                "CIW007",
-                checksum_line,
-                "Payload-Fehler braucht eine bestmögliche tar -tzf-Diagnose.",
-            )
-        if not enforced:
-            add(
-                "CIW010",
-                checksum_line,
-                "Ist- und Soll-Prüfsumme müssen verglichen werden; eine Abweichung muss ungleich null enden.",
-            )
-
-    for number, line in logical_shell_lines(step):
-        if AUDIT_BYPASS.search(line):
-            add(
-                "CIW008",
-                number,
-                "Audit darf nicht per Shell-Bypass entkräftet werden.",
-            )
-    if AUDIT.search(text) and re.search(
-        r"(?mi)^\s*continue-on-error\s*:\s*true\s*(?:#.*)?$",
-        text,
-    ):
-        add(
-            "CIW009",
-            step.start_line,
-            "Audit-Schritt darf continue-on-error nicht aktivieren.",
-        )
-
     return issues
 
 
-def validate_workflow(path: Path, root: Path) -> list[SafetyIssue]:
+def _collect_payload_evidence(text: str) -> PayloadEvidence:
+    """Collect diagnostic and enforcement evidence from one payload step."""
+
+    lower = text.lower()
+    actual_checksum = bool(
+        re.search(
+            r"(?:actual|computed)(?:_payload)?_?checksum[^\n]*sha256sum",
+            lower,
+        )
+        and re.search(
+            r"(?:computed|actual)[^\n]*payload[^\n]*checksum",
+            lower,
+        )
+    )
+    expected_checksum = bool(
+        re.search(r"expected(?:_payload)?_?checksum", lower)
+        and re.search(r"expected[^\n]*payload[^\n]*checksum", lower)
+    )
+    fragment_diagnostics = bool(
+        re.search(r"\bfragment\w*\b", lower)
+        and re.search(r"\bwc\s+-c\b|\bstat\b[^\n]*(?:%s|size)", lower)
+        and re.search(r"sha256sum[^\n]*\$\{?fragment", lower)
+    )
+    return PayloadEvidence(
+        actual_checksum=actual_checksum,
+        expected_checksum=expected_checksum,
+        fragment_diagnostics=fragment_diagnostics,
+        archive_diagnostics=bool(re.search(r"\btar\b[^\n]*-tzf", text)),
+        enforced_comparison=bool(
+            CHECKSUM_COMPARISON.search(text) and NONZERO_EXIT.search(text)
+        ),
+    )
+
+
+def _validate_payload_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
+    """Require transparent and enforced checksums for one payload step."""
+
+    text = step.text
+    if not _payload_signature(text):
+        return []
+
+    checksum_line = next(
+        (number for number, line in step.active_lines() if "sha256sum" in line),
+        step.start_line,
+    )
+    evidence = _collect_payload_evidence(text)
+    issues: List[SafetyIssue] = []
+    if not evidence.actual_checksum:
+        issues.append(
+            _new_issue(
+                relative,
+                checksum_line,
+                "CIW004",
+                "Payload muss die berechnete SHA-256 ausgeben.",
+            )
+        )
+    if not evidence.expected_checksum:
+        issues.append(
+            _new_issue(
+                relative,
+                checksum_line,
+                "CIW005",
+                "Payload muss die erwartete SHA-256 ausgeben.",
+            )
+        )
+    if not evidence.fragment_diagnostics:
+        issues.append(
+            _new_issue(
+                relative,
+                checksum_line,
+                "CIW006",
+                "Payload muss Größe und SHA-256 jedes Fragments ausgeben.",
+            )
+        )
+    if not evidence.archive_diagnostics:
+        issues.append(
+            _new_issue(
+                relative,
+                checksum_line,
+                "CIW007",
+                "Payload-Fehler braucht eine bestmögliche tar -tzf-Diagnose.",
+            )
+        )
+    if not evidence.enforced_comparison:
+        issues.append(
+            _new_issue(
+                relative,
+                checksum_line,
+                "CIW010",
+                "Ist- und Soll-Prüfsumme müssen verglichen werden; eine Abweichung muss ungleich null enden.",
+            )
+        )
+    return issues
+
+
+def _validate_audit_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
+    """Reject shell and workflow-level attempts to soften an audit failure."""
+
+    issues: List[SafetyIssue] = []
+    for number, line in logical_shell_lines(step):
+        if AUDIT_BYPASS.search(line):
+            issues.append(
+                _new_issue(
+                    relative,
+                    number,
+                    "CIW008",
+                    "Audit darf nicht per Shell-Bypass entkräftet werden.",
+                )
+            )
+    if AUDIT.search(step.text) and re.search(
+        r"(?mi)^\s*continue-on-error\s*:\s*true\s*(?:#.*)?$",
+        step.text,
+    ):
+        issues.append(
+            _new_issue(
+                relative,
+                step.start_line,
+                "CIW009",
+                "Audit-Schritt darf continue-on-error nicht aktivieren.",
+            )
+        )
+    return issues
+
+
+def validate_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
+    """Validate one workflow step against all Variant-B requirements."""
+
+    issues: List[SafetyIssue] = []
+    issues.extend(_validate_writer_step(step, relative))
+    issues.extend(_validate_payload_step(step, relative))
+    issues.extend(_validate_audit_step(step, relative))
+    return issues
+
+
+def validate_workflow(path: Path, root: Path) -> List[SafetyIssue]:
     """Validate one workflow file and report all findings with line numbers."""
 
     text = path.read_text(encoding="utf-8")
@@ -341,7 +418,7 @@ def validate_workflow(path: Path, root: Path) -> list[SafetyIssue]:
             and GIT_MUTATION.search(line)
         ):
             issues.append(
-                SafetyIssue(
+                _new_issue(
                     relative,
                     number,
                     "CIW011",
@@ -351,18 +428,18 @@ def validate_workflow(path: Path, root: Path) -> list[SafetyIssue]:
     return issues
 
 
-def validate_repository(root: Path) -> list[SafetyIssue]:
+def validate_repository(root: Path) -> List[SafetyIssue]:
     """Validate all workflows in ``root`` and return a stable sorted result."""
 
-    root = root.resolve()
+    resolved_root = root.resolve()
     return sorted(
         issue
-        for workflow in workflow_files(root)
-        for issue in validate_workflow(workflow, root)
+        for workflow in workflow_files(resolved_root)
+        for issue in validate_workflow(workflow, resolved_root)
     )
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[Sequence[str]] = None) -> int:
     """Run the command-line validator and return a process exit code."""
 
     parser = argparse.ArgumentParser(
