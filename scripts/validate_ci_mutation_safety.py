@@ -2,15 +2,13 @@
 """Block unsafe Git writers, opaque payload checks, and softened audits in CI."""
 
 import argparse
-from dataclasses import dataclass
 from pathlib import Path
 import re
 import sys
-from typing import List, Optional, Sequence, Tuple
+from typing import List, NamedTuple, Optional, Sequence, Tuple
 
 
-@dataclass(frozen=True, order=True)
-class SafetyIssue:
+class SafetyIssue(NamedTuple):
     """One actionable mutation-safety finding in a workflow file."""
 
     path: str
@@ -24,8 +22,7 @@ class SafetyIssue:
         return f"{self.path}:{self.line}: {self.code} {self.message}"
 
 
-@dataclass(frozen=True)
-class StepBlock:
+class StepBlock(NamedTuple):
     """A single immediate list item below a GitHub Actions ``steps:`` key."""
 
     start_line: int
@@ -48,8 +45,7 @@ class StepBlock:
         ]
 
 
-@dataclass(frozen=True)
-class PayloadEvidence:
+class PayloadEvidence(NamedTuple):
     """Boolean evidence collected from one payload-verification step."""
 
     actual_checksum: bool
@@ -78,6 +74,9 @@ CHECKSUM_COMPARISON = re.compile(
 )
 NONZERO_EXIT = re.compile(
     r"\bexit\s+(?:[1-9][0-9]*|\$\{?[A-Za-z_][A-Za-z0-9_]*\}?)\b"
+)
+CONTINUE_ON_ERROR = re.compile(
+    r"(?mi)^\s*continue-on-error\s*:\s*true\s*(?:#.*)?$"
 )
 
 
@@ -139,11 +138,12 @@ def workflow_step_blocks(text: str) -> List[StepBlock]:
                     if candidate_indent <= steps_indent:
                         break
                     candidate_item = LIST_ITEM.match(candidate)
-                    if (
-                        candidate_item
-                        and len(candidate_item.group("indent")) == item_indent
-                    ):
-                        break
+                    if candidate_item:
+                        candidate_item_indent = len(
+                            candidate_item.group("indent")
+                        )
+                        if candidate_item_indent == item_indent:
+                            break
                 index += 1
             blocks.append(
                 StepBlock(
@@ -163,6 +163,22 @@ def line_has_staged_diff(line: str, *, quiet: bool) -> bool:
         bool(GIT_DIFF.search(line))
         and ("--cached" in line or "--staged" in line)
         and (("--quiet" in line) is quiet)
+    )
+
+
+def line_has_status_diagnostic(line: str) -> bool:
+    """Return whether ``line`` prints a concise Git working-tree status."""
+
+    return bool(GIT_STATUS.search(line)) and (
+        "--short" in line or "--porcelain" in line
+    )
+
+
+def line_has_staged_diagnostic(line: str) -> bool:
+    """Return whether ``line`` prints useful staged-change diagnostics."""
+
+    return line_has_staged_diff(line, quiet=False) and (
+        "--name-status" in line or "--stat" in line
     )
 
 
@@ -204,7 +220,12 @@ def _payload_signature(text: str) -> bool:
     )
 
 
-def _new_issue(relative: str, line: int, code: str, message: str) -> SafetyIssue:
+def _new_issue(
+    relative: str,
+    line: int,
+    code: str,
+    message: str,
+) -> SafetyIssue:
     """Create one consistently structured workflow finding."""
 
     return SafetyIssue(relative, line, code, message)
@@ -229,32 +250,28 @@ def _validate_writer_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
                 relative,
                 anchor,
                 "CIW001",
-                "Jeder Git-Writer-Schritt benötigt einen staged No-op-Guard mit --quiet.",
+                "Jeder Git-Writer-Schritt benötigt einen staged "
+                "No-op-Guard mit --quiet.",
             )
         )
-    if not any(
-        GIT_STATUS.search(line) and ("--short" in line or "--porcelain" in line)
-        for line in raw_lines
-    ):
+    if not any(line_has_status_diagnostic(line) for line in raw_lines):
         issues.append(
             _new_issue(
                 relative,
                 anchor,
                 "CIW002",
-                "Jeder Git-Writer-Schritt muss git status --short/--porcelain ausgeben.",
+                "Jeder Git-Writer-Schritt muss git status "
+                "--short/--porcelain ausgeben.",
             )
         )
-    if not any(
-        line_has_staged_diff(line, quiet=False)
-        and ("--name-status" in line or "--stat" in line)
-        for line in raw_lines
-    ):
+    if not any(line_has_staged_diagnostic(line) for line in raw_lines):
         issues.append(
             _new_issue(
                 relative,
                 anchor,
                 "CIW003",
-                "Jeder Git-Writer-Schritt muss einen staged --name-status/--stat-Diff ausgeben.",
+                "Jeder Git-Writer-Schritt muss einen staged "
+                "--name-status/--stat-Diff ausgeben.",
             )
         )
     return issues
@@ -302,7 +319,11 @@ def _validate_payload_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
         return []
 
     checksum_line = next(
-        (number for number, line in step.active_lines() if "sha256sum" in line),
+        (
+            number
+            for number, line in step.active_lines()
+            if "sha256sum" in line
+        ),
         step.start_line,
     )
     evidence = _collect_payload_evidence(text)
@@ -340,7 +361,8 @@ def _validate_payload_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
                 relative,
                 checksum_line,
                 "CIW007",
-                "Payload-Fehler braucht eine bestmögliche tar -tzf-Diagnose.",
+                "Payload-Fehler braucht eine bestmögliche "
+                "tar -tzf-Diagnose.",
             )
         )
     if not evidence.enforced_comparison:
@@ -349,7 +371,8 @@ def _validate_payload_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
                 relative,
                 checksum_line,
                 "CIW010",
-                "Ist- und Soll-Prüfsumme müssen verglichen werden; eine Abweichung muss ungleich null enden.",
+                "Ist- und Soll-Prüfsumme müssen verglichen werden; "
+                "eine Abweichung muss ungleich null enden.",
             )
         )
     return issues
@@ -369,10 +392,10 @@ def _validate_audit_step(step: StepBlock, relative: str) -> List[SafetyIssue]:
                     "Audit darf nicht per Shell-Bypass entkräftet werden.",
                 )
             )
-    if AUDIT.search(step.text) and re.search(
-        r"(?mi)^\s*continue-on-error\s*:\s*true\s*(?:#.*)?$",
-        step.text,
-    ):
+    audit_softened = bool(
+        AUDIT.search(step.text) and CONTINUE_ON_ERROR.search(step.text)
+    )
+    if audit_softened:
         issues.append(
             _new_issue(
                 relative,
@@ -400,29 +423,28 @@ def validate_workflow(path: Path, root: Path) -> List[SafetyIssue]:
     text = path.read_text(encoding="utf-8")
     relative = path.relative_to(root).as_posix()
     steps = workflow_step_blocks(text)
-    issues = [
-        issue
-        for step in steps
-        for issue in validate_step(step, relative)
-    ]
+    issues: List[SafetyIssue] = []
+    for step in steps:
+        issues.extend(validate_step(step, relative))
 
-    covered = {
-        number
-        for step in steps
-        for number in range(step.start_line, step.end_line + 1)
-    }
+    covered = set()
+    for step in steps:
+        covered.update(range(step.start_line, step.end_line + 1))
+
     for number, line in enumerate(text.splitlines(), 1):
-        if (
+        mutation_outside_step = (
             number not in covered
             and not line.lstrip().startswith("#")
-            and GIT_MUTATION.search(line)
-        ):
+            and bool(GIT_MUTATION.search(line))
+        )
+        if mutation_outside_step:
             issues.append(
                 _new_issue(
                     relative,
                     number,
                     "CIW011",
-                    "Git-Mutation liegt außerhalb eines analysierbaren Workflow-Schritts.",
+                    "Git-Mutation liegt außerhalb eines analysierbaren "
+                    "Workflow-Schritts.",
                 )
             )
     return issues
@@ -432,11 +454,10 @@ def validate_repository(root: Path) -> List[SafetyIssue]:
     """Validate all workflows in ``root`` and return a stable sorted result."""
 
     resolved_root = root.resolve()
-    return sorted(
-        issue
-        for workflow in workflow_files(resolved_root)
-        for issue in validate_workflow(workflow, resolved_root)
-    )
+    issues: List[SafetyIssue] = []
+    for workflow in workflow_files(resolved_root):
+        issues.extend(validate_workflow(workflow, resolved_root))
+    return sorted(issues)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -458,7 +479,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
         return 1
     print(
-        f"CI-Mutationssicherheit: OK ({len(workflow_files(root))} Workflows geprüft)."
+        "CI-Mutationssicherheit: OK "
+        f"({len(workflow_files(root))} Workflows geprüft)."
     )
     return 0
 
