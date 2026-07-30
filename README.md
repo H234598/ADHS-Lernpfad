@@ -16,7 +16,7 @@ tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Lernpfad]
 
 Ein quelloffenes, Obsidian-taugliches Lernkompendium zu ADHS. Es beginnt bei den Grundlagen und wächst schrittweise bis zum Lesen, Bewerten und Einordnen aktueller Forschung.
 
-**Webfassung:** https://ADHS.telacore.org/
+**Webfassung:** [ADHS.telacore.org](https://ADHS.telacore.org/)
 
 > [!important]
 > Das Kompendium ersetzt keine ärztliche oder psychotherapeutische Diagnostik oder Behandlung. Gruppenbefunde werden nicht als sichere Aussagen über einzelne Personen dargestellt.
