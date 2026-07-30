@@ -26,7 +26,7 @@ citation:
 
 ## Vollständige Zitation
 
-Hoskins, J. I., Gooch, D., & Gilligan-Lee, K. A. (2026). Symptoms of Anxiety in Adults with ADHD: A Systematic Review and Meta-Analysis of Case-Control Studies. *Journal of Attention Disorders*. Advance online publication. Article 10870547261459712.
+Hoskins, Jessica I., Gooch, Debbie, & Gilligan-Lee, Katie A. (2026). Symptoms of Anxiety in Adults with ADHD: A Systematic Review and Meta-Analysis of Case-Control Studies. *Journal of Attention Disorders*, 10870547261459712.
 
 ## Evidenztyp und Design
 
