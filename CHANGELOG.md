@@ -5,7 +5,7 @@
 - Einheit 16 „Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen“ ergänzt
 - Angstsymptome, diagnostizierte Angststörungen und ADHS-bezogene Regulationsprobleme methodisch getrennt
 - wechselseitige Verstärkung, Differentialdiagnostik, Sicherheitsverhalten und Vermeidung ohne pauschale Kausalbehauptung eingeordnet
-- zwei aktuelle Meta-Analysen mit klarer Trennung von Symptomwerten, Diagnosen und Gruppenbefunden sowie Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung ergänzt
+- zwei aktuelle Meta-Analysen ergänzt und Symptomwerte, Diagnosen sowie Gruppenbefunde klar getrennt; außerdem Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung aktualisiert
 
 ## 0.17.0 – 2026-07-25
 
