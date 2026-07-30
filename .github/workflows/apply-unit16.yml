@@ -1,23 +1,25 @@
-name: Apply unit 16 payload
+name: Integrate unit 16
 
 on:
   push:
     branches: [agent/einheit-16-angststoerungen-adhs]
     paths:
-      - .automation-repair/unit16.payload.*
       - .github/workflows/apply-unit16.yml
+      - 02-Vertiefung/04-Angststoerungen-und-ADHS.md
+      - references/Hoskins2026.md
+      - references/Njardvik2025.md
 
 permissions:
   contents: write
 
 concurrency:
-  group: apply-unit16-payload
+  group: integrate-unit16
   cancel-in-progress: false
 
 jobs:
-  apply:
+  integrate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 50
+    timeout-minutes: 60
     steps:
       - name: Checkout working branch
         uses: actions/checkout@v7
@@ -41,138 +43,133 @@ jobs:
           node-version: '24'
           cache: npm
 
-      - name: Reconstruct and safely extract payload
+      - name: Integrate unit into project files
         shell: bash
         run: |
           set -Eeuo pipefail
-          python - "$RUNNER_TEMP/unit16.tar.gz" <<'PY'
+          python - <<'PY'
           from __future__ import annotations
 
-          import base64
-          import hashlib
-          from pathlib import Path, PurePosixPath
-          import sys
-          import tarfile
-
-          fragment_root = Path('.automation-repair')
-          expected_names = [f'unit16.payload.{index:02d}' for index in range(6)]
-          fragments = sorted(fragment_root.glob('unit16.payload.*'))
-          if [path.name for path in fragments] != expected_names:
-              raise SystemExit('Unerwartete Payload-Fragmente')
-
-          def overlap(left: str, right: str) -> int:
-              candidate = right + '\0' + left[-len(right):]
-              prefix = [0] * len(candidate)
-              for index in range(1, len(candidate)):
-                  match = prefix[index - 1]
-                  while match and candidate[index] != candidate[match]:
-                      match = prefix[match - 1]
-                  if candidate[index] == candidate[match]:
-                      match += 1
-                  prefix[index] = match
-              return prefix[-1]
-
-          payload = ''
-          repairs: list[tuple[str, int]] = []
-          boundaries: list[int] = []
-          for path in fragments:
-              fragment = path.read_text(encoding='ascii').strip()
-              if payload:
-                  shared = overlap(payload, fragment)
-                  if shared >= 256:
-                      repairs.append((path.name, shared))
-                      fragment = fragment[shared:]
-              payload += fragment
-              boundaries.append(len(payload))
-
-          if len(repairs) != 1 or repairs[0][0] != 'unit16.payload.01':
-              raise SystemExit(f'Unerwartetes Fragment-Überlappungsmuster: {repairs}')
-
-          expected_sha = '05f2646418b408b93cc85b0c9184c0fb358d565263e197cd1ac8eadcabc17fd5'
-          alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-          recovery: tuple[int, str] | None = None
-          if hashlib.sha256(payload.encode('ascii')).hexdigest() != expected_sha:
-              if len(payload) % 4 != 3:
-                  raise SystemExit(
-                      f'Payload beschädigt, aber nicht durch genau ein fehlendes Base64-Zeichen: '
-                      f'len={len(payload)} mod4={len(payload) % 4}'
-                  )
-
-              # Fragment 02 besitzt als einziges reguläres Fragment 6999 statt
-              # 7000 Zeichen. Durchsuche deshalb zuerst exakt seinen normierten
-              # Bereich; nur falls diese strukturelle Diagnose nicht trägt,
-              # folgt ein vollständiger deterministischer Fallback.
-              primary = range(boundaries[1], boundaries[2] + 1)
-              fallback = range(0, len(payload) + 1)
-              tested: set[int] = set()
-              for positions in (primary, fallback):
-                  for position in positions:
-                      if position in tested:
-                          continue
-                      tested.add(position)
-                      prefix = payload[:position]
-                      suffix = payload[position:]
-                      for character in alphabet:
-                          candidate = prefix + character + suffix
-                          if hashlib.sha256(candidate.encode('ascii')).hexdigest() == expected_sha:
-                              payload = candidate
-                              recovery = (position, character)
-                              break
-                      if recovery is not None:
-                          break
-                  if recovery is not None:
-                      break
-              if recovery is None:
-                  raise SystemExit('Fehlendes Base64-Zeichen konnte nicht rekonstruiert werden')
-
-          if len(payload) % 4:
-              raise SystemExit('Rekonstruierte Base64-Payload ist nicht 4-Byte-ausgerichtet')
-          archive_bytes = base64.b64decode(payload, validate=True)
-          archive_path = Path(sys.argv[1])
-          archive_path.write_bytes(archive_bytes)
-          print(f'Entfernter Überlapp: {repairs[0][1]} Zeichen aus unit16.payload.01')
-          print(f'Rekonstruiertes fehlendes Zeichen: {recovery}')
-          print(f'Payload-SHA-256: {hashlib.sha256(payload.encode("ascii")).hexdigest()}')
-          print(f'Archiv-SHA-256: {hashlib.sha256(archive_bytes).hexdigest()}')
-
-          expected = {
-              '02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md',
-              '02-Vertiefung/04-Angststoerungen-und-ADHS.md',
-              'README.md', 'ROADMAP.md', 'Glossar.md', 'cards/cards.yaml',
-              'index.json', 'knowledge-graph/planned-nodes.yaml', 'mkdocs.yml',
-              'references/Hoskins2026.md', 'references/Njardvik2025.md',
-          }
-          with tarfile.open(archive_path, 'r:gz') as archive:
-              members = archive.getmembers()
-              names = {member.name for member in members}
-              if names != expected:
-                  raise SystemExit(f'Unerwartete Payload-Dateien: {sorted(names ^ expected)}')
-              for member in members:
-                  path = PurePosixPath(member.name)
-                  if path.is_absolute() or '..' in path.parts or not member.isfile():
-                      raise SystemExit(f'Unsicherer Archiveintrag: {member.name}')
-              archive.extractall('.', filter='data')
-          PY
-
-      - name: Update changelog
-        run: |
-          python - <<'PY'
+          import json
           from pathlib import Path
-          path = Path('CHANGELOG.md')
-          text = path.read_text(encoding='utf-8')
-          heading = '## 0.18.0 – 2026-07-29'
-          if heading not in text:
-              entry = '''## 0.18.0 – 2026-07-29
 
-          - Einheit 16 „Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen“ ergänzt
-          - Angstsymptome, diagnostizierte Angststörungen und ADHS-bezogene Regulationsprobleme methodisch getrennt
-          - bidirektionale Verstärkung, Differentialdiagnostik, Sicherheitsverhalten und Vermeidung ohne pauschale Kausalbehauptung eingeordnet
-          - zwei aktuelle systematische Reviews, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung ergänzt
+          def replace_once(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text(encoding='utf-8')
+              if new in text:
+                  return
+              if old not in text:
+                  raise SystemExit(f'Integrationsanker fehlt in {path}: {old[:100]!r}')
+              file.write_text(text.replace(old, new, 1), encoding='utf-8')
 
-          '''
-              entry = '\n'.join(line.removeprefix('          ') for line in entry.splitlines()) + '\n'
-              text = text.replace('# Änderungsverlauf\n\n', '# Änderungsverlauf\n\n' + entry, 1)
-              path.write_text(text, encoding='utf-8')
+          replace_once(
+              '02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md',
+              '- Weiter: [[ROADMAP#Milestone A – Klinische Heterogenität und Lebensspanne|Nächste Themen laut Roadmap]]',
+              '- Weiter: [[02-Vertiefung/04-Angststoerungen-und-ADHS|Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen]]',
+          )
+
+          replace_once('README.md', 'version: 0.17.0', 'version: 0.18.0')
+          replace_once('README.md', 'last_reviewed: 2026-07-25', 'last_reviewed: 2026-07-30')
+          replace_once(
+              'README.md',
+              'tags: [ADHS, Neurobiologie, Autismus, Parkinson, Lernpfad]',
+              'tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Lernpfad]',
+          )
+          replace_once(
+              'README.md',
+              '15. [[02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen|Parkinson, ADHS und mechanistische Vergleiche]]',
+              '15. [[02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen|Parkinson, ADHS und mechanistische Vergleiche]]\n16. [[02-Vertiefung/04-Angststoerungen-und-ADHS|Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen]]',
+          )
+
+          replace_once('ROADMAP.md', 'last_reviewed: 2026-07-25', 'last_reviewed: 2026-07-30')
+          replace_once(
+              'ROADMAP.md',
+              'Der Lernpfad umfasst derzeit 15 fortlaufende Einheiten:',
+              'Der Lernpfad umfasst derzeit 16 fortlaufende Einheiten:',
+          )
+          replace_once(
+              'ROADMAP.md',
+              '15. Parkinson, ADHS und mechanistische Vergleiche',
+              '15. Parkinson, ADHS und mechanistische Vergleiche\n16. Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen',
+          )
+          replace_once(
+              'ROADMAP.md',
+              '- [ ] **Angststörungen und ADHS**',
+              '- [x] **Angststörungen und ADHS** — umgesetzt als Einheit 16',
+          )
+
+          replace_once('Glossar.md', 'last_reviewed: 2026-07-25', 'last_reviewed: 2026-07-30')
+          replace_once(
+              'Glossar.md',
+              '## Arbeitsgedächtnis\nSystem zur kurzfristigen aktiven Speicherung und Bearbeitung von Information.',
+              '## Angststörung\nPsychische Störung mit anhaltender oder wiederkehrender Furcht, Sorge, körperlicher Aktivierung oder Vermeidung, die über eine vorübergehende angemessene Angstreaktion hinausgeht und relevante Beeinträchtigung verursacht.\n\n## Arbeitsgedächtnis\nSystem zur kurzfristigen aktiven Speicherung und Bearbeitung von Information.',
+          )
+          replace_once(
+              'Glossar.md',
+              '## Screening\nKurze systematische Prüfung, die eine Wahrscheinlichkeit abschätzt, aber keine vollständige Diagnose ersetzt.',
+              '## Sicherheitsverhalten\nHandlung zur kurzfristigen Verringerung einer befürchteten Gefahr oder Unsicherheit, etwa Rückversicherung oder wiederholte Kontrolle; kann eine realistische Kompensation sein, bei Angst aber auch korrigierende Erfahrungen verhindern.\n\n## Screening\nKurze systematische Prüfung, die eine Wahrscheinlichkeit abschätzt, aber keine vollständige Diagnose ersetzt.',
+          )
+          replace_once(
+              'Glossar.md',
+              '## Zirkadianer Rhythmus',
+              '## Vermeidung\nNichtausführen oder Verlassen einer gefürchteten Situation, Aufgabe oder inneren Erfahrung; vermindert Belastung oft kurzfristig, kann Angst und Funktionsbeeinträchtigung langfristig jedoch aufrechterhalten.\n\n## Zirkadianer Rhythmus',
+          )
+
+          cards = Path('cards/cards.yaml')
+          cards_text = cards.read_text(encoding='utf-8')
+          if '  unit: 16\n' not in cards_text:
+              cards_text += '''\n- id: 1016
+  unit: 16
+  front: Warum kann Aufschieben bei ADHS und einer Angststörung ähnlich aussehen, obwohl unterschiedliche Mechanismen beteiligt sein können?
+  back: Bei ADHS können unklare Schritte, geringe unmittelbare Rückmeldung oder instabile Zielaktivierung den Start erschweren; bei Angst kann Aufschub erwartete Fehler, Bewertung oder körperliche Aktivierung vermeiden. Beide Mechanismen können gleichzeitig vorkommen.
+  tags:
+  - ADHS
+  - Angststörungen
+  - Vertiefung
+  - Differentialdiagnostik
+  - Einheit_16
+'''
+              cards.write_text(cards_text, encoding='utf-8')
+
+          index_path = Path('index.json')
+          index = json.loads(index_path.read_text(encoding='utf-8'))
+          index['version'] = '0.18.0'
+          index['last_reviewed'] = '2026-07-30'
+          if not any(chapter.get('number') == 16 for chapter in index['chapters']):
+              index['chapters'].append(
+                  {
+                      'number': 16,
+                      'path': '02-Vertiefung/04-Angststoerungen-und-ADHS.md',
+                      'title': 'Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen',
+                  }
+              )
+          index_path.write_text(json.dumps(index, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          replace_once(
+              'knowledge-graph/planned-nodes.yaml',
+              '02-Vertiefung/04-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet',
+              '02-Vertiefung/05-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet',
+          )
+          replace_once(
+              'mkdocs.yml',
+              '      - Parkinson, ADHS und mechanistische Vergleiche: 02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md',
+              '      - Parkinson, ADHS und mechanistische Vergleiche: 02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md\n      - Angststörungen und ADHS: 02-Vertiefung/04-Angststoerungen-und-ADHS.md',
+          )
+
+          changelog = Path('CHANGELOG.md')
+          changelog_text = changelog.read_text(encoding='utf-8')
+          heading = '## 0.18.0 – 2026-07-30'
+          if heading not in changelog_text:
+              entry = '''## 0.18.0 – 2026-07-30
+
+- Einheit 16 „Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen“ ergänzt
+- Angstsymptome, diagnostizierte Angststörungen und ADHS-bezogene Regulationsprobleme methodisch getrennt
+- wechselseitige Verstärkung, Differentialdiagnostik, Sicherheitsverhalten und Vermeidung ohne pauschale Kausalbehauptung eingeordnet
+- zwei aktuelle Meta-Analysen, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung ergänzt
+
+'''
+              changelog_text = changelog_text.replace('# Änderungsverlauf\n\n', '# Änderungsverlauf\n\n' + entry, 1)
+              changelog.write_text(changelog_text, encoding='utf-8')
           PY
 
       - name: Install pinned dependencies
@@ -190,6 +187,7 @@ jobs:
           RUNTIME_STATUS_MANAGED: '0'
         run: |
           set -Eeuo pipefail
+          python scripts/build_literature.py
           git diff --check
           python -m compileall -q scripts tests
           python scripts/validate_prompt_baselines.py
@@ -197,7 +195,6 @@ jobs:
           bash Sync/tests/test-posix-sync.sh
           python -m pytest -q
           npm test
-          python scripts/build_literature.py
           python scripts/build_graph.py
           python scripts/validate_graph.py
           python scripts/validate_links.py
@@ -234,10 +231,6 @@ jobs:
           git diff --cached --check
           git status --short
           git diff --cached --name-status
-          if git diff --cached --quiet; then
-            echo 'No validated content changes to commit; push is skipped.'
-            exit 0
-          fi
           git commit -m 'feat: ergänze Einheit 16 zu Angststörungen und ADHS'
           auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
           git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth" \
