@@ -32,10 +32,12 @@ jobs:
           from __future__ import annotations
 
           import base64
+          import binascii
           import hashlib
           from pathlib import Path, PurePosixPath
           import tarfile
 
+          output = Path('build/unit16')
           fragments = sorted(Path('.automation-repair').glob('unit16.payload.*'))
           expected_fragments = [f'unit16.payload.{index:02d}' for index in range(6)]
           if [path.name for path in fragments] != expected_fragments:
@@ -54,26 +56,46 @@ jobs:
               return prefix[-1]
 
           payload = fragments[0].read_text(encoding='ascii').strip()
-          repairs = []
+          repairs: list[tuple[str, int]] = []
+          fragment_lengths = {fragments[0].name: len(payload)}
           for fragment_path in fragments[1:]:
               fragment = fragment_path.read_text(encoding='ascii').strip()
+              fragment_lengths[fragment_path.name] = len(fragment)
               shared = overlap(payload, fragment)
               if shared >= 256:
                   repairs.append((fragment_path.name, shared))
                   fragment = fragment[shared:]
               payload += fragment
 
+          diagnosis = [
+              *(f'{name}_chars={length}' for name, length in fragment_lengths.items()),
+              f'repairs={repairs}',
+              f'payload_chars_before_padding={len(payload)}',
+              f'payload_mod4={len(payload) % 4}',
+              f'payload_tail={payload[-16:]}',
+          ]
           if len(repairs) != 1 or repairs[0][0] != 'unit16.payload.01':
+              output.joinpath('diagnosis.txt').write_text('\n'.join(diagnosis) + '\n', encoding='utf-8')
               raise SystemExit(f'Unerwartetes Überlappungsmuster: {repairs}')
-          archive = base64.b64decode(payload, validate=True)
-          archive_path = Path('build/unit16.tar.gz')
+
+          padding = '=' * (-len(payload) % 4)
+          diagnosis.append(f'added_padding={len(padding)}')
+          try:
+              archive = base64.b64decode(payload + padding, validate=True)
+          except binascii.Error as exc:
+              diagnosis.append(f'base64_error={exc}')
+              output.joinpath('diagnosis.txt').write_text('\n'.join(diagnosis) + '\n', encoding='utf-8')
+              raise SystemExit(f'Rekonstruierte Payload ist kein gültiges Base64: {exc}') from exc
+
+          archive_path = output / 'unit16.tar.gz'
           archive_path.write_bytes(archive)
-          Path('build/unit16/diagnosis.txt').write_text(
-              f'overlap={repairs[0][1]}\n'
-              f'archive_bytes={len(archive)}\n'
-              f'sha256={hashlib.sha256(archive).hexdigest()}\n',
-              encoding='utf-8',
+          diagnosis.extend(
+              [
+                  f'archive_bytes={len(archive)}',
+                  f'sha256={hashlib.sha256(archive).hexdigest()}',
+              ]
           )
+          output.joinpath('diagnosis.txt').write_text('\n'.join(diagnosis) + '\n', encoding='utf-8')
 
           expected = {
               '02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md',
@@ -84,16 +106,18 @@ jobs:
           }
           with tarfile.open(archive_path, 'r:gz') as tar:
               members = tar.getmembers()
-              if {member.name for member in members} != expected:
-                  raise SystemExit('Unerwartete Archivmitglieder')
+              names = {member.name for member in members}
+              if names != expected:
+                  raise SystemExit(f'Unerwartete Archivmitglieder: {sorted(names ^ expected)}')
               for member in members:
                   path = PurePosixPath(member.name)
                   if path.is_absolute() or '..' in path.parts or not member.isfile():
                       raise SystemExit(f'Unsicherer Archiveintrag: {member.name}')
-              tar.extractall('build/unit16/extracted', filter='data')
+              tar.extractall(output / 'extracted', filter='data')
           PY
 
       - name: Upload reconstructed source payload
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: unit16-reconstructed-${{ github.event.pull_request.head.sha }}
