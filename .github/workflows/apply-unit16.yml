@@ -55,13 +55,12 @@ jobs:
           import tarfile
 
           fragment_root = Path('.automation-repair')
-          expected_fragments = [f'unit16.payload.{index:02d}' for index in range(6)]
-          fragment_paths = sorted(fragment_root.glob('unit16.payload.*'))
-          actual_fragments = [path.name for path in fragment_paths]
-          if actual_fragments != expected_fragments:
-              raise SystemExit(f'Unerwartete Payload-Fragmente: {actual_fragments}')
+          expected_names = [f'unit16.payload.{index:02d}' for index in range(6)]
+          fragments = sorted(fragment_root.glob('unit16.payload.*'))
+          if [path.name for path in fragments] != expected_names:
+              raise SystemExit('Unerwartete Payload-Fragmente')
 
-          def longest_suffix_prefix_overlap(left: str, right: str) -> int:
+          def overlap(left: str, right: str) -> int:
               candidate = right + '\0' + left[-len(right):]
               prefix = [0] * len(candidate)
               for index in range(1, len(candidate)):
@@ -73,46 +72,75 @@ jobs:
                   prefix[index] = match
               return prefix[-1]
 
-          payload = fragment_paths[0].read_text(encoding='ascii').strip()
-          repaired_overlaps: list[tuple[str, int]] = []
-          for fragment_path in fragment_paths[1:]:
-              fragment = fragment_path.read_text(encoding='ascii').strip()
-              overlap = longest_suffix_prefix_overlap(payload, fragment)
-              if overlap >= 256:
-                  repaired_overlaps.append((fragment_path.name, overlap))
-                  fragment = fragment[overlap:]
+          payload = ''
+          repairs: list[tuple[str, int]] = []
+          boundaries: list[int] = []
+          for path in fragments:
+              fragment = path.read_text(encoding='ascii').strip()
+              if payload:
+                  shared = overlap(payload, fragment)
+                  if shared >= 256:
+                      repairs.append((path.name, shared))
+                      fragment = fragment[shared:]
               payload += fragment
+              boundaries.append(len(payload))
 
-          if repaired_overlaps != [('unit16.payload.01', repaired_overlaps[0][1])] if repaired_overlaps else True:
-              raise SystemExit(f'Unerwartetes Fragment-Überlappungsmuster: {repaired_overlaps}')
-          if len(repaired_overlaps) != 1 or repaired_overlaps[0][0] != 'unit16.payload.01':
-              raise SystemExit(f'Unerwartetes Fragment-Überlappungsmuster: {repaired_overlaps}')
+          if len(repairs) != 1 or repairs[0][0] != 'unit16.payload.01':
+              raise SystemExit(f'Unerwartetes Fragment-Überlappungsmuster: {repairs}')
+
+          expected_sha = '05f2646418b408b93cc85b0c9184c0fb358d565263e197cd1ac8eadcabc17fd5'
+          alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+          recovery: tuple[int, str] | None = None
+          if hashlib.sha256(payload.encode('ascii')).hexdigest() != expected_sha:
+              if len(payload) % 4 != 3:
+                  raise SystemExit(
+                      f'Payload beschädigt, aber nicht durch genau ein fehlendes Base64-Zeichen: '
+                      f'len={len(payload)} mod4={len(payload) % 4}'
+                  )
+
+              # Fragment 02 besitzt als einziges reguläres Fragment 6999 statt
+              # 7000 Zeichen. Durchsuche deshalb zuerst exakt seinen normierten
+              # Bereich; nur falls diese strukturelle Diagnose nicht trägt,
+              # folgt ein vollständiger deterministischer Fallback.
+              primary = range(boundaries[1], boundaries[2] + 1)
+              fallback = range(0, len(payload) + 1)
+              tested: set[int] = set()
+              for positions in (primary, fallback):
+                  for position in positions:
+                      if position in tested:
+                          continue
+                      tested.add(position)
+                      prefix = payload[:position]
+                      suffix = payload[position:]
+                      for character in alphabet:
+                          candidate = prefix + character + suffix
+                          if hashlib.sha256(candidate.encode('ascii')).hexdigest() == expected_sha:
+                              payload = candidate
+                              recovery = (position, character)
+                              break
+                      if recovery is not None:
+                          break
+                  if recovery is not None:
+                      break
+              if recovery is None:
+                  raise SystemExit('Fehlendes Base64-Zeichen konnte nicht rekonstruiert werden')
+
           if len(payload) % 4:
               raise SystemExit('Rekonstruierte Base64-Payload ist nicht 4-Byte-ausgerichtet')
-
-          try:
-              archive_bytes = base64.b64decode(payload, validate=True)
-          except ValueError as exc:
-              raise SystemExit(f'Rekonstruierte Payload ist kein gültiges Base64: {exc}') from exc
-
+          archive_bytes = base64.b64decode(payload, validate=True)
           archive_path = Path(sys.argv[1])
           archive_path.write_bytes(archive_bytes)
-          print(f'Entfernter Überlapp: {repaired_overlaps[0][1]} Zeichen aus unit16.payload.01')
-          print(f'Rekonstruiertes Archiv: {len(archive_bytes)} Bytes')
+          print(f'Entfernter Überlapp: {repairs[0][1]} Zeichen aus unit16.payload.01')
+          print(f'Rekonstruiertes fehlendes Zeichen: {recovery}')
+          print(f'Payload-SHA-256: {hashlib.sha256(payload.encode("ascii")).hexdigest()}')
           print(f'Archiv-SHA-256: {hashlib.sha256(archive_bytes).hexdigest()}')
 
           expected = {
               '02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md',
               '02-Vertiefung/04-Angststoerungen-und-ADHS.md',
-              'README.md',
-              'ROADMAP.md',
-              'Glossar.md',
-              'cards/cards.yaml',
-              'index.json',
-              'knowledge-graph/planned-nodes.yaml',
-              'mkdocs.yml',
-              'references/Hoskins2026.md',
-              'references/Njardvik2025.md',
+              'README.md', 'ROADMAP.md', 'Glossar.md', 'cards/cards.yaml',
+              'index.json', 'knowledge-graph/planned-nodes.yaml', 'mkdocs.yml',
+              'references/Hoskins2026.md', 'references/Njardvik2025.md',
           }
           with tarfile.open(archive_path, 'r:gz') as archive:
               members = archive.getmembers()
@@ -130,7 +158,6 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-
           path = Path('CHANGELOG.md')
           text = path.read_text(encoding='utf-8')
           heading = '## 0.18.0 – 2026-07-29'
@@ -195,6 +222,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git rm --ignore-unmatch \
             .github/workflows/apply-unit16.yml \
+            .github/workflows/diagnose-unit16.yml \
             .automation-repair/unit16.payload.*
           git add \
             02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md \
