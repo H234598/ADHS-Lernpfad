@@ -13,7 +13,7 @@ Verfahren zur längerfristigen Schätzung von Aktivitäts- und Ruhephasen mit ei
 Deutlich vermindertes Interesse oder verminderte Fähigkeit, Freude an gewöhnlich angenehmen Aktivitäten zu erleben; ein mögliches Kernmerkmal depressiver Episoden.
 
 ## Angststörung
-Psychische Störung mit anhaltender oder wiederkehrender Furcht, Sorge, körperlicher Aktivierung oder Vermeidung, die über eine vorübergehende angemessene Angstreaktion hinausgeht und relevante Beeinträchtigung verursacht.
+Psychische Störung mit anhaltender oder wiederkehrender Furcht, Sorge oder einem klaren Angst- beziehungsweise Bedrohungsbezug, die über eine vorübergehende angemessene Angstreaktion hinausgeht und relevante Beeinträchtigung verursacht; körperliche Aktivierung und Vermeidung können Begleitmerkmale sein.
 
 ## Arbeitsgedächtnis
 System zur kurzfristigen aktiven Speicherung und Bearbeitung von Information.
