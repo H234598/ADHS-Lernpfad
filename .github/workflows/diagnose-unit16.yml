@@ -1,0 +1,102 @@
+name: Diagnose unit 16 payload
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: diagnose-unit16-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  diagnose:
+    if: github.head_ref == 'agent/einheit-16-angststoerungen-adhs'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout pull-request head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Reconstruct and inspect payload
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p build/unit16
+          python - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import hashlib
+          from pathlib import Path, PurePosixPath
+          import tarfile
+
+          fragments = sorted(Path('.automation-repair').glob('unit16.payload.*'))
+          expected_fragments = [f'unit16.payload.{index:02d}' for index in range(6)]
+          if [path.name for path in fragments] != expected_fragments:
+              raise SystemExit('Unerwartete Payload-Fragmente')
+
+          def overlap(left: str, right: str) -> int:
+              candidate = right + '\0' + left[-len(right):]
+              prefix = [0] * len(candidate)
+              for index in range(1, len(candidate)):
+                  match = prefix[index - 1]
+                  while match and candidate[index] != candidate[match]:
+                      match = prefix[match - 1]
+                  if candidate[index] == candidate[match]:
+                      match += 1
+                  prefix[index] = match
+              return prefix[-1]
+
+          payload = fragments[0].read_text(encoding='ascii').strip()
+          repairs = []
+          for fragment_path in fragments[1:]:
+              fragment = fragment_path.read_text(encoding='ascii').strip()
+              shared = overlap(payload, fragment)
+              if shared >= 256:
+                  repairs.append((fragment_path.name, shared))
+                  fragment = fragment[shared:]
+              payload += fragment
+
+          if len(repairs) != 1 or repairs[0][0] != 'unit16.payload.01':
+              raise SystemExit(f'Unerwartetes Überlappungsmuster: {repairs}')
+          archive = base64.b64decode(payload, validate=True)
+          archive_path = Path('build/unit16.tar.gz')
+          archive_path.write_bytes(archive)
+          Path('build/unit16/diagnosis.txt').write_text(
+              f'overlap={repairs[0][1]}\n'
+              f'archive_bytes={len(archive)}\n'
+              f'sha256={hashlib.sha256(archive).hexdigest()}\n',
+              encoding='utf-8',
+          )
+
+          expected = {
+              '02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen.md',
+              '02-Vertiefung/04-Angststoerungen-und-ADHS.md',
+              'README.md', 'ROADMAP.md', 'Glossar.md', 'cards/cards.yaml',
+              'index.json', 'knowledge-graph/planned-nodes.yaml', 'mkdocs.yml',
+              'references/Hoskins2026.md', 'references/Njardvik2025.md',
+          }
+          with tarfile.open(archive_path, 'r:gz') as tar:
+              members = tar.getmembers()
+              if {member.name for member in members} != expected:
+                  raise SystemExit('Unerwartete Archivmitglieder')
+              for member in members:
+                  path = PurePosixPath(member.name)
+                  if path.is_absolute() or '..' in path.parts or not member.isfile():
+                      raise SystemExit(f'Unsicherer Archiveintrag: {member.name}')
+              tar.extractall('build/unit16/extracted', filter='data')
+          PY
+
+      - name: Upload reconstructed source payload
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit16-reconstructed-${{ github.event.pull_request.head.sha }}
+          path: build/unit16/
+          if-no-files-found: error
+          retention-days: 7
