@@ -29,7 +29,7 @@ citation:
 
 ## Vollständige Zitation
 
-Njardvik, U., Wergeland, G. J., Riise, E. N., Hannesdottir, D. Kr., & Öst, L.-G. (2025). Psychiatric comorbidity in children and adolescents with ADHD: A systematic review and meta-analysis. *Clinical Psychology Review, 118*, 102571.
+Njardvik, Urdur, Wergeland, Gro Janne, Riise, Eili N., Hannesdottir, Dagmar Kr., & Öst, Lars-Göran (2025). Psychiatric comorbidity in children and adolescents with ADHD: A systematic review and meta-analysis. *Clinical Psychology Review, 118*, 102571.
 
 ## Evidenztyp und Design
 
