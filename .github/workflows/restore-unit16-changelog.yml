@@ -11,7 +11,7 @@ permissions:
 
 concurrency:
   group: restore-unit16-changelog
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   restore:
@@ -22,17 +22,17 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: agent/einheit-16-angststoerungen-adhs
-          fetch-depth: 2
+          fetch-depth: 0
           persist-credentials: false
 
-      - name: Restore parent changelog and keep the evidence clarification
+      - name: Restore validated changelog and keep evidence clarification
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git checkout HEAD^ -- CHANGELOG.md
+          git checkout a818b1b3c00408ebdab1e913d149a2baaaf274a2 -- CHANGELOG.md
           python - <<'PY'
           from pathlib import Path
           path = Path('CHANGELOG.md')
