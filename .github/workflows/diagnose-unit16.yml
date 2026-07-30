@@ -32,12 +32,13 @@ jobs:
           from __future__ import annotations
 
           import base64
-          import binascii
           import hashlib
           from pathlib import Path, PurePosixPath
           import tarfile
 
           output = Path('build/unit16')
+          expected_payload_sha256 = '05f2646418b408b93cc85b0c9184c0fb358d565263e197cd1ac8eadcabc17fd5'
+          alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
           fragments = sorted(Path('.automation-repair').glob('unit16.payload.*'))
           expected_fragments = [f'unit16.payload.{index:02d}' for index in range(6)]
           if [path.name for path in fragments] != expected_fragments:
@@ -55,44 +56,65 @@ jobs:
                   prefix[index] = match
               return prefix[-1]
 
-          payload = fragments[0].read_text(encoding='ascii').strip()
+          normalized_parts: list[str] = []
+          payload = ''
           repairs: list[tuple[str, int]] = []
-          fragment_lengths = {fragments[0].name: len(payload)}
-          for fragment_path in fragments[1:]:
+          boundaries: list[int] = []
+          fragment_lengths: dict[str, int] = {}
+          for fragment_path in fragments:
               fragment = fragment_path.read_text(encoding='ascii').strip()
               fragment_lengths[fragment_path.name] = len(fragment)
-              shared = overlap(payload, fragment)
-              if shared >= 256:
-                  repairs.append((fragment_path.name, shared))
-                  fragment = fragment[shared:]
+              if payload:
+                  shared = overlap(payload, fragment)
+                  if shared >= 256:
+                      repairs.append((fragment_path.name, shared))
+                      fragment = fragment[shared:]
+              normalized_parts.append(fragment)
               payload += fragment
+              boundaries.append(len(payload))
 
           diagnosis = [
               *(f'{name}_chars={length}' for name, length in fragment_lengths.items()),
               f'repairs={repairs}',
-              f'payload_chars_before_padding={len(payload)}',
+              f'normalized_boundaries={boundaries}',
+              f'payload_chars={len(payload)}',
               f'payload_mod4={len(payload) % 4}',
-              f'payload_tail={payload[-16:]}',
           ]
           if len(repairs) != 1 or repairs[0][0] != 'unit16.payload.01':
               output.joinpath('diagnosis.txt').write_text('\n'.join(diagnosis) + '\n', encoding='utf-8')
               raise SystemExit(f'Unerwartetes Überlappungsmuster: {repairs}')
 
-          padding = '=' * (-len(payload) % 4)
-          diagnosis.append(f'added_padding={len(padding)}')
-          try:
-              archive = base64.b64decode(payload + padding, validate=True)
-          except binascii.Error as exc:
-              diagnosis.append(f'base64_error={exc}')
-              output.joinpath('diagnosis.txt').write_text('\n'.join(diagnosis) + '\n', encoding='utf-8')
-              raise SystemExit(f'Rekonstruierte Payload ist kein gültiges Base64: {exc}') from exc
+          candidate_positions = sorted({0, *boundaries[:-1], len(payload)})
+          recovered_payload = None
+          recovery = None
+          for position in candidate_positions:
+              prefix = payload[:position]
+              suffix = payload[position:]
+              for character in alphabet:
+                  candidate = prefix + character + suffix
+                  if hashlib.sha256(candidate.encode('ascii')).hexdigest() == expected_payload_sha256:
+                      recovered_payload = candidate
+                      recovery = (position, character)
+                      break
+              if recovered_payload is not None:
+                  break
 
+          diagnosis.append(f'candidate_positions={candidate_positions}')
+          diagnosis.append(f'recovery={recovery}')
+          if recovered_payload is None:
+              output.joinpath('diagnosis.txt').write_text('\n'.join(diagnosis) + '\n', encoding='utf-8')
+              raise SystemExit('Keine einzelne fehlende Base64-Stelle an einer Fragmentgrenze passt zur Soll-Prüfsumme')
+
+          archive = base64.b64decode(recovered_payload, validate=True)
           archive_path = output / 'unit16.tar.gz'
           archive_path.write_bytes(archive)
+          output.joinpath('unit16.payload.b64').write_text(recovered_payload, encoding='ascii')
           diagnosis.extend(
               [
+                  f'recovered_payload_chars={len(recovered_payload)}',
+                  f'payload_sha256={hashlib.sha256(recovered_payload.encode("ascii")).hexdigest()}',
                   f'archive_bytes={len(archive)}',
-                  f'sha256={hashlib.sha256(archive).hexdigest()}',
+                  f'archive_sha256={hashlib.sha256(archive).hexdigest()}',
               ]
           )
           output.joinpath('diagnosis.txt').write_text('\n'.join(diagnosis) + '\n', encoding='utf-8')
