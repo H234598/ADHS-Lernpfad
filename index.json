@@ -1,7 +1,7 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.18.0",
-  "last_reviewed": "2026-07-30",
+  "version": "0.19.0",
+  "last_reviewed": "2026-07-31",
   "chapters": [
     {
       "number": 1,
@@ -82,6 +82,11 @@
       "number": 16,
       "path": "02-Vertiefung/04-Angststoerungen-und-ADHS.md",
       "title": "Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen"
+    },
+    {
+      "number": 17,
+      "path": "02-Vertiefung/05-Zwangssymptome-und-Zwangsstoerung.md",
+      "title": "Zwangssymptome, Zwangsstörung und ADHS: Funktion, Abgrenzung und Koexistenz"
     }
   ]
 }
