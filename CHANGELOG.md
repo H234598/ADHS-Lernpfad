@@ -1,5 +1,13 @@
 # Änderungsverlauf
 
+
+## 0.19.0 – 2026-07-31
+
+- Einheit 17 „Zwangssymptome, Zwangsstörung und ADHS: Funktion, Abgrenzung und Koexistenz“ ergänzt
+- Zwangsgedanken, Zwangshandlungen, Perfektionismus, ADHS-bezogene Kompensation und wiederholte Kontrollen nach ihrer Funktion differenziert
+- uneinheitliche Koexistenzschätzungen ohne Scheingenauigkeit eingeordnet und aktuelle S3-Leitlinien- sowie Umbrella-Review-Evidenz ergänzt
+- drei Studienkarten, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und geplante Wissensgraph-Knoten aktualisiert
+
 ## 0.18.0 – 2026-07-30
 
 - Einheit 16 „Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen“ ergänzt
