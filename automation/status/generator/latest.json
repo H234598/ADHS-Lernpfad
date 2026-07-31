@@ -1,18 +1,54 @@
 {
-  "artifacts": [],
+  "artifacts": [
+    {
+      "path": null,
+      "recorded_at": "2026-07-31T04:54:30.000Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "branch",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/tree/agent/einheit-17-zwangssymptome-adhs",
+      "value": "agent/einheit-17-zwangssymptome-adhs"
+    },
+    {
+      "path": null,
+      "recorded_at": "2026-07-31T04:54:30.000Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "commit",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/893abb37c0fafaf86083904ca1240e73831b30e2",
+      "value": "893abb37c0fafaf86083904ca1240e73831b30e2"
+    },
+    {
+      "path": null,
+      "recorded_at": "2026-07-31T04:54:30.000Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "pull_request",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/pull/47",
+      "value": "#47"
+    }
+  ],
   "completed_phases": [
     "initialize",
     "load_main",
     "check_previous_run",
     "check_existing_pr",
     "read_prompts",
-    "research"
+    "research",
+    "create_branch",
+    "create_content",
+    "generate_outputs",
+    "validate",
+    "commit",
+    "push",
+    "create_pr",
+    "verify_pr"
   ],
   "context": {
-    "branch": "main",
-    "commit_sha": "beb18654a530dfd4fb5be6ebfc7dbe380e375e11",
-    "pr_number": null,
-    "pr_url": null,
+    "branch": "agent/einheit-17-zwangssymptome-adhs",
+    "commit_sha": "893abb37c0fafaf86083904ca1240e73831b30e2",
+    "pr_number": 47,
+    "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/47",
     "repository": "H234598/ADHS-Lernpfad",
     "workflow_run": null
   },
@@ -21,17 +57,20 @@
   "ended_at": null,
   "error": null,
   "metrics": {
+    "changed_files": 16,
     "planned_topic": "Zwangssymptome und Zwangsstörung",
-    "unit_number": 17
+    "reference_cards_added": 3,
+    "unit_number": 17,
+    "word_count": 1653
   },
-  "phase": "create_branch",
+  "phase": "wait_review",
   "previous_status": "running",
   "recovery": null,
-  "retention_until": "2026-08-30T04:44:39.000Z",
-  "revision": 3,
+  "retention_until": "2026-08-30T04:54:30.000Z",
+  "revision": 4,
   "run_id": "d733181e-5b99-4337-9648-fc90540e69bb",
   "schema_version": "3.0.0",
   "status": "running",
-  "updated_at": "2026-07-31T04:44:39.000Z",
+  "updated_at": "2026-07-31T04:54:30.000Z",
   "workflow": "generator"
 }
