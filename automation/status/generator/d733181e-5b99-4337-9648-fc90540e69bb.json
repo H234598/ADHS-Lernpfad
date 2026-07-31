@@ -5,7 +5,8 @@
     "load_main",
     "check_previous_run",
     "check_existing_pr",
-    "read_prompts"
+    "read_prompts",
+    "research"
   ],
   "context": {
     "branch": "main",
@@ -23,14 +24,14 @@
     "planned_topic": "Zwangssymptome und Zwangsstörung",
     "unit_number": 17
   },
-  "phase": "research",
-  "previous_status": "created",
+  "phase": "create_branch",
+  "previous_status": "running",
   "recovery": null,
-  "retention_until": "2026-08-30T04:09:03.000Z",
-  "revision": 2,
+  "retention_until": "2026-08-30T04:44:39.000Z",
+  "revision": 3,
   "run_id": "d733181e-5b99-4337-9648-fc90540e69bb",
   "schema_version": "3.0.0",
   "status": "running",
-  "updated_at": "2026-07-31T04:09:03.000Z",
+  "updated_at": "2026-07-31T04:44:39.000Z",
   "workflow": "generator"
 }
