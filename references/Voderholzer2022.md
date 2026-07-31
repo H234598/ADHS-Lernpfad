@@ -52,7 +52,7 @@ Der Zeitschriftenartikel ist eine Zusammenfassung und ersetzt nicht das vollstä
 
 ## Verhältnis zum bisherigen Konsens
 
-Bestätigt die zentrale Rolle von Exposition mit Reaktionsmanagement und die leitliniengebundene, individuell abgewogene Pharmakotherapie. Die zugrunde liegende S3-Leitlinie Version 2.0 wurde am 12. Juli 2022 veröffentlicht und ist laut AWMF bis 29. Juni 2027 gültig.
+Bestätigt die zentrale Rolle von Exposition mit Reaktionsmanagement und die leitliniengebundene, individuell abgewogene Pharmakotherapie. Die zugrunde liegende S3-Leitlinie Version 2.0 wurde am 12. Juli 2022 veröffentlicht und ist laut AWMF bis 30. Juni 2027 gültig.
 
 ## Links
 
