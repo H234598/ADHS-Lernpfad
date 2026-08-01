@@ -26,6 +26,24 @@
       "type": "pull_request",
       "url": "https://github.com/H234598/ADHS-Lernpfad/pull/47",
       "value": "#47"
+    },
+    {
+      "path": null,
+      "recorded_at": "2026-08-01T04:11:03.000Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "commit",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/1eb39ece4493ecb98dd7c97ed560e5035e6c1840",
+      "value": "1eb39ece4493ecb98dd7c97ed560e5035e6c1840"
+    },
+    {
+      "path": null,
+      "recorded_at": "2026-08-01T04:11:03.000Z",
+      "reusable": true,
+      "sha256": null,
+      "type": "commit",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/ee91741ec71a1232a4c3b90f42b805591a0d9359",
+      "value": "ee91741ec71a1232a4c3b90f42b805591a0d9359"
     }
   ],
   "completed_phases": [
@@ -42,42 +60,52 @@
     "commit",
     "push",
     "create_pr",
-    "verify_pr"
+    "verify_pr",
+    "wait_review",
+    "ready_for_review",
+    "verify_second_ci",
+    "merge",
+    "complete"
   ],
   "context": {
     "branch": "agent/einheit-17-zwangssymptome-adhs",
-    "commit_sha": "893abb37c0fafaf86083904ca1240e73831b30e2",
+    "commit_sha": "ee91741ec71a1232a4c3b90f42b805591a0d9359",
     "pr_number": 47,
     "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/47",
     "repository": "H234598/ADHS-Lernpfad",
     "workflow_run": null
   },
   "created_at": "2026-07-31T04:00:58.000Z",
-  "duration_seconds": null,
-  "ended_at": null,
+  "duration_seconds": 87005.0,
+  "ended_at": "2026-08-01T04:11:03.000Z",
   "error": null,
   "metrics": {
     "changed_files": 16,
+    "coderabbit_disagreement": false,
     "coderabbit_state": "success",
     "codacy_state": "success",
+    "head_sha": "1eb39ece4493ecb98dd7c97ed560e5035e6c1840",
+    "merge_commit_sha": "ee91741ec71a1232a4c3b90f42b805591a0d9359",
+    "merged": true,
     "planned_topic": "Zwangssymptome und Zwangsstörung",
     "project_ci_state": "success",
     "qlty_state": "success",
     "reference_cards_added": 3,
     "remark_lint_state": "success",
     "review_eligible_at": "2026-07-31T06:53:44Z",
+    "second_ci_state": "success",
     "unit_number": 17,
     "unresolved_coderabbit_threads": 0,
     "word_count": 1653
   },
-  "phase": "wait_review",
+  "phase": "complete",
   "previous_status": "running",
   "recovery": null,
-  "retention_until": "2026-08-30T05:00:15.000Z",
-  "revision": 5,
+  "retention_until": "2026-08-31T04:11:03.000Z",
+  "revision": 6,
   "run_id": "d733181e-5b99-4337-9648-fc90540e69bb",
   "schema_version": "3.0.0",
-  "status": "running",
-  "updated_at": "2026-07-31T05:00:15.000Z",
+  "status": "success",
+  "updated_at": "2026-08-01T04:11:03.000Z",
   "workflow": "generator"
 }
