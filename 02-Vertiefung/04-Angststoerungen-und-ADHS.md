@@ -167,5 +167,5 @@ Bei ADHS kann der Start durch unklare Schritte, geringe unmittelbare Rückmeldun
 ## Navigation
 
 - Zurück: [[02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen|Parkinson, ADHS und mechanistische Vergleiche]]
-- Weiter: [[ROADMAP#A2 · Angst, Zwang, Trauma und episodische Störungen — P0|Zwang, Trauma und episodische Veränderungen laut Roadmap]]
+- Weiter: [[02-Vertiefung/05-Zwangssymptome-und-Zwangsstoerung|Zwangssymptome, Zwangsstörung und ADHS]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]

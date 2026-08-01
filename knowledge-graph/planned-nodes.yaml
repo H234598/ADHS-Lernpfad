@@ -1,5 +1,17 @@
 nodes:
-- path: 02-Vertiefung/05-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet
+- path: 02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen
+  title: Trauma, PTBS und komplexe Traumafolgen
+  type: chapter
+  scope: learning
+  level: Vertiefung
+  roadmap: ROADMAP.md#a2-angst-zwang-trauma-und-episodische-störungen-p0
+- path: 02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen
+  title: Bipolare Störungen, Psychosen und episodische Veränderungen
+  type: chapter
+  scope: learning
+  level: Vertiefung
+  roadmap: ROADMAP.md#a2-angst-zwang-trauma-und-episodische-störungen-p0
+- path: 02-Vertiefung/08-Studienmethodik-Effektgroessen-Bias-und-Kausalitaet
   title: Studienmethodik, Effektgrößen, Bias und Kausalität
   type: chapter
   scope: learning

@@ -153,3 +153,13 @@ cards:
   - Vertiefung
   - Differentialdiagnostik
   - Einheit_16
+- id: 1017
+  unit: 17
+  front: Warum ist wiederholtes Kontrollieren allein kein Beweis für eine Zwangsstörung?
+  back: Weil dieselbe sichtbare Handlung unterschiedliche Funktionen haben kann. Bei ADHS kann sie Vergesslichkeit kompensieren; bei einer Zwangsstörung kann sie aufdringliche Zweifel oder befürchtete Folgen kurzfristig neutralisieren.
+  tags:
+  - ADHS
+  - Zwangsstörung
+  - Vertiefung
+  - Differentialdiagnostik
+  - Einheit_17

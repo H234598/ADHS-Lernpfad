@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-30
+last_reviewed: 2026-07-31
 ---
 
 # Glossar
@@ -51,6 +51,9 @@ Prozesse, die Entstehung, Intensität, Dauer, Aufmerksamkeit, Ausdruck oder Verh
 ## Epigenetik
 Veränderungen der Genregulation, die nicht auf einer Änderung der DNA-Sequenz beruhen; kein Beleg dafür, dass einzelne Erfahrungen eine komplexe Störung gezielt „anschalten“.
 
+## Exposition mit Reaktionsmanagement
+Störungsspezifisches Verfahren der kognitiven Verhaltenstherapie bei Zwangsstörungen: gefürchtete oder unsicherheitsauslösende Situationen werden geplant aufgesucht, während die übliche Zwangshandlung oder Neutralisierung unter therapeutischer Begleitung nicht ausgeführt wird.
+
 ## Exekutive Funktionen
 Sammelbegriff für Kontrollprozesse wie Arbeitsgedächtnis, Inhibition, Planung und kognitive Flexibilität.
 
@@ -83,6 +86,9 @@ Zusätzliche Erkrankung oder Störung, die gleichzeitig mit einer anderen Diagno
 
 ## Koexistenz
 Gleichzeitiges Vorliegen diagnostisch unterscheidbarer Bedingungen, beispielsweise ADHS und Autismus; bedeutet weder Gleichheit noch eine bloße Unterform der jeweils anderen Diagnose.
+
+## Negative Verstärkung
+Lernprozess, bei dem ein Verhalten wahrscheinlicher wird, weil es einen unangenehmen Zustand kurzfristig beendet oder vermindert; bei Zwangshandlungen kann kurzfristige Erleichterung das Ritual langfristig stabilisieren.
 
 ## Neurodegeneration
 Fortschreitende Schädigung oder Verlust von Nervenzellen und neuronalen Funktionen; nicht gleichbedeutend mit einer seit der Entwicklung bestehenden Neuroentwicklungsstörung.
@@ -152,6 +158,12 @@ Spektrum von Todeswünschen und Suizidgedanken über Pläne und Vorbereitungen b
 
 ## Vermeidung
 Nichtausführen oder Verlassen einer gefürchteten Situation, Aufgabe oder inneren Erfahrung; vermindert Belastung oft kurzfristig, kann Angst und Funktionsbeeinträchtigung langfristig jedoch aufrechterhalten.
+
+## Zwangsgedanke
+Wiederkehrender aufdringlicher und unerwünschter Gedanke, Impuls oder ein Bild, das Belastung auslösen kann; sein Inhalt ist nicht mit einer Absicht gleichzusetzen.
+
+## Zwangshandlung
+Wiederholte sichtbare oder mentale Handlung, zu der sich eine Person gedrängt fühlt, häufig um Belastung zu vermindern oder eine befürchtete Folge zu verhindern; nicht jede Routine, Kontrolle oder Gedächtnisstütze ist zwanghaft.
 
 ## Zirkadianer Rhythmus
 Ungefähr 24-stündiger biologischer Zeitrhythmus, der unter anderem Schlafneigung, Wachheit, Körpertemperatur und Hormonausschüttung beeinflusst.

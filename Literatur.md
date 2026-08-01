@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-30
+last_reviewed: 2026-07-31
 ---
 
 # Literatur
@@ -15,6 +15,14 @@ last_reviewed: 2026-07-30
 Australasian ADHD Professionals Association (2022). Australian evidence-based clinical practice guideline for attention deficit hyperactivity disorder.
 
 - Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
+
+## Abramovitch2015
+
+Abramovitch, Amitai, Dar, Reuven, Mittelman, Andrew, & Wilhelm, Sabine (2015). Comorbidity Between Attention Deficit/Hyperactivity Disorder and Obsessive-Compulsive Disorder Across the Lifespan: A Systematic and Critical Review. *Harvard Review of Psychiatry, 23*(4), 245–262.
+
+- DOI: [https://doi.org/10.1097/HRP.0000000000000050](https://doi.org/10.1097/HRP.0000000000000050)
+- PubMed: [PMID 26052877](https://pubmed.ncbi.nlm.nih.gov/26052877/)
+- Evidenztyp: `systematic-critical-review` · Evidenzgrad: `moderate` · Status: `disputed`
 
 ## Baiamonte2026
 
@@ -209,6 +217,14 @@ Rother, Y., Orlando, C. M., Warren, P., & Flory, K. (2025). ADHD and Suicidality
 - PubMed: [PMID 40536652](https://pubmed.ncbi.nlm.nih.gov/40536652/)
 - Evidenztyp: `systematic-review` · Evidenzgrad: `high` · Status: `consensus`
 
+## SerranoOrtiz2026
+
+Serrano-Ortiz, Marina, Llopis-Sánchez, Blanca, & Orgilés, Mireia (2026). Current state of the evidence on treatments for obsessive-compulsive disorder in children and adolescents: An umbrella review. *Journal of Behavior Therapy and Experimental Psychiatry, 91*, 102091.
+
+- DOI: [https://doi.org/10.1016/j.jbtep.2026.102091](https://doi.org/10.1016/j.jbtep.2026.102091)
+- PubMed: [PMID 41762804](https://pubmed.ncbi.nlm.nih.gov/41762804/)
+- Evidenztyp: `umbrella-review` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Sibley2018
 
 Sibley, M. H., Rohde, L. A., Swanson, J. M., et al. (2018). Late-onset ADHD reconsidered with comprehensive repeated assessments between ages 10 and 25. *American Journal of Psychiatry, 175*(2), 140–149.
@@ -248,6 +264,14 @@ Türk, S., Korfmacher, A.-K., Gerger, H., van der Oord, S., & Christiansen, H. (
 - DOI: [https://doi.org/10.1016/j.cpr.2023.102271](https://doi.org/10.1016/j.cpr.2023.102271)
 - PubMed: [PMID 37030086](https://pubmed.ncbi.nlm.nih.gov/37030086/)
 - Evidenztyp: `umbrella-review-meta-meta-analysis` · Evidenzgrad: `moderate` · Status: `consensus`
+
+## Voderholzer2022
+
+Voderholzer, Ulrich, Favreau, Matthias, Rubart, Antonie, Staniloiu, Angelica, Wahl-Kordon, Andreas, Zurowski, Bartosz, & Kathmann, Norbert (2022). Therapie der Zwangsstörungen: Empfehlungen der revidierten S3-Leitlinie Zwangsstörungen. *Nervenarzt, 93*(7), 678–687.
+
+- DOI: [https://doi.org/10.1007/s00115-022-01336-9](https://doi.org/10.1007/s00115-022-01336-9)
+- PubMed: [PMID 35763051](https://pubmed.ncbi.nlm.nih.gov/35763051/)
+- Evidenztyp: `guideline-summary` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Volkow2011
 

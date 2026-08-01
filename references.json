@@ -17,6 +17,43 @@
     "type": "report"
   },
   {
+    "DOI": "10.1097/HRP.0000000000000050",
+    "PMID": "26052877",
+    "URL": "https://doi.org/10.1097/HRP.0000000000000050",
+    "author": [
+      {
+        "family": "Abramovitch",
+        "given": "Amitai"
+      },
+      {
+        "family": "Dar",
+        "given": "Reuven"
+      },
+      {
+        "family": "Mittelman",
+        "given": "Andrew"
+      },
+      {
+        "family": "Wilhelm",
+        "given": "Sabine"
+      }
+    ],
+    "container-title": "Harvard Review of Psychiatry",
+    "id": "Abramovitch2015",
+    "issue": "4",
+    "issued": {
+      "date-parts": [
+        [
+          2015
+        ]
+      ]
+    },
+    "page": "245–262",
+    "title": "Comorbidity Between Attention Deficit/Hyperactivity Disorder and Obsessive-Compulsive Disorder Across the Lifespan: A Systematic and Critical Review",
+    "type": "article-journal",
+    "volume": "23"
+  },
+  {
     "DOI": "10.3390/brainsci16060646",
     "PMID": "42352655",
     "URL": "https://doi.org/10.3390/brainsci16060646",
@@ -830,6 +867,38 @@
     "volume": "28"
   },
   {
+    "DOI": "10.1016/j.jbtep.2026.102091",
+    "PMID": "41762804",
+    "URL": "https://doi.org/10.1016/j.jbtep.2026.102091",
+    "author": [
+      {
+        "family": "Serrano-Ortiz",
+        "given": "Marina"
+      },
+      {
+        "family": "Llopis-Sánchez",
+        "given": "Blanca"
+      },
+      {
+        "family": "Orgilés",
+        "given": "Mireia"
+      }
+    ],
+    "container-title": "Journal of Behavior Therapy and Experimental Psychiatry",
+    "id": "SerranoOrtiz2026",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "number": "102091",
+    "title": "Current state of the evidence on treatments for obsessive-compulsive disorder in children and adolescents: An umbrella review",
+    "type": "article-journal",
+    "volume": "91"
+  },
+  {
     "DOI": "10.1176/appi.ajp.2017.17030298",
     "PMID": "29070684",
     "URL": "https://doi.org/10.1176/appi.ajp.2017.17030298",
@@ -1026,6 +1095,55 @@
     "title": "Interventions for ADHD in childhood and adolescence: A systematic umbrella review and meta-meta-analysis",
     "type": "article-journal",
     "volume": "102"
+  },
+  {
+    "DOI": "10.1007/s00115-022-01336-9",
+    "PMID": "35763051",
+    "URL": "https://doi.org/10.1007/s00115-022-01336-9",
+    "author": [
+      {
+        "family": "Voderholzer",
+        "given": "Ulrich"
+      },
+      {
+        "family": "Favreau",
+        "given": "Matthias"
+      },
+      {
+        "family": "Rubart",
+        "given": "Antonie"
+      },
+      {
+        "family": "Staniloiu",
+        "given": "Angelica"
+      },
+      {
+        "family": "Wahl-Kordon",
+        "given": "Andreas"
+      },
+      {
+        "family": "Zurowski",
+        "given": "Bartosz"
+      },
+      {
+        "family": "Kathmann",
+        "given": "Norbert"
+      }
+    ],
+    "container-title": "Nervenarzt",
+    "id": "Voderholzer2022",
+    "issue": "7",
+    "issued": {
+      "date-parts": [
+        [
+          2022
+        ]
+      ]
+    },
+    "page": "678–687",
+    "title": "Therapie der Zwangsstörungen: Empfehlungen der revidierten S3-Leitlinie Zwangsstörungen",
+    "type": "article-journal",
+    "volume": "93"
   },
   {
     "DOI": "10.1038/mp.2010.97",

@@ -1,7 +1,7 @@
 ---
 title: Fachliche Roadmap
 tags: [ADHS, Roadmap, Wissenschaft, Lernpfad, Diagnostik, Behandlung, Versorgung, Forschung]
-last_reviewed: 2026-07-30
+last_reviewed: 2026-07-31
 status: fortlaufend
 ---
 
@@ -41,7 +41,7 @@ Ein Themenblock kann mehrere Einheiten erfordern. Er gilt erst dann als abgeschl
 
 ## Aktueller Stand des Lernpfads
 
-Der Lernpfad umfasst derzeit 16 fortlaufende Einheiten:
+Der Lernpfad umfasst derzeit 17 fortlaufende Einheiten:
 
 1. Was ist ADHS?
 2. Inhibition und Handlungssteuerung
@@ -59,6 +59,7 @@ Der Lernpfad umfasst derzeit 16 fortlaufende Einheiten:
 14. Autismus und ADHS: Koexistenz, Überlappung und Abgrenzung
 15. Parkinson, ADHS und mechanistische Vergleiche
 16. Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen
+17. Zwangssymptome, Zwangsstörung und ADHS: Funktion, Abgrenzung und Koexistenz
 
 Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität sowie einen Behandlungsüberblick gut ab. Die größten fachlichen Lücken liegen nun bei der Breite der Komorbiditäten, spezifischen Lebensphasen und Populationen, Funktions- und Versorgungsthemen, differenzierter Behandlungssicherheit, sozialer Ungleichheit, digitaler Diagnostik sowie dem systematischen Übergang auf Forschungsniveau.
 
@@ -110,7 +111,7 @@ Die folgende Liste erhält sämtliche Themen der bisherigen Roadmap. Bereits vor
   - Sorgen, Bedrohungsfokus, Vermeidung und körperliche Angstsymptome von primärer Unaufmerksamkeit unterscheiden;
   - wechselseitige Verstärkung, Leistungsangst und Behandlungshürden einordnen;
   - Komorbidität von Differentialdiagnose trennen.
-- [ ] **Zwangssymptome und Zwangsstörung**
+- [x] **Zwangssymptome und Zwangsstörung** — umgesetzt als Einheit 17
   - impulsives, wechselhaftes Verhalten von ritualisiertem Verhalten und aufdringlichen Gedanken abgrenzen;
   - Perfektionismus und kompensatorische Kontrollsysteme nicht vorschnell als Zwang diagnostizieren.
 - [ ] **Trauma, PTBS und komplexe Traumafolgen**
@@ -521,7 +522,7 @@ Die vorhandene Einheit 13 bleibt der gemeinsame Überblick. Folgende Vertiefunge
 
 Die tägliche Inhaltsautomation liest diese Roadmap als fachliche Orientierung. Für die Auswahl des nächsten Themas gelten deshalb folgende Regeln:
 
-1. **Als Nächstes wird A1 bearbeitet.** Danach folgt grundsätzlich der erste noch offene P0-Block, dessen Voraussetzungen durch vorhandene Einheiten erfüllt sind.
+1. Grundsätzlich folgt der erste noch offene P0-Block, dessen Voraussetzungen durch vorhandene Einheiten erfüllt sind.
 2. Ein dringender Sicherheitsbefund, eine neue verbindliche Leitlinie oder eine Korrektur eines nachweislich falschen Alttextes darf die Reihenfolge überholen. Die Abweichung muss im Pull Request begründet werden.
 3. Ein Themenblock wird vor dem Schreiben geteilt, wenn eine vollständige Behandlung den Zielumfang einer Einheit überschreiten würde. Die Teilung wird in dieser Roadmap ergänzt; Informationen werden nicht gestrichen.
 4. Ein Unterthema darf nur dann übersprungen werden, wenn es bereits in einer bestehenden Einheit ausreichend behandelt wird. Die betreffende Stelle muss im Pull Request benannt werden.
