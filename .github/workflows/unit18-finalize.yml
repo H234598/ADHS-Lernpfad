@@ -3,7 +3,7 @@ name: Finalize unit 18 once
 on:
   pull_request:
     branches: [main]
-    types: [opened]
+    types: [opened, synchronize]
 
 permissions:
   contents: write
@@ -25,9 +25,9 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install project dependencies
+      - name: Install literature dependency
         run: |
-          python -m pip install --disable-pip-version-check -r requirements.txt
+          python -m pip install --disable-pip-version-check PyYAML==6.0.2
           python -m pip check
 
       - name: Patch project indexes and regenerate literature
