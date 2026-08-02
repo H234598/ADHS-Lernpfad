@@ -79,11 +79,11 @@ jobs:
 
           changelog = Path('CHANGELOG.md')
           text = changelog.read_text(encoding='utf-8')
-          entry = '''\n## 2026-08-02 – Einheit 18: Trauma, PTBS und komplexe Traumafolgen\n\n- neue Vertiefungseinheit zur Abgrenzung und Koexistenz von ADHS, PTBS und komplexer PTBS;\n- aktuelle deutsche S3-Leitlinie von 2026 und ICD-11-CDDR als diagnostische Grundlage ergänzt;\n- systematische Evidenz zur ADHS/PTBS-Koexistenz und zu geschlechtsbezogenen Gruppenunterschieden eingeordnet;\n- README, Roadmap, Index, MkDocs-Navigation, Glossar, Lernkarten und Wissensgraph aktualisiert;\n- Literatur.md, references.bib und references.json reproduzierbar aus den Studienkarten regeneriert.\n'''
-          heading = '# Changelog\n'
+          entry = '''\n## 0.20.0 – 2026-08-02\n\n- Einheit 18 „Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS“ ergänzt\n- Traumaexposition, PTBS, komplexe PTBS, Intrusionen, Dissoziation und ADHS-bezogene Aufmerksamkeitsprobleme differenziert\n- aktuelle deutsche S3-Leitlinie von 2026, ICD-11-CDDR und systematische Evidenz zur ADHS/PTBS-Koexistenz ergänzt\n- geschlechtsbezogene Gruppenbefunde ohne kausale oder individuelle Prognose eingeordnet\n- vier Studienkarten, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und geplante Wissensgraph-Knoten aktualisiert\n'''
+          heading = '# Änderungsverlauf\n'
           if heading not in text:
-              raise SystemExit('Changelog-Hauptüberschrift fehlt')
-          if '## 2026-08-02 – Einheit 18:' not in text:
+              raise SystemExit('Änderungsverlauf-Hauptüberschrift fehlt')
+          if '## 0.20.0 – 2026-08-02' not in text:
               text = text.replace(heading, heading + entry, 1)
           changelog.write_text(text, encoding='utf-8')
           PY
