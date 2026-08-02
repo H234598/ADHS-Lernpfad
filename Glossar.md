@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-31
+last_reviewed: 2026-08-02
 ---
 
 # Glossar
@@ -39,6 +39,9 @@ Fehlschluss, neue oder zusätzliche Beschwerden vollständig einer bereits bekan
 ## Differentialdiagnose
 Alternative Erklärung für ein Beschwerdebild, die anhand von Beginn, Verlauf, Kontext und Begleitmerkmalen gegen andere Möglichkeiten geprüft wird.
 
+## Dissoziation
+Veränderung der üblichen Integration von Wahrnehmung, Erinnerung, Identität, Körper- oder Gegenwartserleben; nicht gleichbedeutend mit gewöhnlicher Ablenkbarkeit oder Tagträumen und diagnostisch eigenständig zu prüfen.
+
 ## Dosisfindung
 Schrittweise Anpassung einer Medikamentendosis anhand vorher definierter Ziele, Wirkdauer und Nebenwirkungen innerhalb fachlicher und zugelassener Grenzen.
 
@@ -75,14 +78,23 @@ Statistischer Unterschied zwischen Gruppen, der keine sichere Aussage über eine
 ## Heritabilität
 Populationsbezogene Schätzung des Anteils beobachteter Unterschiede, der unter den untersuchten Bedingungen statistisch mit genetischen Unterschieden zusammenhängt; kein genetischer Prozentanteil einer Person.
 
+## Hyperarousal
+Anhaltend erhöhte körperliche und psychische Alarmbereitschaft, etwa mit Schreckhaftigkeit, Schlafproblemen, Reizbarkeit oder Hypervigilanz; ein möglicher PTBS-Bereich, aber kein für sich allein spezifischer Diagnosenachweis.
+
 ## Inhibition
 Hemmung dominanter oder begonnener Reaktionen zugunsten eines Ziels.
 
 ## Insomnie
 Anhaltende Ein- oder Durchschlafstörung trotz ausreichender Schlafgelegenheit, verbunden mit relevanten Folgen am Tag.
 
+## Intrusion
+Ungewolltes Wiederauftreten belastender Erinnerungen, Bilder, Gedanken oder Sinneseindrücke; bei PTBS wird der Bezug zur Traumaerfahrung und zum Erleben in der Gegenwart geprüft.
+
 ## Komorbidität
 Zusätzliche Erkrankung oder Störung, die gleichzeitig mit einer anderen Diagnose besteht.
+
+## Komplexe PTBS
+ICD-11-Diagnose mit den PTBS-Kernsymptomen und zusätzlichen anhaltenden Störungen der Selbstorganisation in Affektregulation, Selbstkonzept und Beziehungen; „komplex“ ist kein Sammelbegriff für jede schwere oder vielfältige Belastung.
 
 ## Koexistenz
 Gleichzeitiges Vorliegen diagnostisch unterscheidbarer Bedingungen, beispielsweise ADHS und Autismus; bedeutet weder Gleichheit noch eine bloße Unterform der jeweils anderen Diagnose.
@@ -104,6 +116,9 @@ Neurodegenerative Erkrankung mit motorischen und nichtmotorischen Symptomen; sie
 
 ## Pharmakotherapie
 Behandlung mit Medikamenten; bei ADHS umfasst sie fachlich ausgewählte, überwachte und regelmäßig überprüfte Wirkstoffe.
+
+## Posttraumatische Belastungsstörung (PTBS)
+Störung nach einer qualifizierenden Traumaexposition mit traumaspezifischem Wiedererleben, Vermeidung, anhaltender Bedrohungsreaktion beziehungsweise verwandten Symptomgruppen und relevanter Beeinträchtigung; Traumaexposition allein genügt nicht für die Diagnose.
 
 ## Psychoedukation
 Strukturierte Vermittlung wissenschaftlich fundierten Wissens über Diagnose, Verlauf, Behandlung und Selbstbeobachtung; keine bloße Informationsbroschüre und nicht automatisch eine vollständige Psychotherapie.
@@ -155,6 +170,9 @@ Wechselseitiger Gebrauch verbaler und nonverbaler Signale, sozialer Gegenseitigk
 
 ## Suizidalität
 Spektrum von Todeswünschen und Suizidgedanken über Pläne und Vorbereitungen bis zu Suizidversuchen und Suiziden; die konkrete Dringlichkeit muss individuell beurteilt werden.
+
+## Traumaexposition
+Konfrontation mit einem extrem bedrohlichen oder entsetzlichen Ereignis beziehungsweise einer Ereignisfolge; sie kann starke Reaktionen auslösen, begründet aber ohne das erforderliche Symptommuster keine PTBS-Diagnose.
 
 ## Vermeidung
 Nichtausführen oder Verlassen einer gefürchteten Situation, Aufgabe oder inneren Erfahrung; vermindert Belastung oft kurzfristig, kann Angst und Funktionsbeeinträchtigung langfristig jedoch aufrechterhalten.
