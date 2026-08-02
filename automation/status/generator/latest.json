@@ -2,23 +2,24 @@
   "schema_version": "3.0.0",
   "run_id": "3de09baa-799c-4323-87d2-067b749b2012",
   "workflow": "generator",
-  "revision": 3,
+  "revision": 4,
   "previous_status": "running",
   "status": "running",
-  "phase": "create_branch",
+  "phase": "create_content",
   "completed_phases": [
     "initialize",
     "load_main",
     "check_previous_run",
     "check_existing_pr",
     "read_prompts",
-    "research"
+    "research",
+    "create_branch"
   ],
   "created_at": "2026-08-02T04:01:21.000Z",
-  "updated_at": "2026-08-02T04:32:00.000Z",
+  "updated_at": "2026-08-02T04:35:00.000Z",
   "ended_at": null,
   "duration_seconds": null,
-  "retention_until": "2026-09-01T04:32:00.000Z",
+  "retention_until": "2026-09-01T04:35:00.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-18-trauma-ptbs-komplexe-traumafolgen",
@@ -34,7 +35,17 @@
     "automatic_unit_pull_request_open": false,
     "research_sources_selected": 4
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "type": "branch",
+      "value": "agent/einheit-18-trauma-ptbs-komplexe-traumafolgen",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/tree/agent/einheit-18-trauma-ptbs-komplexe-traumafolgen",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-02T04:35:00.000Z"
+    }
+  ],
   "error": null,
   "recovery": null
 }
