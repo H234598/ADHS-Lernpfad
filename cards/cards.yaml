@@ -163,3 +163,14 @@ cards:
   - Vertiefung
   - Differentialdiagnostik
   - Einheit_17
+- id: 1018
+  unit: 18
+  front: Warum reicht Konzentrationsschwäche nach einer Traumaerfahrung weder für die Diagnose PTBS noch gegen eine ADHS-Diagnose?
+  back: Weil Konzentrationsprobleme unspezifisch sind. PTBS verlangt einen traumabezogenen Symptomzusammenhang; ADHS ein früh beginnendes, situationsübergreifendes Entwicklungsmuster. Beide Störungen können koexistieren.
+  tags:
+  - ADHS
+  - PTBS
+  - Trauma
+  - Vertiefung
+  - Differentialdiagnostik
+  - Einheit_18
