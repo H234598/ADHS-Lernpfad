@@ -1,0 +1,51 @@
+name: Fix unit 18 planned navigation once
+
+on:
+  pull_request:
+    branches: [main]
+    types: [synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-link:
+    if: github.head_ref == 'agent/einheit-18-trauma-ptbs-komplexe-traumafolgen'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out unit branch
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-18-trauma-ptbs-komplexe-traumafolgen
+          fetch-depth: 0
+
+      - name: Replace direct planned-page link with Roadmap link
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md')
+          text = path.read_text(encoding='utf-8')
+          old = '- Weiter: [[02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen|Bipolare Störungen, Psychosen und episodische Veränderungen]] *(geplant)*'
+          new = '- Weiter: [[ROADMAP#A2 · Angst, Zwang, Trauma und episodische Störungen — P0|Bipolare Störungen, Psychosen und episodische Veränderungen]] *(geplant)*'
+          if old not in text:
+              raise SystemExit('Erwarteter direkter Plan-Link fehlt')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          rm .github/workflows/unit18-link-fix.yml
+
+      - name: Commit link repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md \
+            .github/workflows/unit18-link-fix.yml
+          git diff --cached --check
+          git commit -m 'fix: verlinke geplante Einheit 19 über die Roadmap'
+          git push origin HEAD:agent/einheit-18-trauma-ptbs-komplexe-traumafolgen
