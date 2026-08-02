@@ -3,9 +3,9 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.19.0
-last_reviewed: 2026-07-31
-tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Zwangsstörung, Lernpfad]
+version: 0.20.0
+last_reviewed: 2026-08-02
+tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Zwangsstörung, Trauma, PTBS, Lernpfad]
 ---
 
 [🛠️](WARTUNG.md "Wartung, Automatisierung und CI")
@@ -61,6 +61,7 @@ Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Si
 15. [[02-Vertiefung/03-Parkinson-ADHS-mechanistische-Vergleiche-und-Grenzen|Parkinson, ADHS und mechanistische Vergleiche]]
 16. [[02-Vertiefung/04-Angststoerungen-und-ADHS|Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen]]
 17. [[02-Vertiefung/05-Zwangssymptome-und-Zwangsstoerung|Zwangssymptome, Zwangsstörung und ADHS: Funktion, Abgrenzung und Koexistenz]]
+18. [[02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen|Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS]]
 
 ## Wissenssystem
 
