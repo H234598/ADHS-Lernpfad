@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-07-31
+last_reviewed: 2026-08-02
 ---
 
 # Glossar
@@ -38,6 +38,9 @@ Fehlschluss, neue oder zusätzliche Beschwerden vollständig einer bereits bekan
 
 ## Differentialdiagnose
 Alternative Erklärung für ein Beschwerdebild, die anhand von Beginn, Verlauf, Kontext und Begleitmerkmalen gegen andere Möglichkeiten geprüft wird.
+
+## Dissoziation
+Veränderung der Integration von Bewusstsein, Erinnerung, Wahrnehmung, Identität oder Körpererleben; einzelne Momente von Abschweifen oder Vergessen sind nicht automatisch dissoziativ.
 
 ## Dosisfindung
 Schrittweise Anpassung einer Medikamentendosis anhand vorher definierter Ziele, Wirkdauer und Nebenwirkungen innerhalb fachlicher und zugelassener Grenzen.
@@ -81,8 +84,14 @@ Hemmung dominanter oder begonnener Reaktionen zugunsten eines Ziels.
 ## Insomnie
 Anhaltende Ein- oder Durchschlafstörung trotz ausreichender Schlafgelegenheit, verbunden mit relevanten Folgen am Tag.
 
+## Intrusion
+Unwillkürlich auftauchende Erinnerung, Vorstellung, Körperempfindung oder ein Traum mit Bezug zu einem belastenden Ereignis; bei PTBS kann sie sich wie ein Wiedererleben in der Gegenwart anfühlen.
+
 ## Komorbidität
 Zusätzliche Erkrankung oder Störung, die gleichzeitig mit einer anderen Diagnose besteht.
+
+## Komplexe posttraumatische Belastungsstörung
+ICD-11-Diagnose mit den Kernmerkmalen einer PTBS und zusätzlichen anhaltenden Störungen der Emotionsregulation, des Selbstkonzepts und der Beziehungsgestaltung; nicht gleichbedeutend mit jeder schweren oder lang andauernden Belastungsreaktion.
 
 ## Koexistenz
 Gleichzeitiges Vorliegen diagnostisch unterscheidbarer Bedingungen, beispielsweise ADHS und Autismus; bedeutet weder Gleichheit noch eine bloße Unterform der jeweils anderen Diagnose.
@@ -104,6 +113,9 @@ Neurodegenerative Erkrankung mit motorischen und nichtmotorischen Symptomen; sie
 
 ## Pharmakotherapie
 Behandlung mit Medikamenten; bei ADHS umfasst sie fachlich ausgewählte, überwachte und regelmäßig überprüfte Wirkstoffe.
+
+## Posttraumatische Belastungsstörung
+Störung nach einem oder mehreren traumatischen Ereignissen mit trauma-bezogenem Wiedererleben, Vermeidung und anhaltendem Bedrohungsgefühl sowie klinisch relevanter Beeinträchtigung; Traumaexposition allein ist keine PTBS.
 
 ## Psychoedukation
 Strukturierte Vermittlung wissenschaftlich fundierten Wissens über Diagnose, Verlauf, Behandlung und Selbstbeobachtung; keine bloße Informationsbroschüre und nicht automatisch eine vollständige Psychotherapie.
@@ -167,6 +179,9 @@ Wiederholte sichtbare oder mentale Handlung, zu der sich eine Person gedrängt f
 
 ## Zirkadianer Rhythmus
 Ungefähr 24-stündiger biologischer Zeitrhythmus, der unter anderem Schlafneigung, Wachheit, Körpertemperatur und Hormonausschüttung beeinflusst.
+
+## Traumaexposition
+Konfrontation mit außergewöhnlicher Bedrohung, schwerer Gewalt, Verletzung oder Tod; sie kann starke Reaktionen auslösen, führt aber nicht zwangsläufig zu einer posttraumatischen Belastungsstörung.
 
 ## Titration
 Kontrollierte schrittweise Veränderung einer Dosis, bis ein sinnvolles Verhältnis aus Nutzen, Wirkdauer und Nebenwirkungen erreicht ist oder ein Wechsel notwendig wird.

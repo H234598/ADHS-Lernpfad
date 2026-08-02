@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-07-31
+last_reviewed: 2026-08-02
 ---
 
 # Literatur
@@ -79,6 +79,12 @@ Cortese, S., Veronesi, G. F., Gabellone, A., et al. (2024). The management of sl
 - PubMed: [PMID 38738544](https://pubmed.ncbi.nlm.nih.gov/38738544/)
 - Evidenztyp: `systematic-review-of-randomized-trials` · Evidenzgrad: `high` · Status: `consensus`
 
+## DeGPT2026
+
+Deutschsprachige Gesellschaft für Psychotraumatologie (2026). S3-Leitlinie Posttraumatische Belastungsstörung (ADAPT), Version 7.0.
+
+- Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Demontis2023
 
 Demontis, D., Walters, G. B., Athanasiadis, G., et al. (2023). Genome-wide analyses of ADHD identify 27 risk loci, refine the genetic architecture and implicate several cognitive domains. *Nature Genetics, 55*(2), 198–208.
@@ -147,6 +153,14 @@ Liu, C.-I., Hua, M.-H., Lu, M.-L., & Goh, K. K. (2023). Effectiveness of cogniti
 - DOI: [https://doi.org/10.1111/papt.12455](https://doi.org/10.1111/papt.12455)
 - PubMed: [PMID 36794797](https://pubmed.ncbi.nlm.nih.gov/36794797/)
 - Evidenztyp: `meta-analysis-randomized-controlled-trials` · Evidenzgrad: `moderate` · Status: `probable`
+
+## Magdi2025
+
+Magdi, Hussein M., Abousoliman, Ali D., lbrahim, Ateya Megahed, Elsehrawy, Mohamed Gamal, EL-Gazar, Heba Emad, & Zoromba, Mohamed Ali (2025). Attention-deficit/hyperactivity disorder and post-traumatic stress disorder adult comorbidity: a systematic review. *Systematic Reviews, 14*(1), 41.
+
+- DOI: [https://doi.org/10.1186/s13643-025-02774-7](https://doi.org/10.1186/s13643-025-02774-7)
+- PubMed: [PMID 39953536](https://pubmed.ncbi.nlm.nih.gov/39953536/)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## Metcalfe2024
 
@@ -280,6 +294,12 @@ Volkow, N. D., Wang, G.-J., Newcorn, J. H., et al. (2011). Motivation deficit in
 - DOI: [https://doi.org/10.1038/mp.2010.97](https://doi.org/10.1038/mp.2010.97)
 - Evidenztyp: `primary-study` · Evidenzgrad: `moderate` · Status: `probable`
 
+## WHO2024
+
+World Health Organization (2024). Clinical descriptions and diagnostic requirements for ICD-11 mental, behavioural and neurodevelopmental disorders.
+
+- Evidenztyp: `diagnostic-manual` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Waldren2024
 
 Waldren, L. H., Leung, F. Y. N., Hargitai, L. D., Burgoyne, A. P., Liceralde, V. R. T., Livingston, L. A., & Shah, P. (2024). Unpacking the overlap between Autism and ADHD in adults: A multi-method approach. *Cortex, 173*, 120–137.
@@ -287,6 +307,14 @@ Waldren, L. H., Leung, F. Y. N., Hargitai, L. D., Burgoyne, A. P., Liceralde, V.
 - DOI: [https://doi.org/10.1016/j.cortex.2023.12.016](https://doi.org/10.1016/j.cortex.2023.12.016)
 - PubMed: [PMID 38387375](https://pubmed.ncbi.nlm.nih.gov/38387375/)
 - Evidenztyp: `preregistered-multi-method-study` · Evidenzgrad: `moderate` · Status: `probable`
+
+## Wilson2025
+
+Wilson, Julia, Fida, Doruntina, Maurer, Rie, Wiley, Aleta, Rajasekera, Therese, & Spagnolo, Primavera (2025). Sex differences in the comorbidity between attention deficit-hyperactivity disorder and posttraumatic stress disorder: A systematic literature review and meta-analysis. *General Hospital Psychiatry, 95*, 32–39.
+
+- DOI: [https://doi.org/10.1016/j.genhosppsych.2025.04.003](https://doi.org/10.1016/j.genhosppsych.2025.04.003)
+- PubMed: [PMID 40252259](https://pubmed.ncbi.nlm.nih.gov/40252259/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## Young2020
 

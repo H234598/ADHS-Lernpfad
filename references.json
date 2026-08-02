@@ -296,6 +296,23 @@
     "volume": "24"
   },
   {
+    "author": [
+      {
+        "literal": "Deutschsprachige Gesellschaft für Psychotraumatologie"
+      }
+    ],
+    "id": "DeGPT2026",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "title": "S3-Leitlinie Posttraumatische Belastungsstörung (ADAPT), Version 7.0",
+    "type": "report"
+  },
+  {
     "DOI": "10.1038/s41588-022-01285-8",
     "PMID": "36702997",
     "URL": "https://doi.org/10.1038/s41588-022-01285-8",
@@ -575,6 +592,51 @@
     "title": "Effectiveness of cognitive behavioural-based interventions for adults with attention-deficit/hyperactivity disorder extends beyond core symptoms: A meta-analysis of randomized controlled trials",
     "type": "article-journal",
     "volume": "96"
+  },
+  {
+    "DOI": "10.1186/s13643-025-02774-7",
+    "PMID": "39953536",
+    "URL": "https://doi.org/10.1186/s13643-025-02774-7",
+    "author": [
+      {
+        "family": "Magdi",
+        "given": "Hussein M."
+      },
+      {
+        "family": "Abousoliman",
+        "given": "Ali D."
+      },
+      {
+        "family": "lbrahim",
+        "given": "Ateya Megahed"
+      },
+      {
+        "family": "Elsehrawy",
+        "given": "Mohamed Gamal"
+      },
+      {
+        "family": "EL-Gazar",
+        "given": "Heba Emad"
+      },
+      {
+        "family": "Zoromba",
+        "given": "Mohamed Ali"
+      }
+    ],
+    "container-title": "Systematic Reviews",
+    "id": "Magdi2025",
+    "issue": "1",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "number": "41",
+    "title": "Attention-deficit/hyperactivity disorder and post-traumatic stress disorder adult comorbidity: a systematic review",
+    "type": "article-journal",
+    "volume": "14"
   },
   {
     "DOI": "10.1080/87565641.2023.2293712",
@@ -1178,6 +1240,23 @@
     "volume": "16"
   },
   {
+    "author": [
+      {
+        "literal": "World Health Organization"
+      }
+    ],
+    "id": "WHO2024",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "title": "Clinical descriptions and diagnostic requirements for ICD-11 mental, behavioural and neurodevelopmental disorders",
+    "type": "book"
+  },
+  {
     "DOI": "10.1016/j.cortex.2023.12.016",
     "PMID": "38387375",
     "URL": "https://doi.org/10.1016/j.cortex.2023.12.016",
@@ -1224,6 +1303,50 @@
     "title": "Unpacking the overlap between Autism and ADHD in adults: A multi-method approach",
     "type": "article-journal",
     "volume": "173"
+  },
+  {
+    "DOI": "10.1016/j.genhosppsych.2025.04.003",
+    "PMID": "40252259",
+    "URL": "https://doi.org/10.1016/j.genhosppsych.2025.04.003",
+    "author": [
+      {
+        "family": "Wilson",
+        "given": "Julia"
+      },
+      {
+        "family": "Fida",
+        "given": "Doruntina"
+      },
+      {
+        "family": "Maurer",
+        "given": "Rie"
+      },
+      {
+        "family": "Wiley",
+        "given": "Aleta"
+      },
+      {
+        "family": "Rajasekera",
+        "given": "Therese"
+      },
+      {
+        "family": "Spagnolo",
+        "given": "Primavera"
+      }
+    ],
+    "container-title": "General Hospital Psychiatry",
+    "id": "Wilson2025",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "page": "32–39",
+    "title": "Sex differences in the comorbidity between attention deficit-hyperactivity disorder and posttraumatic stress disorder: A systematic literature review and meta-analysis",
+    "type": "article-journal",
+    "volume": "95"
   },
   {
     "DOI": "10.1186/s12916-020-01585-y",
