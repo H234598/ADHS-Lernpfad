@@ -2,21 +2,22 @@
   "schema_version": "3.0.0",
   "run_id": "3de09baa-799c-4323-87d2-067b749b2012",
   "workflow": "generator",
-  "revision": 1,
-  "previous_status": null,
+  "revision": 2,
+  "previous_status": "running",
   "status": "running",
-  "phase": "read_prompts",
+  "phase": "research",
   "completed_phases": [
     "initialize",
     "load_main",
     "check_previous_run",
-    "check_existing_pr"
+    "check_existing_pr",
+    "read_prompts"
   ],
   "created_at": "2026-08-02T04:01:21.000Z",
-  "updated_at": "2026-08-02T04:01:21.000Z",
+  "updated_at": "2026-08-02T04:18:00.000Z",
   "ended_at": null,
   "duration_seconds": null,
-  "retention_until": "2026-09-01T04:01:21.000Z",
+  "retention_until": "2026-09-01T04:18:00.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": null,
