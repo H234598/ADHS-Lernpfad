@@ -70,8 +70,9 @@ flowchart TD
   B --> E[mögliche Koexistenz]
   D --> E
   S[Schlaf, Depression, Angst, Substanzen, körperliche Erkrankungen] --> F[weitere Erklärungen prüfen]
-  F --> E
-  E --> G[getrennte Behandlungsziele und Verlaufsmessung]
+  F --> H[klinische Gesamtformulierung]
+  E --> H
+  H --> G[getrennte Behandlungsziele und Verlaufsmessung]
 ```
 
 Eine Person kann bereits in der Kindheit breite Organisations- und Aufmerksamkeitsprobleme gehabt haben und nach einem späteren Gewalt- oder Unfallerlebnis zusätzlich Flashbacks und Vermeidung entwickeln. Eine andere Person kann erst nach dem Ereignis deutlich unkonzentriert und schreckhaft werden. Eine dritte besitzt lückenhafte Kindheitsinformationen, sodass die Diagnose zunächst unsicher bleibt. Wissenschaftliche Sorgfalt verlangt, diese Möglichkeiten nicht durch eine schnelle Entweder-oder-Entscheidung zu ersetzen.
