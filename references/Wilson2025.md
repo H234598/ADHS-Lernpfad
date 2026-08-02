@@ -42,7 +42,7 @@ Insgesamt 13.585 Teilnehmende, davon 7.005 weiblich und 6.580 männlich. Die Stu
 
 ## Kernaussage
 
-Die gepoolten Chancen einer gemeinsamen ADHS/PTBS-Diagnose waren bei weiblichen Teilnehmenden höher als bei männlichen Teilnehmenden. Der Gesamteffekt betrug OR 1,32; in der Erwachsenen-Untergruppe OR 1,41.
+Die gepoolten Chancen einer gemeinsamen ADHS/PTBS-Diagnose waren bei weiblichen Teilnehmenden höher als bei männlichen Teilnehmenden. Der Gesamteffekt betrug OR 1,32; in der Erwachsenen-Untergruppe OR 1,41. Diese Odds Ratios sind relative Gruppenmaße und keine absoluten Risiken.
 
 ## Einschränkungen
 
