@@ -163,3 +163,14 @@ cards:
   - Vertiefung
   - Differentialdiagnostik
   - Einheit_17
+- id: 1018
+  unit: 18
+  front: Warum beweisen Konzentrationsprobleme nach einem Trauma weder ADHS noch PTBS?
+  back: Weil Konzentrationsprobleme unspezifisch sind. ADHS erfordert ein früh beginnendes, kontextübergreifendes Entwicklungsmuster; PTBS erfordert Trauma-Bezug sowie Wiedererleben, Vermeidung, anhaltendes Bedrohungsgefühl und Beeinträchtigung. Beides kann gleichzeitig vorliegen.
+  tags:
+  - ADHS
+  - Trauma
+  - PTBS
+  - Vertiefung
+  - Differentialdiagnostik
+  - Einheit_18
