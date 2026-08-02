@@ -1,0 +1,56 @@
+name: Fix unit 18 formulation diagram once
+
+on:
+  pull_request:
+    branches: [main]
+    types: [synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-diagram:
+    if: github.head_ref == 'agent/einheit-18-trauma-ptbs-komplexe-traumafolgen'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out unit branch
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-18-trauma-ptbs-komplexe-traumafolgen
+          fetch-depth: 0
+
+      - name: Separate alternatives from the coexistence hypothesis
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md')
+          text = path.read_text(encoding='utf-8')
+          old = '''  S[Schlaf, Depression, Angst, Substanzen, körperliche Erkrankungen] --> F[weitere Erklärungen prüfen]
+  F --> E
+  E --> G[getrennte Behandlungsziele und Verlaufsmessung]'''
+          new = '''  S[Schlaf, Depression, Angst, Substanzen, körperliche Erkrankungen] --> F[weitere Erklärungen prüfen]
+  F --> H[klinische Gesamtformulierung]
+  E --> H
+  H --> G[getrennte Behandlungsziele und Verlaufsmessung]'''
+          if old not in text:
+              raise SystemExit('Erwarteter Diagrammblock fehlt')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          rm .github/workflows/unit18-diagram-fix.yml
+
+      - name: Commit diagram repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md \
+            .github/workflows/unit18-diagram-fix.yml
+          git diff --cached --check
+          git commit -m 'fix: trenne Alternativerklärungen von ADHS-PTBS-Koexistenz'
+          git push origin HEAD:agent/einheit-18-trauma-ptbs-komplexe-traumafolgen
