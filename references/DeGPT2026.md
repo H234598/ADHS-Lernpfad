@@ -38,7 +38,7 @@ PTBS benötigt eine trauma- und symptombezogene Diagnostik sowie eine fachgerech
 
 ## Einschränkungen
 
-Eine Leitlinie verbindet systematisch bewertete Evidenz mit Konsens und ist keine einzelne Primärstudie. Empfehlungen müssen auf die individuelle klinische Situation und den jeweiligen Versorgungskontext übertragen werden. Die Leitlinie beantwortet nicht spezifisch alle Fragen zur gleichzeitigen ADHS.
+Eine Leitlinie verbindet systematisch bewertete Evidenz mit Konsens und ist keine einzelne Primärstudie. Empfehlungen müssen auf die individuelle klinische Situation und den jeweiligen Versorgungskontext übertragen werden. Die Leitlinie beantwortet nicht spezifisch alle Fragen zur gleichzeitigen ADHS; daraus folgt keine allgemeine Behandlungsreihenfolge für die Komorbidität.
 
 ## Verhältnis zum bisherigen Konsens
 
