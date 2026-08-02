@@ -2,10 +2,10 @@
   "schema_version": "3.0.0",
   "run_id": "3de09baa-799c-4323-87d2-067b749b2012",
   "workflow": "generator",
-  "revision": 4,
+  "revision": 6,
   "previous_status": "running",
   "status": "running",
-  "phase": "create_content",
+  "phase": "wait_review",
   "completed_phases": [
     "initialize",
     "load_main",
@@ -13,27 +13,46 @@
     "check_existing_pr",
     "read_prompts",
     "research",
-    "create_branch"
+    "create_branch",
+    "create_content",
+    "generate_outputs",
+    "validate",
+    "commit",
+    "push",
+    "create_pr",
+    "verify_pr"
   ],
   "created_at": "2026-08-02T04:01:21.000Z",
-  "updated_at": "2026-08-02T04:35:00.000Z",
+  "updated_at": "2026-08-02T05:00:00.000Z",
   "ended_at": null,
   "duration_seconds": null,
-  "retention_until": "2026-09-01T04:35:00.000Z",
+  "retention_until": "2026-09-01T05:00:00.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-18-trauma-ptbs-komplexe-traumafolgen",
-    "commit_sha": "ee91741ec71a1232a4c3b90f42b805591a0d9359",
-    "pr_number": null,
-    "pr_url": null,
+    "commit_sha": "4d38d02344e7ca826efdb92fbcadef66dd0872d4",
+    "pr_number": 48,
+    "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/48",
     "workflow_run": null
   },
   "metrics": {
     "unit_number": 18,
     "planned_topic": "Trauma, PTBS und komplexe Traumafolgen",
+    "flow_words": 1666,
+    "new_reference_cards": 4,
     "unrelated_open_pull_requests": [43, 46],
-    "automatic_unit_pull_request_open": false,
-    "research_sources_selected": 4
+    "automatic_unit_pull_request_open": true,
+    "research_sources_selected": 4,
+    "review_eligible_at": "2026-08-02T06:38:14.000Z",
+    "repair_eligible_at": "2026-08-02T18:00:00.000Z",
+    "validate_compendium": "success",
+    "download_exports": "success",
+    "remark_lint": "success",
+    "codacy_security_scan": "success",
+    "qlty": "success",
+    "coderabbit": "success",
+    "unresolved_coderabbit_threads": 0,
+    "disagreement_open": false
   },
   "artifacts": [
     {
@@ -44,6 +63,24 @@
       "sha256": null,
       "reusable": true,
       "recorded_at": "2026-08-02T04:35:00.000Z"
+    },
+    {
+      "type": "commit",
+      "value": "4d38d02344e7ca826efdb92fbcadef66dd0872d4",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/4d38d02344e7ca826efdb92fbcadef66dd0872d4",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-02T05:00:00.000Z"
+    },
+    {
+      "type": "pull_request",
+      "value": "#48",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/pull/48",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-02T04:45:00.000Z"
     }
   ],
   "error": null,
