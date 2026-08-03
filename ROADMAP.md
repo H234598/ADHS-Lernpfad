@@ -1,7 +1,7 @@
 ---
 title: Fachliche Roadmap
 tags: [ADHS, Roadmap, Wissenschaft, Lernpfad, Diagnostik, Behandlung, Versorgung, Forschung]
-last_reviewed: 2026-07-31
+last_reviewed: 2026-08-02
 status: fortlaufend
 ---
 
@@ -41,7 +41,7 @@ Ein Themenblock kann mehrere Einheiten erfordern. Er gilt erst dann als abgeschl
 
 ## Aktueller Stand des Lernpfads
 
-Der Lernpfad umfasst derzeit 17 fortlaufende Einheiten:
+Der Lernpfad umfasst derzeit 18 fortlaufende Einheiten:
 
 1. Was ist ADHS?
 2. Inhibition und Handlungssteuerung
@@ -60,6 +60,7 @@ Der Lernpfad umfasst derzeit 17 fortlaufende Einheiten:
 15. Parkinson, ADHS und mechanistische Vergleiche
 16. Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen
 17. Zwangssymptome, Zwangsstörung und ADHS: Funktion, Abgrenzung und Koexistenz
+18. Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS
 
 Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität sowie einen Behandlungsüberblick gut ab. Die größten fachlichen Lücken liegen nun bei der Breite der Komorbiditäten, spezifischen Lebensphasen und Populationen, Funktions- und Versorgungsthemen, differenzierter Behandlungssicherheit, sozialer Ungleichheit, digitaler Diagnostik sowie dem systematischen Übergang auf Forschungsniveau.
 
@@ -114,7 +115,7 @@ Die folgende Liste erhält sämtliche Themen der bisherigen Roadmap. Bereits vor
 - [x] **Zwangssymptome und Zwangsstörung** — umgesetzt als Einheit 17
   - impulsives, wechselhaftes Verhalten von ritualisiertem Verhalten und aufdringlichen Gedanken abgrenzen;
   - Perfektionismus und kompensatorische Kontrollsysteme nicht vorschnell als Zwang diagnostizieren.
-- [ ] **Trauma, PTBS und komplexe Traumafolgen**
+- [x] **Trauma, PTBS und komplexe Traumafolgen** — umgesetzt als Einheit 18
   - zeitlichen Beginn, Intrusionen, Vermeidung, Hyperarousal, Dissoziation und Schlafstörungen berücksichtigen;
   - traumabezogene Symptome nicht nachträglich automatisch zu ADHS umdeuten;
   - mögliche Koexistenz und geschlechts- beziehungsweise kontextspezifische Verzerrungen behandeln.

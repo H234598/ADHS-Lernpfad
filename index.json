@@ -1,7 +1,7 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.19.0",
-  "last_reviewed": "2026-07-31",
+  "version": "0.20.0",
+  "last_reviewed": "2026-08-02",
   "chapters": [
     {
       "number": 1,
@@ -87,6 +87,11 @@
       "number": 17,
       "path": "02-Vertiefung/05-Zwangssymptome-und-Zwangsstoerung.md",
       "title": "Zwangssymptome, Zwangsstörung und ADHS: Funktion, Abgrenzung und Koexistenz"
+    },
+    {
+      "number": 18,
+      "path": "02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md",
+      "title": "Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS"
     }
   ]
 }

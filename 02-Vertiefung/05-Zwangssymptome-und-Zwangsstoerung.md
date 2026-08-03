@@ -171,5 +171,5 @@ Bei ADHS kann Kontrollieren eine begrenzte Kompensation für Ablenkung oder unsi
 ## Navigation
 
 - Zurück: [[02-Vertiefung/04-Angststoerungen-und-ADHS|Angststörungen und ADHS: Komorbidität, Abgrenzung und Wechselwirkungen]]
-- Weiter: [[ROADMAP#A2 · Angst, Zwang, Trauma und episodische Störungen — P0|Trauma, PTBS und komplexe Traumafolgen]]
+- Weiter: [[02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen|Trauma, PTBS und komplexe Traumafolgen]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]

@@ -1,5 +1,13 @@
 # Änderungsverlauf
 
+## 0.20.0 – 2026-08-02
+
+- Einheit 18 „Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS“ ergänzt
+- Traumaexposition, PTBS, komplexe PTBS, Intrusionen, Dissoziation und ADHS-bezogene Aufmerksamkeitsprobleme differenziert
+- aktuelle deutsche S3-Leitlinie von 2026, ICD-11-CDDR und systematische Evidenz zur ADHS/PTBS-Koexistenz ergänzt
+- geschlechtsbezogene Gruppenbefunde ohne kausale oder individuelle Prognose eingeordnet
+- vier Studienkarten, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und geplante Wissensgraph-Knoten aktualisiert
+
 
 ## 0.19.0 – 2026-07-31
 
