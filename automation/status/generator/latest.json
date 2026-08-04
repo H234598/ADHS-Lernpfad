@@ -2,44 +2,88 @@
   "schema_version": "3.0.0",
   "run_id": "e03ff067-c37c-4129-acd1-444245a55ef5",
   "workflow": "generator",
-  "revision": 2,
+  "revision": 3,
   "previous_status": "running",
   "status": "running",
-  "phase": "research",
+  "phase": "wait_review",
   "completed_phases": [
     "initialize",
     "load_main",
     "check_previous_run",
     "check_existing_pr",
-    "read_prompts"
+    "read_prompts",
+    "research",
+    "create_branch",
+    "create_content",
+    "generate_outputs",
+    "validate",
+    "commit",
+    "push",
+    "create_pr",
+    "verify_pr"
   ],
   "created_at": "2026-08-04T04:00:44.000Z",
-  "updated_at": "2026-08-04T04:24:00.000Z",
+  "updated_at": "2026-08-04T04:51:26.000Z",
   "ended_at": null,
   "duration_seconds": null,
-  "retention_until": "2026-09-03T04:24:00.000Z",
+  "retention_until": "2026-09-03T04:51:26.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
-    "branch": "main",
-    "commit_sha": "1f991e2e89989961672e2fc766388ec6f4c85cfc",
-    "pr_number": null,
-    "pr_url": null,
+    "branch": "agent/einheit-19-bipolare-psychosen-episoden",
+    "commit_sha": "3729b388dd0c131e8aa741101ce755bcd2a4caf0",
+    "pr_number": 49,
+    "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/49",
     "workflow_run": null
   },
   "metrics": {
     "unit_number": 19,
     "planned_topic": "Bipolare Störungen, Psychosen und andere episodische Veränderungen",
-    "unrelated_open_pull_requests": [43, 46],
-    "automatic_unit_pull_request_open": false,
+    "prose_words": 1795,
+    "literature_sources": 48,
     "research_sources_selected": [
       "NICEBipolar2025",
       "WHO2024",
       "Schiweck2021",
       "Miskowiak2024",
       "SalazarDePablo2025"
-    ]
+    ],
+    "unrelated_open_pull_requests": [43, 46],
+    "automatic_unit_pull_request_open": true,
+    "review_eligible_at": "2026-08-04T06:36:07.000Z",
+    "repair_eligible_at": "2026-08-04T18:00:00.000Z",
+    "remark_lint": "success",
+    "project_validation": "in_progress",
+    "coderabbit": "pending"
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "type": "branch",
+      "value": "agent/einheit-19-bipolare-psychosen-episoden",
+      "path": null,
+      "url": null,
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-04T04:51:26.000Z"
+    },
+    {
+      "type": "commit",
+      "value": "3729b388dd0c131e8aa741101ce755bcd2a4caf0",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/3729b388dd0c131e8aa741101ce755bcd2a4caf0",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-04T04:51:26.000Z"
+    },
+    {
+      "type": "pull_request",
+      "value": "#49",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/pull/49",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-04T04:51:26.000Z"
+    }
+  ],
   "error": null,
   "recovery": null
 }
