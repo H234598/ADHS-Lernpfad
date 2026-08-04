@@ -1,7 +1,7 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.20.0",
-  "last_reviewed": "2026-08-02",
+  "version": "0.21.0",
+  "last_reviewed": "2026-08-04",
   "chapters": [
     {
       "number": 1,
@@ -92,6 +92,11 @@
       "number": 18,
       "path": "02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md",
       "title": "Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS"
+    },
+    {
+      "number": 19,
+      "path": "02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md",
+      "title": "Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit"
     }
   ]
 }

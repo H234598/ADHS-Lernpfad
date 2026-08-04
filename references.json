@@ -705,6 +705,40 @@
     "volume": "155"
   },
   {
+    "DOI": "10.1111/bdi.13414",
+    "PMID": "38433530",
+    "URL": "https://doi.org/10.1111/bdi.13414",
+    "author": [
+      {
+        "family": "Miskowiak",
+        "given": "Kamilla W."
+      },
+      {
+        "family": "Obel",
+        "given": "Zacharias K."
+      },
+      {
+        "family": "Guglielmo",
+        "given": "Riccardo"
+      }
+    ],
+    "container-title": "Bipolar Disorders",
+    "id": "Miskowiak2024",
+    "issue": "3",
+    "issued": {
+      "date-parts": [
+        [
+          2024
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "216–239",
+    "title": "Efficacy and safety of established and off-label ADHD drug therapies for cognitive impairment or attention-deficit hyperactivity disorder symptoms in bipolar disorder: A systematic review by the ISBD Targeting Cognition Task Force",
+    "type": "article-journal",
+    "volume": "26"
+  },
+  {
     "author": [
       {
         "literal": "National Institute for Health and Care Excellence"
@@ -719,6 +753,23 @@
       ]
     },
     "title": "Attention deficit hyperactivity disorder: diagnosis and management (NICE guideline NG87)",
+    "type": "report"
+  },
+  {
+    "author": [
+      {
+        "literal": "National Institute for Health and Care Excellence"
+      }
+    ],
+    "id": "NICEBipolar2025",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "title": "Bipolar disorder: assessment and management (CG185), updated 2 September 2025",
     "type": "report"
   },
   {
@@ -927,6 +978,73 @@
     "title": "ADHD and Suicidality in Adolescents: A Systematic Review of Moderators and Mediators",
     "type": "article-journal",
     "volume": "28"
+  },
+  {
+    "DOI": "10.1001/jamapsychiatry.2025.2311",
+    "PMID": "40900605",
+    "URL": "https://doi.org/10.1001/jamapsychiatry.2025.2311",
+    "author": [
+      {
+        "family": "Salazar de Pablo",
+        "given": "Gonzalo"
+      },
+      {
+        "family": "Aymerich",
+        "given": "Claudia"
+      },
+      {
+        "family": "Chart-Pascual",
+        "given": "Juan Pablo"
+      }
+    ],
+    "container-title": "JAMA Psychiatry",
+    "id": "SalazarDePablo2025",
+    "issue": "11",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "1103–1112",
+    "title": "Occurrence of Psychosis and Bipolar Disorder in Individuals With Attention-Deficit/Hyperactivity Disorder Treated With Stimulants: A Systematic Review and Meta-Analysis",
+    "type": "article-journal",
+    "volume": "82"
+  },
+  {
+    "DOI": "10.1016/j.neubiorev.2021.01.017",
+    "PMID": "33515607",
+    "URL": "https://doi.org/10.1016/j.neubiorev.2021.01.017",
+    "author": [
+      {
+        "family": "Schiweck",
+        "given": "Carmen"
+      },
+      {
+        "family": "Arteaga-Henriquez",
+        "given": "Gara"
+      },
+      {
+        "family": "Aichholzer",
+        "given": "Mareike"
+      }
+    ],
+    "container-title": "Neuroscience & Biobehavioral Reviews",
+    "id": "Schiweck2021",
+    "issued": {
+      "date-parts": [
+        [
+          2021
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "100–123",
+    "title": "Comorbidity of ADHD and adult bipolar disorder: A systematic review and meta-analysis",
+    "type": "article-journal",
+    "volume": "124"
   },
   {
     "DOI": "10.1016/j.jbtep.2026.102091",

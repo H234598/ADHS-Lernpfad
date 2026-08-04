@@ -142,11 +142,13 @@ cards:
   - Vertiefung
   - Differentialdiagnostik
   - Einheit_15
-
 - id: 1016
   unit: 16
-  front: Warum kann Aufschieben bei ADHS und einer Angststörung ähnlich aussehen, obwohl unterschiedliche Mechanismen beteiligt sein können?
-  back: Bei ADHS können unklare Schritte, geringe unmittelbare Rückmeldung oder instabile Zielaktivierung den Start erschweren; bei Angst kann Aufschub erwartete Fehler, Bewertung oder körperliche Aktivierung vermeiden. Beide Mechanismen können gleichzeitig vorkommen.
+  front: Warum kann Aufschieben bei ADHS und einer Angststörung ähnlich aussehen, obwohl unterschiedliche Mechanismen
+    beteiligt sein können?
+  back: Bei ADHS können unklare Schritte, geringe unmittelbare Rückmeldung oder instabile Zielaktivierung den Start
+    erschweren; bei Angst kann Aufschub erwartete Fehler, Bewertung oder körperliche Aktivierung vermeiden. Beide
+    Mechanismen können gleichzeitig vorkommen.
   tags:
   - ADHS
   - Angststörungen
@@ -156,7 +158,8 @@ cards:
 - id: 1017
   unit: 17
   front: Warum ist wiederholtes Kontrollieren allein kein Beweis für eine Zwangsstörung?
-  back: Weil dieselbe sichtbare Handlung unterschiedliche Funktionen haben kann. Bei ADHS kann sie Vergesslichkeit kompensieren; bei einer Zwangsstörung kann sie aufdringliche Zweifel oder befürchtete Folgen kurzfristig neutralisieren.
+  back: Weil dieselbe sichtbare Handlung unterschiedliche Funktionen haben kann. Bei ADHS kann sie Vergesslichkeit
+    kompensieren; bei einer Zwangsstörung kann sie aufdringliche Zweifel oder befürchtete Folgen kurzfristig neutralisieren.
   tags:
   - ADHS
   - Zwangsstörung
@@ -166,7 +169,9 @@ cards:
 - id: 1018
   unit: 18
   front: Warum beweisen Konzentrationsprobleme nach einem Trauma weder ADHS noch PTBS?
-  back: Weil Konzentrationsprobleme unspezifisch sind. ADHS erfordert ein früh beginnendes, kontextübergreifendes Entwicklungsmuster; PTBS erfordert Trauma-Bezug sowie Wiedererleben, Vermeidung, anhaltendes Bedrohungsgefühl und Beeinträchtigung. Beides kann gleichzeitig vorliegen.
+  back: Weil Konzentrationsprobleme unspezifisch sind. ADHS erfordert ein früh beginnendes, kontextübergreifendes
+    Entwicklungsmuster; PTBS erfordert Trauma-Bezug sowie Wiedererleben, Vermeidung, anhaltendes Bedrohungsgefühl
+    und Beeinträchtigung. Beides kann gleichzeitig vorliegen.
   tags:
   - ADHS
   - Trauma
@@ -174,3 +179,16 @@ cards:
   - Vertiefung
   - Differentialdiagnostik
   - Einheit_18
+- id: 1019
+  unit: 19
+  front: Warum ist eine Phase mit wenig Schlaf und hoher Aktivität nicht automatisch ADHS oder Manie?
+  back: Weil ADHS ein entwicklungsbezogenes Muster ist und Manie beziehungsweise Hypomanie eine klar abgrenzbare
+    qualitative Episode erfordern. Schlafdauer, subjektives Schlafbedürfnis, Stimmung, Energie, Aktivität, Realitätsbezug,
+    Folgen, Substanzen und Medikamente müssen gemeinsam geprüft werden.
+  tags:
+  - ADHS
+  - Bipolare_Stoerung
+  - Psychose
+  - Vertiefung
+  - Differentialdiagnostik
+  - Einheit_19
