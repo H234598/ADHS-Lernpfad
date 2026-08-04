@@ -1,4 +1,5 @@
 name: Finalize unit 19
+# Retry after deterministic EOF normalization.
 
 on:
   pull_request:
