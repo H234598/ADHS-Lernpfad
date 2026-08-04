@@ -1,5 +1,4 @@
 name: Finalize unit 19
-# Retry after deterministic EOF normalization.
 
 on:
   pull_request:
@@ -68,10 +67,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          HEAD_SHA="$(git rev-parse HEAD)"
           git diff --check
           python scripts/validate_prompt_baselines.py
-          python scripts/build_graph.py
-          python scripts/validate_graph.py --expected-revision "$(git rev-parse HEAD)"
+          GITHUB_SHA="$HEAD_SHA" python scripts/build_graph.py
+          python scripts/validate_graph.py --expected-revision "$HEAD_SHA"
           python scripts/validate_links.py
           python scripts/validate_compendium.py
           python scripts/build_combined.py
