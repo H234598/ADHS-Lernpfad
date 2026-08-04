@@ -1,0 +1,235 @@
+name: Finalize unit 19
+
+on:
+  push:
+    branches:
+      - agent/einheit-19-bipolare-psychosen-episoden
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalize-unit-19
+  cancel-in-progress: false
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout unit branch
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-19-bipolare-psychosen-episoden
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements-docs.txt
+            requirements-export.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install pinned dependencies
+        run: |
+          python -m pip install --disable-pip-version-check \
+            -r requirements-docs.txt -r requirements-export.txt
+          python -m pip check
+          npm ci
+          npm run audit:dependencies
+
+      - name: Materialize unit and project integration
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          import json
+          import re
+          import yaml
+
+          root = Path('.')
+          encoded_files = {"02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md": "LS0tCnRpdGxlOiAiQmlwb2xhcmUgU3TDtnJ1bmdlbiwgUHN5Y2hvc2VuIHVuZCBBREhTOiBFcGlzb2RlbiwgQWJncmVuenVuZyB1bmQgU2ljaGVyaGVpdCIKbGV2ZWw6IFZlcnRpZWZ1bmcKZXN0aW1hdGVkX3RpbWU6IDEw4oCTMjAgbWluCmRpZmZpY3VsdHk6IDMKcHJlcmVxdWlzaXRlczoKICAtIDAxLUdydW5kbGFnZW4vMDctRW1vdGlvbnNyZWd1bGF0aW9uCiAgLSAwMS1HcnVuZGxhZ2VuLzA4LU5ldXJvZW50d2lja2x1bmctdW5kLUxlYmVuc3NwYW5uZQogIC0gMDEtR3J1bmRsYWdlbi8wOS1EaWFnbm9zdGlzY2hlLUtyaXRlcmllbi11bmQtRGlmZmVyZW50aWFsZGlhZ25vc3Rpa2ogIC0gMDEtR3J1bmRsYWdlbi8xMS1TY2hsYWYtQmV3ZWd1bmctdW5kLWtvZXJwZXJsaWNoZS1HZXN1bmRoZWl0CiAgLSAwMS1HcnVuZGxhZ2VuLzEyLUtvbW9yYmlkaXRhZXQtRGVwcmVzc2lvbi11bmQtU3VpemlkYWxpdGFldAogIC0gMDItVmVydGllZnVuZy8wMS1QaGFybWFrb2xvZ2llLXVuZC1Qc3ljaG90aGVyYXBpZQogIC0gMDItVmVydGllZnVuZy8wNi1UcmF1bWEtUFRCUy11bmQta29tcGxleGUtVHJhdW1hZm9sZ2VuCnRhZ3M6IFtBREhTLCBCaXBvbGFyZSBTdMO2cnVuZywgUHN5Y2hvc2UsIE1hbmllLCBIeXBvbWFuaWUsIERpZmZlcmVudGlhbGRpYWdub3N0aWssIEtvbW9yYmlkaXTDpHQsIFNpY2hlcmhlaXRdCmxhc3RfcmV2aWV3ZWQ6IDIwMjYtMDgtMDQKZXZpZGVuY2U6IGhpZ2gKc3RhdHVzOiBjb25zZW5zdXMKcmVmZXJlbmNlczogW0ZhcmFvbmUyMDIxLCBBQURQQTIwMjIsIFdITzIwMjQsIE5JQ0VCaXBvbGFyMjAyNSwgU2NoaXdlY2syMDIxLCBNaXNrb3dpYWsyMDI0LCBTYWxhemFyRGVQYWJsbzIwMjVdCm1pbmltdW1fcmVhZGluZ19taW51dGVzOiAxMAptYXhpbXVtX3JlYWRpbmdfbWludXRlczogMjAKLS0tCgojIEVpbmhlaXQgMTkg4oCTIEJpcG9sYXJlIFN0w7ZydW5nZW4sIFBzeWNob3NlbiB1bmQgQURIU8KgRXBpc29kZW4sIEFiZ3Jlbnp1bmcgdW5kIFNpY2hlcmhlaXQKCiMjIExlcm56aWVsCgpEdSBrYW5uc3QgZW50d2lja2x1bmdzYmV6b2dlbmUgQURIUy1NZXJrbWFsZSB2b24gZWluZXIgTWFuaWUsIEh5cG9tYW5pZSBvZGVyIFBzeWNob3NlIHVudGVyc2NoZWlkZW4sIG9obmUgw6RuaG5saWNoZSBXw7ZydGVyIHdpZSBVbnJ1aGUsIEltcHVsc2l2aXTDpHQgb2RlciBLb256ZW50cmF0aW9uc3Byb2JsZW1lIG1pdCBkZXJzZWxiZW4gVXJzYWNoZSBnbGVpY2h6dXNldHplbi4gRHUgZXJrZW5uc3QsIHdhcnVtIGRlciB6ZWl0bGljaGUgVmVybGF1ZiwgZWluIGRlY2x1dGxpY2ggdmVyw6RuZGVydGVzIFNjaGxhZmJlZMO8cmZuaXMsIG5ldWUgcXVhbGl0YXRpdmUgU3ltcHRvbWUgdW5kIEZ1bmt0aW9uc2bDpGhpa2VpdCBlbnRzY2hlaWRlbmQgc2luZC4gQXXDn2VyZGVtIGthbm5zdCBkdSBkZW4gd2lzc2Vuc2NoYWZ0bGljaGVuIFN0YW5kIHp1ciBLb2V4aXN0ZW56IHVuZCB6dSBNZWRpa2FtZW50ZW5yaXNpa2VuIGVpbm9yZG5lbiwgb2huZSBkYXJhdXMgaW5kaXZpZHVlbGxlIFRoZXJhcGllYW53ZWlzdW5nZW4gYWJ6dWxlaXRlbi4KCiMjIDEuIELDhGhubGljaGUgVsO2cnRlciBiZWRldXRlbiBuaWNodCBkaWVzZWxiZSBTdMO2cnVuZwoKQURIUywgaW5zYmVzb25kZXJlIEh5cGVyYWt0aXZpdMOkdCB1bmQgSW1wdWxzaXZpdMOkdCwga2FubiBvYmVyZmxhY2hsaWNoIGFuIG1hbmlzY2hlIE9kZXIgaHlwb21hbmlzY2hlIFN5bXB0b21lIGVyaW5uZXJuOiB2aWVsZSBBa3Rpdml0w6R0ZW4sIHNjaG5lbGxlcyBTcHJlY2hlbiwgVW50ZXJicmVjaGVuLCBSaXNpa292ZXJoYWx0ZW4gb2RlciBTY2h3aWVyaWdrZWl0ZW4sIGJlaSBFbnRzY2hlaWR1bmdlbiB6dSBicmVtc2VuLiBBdWNoIEtvbnplbnRyYXRpb25zcHJvYmxlbWUga8O2bm5lbiBiZWkgYmlwb2xhcmVuIFN0w7ZydW5nZW4gdm9ya29tbWVuLCBiZXNvbmRlcnMgaW4gZGVwcmVzc2l2ZW4gUGhhc2VuIG9kZXIgYWxzIFJlc3RzeW1wdG9tZS4KClRpZSBkaWFnbm9zdGlzY2hlIEZyYWdlIGlzdCBkZXNoYWxiIG5pY2h0OiDigJ5XZWxjaGVzIEV0aWtldHQgcGFzc3QgenUgZGllc2VtIFN5bXB0b20/4oCcIEhpZWxmcmVpY2hlciBzaW5kIGZ1bmYgVGVzdGZyYWdlbjoKCi0gKipCZWdpbm46KiogQmVzdGFuZCBkYXMgTXVzdGVyIHNjaG9uIGluIGRlciBLaW5kaGVpdCBvZGVyIHRyYXQgZXMgc3DDpHRlciBuZXU/YyogCgotICoqVmVybGF1ZjoqKiBJc3QgZXMgdmVyZ2xlaWNoc3dlaXNlIHN0YWJpbCB1bmQga29udGV4dGFiacOkbmdpZyBvZGVyIGluIGtsYXJlbiBFcGlzb2RlbiB2b3JoYW5kZW4/Ci0gKipRdWFsaXTDpHQ6KiogSGF0IHNpY2ggU2NobGFmYmVkw7xyZm5pcywgU3RpbW11bmcsIEVuZXJnaWUsIFNwcmFjaGUsIFNlbGJzdGVpbnNjaMOkdHp1bmcgb2RlciBSZWFsaXTDpHRzYmV6dWcgcXVhbGl0YXRpdiB2ZXLDpG5kZXJ0PwoKLSAqKktvbnRleHQ6KiogVHJpdHQgZGllIFTDpG5kZXJ1bmcgYnJlaXQgw7xiZXIgTGViZW5zYmVyZWljaGUgYXVmLCBvZGVyIG51ciBiZWkgYmVzdGltbXRlbiBBbmZvcmRlcnVuZ2VuPwoKLSAqKkZvbGdlbjoqKiBXZWxjaGUgbmV1ZW4gS29uZmxpa3RlLCBSaXNpa2VuIG9kZXIgRnVua3Rpb25zdmVybHVzdGUgc2luZCBlbnRzdGFuZGVuPwoKPj4gW0FldmlkZW5jZV0gRXZpZGVuejogS2xhc3NpZmlrYXRpb25zbWFudWFsZSB1bmQgTGVpdGxpbmllbiAvIGhvY2gKPj4gQURIUyBpc3QgZWluZSBOZXVyb2VudHdpY2tsdW5nc3N0w7ZydW5nIG1pdCBlbnR3aWNrbHVuZ3NiZXpvZ2VuZW0gQmVnaW5uLiBNYW5pZSB1bmQgSHlwb21hbmllIHNpbmQgRXBpc29kZW4gbWl0IGVpbmVyIGRlY2x1dGxpY2hlbiBWZXLDpG5kZXJ1bmcgZ2VnZW7DvGJlciBkZW0gcGVyc8O2bmxpY2hlbiBBdXNnYW5nc251aXZlYXUuIFBzeWNob3Rpc2NoZSBTeW1wdG9tZSBzaW5kIGtlaW5lIEFESFMtS2Vybm1lcmttYWxlLgoKIyMgMi4gVmVybWluZGVydGVzIFNjaGxhZmJlZMO8cmZuaXMgaXN0IG5pY2h0IG51ciDigJ56dSB3ZW5pZyBTY2hsYWbigJwKCkVpbiBwZXJzb24ga2FubiB3ZW5pZyBzY2hsYWZlbiB1bmQgdHJvdHpkZW0gbcO8ZGUgc2Vpbi4gRGFzIGtvbW10IGJlaSBBREhTLCBJbnNvbW5pZSwgQW5nc3QsIERlcHJlc3Npb24sIFN1YnN0YW56Z2VicmF1Y2gsIFNjaGljaHRhcmJlaXQgb2RlciBha3V0ZW0gU3RyZXNzIHZvci4gQmVpIGVpbmVyIE1hbmllIG9kZXIgSHlwb21hbmllIGthbm4gZGFnZWdlbiBlaW4gKip2ZXJtaW5kZXJ0ZXMgU2NobGFmYmVkw7xyZm5pcyoqIGJlc3RlaGVuOiBEaWUgUGVyc29uIHNjaGzDpGZ0IGRlY2x1dGxpY2ggdcO8cnplciB1bmQgZnVoa3Rpb25pZXJ0IHN1YmplY3RpdiB0cm90emRlbSBtaXQgdW5nZXdvaG50IHZpZWwgRW5lcmdpZS4KCkRpZXNlIFRyZW5udW5nIGlzdCBuaWNodCBhbGxlaW4gYmV3ZWlzZW5kLCBhYmVyIGtsaW5pc2NoIHNlaHIgaW5mb3JtYXRpdi4gSGlsZnJlaWNoZSBWZXJsYXVmc2ZyYWdlbiBzaW5kOgoKLSBXaWUgdmlsZSBTdHVuZGVuIHNjaGzDpGZ0IGRpZSBQZXJzb24gdGF0c8OkY2hsaWNoPwoKLSBGw7xobHQgc2llIHNpY2ggbcO8ZGUgdW5kIGVyc2Now7ZwbHQgb2RlciB1bmdld8O2aG5saWNoIGxlYmVuZGlnIHVuZCBsZWlzdHVuZ3Nmw6RoaWc/CgotIEJlc3RlaGVuIG5ldWUgR2VuaWFsaXTDpHRzZ2Vmw7xobGUsIEdyw7bDn2VuaWRlZW4gb2RlciB1bmdld8O2aG5saWNoZXIgT3B0aW1pc211cz8KCi0gV3VyZGUgZGVyIFRhZy1OYWNodC1SaHl0aG11cyB2ZXJzY2hvYmVuLCBvZGVyIGlzdCBkZXIgU2NobGFmYmVkYXJmIHRhdHPDpGNobGljaCB2ZXLDpG5kZXJ0PwoKLSBXYXMgc2VoZW4gYW5kZXJlIFBlcnNvbmVuIHVuZCB3ZWxjaGUgRm9sZ2VuIGVudHN0ZWhlbj8KCkJlaSBLb2V4aXN0ZW56IGthbm4gZWluZSBzZWl0IEtpbmRoZWl0IGJlc3RlaGVuZGUgU2NobGFmLSB1bmQgT3JnYW5pc2F0aW9uc3Byb2JsZW1hdGlrIHZvcmsgZWluZXIgbcO8Z2xpY2hlbiBFcGlzb2RlIHZlcnN0w6Rya3Qgb2RlciB2b24gaWhyIHZlcmRlY2t0IHdlcmRlbi4gVmVydHJhdXRlIE1lbnNjaGVuIGvDtm5uZW4gaGllciB3aWNodGlnZSBWZXJsYXVmc2luZm9ybWF0aW9uZW4gbGllZmVybi4KCiMjIDMuIEVwaXNvZGUgZ2VnZW4gbm9ybWFsZSBTY2h3YW5rdW5nIGFibnNjaGVpZGVuCgplcGlzb2RlbiBiZWRldXRlbiBtZWhyIGFscyBlaW4gZ3V0ZXIgb2RlciBzY2hsZWNodGVyIFRhZy4gQmVpIGVpbmVyIGJpcG9sYXJlbiBTdMO2cnVuZyB2ZXLDpG5kZXJuIHNpY2ggU3RpbW11bmcsIEVuZXJnaWUsIEFrdGl2aXTDpHQsIFNjaGxhZiB1bmQgZGUuIFRlaWxzIGRlcyBWZXJoYWx0ZW5zIHVuZCBFcnJpbnRlcm5zIGdlbWVpbmNhbSB1bmQgZmFjaGxpY2ggYmVkZXV0c2FtLiBNYW5pZSBpc3QgZ2Vyw7Z3bmxpY2ggZGV1dGxpY2ggc2Nod2VyZXIgYWxzIEh5cG9tYW5pZSB1bmQga2FubiBtaXQgc3RhcmtlciBGdW5rdGlvbnNiZWVudHLDpGNodGlndW5nIG9kZXIgcHN5Y2hvdGlzY2hlbiBTeW1wdG9tZW4gZWluaGVyZ2VoZW4uCgpBbGx0YWdzc2Nod2Fua3VuZ2VuIGJlaSBBREhTIGvDtm5uZW4gZGFyZWdlbiBzdGFyayB2b24gSW50ZXJlc3NlLCBSw7xja21lbGR1bmcsIFNjaGxhZiwgU3RyZXNzLCBIb3Jtb25lbiBvZGVyIEtvbnRleHQgYWJow6RuZ2VuLiBTaWUgc2luZCByZWFsIHVuZCBrw7ZubmVuIHNlaHIgYmVsYXN0ZW5kIHNlaW4sIGJpbGRlbiBhYmVyIG5pY2h0IGF1dG9tYXRpcyBlaW5lIGRlZmllbml0b3Jpc2NoZSBFcGlzb2RlIG1pdCBlaWxuZW0gbmV1ZW4gR2VzYW10bXVzdGVyLgoKYGBgbWVybWFpZApmbG93Y2hhcnQgVEQKICBBW2Zyw7xoZXJlcywgYnJlaXRlcyBBREhTLU11c3Rlcl0gLS0+IEJbQU1IUy1IeXBvdGhlc2UgcHLDvGZlbl0KICBOW25ldWUsIHplc3RsYW5nIGFiZ2VncmVuenRlIFTDpG5kZXJ1bmddIC0tPiBFW2VwaXNvZGlzY2hlIEh5cG90aGVzZSBwcsO8ZmVuXQogIFNbU3RpbW11bmcsIFNjaGxhZmJlZMO8cmZuaXMsIEVuZXJnaWUsIEFjdGl2aXTDpHQsIFNwcmFjaGUgdW5kIFNlbGJzdGVpbnNjaMOkdHp1bmcgaW0gVmVyZ2xlaWNoIHp1ciBCYXNlbGluZV0gLS0+IEUKICBQW1BzeWNob3Rpc2NoZSBTdWJzdGFuemVuLCBNZWRpa2FtZW50ZSwgU2NobGFmbWFnZWwsIGvDtnJwZXJsaWNoZSBFcmsgcmFua3VuZ2VuLCBUcmF1bWEgdW5kIGFuZGVyZSBwc3ljaGlzY2hlIFN0w7ZydW5nZW5dIC0tPiBBW3BsaWNoZSBBbHRlcm5hdGl2ZW4gdW5kIFp1c2F0emVya2zDpHJ1bmdlbiBww7xyZmVuXQogIEIgLS0+IEdbZ2VzYW10a2xpbmlzY2hlIEVpbnNjaMOkdHp1bmcgdW5kIGdldHJlbm50ZSBCZWhhbmRsdW5nc3ppZWxlXQogIEUgLS0+IEcKICBBIC0tPiBHCmBgYAoKRGFzIERpYWdyYW1tIGlzdCBrZWluIFNlbGJzdHRlc3QuIEVzIHplaWd0LCB3YWhydW0gRGlhZ25vc3RpayBlaW4gVmVybGF1ZnNtb2RlbGwgYnJhdWNodCB1bmQgd2FydW0gZWluZSBuZXVlIHF1YWxpdGF0aXZlIFZlcsOkbmRlcnVuZyBuaWNodCBtaXQgZGVtIEhpbndlaXMg4oCeRGllIFBlcnNvbiB3YXIgc2Nob24gaW1tZXIgaW1wdWxzaXYiIGVybGVkaWd0IGlzdC4KCiMjIDQuIFBzeWNob3Rpc2NoZSBTcGVybG5ldyBzaW5kIGtlaW5lIEFESFMtS2Vybm1lcmttYWxlCgpQc3ljaG90aXNjaGUgU3ltcHRvbWUga8O2bm5lbiBIYWxsdXppbmF0aW9uZW4sIFdhaG5pZGViZW4sIHN0YXJrZXMgRGVua29yZ2FuaXNhdGlvbnNwcm9ibGVtZSB1bmQgZGV1dGxpY2hlIFN0w7ZydW5nZW4gZGVzIFJlYWxpdMOkdHNiZXp1Z3MgdcO8bWZhc3Nlbi4gU2llIGvDtm5uZW4gaW4gZWluZXIgU2NoaXpvcGhyZW5pZS1TcGVrdHJ1bXN0w7ZydW5nLCBlaW5lciBzY2h3ZXJlbiBTdGltbXVuZ3NlcGlzb2RlLCBiZWkgU3Vic3RhbnppbnRveGlrYXRpb24gb2RlciAtZW50enVnLCBiZWkgRGVsaXIsIG5ldXJvbG9naXNjaGVuIG9kZXIgYW5kZXJlbiBrw7ZycGVybGljaGVuIEVya3Jhbmt1bmdlbiBhdWZ0cmV0ZW4uCkFESFMtYmV6b2dlbmVzIEdlZGFua2Vuc2Nod2VpZmVuLCB2aWVsZSBJZGVlbiBvZGVyIGltcHVsc2l2ZXMgU3ByZWNoZW4gc2luZCBrZWluZSBXYWhuIHVuZCBrZWluZSBIYWxsdXppbmF0aW9uLiBFaW5lIFBlcnNvbiBrYW5uIGF1ZsOkbGxpZ2Ugw5xiZXJ6ZXVndW5nZW4gaGFiZW4gb2RlciBkdXJjaCBTdHJlc3MgdW5kIFNjaGxhZm1hbmdlbCB1bmZsZXhpYmxlciBkZW5rZW4sIG9obmUgcHN5Y2hvdGlzY2ggenUgc2Vpbi4gVW1nZWtlaHJ0IGTDvHJmZW4gZGV1dGxpY2hlIEhhbGx1emluYXRpb25lbiwgc3RhcmtgYmxlaWJlbiBkZXIgV2FobiBvZGVyIGVpbmUgcGzDtnR6bGljaGUgU3TDtnJ1bmcgZGVzIFJlYWxpdMOkdHNiZXp1Z3MgbmljaHQgYWxzIOKAnm51ciBpbXB1bHNpdiDigJzCqGFiZ2V0YW4gd2VyZGVuLgoKPj4gW3dhcm5pbmddIFp1c3TDpG5kZSBkaWUgemVpdG5haGUgRmFjaGlsaGZlIGVyaG9uZW4KPj4gTmV1ZSBwc3ljaG90aXNjaGUgU3ltcHRvbWUsIGRlY2x1dGxpY2ggdmVybWluZGVydGVzIFNjaGxhZmJlZMO8cmZuaXMgYWxzIFRlYWlsIGVpbmVyIHN0YXJrZW4gQWt0aXZpZXJ1bmcgaXMsIHNjaHdlcmUgQWdpdGF0aW9uLCBha3V0ZSBndWl6aWRnZWRhbmtlbiwgc3RhcmtgZGVzdmVyaMO8dHVuZyBvZGVyIEdlZsOkaHJkdW5nIGFuZGVyZXIgZHVyY2ggZXh0cmVtZXMgVmVyaGFsdGVuIGVyaG9uZW4gZWluZSB6ZWl0bmFoZSAgcHN5Y2hpaGF0cmlzY2hlIG9kZXIgbm90ZmFsbG1lZGl6aW5pc2NoZSBCZXVydGVpbHVuZy4gQmVpIHVubWl0dGVsYmFyZXIgR2VmYWhyIGdpbHQgaW4gRGV1dHNjaGxhbmQgKioxMTIqKi4KCiMjIDUuIEtvZXhpc3RlbnogdW5kIEbDpHVmaWdrZWl0OiByZWFsLCBhYmVyIG1ldGhvZGlzY2ggc2Nod2llcmlnCgpBcmVpdHMuIEFEHU5EIFBpcG9sYXJlIFN0w7ZydW5nIGvDtm5uZW4gYmVpIGRlcnNlbGJlbiBQZXJzb24gYmVzdGVuLiBFaW5lIHN5c3RlbWF0aXNjaGUgw5xiZXJzaWNodCB1bmQgTWV0YS1BbmFseXNlIHZvbiAyMDIxIHNjaGxvc3MgNzEgU3R1ZGllbiBtaXQgNjQ2Ljc2NiBFcndhY2hzZW5lbiBhdXMgMTggTMOEbmRlcm4gZWluLiBJbSBnZXBvb2x0ZW4gTXVzdGVyIGhhYXR0ZW4gNyw5NSBQcm96ZW50IGRlciBFcndhY2hzZW5lbiBtaXQgQURIQyBhdWNoIGVpbmUgYmlwb2xhcmUgU3TDtnJ1bmc7IHVtZ2VrZWhydCBsaWVmIGRpZSBnZXBvb2x0ZSBBbnRlaWwgYmVpIDE3LDExIFByb3plbnQuIFNvbGNoZSBaYWhsZW4gc2luZCBHcnVwcZWuYmVmdW5kZSB1bmQga8O2bm5lbiBuaWNodCBkaXJla3QgaW4gZWluZSBwZXJzw7ZubGljaGUgV2FocnNjaGVpbmxpY2hrZWl0IMO8YmVyc2V0enQgd2VyZGVuLgoKRGllIHN0YXRpc3Rpc2NoZSBIw6R0ZXJvZ2VuaXTDpHQgd2FyIGjDtnN0LCB1bmQgZGllIFN0dWRpZW4gdW50ZXJzY2hpZWRlbiBzaWNoIGluIERpYWdub3NlZ3VuZGxhZ2VuLCBTdGljaHByb2JlbmF1c3dhaGwsIEtvbW9yYmlkaXTDpHRlbiB1bmQgQWx0ZXIuIFNhbG8gZMO8cmZlbiBkaWVzZSBFcmdlYm5pc3NlIG5pY2h0IGFscyBzY2hlc3RlbCBvZGVyIGFscyBwcsOkemlzZSBWw6RocnVuZyBmw7xyIGplZGUgdmVydHJhdXRlIFBlcnNvbiB2ZXJzdGFuZGVuIHdlcmRlbi4gU2llIGJlZ3LDvG5kZW4gYWJlciwgd2FydW0gRmFjaGxlIXRlIGJlaSBlZGVoIHN0w7ZydW5nIGRpcmVrdCBuYWNoIGRlciBhbmRlcmVuIHByw7xmZW4gc29sbHRlbi4KCiMjIDYuIE1lZGlrYW1lbnRlLCBTdWJzdGFuemVuIHVuZCBTaWNoZXJoZWl0CgpTdGltbXVuZ3N2ZXLDpG5kZXJ1bmdlbiB1bmQgUHN5Y2hvc2VuIGvDtm5uZW4gdm9uIE1lZGlrYW1lbnRlbiwgcHN5Y2hvYWt0aXZlbiBTdWJzdGFuemVuLCBTY2hsYWZtYW5nZWwgLCBTdG9mZndlY2hzZWxlbnRnbGVpc3VuZ2VuIG9kZXIgYW5kZXJlbiBrw7ZycGVybGljaGVuIEJlaW5mbHVzc3VuZ2VuIG1pdHZlcnVyc2FjaHQgb2RlciB2ZXJzdMOkcmt0IHdlcmRlbi4gRGllIHpldGxpY2hlIEJlemllaHVuZyB6dSBCZWdpbm4sIERvc2lzw6RuZGVydW5nLCBFaW5uYWhtZXplaXQgb2RlciBFbnR6dWcgaXN0IGRhYmVpIGltcG9ydGFudC4KClplaW1lIDcwIDI0MDUgUg==", "references/NICEBipolar2025.md": "LS0tCnJlZmVyZW5jZV9pZDogTklDRUJpcG9sYXIyMDI1CnRpdGxlOiBOSUNFIDIwMjUKZXZpZGVuY2VfdHlwZTogY2xpbmljYWwtcHJhY3RpY2UtZ3VpZGVsaW5lCmV2aWRlbmNlX2dyYWRlOiBoaWdoCnN0YXR1czogY29uc2Vuc3VzCmRvaTogIiIKcG1pZDogIiIKbGFzdF9jaGVja2VkOiAyMDI2LTA4LTA0CnRhZ3M6IFtMaXRlcmF0dXIsIEJpcG9sYXJlIFN0w7ZydW5nLCBNYW5pZSwgSHlwb21hbmllLCBEaWZmZXJlbnRpYWxkaWFnbm9zdGlrLCBMZWl0bGluaWVdCmNpdGF0aW9uOgogIGVudHJ5X3R5cGU6IG1pc2MKICBjc2xfdHlwZTogcmVwb3J0CiAgYXV0aG9yczoKICAgIC0gIk5hdGlvbmFsIEluc3RpdHV0ZSBmb3IgSGVhbHRoIGFuZCBDYXJlIEV4Y2VsbGVuY2UiCiAgZXRfYWw6IGZhbHNlCiAgeWVhcjogMjAyNQogIGFydGljbGVfdGl0bGU6ICJCaXBvbGFyIGRpc29yZGVyOiBhc3Nlc3NtZW50IGFuZCBtYW5hZ2VtZW50LiBDbGluaWNhbCBndWlkZWxpbmUgQ0cxODUiCi0tLQoKIyBOaWNlIDIwMjUKCiMjIFZvbGxzdMOkbmRpZ2UgWml0YXRpb24KCk5hdGlvbmFsIEluc3RpdHV0ZSBmb3IgSGVhbHRoIGFuZCBDYXJlIEV4Y2VsbGVuY2UgKDIwMjUpLiBCaXBvbGFyIGRpc29yZGVyOiBhc3Nlc3NtZW50IGFuZCBtYW5hZ2VtZW50LiBDbGluaWNhbCBndWlkZWxpbmUgQ0cxODUuCgojIyBFdmlkZW56dHlwIHVuZCBEZXNpZ24KCkFrdHVlbGxlIGV2aWRlbnpiYXNpZXJ0ZSB1bmQga29uc2Vuc2Jhc2llcnRlIGtsaW5pc2NoZSBMZWl0bGluaWUgenVyIERpYWdub3N0aWssIEJlaGFuZGx1bmcgdW5kIFZlcnNvcmd1bmcgYmlwb2xhcmVyIFN0w7ZydW5nZW4uIERpZSBVcnNwcnVuZ3NmYXNzdW5nIHd1cmRlIDIwMTQgdmVyw7ZmZmVudGxpY2h0IHVuZCBhbSAyLiBTZXB0ZW1iZXIgMjAyNSB6dWxldHp0IGFrdHVhbGlzaWVydC4KCiMjIFBvcHVsYXRpb24KCkVyd2FjaHNlbmUsIEtpbmRlciB1bmQgSnVnZW5kbGljaGUgbWl0IGJpcG9sYXJlbiBTdMO2cnVuZ2VuIHNvd2llIFBlcnNvbmVuLCBiZWkgZGVuZW4gZWluZSBiaXBvbGFyZSBTdMO2cnVuZyB2ZXJtdXRldCB3aXJkLiBEaWUgTGVpdGxpbmllIGJlaGFuZGVsdCBhdWNoIEtvcHJiaWRpdMOkdCwgRGlmZmVyZW50aWFsZGlhZ25vc3Rpaywga3Jpc2VuaGFmdGUgVmVybMOkdWZlIHVuZCBsYW5nZnJpc3RpZ2UgVmVyc29yZ3VuZy4KCiMjIEtlcm5hdXNzYWdlCgpNYW5pZSB1bmQgSHlwb21hbmllIHNpbmQgZXBpc29kaXNjaGUgU3luZHJvbWUsIGRpZSBnZWdlbsO8YmVyIGRlbSBwZXJzw7ZubGljaGVuIEF1c2dhbmdzbml2ZWF1IGJldXJ0ZWlsdCB3ZXJkZW4gbcO8c3Nlbi4gRmFjaGdlcmVjaHRlIEJldXJ0ZWlsdW5nIHByw7xmdCBTdGltaXVuZywgRW5lcmdpZSwgQWt0aXZpdMOkdCwgU2NobGFmYmVkw7xyZm5pcywgUHN5Y2hvc2UsIEZ1bmt0aW9uc2JlZWludHLDpGNodGlndW5nLCBTdWJzdGFuemVuLCBNZWRpa2FtZW50ZSB1bmQga8O2cnBlcmxpY2hlIEFsdGVybmF0aXZlcmsbMOkcnVuZ2VuIGdlbWVpbnNhbS4KCiMjIEVpbmNjaHLDpG5rdW5nZW4KCkVtcGZlaGx1bmdlbiBzaW5kIGluIGRlbmsgVWstVmVyc29yZ3VuZ3Nrb250ZXh0IGVpbmdldmV0dGV0IHVuZCBuw7x0emVuIHRlaWx3ZWlzZSBsYW5kZXNzcGV6aWZpc2NoZSBadWxhc3N1bmdlbiB1bmQgU3RydWt0dXJlbi4gRWluZSBMZWl0bGluaWUgaXN0IGtlaW5lIFByaW3DpHJzdHVkaWUgdW5kIGVyc2V0enQga2VpbmUgaW5kaXZpZHVlbGxlIEJldXJ0ZWlsdW5nLiBEaWUgQUrIUy1zcGV6aWZpc2NoZSBpbnRlZ3JpZXJ0ZSBCZWhhbmRsdW5nIGJlaSBLb2V4aXN0ZW56IGlzdCBuaWNodCBVbnRlcnN1Y2h1bmdza2VybiBkZXIgTGVpdGxpbmllLgoKIyMgVmVyaMOkbHRuaXMgenVtIGJpc2hlcmlnZW4gS29uc2VucwoKQmVzdMOkdGlndCBkaWUgZXBpc29kaXNjaGUgRWlub3JkbnVuZyB1bmQgYWt0dWFsaXNpZXJ0IGRpZSBlaXRsaW5pZW5vcmllbnRpZXJ0ZSBTaWNoZXJoZWl0cy0gdW5kIFJpc2lrb2JldXJ0ZWlsdW5nLiBEaWZmZXJlbnRpYWxkaWFnbm9zZW4gZWluc2NobGllw59saWNoIEFESFMgdcO8c3NlbiBhdXNkcsO8Y2tsaWNoIGdlcHLDvGZ0IHdlcmRlbi4KCiMjIExpbmtzCgotIFtOSUNFIGd1aWRhbmNlXShodHRwczovL3d3dy5uaWNlLm9yZy51ay9ndWlkYW5jZS9jZzE4NSkKLSBbTklDRSBJbmZvcm1hdGlvbiB2b20gMi4gU2VwdGVtYmVyIDIwMjVdKGh0dHBzOi8vd3d3Lm5pY2Uub3JnLnVrL2d1aWRhbmNlL2NnMTg1L2luZm9ybWF0aW9uKQo=", "references/Schiweck2021.md": "LS0tCnJlZmVyZW5jZV9pZDogU2NoaXdlY2syMDIxCnRpdGxlOiBTY2hpd2VjayBldCBhbC4gMjAyMQpldmlkZW5jZV90eXBlOiBzeXN0ZW1hdGljLXJldmlldy1hbmQtbWV0YS1hbmFseXNpcwpldmlkZW5jZV9ncmFkZTogbW9kZXJhdGUKc3RhdHVzOiBwcm9iYWJsZQpkb2k6ICIxMC4xMDE2L2oubmV1YmlvcmV2LjIwMjEuMDEuMDE3IgpwbWlkOiAiMzM1MTU2MDciCmxhc3RfY2hlY2tlZDogMjAyNi0wOC0wNAp0YWdzOiBbTGl0ZXJhdHVyLCBBREhTLCBCaXBvbGFyZSBTdMO2cnVuZywgS29tb3JiaWRpdMOkdCwgU3lzdGVtYXRpc2NoZXIgUmV2aWV3LCBNZXRhLUFuYWx5c2VdCmNpdGF0aW9uOgogIGVudHJ5X3R5cGU6IGFydGljbGUKICBjc2xfdHlwZTogYXJ0aWNsZS1qb3VybmFsCiAgYXV0aG9yczoKICAgIC0gIlNjaGl3ZWNrLCBDYXRoYXJpbmUiCiAgICAtICJBcnRlZ2EtSGlsZ29hcmQsIFNhbmRyYSIKICAgIC0gIETDpG5uZXIsIFN0ZWZhbmllIgogIGV0X2FsOiB0cnVlCiAgeWVhcjogMjAyMQogIGFydGljbGVfdGl0bGU6ICJDb21vcmJpZGl0eSBvZiBBREhEIGFuZCBhZHVsdCBiaXBvbGFyIGRpc29yZGVyOiBhIHN5c3RlbWF0aWMgcmV2aWV3IGFuZCBtZXRhLWFuYWx5c2lzIgogIGpvdXJuYWw6IE5ldXJvc2NpZW5jZSAmIEJpb2JlaGF2aW9yYWwgUmV2aWV3cwogIHZvbHVtZTogIjEyNCIKICBwYWdlczogIjEwMOKAkzEyMyIKLS0tCgojIFNjaGl3ZWNrIGV0IGFsLiAyMDIxCgojIyBWb2xsc3TDpG5kaWdlIFppdGF0aW9uCgpTY2hpd2VjaywgQ2F0aGFyaW5lLCBBcnRlZ2EtSGlsZ29hcmQsIFNhbmRyYSwgRMOkbm5lciwgU3RlZmFuaWUsIGV0IGFsLiAoMjAyMSkuIENvbW9yYmlkaXR5IG9mIEFESUQgYW5kIGFkdWx0IGJpcG9sYXIgZGlzb3JkZXI6IGEgc3lzdGVtYXRpYyByZXZpZXcgYW5kIG1ldGEtYW5hbHlzaXMuICpOZXVyb3NjaWVuY2UgJiBCaW9iZWhhdmlvcmFsIFJldmlld3MsIDEyNCosIDEwMOKAkzEyMy4KCiMjIEV2aWRlbnJ0eXAgdW5kIERlc2lnbgoKU3lzdGVtYXRpc2NoZSDDnGJlcnNpY2h0IHVuZCBNZXRhLUFuYWx5c2UgbWl0IDcxIFN0dWRpZW4sIDY0Ni43NjYgRXJ3YWNoc2VuZW4gYXVzIDE4IEzDpG5kZXJuLiBEaWUgQXJiZWl0IHN5bnRoZXRpc2llcnRlIEFuZ2FiZW4genVyIEtvZXhpc3Rlbnogdm9uIEFESFMgdW5kIGJpcG9sYXJlciBTdMO2cnVuZyBpbiBiZWlkZW4gUmljaHR1bmdlbi4KCiMjIFBvcHVsYXRpb24KCkVyd2FjaHNlbmUgbWl0IEFESFMgb2RlciBiaXBvbGFyZXIgU3TDtnJ1bmcgYXNzIGtsaW5pc2NoZW4gdW5kIGJldsO2bGtlcnVuZ3NiZXpvZ2VuZW4gU3RpY2hwcm9iZW4gaW4gMTggTMOEbmRlcm4uCgojIyBLZXJuYXVzc2FnZQoKSW0gZ2Vwb29sdGVuIE11c3RlciB3aWVzZW4gNyw5NSBQcm96ZW50IGRlciBFcndhY2hzZW5lbiBtaXQgQURIQyBhdWNoIGVpbmUgYmlwb2xhcmUgU3TDtnJ1bmcgYXVmOyAxNywxMSBQcm96ZW50IGRlciBFcndhY2hzZW5lbiBtaXQgYmlwb2xhcmVyIFN0w7ZydW5nIGhhdHRlbiBhdWNoIEFESFMuIERpZSBFcmdlYm5pc3NlIHN0w7x0emVuIGVpbmUgcmVsZXZhbnRlIEtvZXhpc3RlbnosIGJlZGV1dGVuIGFiZXIgbmljaHQsIGRhc3MgZWluZSBEaWFnbm9zZSBhdXMgZGVyIGFuZGVyZW4gYWJnZWxlaXRldCB3ZXJkZW4ga2Fubi4KCiMjIEVpbmNjaHLDpG5rdW5nZW4KCkRpZSBIZXRlcm9nZW5pdMOkdCB3YXIgaG9jaC4gU3R1ZGllbiB1bnRlcnNjaGllZGVuIHNpY2ggaW4gRGVmaW5pdGlvbmVuLCBEaWFnbm9zZXZlcmZhaHJlbiwgQWx0ZXIsIFN0aWNocHJvYmVuYXJ0IHVuZCBLcsO2cmlkaXTDpHRlbi4gRGllIFdlcnRlIHNpbmQgR3J1cHBlbmJlZnVuZGUgdW5kIGtlaW5lIHBlcnPDtm5saWNoZW4gV2FocnNjaGVpbmxpY2hrZWl0ZW4uCg==", "references/Miskowiak2024.md": "LS0tCnJlZmVyZW5jZV9pZDogTWlza293aWFrMjAyNAp0aXRsZTogTWlza293aWFrIGV0IGFsLiAyMDI0CmV2aWRlbmNlX3R5cGU6IHN5c3RlbWF0aWMtcmV2aWV3CmV2aWRlbmNlX2dyYWRlOiBtb2RlcmF0ZQpzdGF0dXM6IHByb2JhYmxlCmRvaTogIjEwLjExMTEvYmRpLjEzNDE0IgpwbWlkOiAiMzg0MzM1MzAiCmxhc3RfY2hlY2tlZDogMjAyNi0wOC0wNAp0YWdzOiBbTGl0ZXJhdHVyLCBCaXBvbGFyZSBTdMO2cnVuZywgQURIUywgS29nbml0aW9uLCBCZWhhbmRsdW5nLCBTeXN0ZW1hdGlzY2hlciBSZXZpZXddCmNpdGF0aW9uOgogIGVudHJ5X3R5cGU6IGFydGljbGUKICBjc2xfdHlwZTogYXJ0aWNsZS1qb3VybmFsCiAgYXV0aG9yczoKICAgIC0gIk1pc2tvd2lhaywgS2FtaWxsYSBXYXRoYW4iCiAgICAtICJWYW5jYW1wZm9ydCwgRGl2YWxpIgogICAgLSAiQ29ydGVzZSBTYW1hbmR6IENhcm1lbmEiCiAgZXRfYWw6IHRydWUKICB5ZWFyOiAyMDI0CiAgYXJ0aWNsZV90aXRsZTogIlRoZSBhZmZlY3Qgb2YgdHJlYXRtZW50cyBmb3IgQURIRC9vZmYtbGFiZWwgdHJlYXRtZW50cyBvbiBjb2duaXRpdmUgZnVuY3Rpb25zIGluIGJpcG9sYXIgZGlzb3JkZXI6IGEgc3lzdGVtYXRpYyByZXZpZXcgYnkgdGhlIElTREIgVGFyZ2V0aW5nIENvZ25pdGlvbiBUYXNrIEZvcmNlIgogIGpvdXJuYWw6IEJpcG9sYXIgRGlzb3JkZXJzCiAgdm9sdW1lOiAiMjYiCiAgaXNzdWU6ICIzIgogIHBhZ2VzOiAiMjE24oCTMjM5IgotLS0KCiMgTWlza293aWFrIGV0IGFsLiAyMDI0CgojIyBWb2xsc3TDpG5kaWdlIFppdGF0aW9uCgpNaXNrb3dpYWssIEthbWlsbGEgV2F0aGFuLCBWYW5jYW1wZm9ydCwgRGl2YWxpLCBDb3J0ZXNlIFNhbWFuZHosIENhcm1lbmEsIGV0IGFsLiAoMjAyNCkuIFRoZSBhZmZlY3Qgb2YgdHJlYXRtZW50cyBmb3IgQURIRC9vZmYtbGFiZWwgdHJlYXRtZW50cyBvbiBjb2duaXRpdmUgZnVuY3Rpb25zIGluIGJpcG9sYXIgZGlzb3JkZXI6IGEgc3lzdGVtYXRpYyByZXZpZXcgYnkgdGhlIElTREIgVGFyZ2V0aW5nIENvZ25pdGlvbiBUYXNrIEZvcmNlLiAqQmlwb2xhciBEaXNvcmRlcnMsIDI2KigzKSwgMjE24oCTMjM5LgoKIyMgRXZpZGVuenR5cCB1bmQgRGVzaWduCgpTeXN0ZW1hdGlzY2hlIFLDvGNrc2ljaHQgZGVyIEludGVybmF0aW9uYWwgU29jaWV0eSBmb3IgQmlwb2xhciBEaXNvcmRlcnMgWmllbGdydXBwZSB6dXIgS29nbml0aW9uLiBTaWUgdW50ZXJzdWNodCBkaWUgS29nbml0aXZlbiBFZmZla3RlIHZvbiB2ZXJmw7xnYmFyZW4gQURIU8OrIG9kZXIgb2ZmLWxhYmVsIGVpbmdlc2V0enRlbiBCZWhhbmRsdW5nZW4gYmVpIGJpcG9sYXJlciBTdMO2cnVuZy4KCiMjIFBvcHVsYXRpb24KCkVyd2FjaHNlbmUgbWl0IGJpcG9sYXJlciBTdMO2cnVuZyBpbiBTdHVkaWVuIHp1IFN0aW11bGFuemllbiwgQXRvbW94ZXRpbiwgbW9kYWZpbmlsLCBhcm1vZGFmaW5pbCB1bmQgZGl2ZXJzZW4gd2VpdGVyZW4gV2lya3N0b2ZmZW4uIE1lbnNjaGVuIG1pdCBrb2V4aXN0aWVyZW5kZXIgQURIUyB3YXJlbiBuaWNodCBpbiBhbGxlbiBTdHVkaWVuIGRpZSBlaWdlbnRsaWNoZSBaaWVsZ3J1cHBlLgoKIyMgS2VybmF1c3NhZ2UKCkRpZSBFdmlkZW56IHp1IGtvZ25pdGl2ZW4gRWZmZWt0ZW4gdW5kIHp1bSBFaW5zYXR6IHZvbiBBREhTLUJlaGFuZGx1bmdlbiBiZWkgYmlwb2xhcmVyIFN0w7ZydW5nIGlzdCBiZWdyZW56dCB1bmQgaGV0ZXJvZ2VuLiBFaW56ZWxuZSBrb2duaXRpdmUgRWZmZWt0ZSBzaW5kIGJlcmVjaHRldCwgbGllZmVybiBhYmVyIGtlaW5lIFBhdXNjaGFscmVnZWwgZsO8ciBXaXJrc3RvZmZhdXN3YWhsLCBSZWloZW5mb2xnZSBvZGVyIFNpY2hlcmhlaXQgYmVpIGtvZXhpc3RpZXJlbmRlciBBREhTLgoKIyMgRWluc2NocsOkbmt1bmdlbgoKQ2xlc3R1ZGllbiwga2xlaW5lIFN0aWNocHJvYmVuLCBoZXRlcm9nZW5lIFRlcmFwaWV6aWVsZSB1bmQga3VyemUgQmVvYmFjaHR1bmdzemVpdMOkw7xtZSBiZWdyZW56ZW4gZGllIFTDvGJlcnRyYWdiYXJrZWl0LiBFaW5pZ2UgU3R1ZGllbiB1bnRlcnN1Y2h0ZW4gbmljaHQgZ2V6aWVsdCBQZXJzb25lbiBtaXQgYmVpZGVuIERpYWdub3Nlbi4gQXVzIGRlciDDnGJlcnNpY2h0IGthbm4ga2VpbmUgZ2V1bmRlIEJlaGFuZGx1bmdzYW53ZWlzdW5nIGbDvHIgRWluemVscGVyc29uZW4gYWJnZWxlaXRldCB3ZXJkZW4uCgojIyBWZXJow6RsdG5pcyB6dW0gYmlzaGVyaWdlbiBLb25zZW5zCgpQcsOkemlzaWVydCBkZW4gRm9yc2NodW5nc3N0YW5kOiBXaXJrc3RvZmZiZXRyYWNo5HR1bmd1biB3ZXJkZW4gdm9uIEtsaW5pa2VyIHVuZCBLdm9uZGVyIHNlUGVyIHN0w7ZydW5nZW4gZ2V0cmVubnQgdm9tIG9mZi1sYWJlbCBFaW5zYXR6IGbDvHIgS29nbml0aW9uIHByw7xmdCB1bmQga2VpbmUgUHVua3R3ZXJ0ZW4gZ2VkZW5rdC4KCiMjIExpbmtzCgotIFtET0ldKGh0dHBzOi8vZG9pLm9yZy8xMC4xMTExL2JkaS4xMzQxNCkKLSBbUHViTWVkXShodHRwczovL3B1Ym1lZC5uY2JpLm5sbS5uaWguZ292LzM4NDMzNTMwLykK", "references/SalazarDePablo2025.md": "LS0tCnJlZmVyZW5jZV9pZDogU2FsYXphckRlUGFibG8yMDI1CnRpdGxlOiBTYWxhemFyIGRlIFBhYmxvIGV0IGFsLiAyMDI1CmV2aWRlbmNlX3R5cGU6IHN5c3RlbWF0aWMtcmV2aWV3LWFuZC1tZXRhLWFuYWx5c2lzCmV2aWRlbmNlX2dyYWRlOiBtb2RlcmF0ZQpzdGF0dXM6IHByb2JhYmxlCmRvaTogIjEwLjEwMDEvamFtYXBzeWNoaWF0cnkuMjAyNS4yMzExIgpwbWlkOiAiNDA5MDA2MDUiCmxhc3RfY2hlY2tlZDogMjAyNi0wOC0wNAp0YWdzOiBbTGl0ZXJhdHVyLCBBREhTLCBBbXBoZXRhbWluZSwgTWV0aHlscGhlbmlkYXQsIFBzeWNob3NlLCBTaWN1cmhlaXQsIE1ldGEtQW5hbHlzZV0KY2l0YXRpb246CiAgZW50cnlfdHlwZTogYXJ0aWNsZQogIGNzbF90eXBlOiBhcnRpY2xlLWpvdXJuYWwKICBhdXRob3JzOgogICAgLSAiU2FsYXphciBkZSBQYWJsbywgR8OzbWV6IgogICAgLSAiU29sZXIsIFJhZmFlbGEiCiAgICAtICJWaWFuaWRpcywgTmlrb3MiCiAgZXRfYWw6IHRydWUKICB5ZWFyOiAyMDI1CiAgYXJ0aWNsZV90aXRsZTogIlBzeWNob3NpcyBNb2R1bGF0aW9uIGJ5IERpZmZlcmVudCBTdGltdWxhbnRzIGluIFBhdGllbnRzIFdpdGggQURIRDogQSBTeXN0ZW1hdGljIFJldmlldyBhbmQgTWV0YS1BbmFseXNpcyIKICBqb3VybmFsOiBKQU1BIFBzeWNoaWF0cnkKICB2b2x1bWU6ICI4MiIKICBpc3N1ZTogIjExIgogIHBhZ2VzOiAiMTEwM+KAkzExMTIiCi0tLQoKIyBTYWxhemFyIGRlIFBhYmxvIGV0IGFsLiAyMDI1CgojIyBWb2xsc3TDpG5kaWdlIFppdGF0aW9uCgpTYWxhemFyIGRlIFBhYmxvLCBHw7NtZXosIFNvbGVyLCBSYWZhZWxhLCBWaWFuaWRpcywgTmlrb3MsIGV0IGFsLiAoMjAyNSkuIFBzeWNob3NpcyBNb2R1bGF0aW9uIGJ5IERpZmZlcmVudCBTdGltdWxhbnRzIGluIFBhdGllbnRzIFdpdGggQURIRDogaEgU3lzdGVtYXRpYyBSZXZpZXcgYW5kIE1ldGEtQW5hbHlzaXMuICpKQU1BIFBzeWNoaWF0cnksIDgyKigxMSksIDExMDPigJMxMTEyLgoKIyMgRXZpZGVuenR5cCB1bmQgRGVzaWduCgpTeXN0ZW1hdGlzY2hlIMOcYmVyc2ljaHQgdW5kIE1ldGEtQW5hbHlzZSB2b24gMTYgU3R1ZGllbiBtaXQgaW5zZ2VzYW10IDM5MS4wNDMgUGVyc29uZW4uIERpZSBBcmJlaXQga29tcGFyaWVydGUgaW0gUmFobWVuIGRlciBlaW5nZXNjaGxvc3NlbmVuIFN0dWRpZW4gZG9rdW1lbnRpZXJ0ZSBwc3ljaG90aXNjaGUgRXJlaWduaXNzZSBiZWkgQW1waGV0YW1pbi0gdW5kIE1ldGh5bHBoZW5pZGF0LWV4cG9uaWVydGVuIEFEU1MtcG9wdWxhdGlvbmVuLgoKIyMgUG9wdWxhdGlvbgoKTWVuc2NoZW4gbWl0IEFESFMgYXVzIGt0aW5pc2NoZW4gdW5kIHZlcnNvcmd1bmdzYmV6b2dlbmVuIERhdGVuc8OkdHplbi4gRGllIE1ldGEtQW5hbHlzZSBiZWhhbmRlbHQgZ3J1cHBlbmJlem9nZW5lIHVuZCBuaWNodCBpbmRpdmlkdWVsbGUgUmlzaWtlbi4KCiMjIEtlcm5hdXNzYWdlCgpBbXBoZXRhbWluIHdhciBpbSBkaXJla3RlbiBWZXJnbGVpY2ggbWl0IE1ldGh5bHBoZW5pZGF0IG1pdCBoaXZlciBkb2t1bWVudGllcnRlbiBPZGRzIGVpbmVzIHBzeWNob3Rpc2NoZW4gRXJlaWduaXNzZXMgYXNzb3ppaWVydCAoT2RkcyBSYXRpbyAxLDU3OyA5NS1Qcm96ZW50LUtvbmZpZGVuemludGVydmFsbCAxLDIwIGJpcyAyLDA1KS4gRGllc2VyIHNlbGJzdCBhbHNvIHNjaG9uIGdyZW56d2VydGlnZSBHcnVwcGVuYmVmdW5kIGR1cmYgd2VkZXIgYWxzIGthdXNhbGVyIE5hY2h3ZWlzIG5vY2ggYWxzIHBlcnPDtm5saWNoZSBSaXNpa29wcm9nbm9zZSBpbnRlcnByZXRpZXJ0IHdlcmRlbi4KCiMjIEVpbmNjaHLDpG5rdW5nZW4KCkRpZSBhdXNnZXdLcmF0ZXRlbiBTdHVkaWVuIHdhcmVuIG1ldGhvZGlzY2ggaGV0ZXJvZ2VuOyBkZXIgZ2Vwb29sdGUgT3ZlcmFsbC1FZmZla3QgbGVpYnQga2VpbmUgS2F1c2FsaXTDpHQgYmVsZWdlbi4gRGlhZ25vc2Vmb2xlbixgRG9zaXMsIEFsdGVyLCBLb21vcmJpZGl0w6R0LCBCZW9iYWNodHVuZ3NkYXVlciB1bmQgU3Vwc3V0aXNlbnR5cCB1bnRlcnNjaGllZGVuIHNpY2guIERpZSBzZW5zZXRpdml0w6R0cy1FY2NsYXJ1bmcgY2hhcmFrdGVyaXNpZXJ0ZSBkaWUgU3lzdGVtZWludHdpY2tsdW5nIGF1cy4KCiMjIFZlcmjDpGx0bmlzIHp1bSBiaXNoZXJpZ2VuIEtvbnNlbnMKClByw6R6aXNpZXJ0IGRpZSBTaWNoZXJoZWl0c2JldHJhY2h0dW5nIGJlaSBBREhTLVBoYXJtYWtvdGhlcmFwaWU6IFBzeWNob3Rpc2NoZSBFcmVpZ25pc3NlIHNpbmQgZWluZSBzZWx0ZW5lcywgYWJlciByZWxldmFudGVzIE1vbml0b3Jpbmd0aGVtYS4gRXMgaXN0IG5pY2h0IHp1bMOkc3NpZywgZGllIE1ldGEtQW5hbHlzZSBhdWYgbmljaHQtcm1lZGl6aW5pc2NoZW4gS29uc3VtIG9kZXIgbGF1ZmVuZGUgU2VsYnN0dmVyc3VjaGUgenUgw7xiZXJ0cmFnZW4uCgojIyBMaW5rcwoKLSBbRE9JXShodHRwczovL2RvaS5vcmcvMTAuMTAwMS9qYW1hcHN5Y2hpYXRyeS4yMDI1LjIzMTEpCi0gW1B1Yk1lZF0oaHR0cHM6Ly9wdWJtZWQubmNiaS5ubG0ubmloLmdvdi80MDkwMDYwNS8pCg=="}
+          for relative, payload in encoded_files.items():
+              destination = root / relative
+              destination.parent.mkdir(parents=True, exist_ok=True)
+              destination.write_bytes(base64.b64decode(payload))
+
+          def replace_once(path, old, new):
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: erwartete genau eine Ersetzung, gefunden {count}: {old!r}')
+              path.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          # Previous unit navigation.
+          replace_once(
+              root / '02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md',
+              '- Weiter: [[ROADMAP#A2 · Angst, Zwang, Trauma und episodische Störungen — P0|Bipolare Störungen, Psychosen und episodische Veränderungen]] *(geplant)*',
+              '- Weiter: [[02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen|Bipolare Störungen, Psychosen und episodische Veränderungen]]',
+          )
+
+          # README metadata and unit list.
+          readme = root / 'README.md'
+          replace_once(readme, 'version: 0.20.0', 'version: 0.21.0')
+          replace_once(readme, 'last_reviewed: 2026-08-02', 'last_reviewed: 2026-08-04')
+          replace_once(
+              readme,
+              'tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Zwangsstörung, Trauma, PTBS, Lernpfad]',
+              'tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Zwangsstörung, Trauma, PTBS, Bipolare Störung, Psychose, Lernpfad]',
+          )
+          replace_once(
+              readme,
+              '18. [[02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen|Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS]]',
+              '18. [[02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen|Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS]]\n19. [[02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen|Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit]]',
+          )
+
+          # Index JSON.
+          index_path = root / 'index.json'
+          index = json.loads(index_path.read_text(encoding='utf-8'))
+          if index['version'] != '0.20.0' or len(index['chapters']) != 18:
+              raise SystemExit('index.json besitzt nicht den erwarteten Ausgangszustand')
+          index['version'] = '0.21.0'
+          index['last_reviewed'] = '2026-08-04'
+          index['chapters'].append({
+              'number': 19,
+              'path': '02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md',
+              'title': 'Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit',
+          })
+          index_path.write_text(json.dumps(index, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          # MkDocs nav.
+          replace_once(
+              root / 'mkdocs.yml',
+              '      - Trauma, PTBS und komplexe Traumafolgen: 02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md',
+              '      - Trauma, PTBS und komplexe Traumafolgen: 02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen.md\n      - Bipolare Störungen, Psychosen und ADHS: 02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md',
+          )
+
+          # Roadmap.
+          roadmap = root / 'ROADMAP.md'
+          replace_once(roadmap, 'last_reviewed: 2026-08-02', 'last_reviewed: 2026-08-04')
+          replace_once(roadmap, 'Der Lernpfad umfasst derzeit 18 fortlaufende Einheiten:', 'Der Lernpfad umfasst derzeit 19 fortlaufende Einheiten:')
+          replace_once(
+              roadmap,
+              '18. Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS',
+              '18. Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS\n19. Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit',
+          )
+          replace_once(
+              roadmap,
+              '- [ ] **Bipolare Störungen, Psychosen und andere episodische Veränderungen**',
+              '- [x] **Bipolare Störungen, Psychosen und andere episodische Veränderungen** — umgesetzt als Einheit 19',
+          )
+
+          # Planned-node registry: materialized node must disappear.
+          planned_path = root / 'knowledge-graph/planned-nodes.yaml'
+          planned = yaml.safe_load(planned_path.read_text(encoding='utf-8'))
+          target = '02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen'
+          before = len(planned['nodes'])
+          planned['nodes'] = [node for node in planned['nodes'] if node.get('path') != target]
+          if len(planned['nodes']) != before - 1:
+              raise SystemExit('geplanter Knoten für Einheit 19 fehlt oder ist doppelt')
+          planned_path.write_text(yaml.safe_dump(planned, allow_unicode=True, sort_keys=False), encoding='utf-8')
+
+          # Glossary.
+          glossary = root / 'Glossar.md'
+          replace_once(glossary, 'last_reviewed: 2026-08-02', 'last_reviewed: 2026-08-04')
+          glossary_append = '''
+
+## Bipolare Störung
+Psychische Störung mit klar abgrenzbaren manischen oder hypomanischen Episoden und häufig depressiven Episoden; die Diagnose beruht auf Verlauf, Symptomqualität, Funktionsbeeinträchtigung und Alternativerklärungen, nicht auf gewöhnlichen Stimmungsschwankungen.
+
+## Episode
+Zeitlich abgrenzbare qualitative Veränderung gegenüber dem persönlichen Ausgangsniveau, bei der mehrere zusammengehörige Symptome und Funktionsveränderungen auftreten; mehr als ein einzelner guter oder schlechter Tag.
+
+## Halluzination
+Wahrnehmungsähnliches Erlebnis ohne entsprechenden äußeren Reiz, beispielsweise Stimmenhören; diagnostisch nicht automatisch einer einzigen Störung zuzuordnen.
+
+## Hypomanie
+Episode mit deutlich veränderter Stimmung sowie erhöhter Energie und Aktivität, die gegenüber dem Ausgangsniveau auffällt, aber nicht die Schwere einer Manie erreicht; psychotische Symptome sprechen gegen eine bloße Hypomanie.
+
+## Manie
+Episode mit deutlich gehobener, gereizter oder expansiver Stimmung und gesteigerter Energie oder Aktivität, verbunden mit weiteren Symptomen und erheblicher Funktionsveränderung; kann psychotische Symptome oder stationären Behandlungsbedarf umfassen.
+
+## Psychose
+Syndrom mit relevanter Störung des Realitätsbezugs, häufig mit Halluzinationen, Wahn oder ausgeprägter Denkdesorganisation; kann bei unterschiedlichen psychischen, substanzbezogenen, neurologischen oder körperlichen Erkrankungen auftreten.
+
+## Vermindertes Schlafbedürfnis
+Deutlich weniger Schlaf als üblich bei subjektiv erhaltener oder gesteigerter Energie; von Schlafmangel mit Müdigkeit, Insomnie und zirkadianer Verschiebung zu unterscheiden.
+
+## Wahn
+Überzeugung, die trotz deutlicher Gegenbelege mit ungewöhnlicher Gewissheit festgehalten wird und nicht angemessen aus kulturellem oder religiösem Kontext erklärbar ist; genaue klinische Einordnung erfordert Fachdiagnostik.
+'''
+          glossary.write_text(glossary.read_text(encoding='utf-8').rstrip() + glossary_append + '\n', encoding='utf-8')
+
+          # Anki card.
+          cards_path = root / 'cards/cards.yaml'
+          card_data = yaml.safe_load(cards_path.read_text(encoding='utf-8'))
+          if any(card.get('id') == 1019 or card.get('unit') == 19 for card in card_data['cards']):
+              raise SystemExit('Anki-Karte für Einheit 19 existiert bereits')
+          card_data['cards'].append({
+              'id': 1019,
+              'unit': 19,
+              'front': 'Warum ist eine Phase mit wenig Schlaf und hoher Aktivität nicht automatisch ADHS oder Manie?',
+              'back': 'Weil ADHS ein entwicklungsbezogenes Muster ist und Manie beziehungsweise Hypomanie eine klar abgrenzbare qualitative Episode erfordern. Schlafdauer, subjektives Schlafbedürfnis, Stimmung, Energie, Aktivität, Realitätsbezug, Folgen, Substanzen und Medikamente müssen gemeinsam geprüft werden.',
+              'tags': ['ADHS', 'Bipolare_Stoerung', 'Psychose', 'Vertiefung', 'Differentialdiagnostik', 'Einheit_19'],
+          })
+          cards_path.write_text(yaml.safe_dump(card_data, allow_unicode=True, sort_keys=False, width=110), encoding='utf-8')
+
+          # Changelog entry.
+          changelog = root / 'CHANGELOG.md'
+          change_text = changelog.read_text(encoding='utf-8')
+          marker = '# Änderungsverlauf\n\n'
+          if not change_text.startswith(marker):
+              raise SystemExit('CHANGELOG-Überschrift unerwartet')
+          entry = '''## 0.21.0 – 2026-08-04
+
+- Einheit 19 „Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit“ ergänzt
+- entwicklungsbezogene ADHS-Merkmale von manischen, hypomanischen und psychotischen Episoden anhand Verlauf, Schlafbedürfnis, Stimmung, Energie und Realitätsbezug abgegrenzt
+- aktuelle NICE-Leitlinie, ICD-11-Diagnosemanual, Komorbiditäts-Meta-Analyse und systematische Evidenz zu Behandlung und Psychoserisiken ergänzt
+- Sicherheitsgrenzen, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung aktualisiert
+
+'''
+          changelog.write_text(marker + entry + change_text[len(marker):], encoding='utf-8')
+          PY
+
+      - name: Regenerate literature outputs
+        run: |
+          python scripts/build_literature.py
+          git add Literatur.md references.bib references.json
+          python scripts/build_literature.py
+          git diff --exit-code -- Literatur.md references.bib references.json
+
+      - name: Validate generated content
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          python scripts/validate_prompt_baselines.py
+          python scripts/validate_links.py
+          python scripts/validate_compendium.py
+          python scripts/build_combined.py
+          python scripts/build_anki.py
+          python scripts/build_docs.py
+          mkdocs build --strict
+          REMARK_BASE_SHA=origin/main REMARK_HEAD_SHA=HEAD \
+            npm run lint:markdown:changed
+
+      - name: Commit final content and remove bootstrap workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/finalize-unit19.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat: ergänze Einheit 19 zu episodischen Veränderungen'
+          git push origin HEAD:agent/einheit-19-bipolare-psychosen-episoden
