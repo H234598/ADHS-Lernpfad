@@ -53,6 +53,11 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/finalize_unit19.py
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('Glossar.md')
+          path.write_text(path.read_text(encoding='utf-8').rstrip() + '\n', encoding='utf-8')
+          PY
           python scripts/build_literature.py
           git add Literatur.md references.bib references.json
           python scripts/build_literature.py
