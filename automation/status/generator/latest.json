@@ -2,21 +2,22 @@
   "schema_version": "3.0.0",
   "run_id": "e03ff067-c37c-4129-acd1-444245a55ef5",
   "workflow": "generator",
-  "revision": 1,
-  "previous_status": "created",
+  "revision": 2,
+  "previous_status": "running",
   "status": "running",
-  "phase": "read_prompts",
+  "phase": "research",
   "completed_phases": [
     "initialize",
     "load_main",
     "check_previous_run",
-    "check_existing_pr"
+    "check_existing_pr",
+    "read_prompts"
   ],
   "created_at": "2026-08-04T04:00:44.000Z",
-  "updated_at": "2026-08-04T04:00:44.000Z",
+  "updated_at": "2026-08-04T04:24:00.000Z",
   "ended_at": null,
   "duration_seconds": null,
-  "retention_until": "2026-09-03T04:00:44.000Z",
+  "retention_until": "2026-09-03T04:24:00.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "main",
@@ -29,7 +30,14 @@
     "unit_number": 19,
     "planned_topic": "Bipolare Störungen, Psychosen und andere episodische Veränderungen",
     "unrelated_open_pull_requests": [43, 46],
-    "automatic_unit_pull_request_open": false
+    "automatic_unit_pull_request_open": false,
+    "research_sources_selected": [
+      "NICEBipolar2025",
+      "WHO2024",
+      "Schiweck2021",
+      "Miskowiak2024",
+      "SalazarDePablo2025"
+    ]
   },
   "artifacts": [],
   "error": null,
