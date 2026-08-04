@@ -2,7 +2,7 @@
   "schema_version": "3.0.0",
   "run_id": "e03ff067-c37c-4129-acd1-444245a55ef5",
   "workflow": "generator",
-  "revision": 3,
+  "revision": 4,
   "previous_status": "running",
   "status": "running",
   "phase": "wait_review",
@@ -23,10 +23,10 @@
     "verify_pr"
   ],
   "created_at": "2026-08-04T04:00:44.000Z",
-  "updated_at": "2026-08-04T04:51:26.000Z",
+  "updated_at": "2026-08-04T04:57:14.000Z",
   "ended_at": null,
   "duration_seconds": null,
-  "retention_until": "2026-09-03T04:51:26.000Z",
+  "retention_until": "2026-09-03T04:57:14.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-19-bipolare-psychosen-episoden",
@@ -51,9 +51,17 @@
     "automatic_unit_pull_request_open": true,
     "review_eligible_at": "2026-08-04T06:36:07.000Z",
     "repair_eligible_at": "2026-08-04T18:00:00.000Z",
+    "policy_action": "wait_initial_review",
+    "project_validation": "success",
+    "export_build": "success",
     "remark_lint": "success",
-    "project_validation": "in_progress",
-    "coderabbit": "pending"
+    "codacy": "success",
+    "qlty": "success",
+    "coderabbit": "success",
+    "unresolved_coderabbit_threads": 0,
+    "coderabbit_disagreement": false,
+    "branch_behind_main": 0,
+    "mergeable": true
   },
   "artifacts": [
     {
