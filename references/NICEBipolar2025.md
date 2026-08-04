@@ -26,7 +26,7 @@ National Institute for Health and Care Excellence (2025). Bipolar disorder: asse
 
 ## Evidenztyp und Design
 
-Aktualisierte evidenz- und konsensbasierte klinische Leitlinie zur Erkennung, Beurteilung, Behandlung und langfristigen Versorgung bipolarer Störungen. Die Leitlinie wurde ursprünglich 2014 veröffentlicht und zuletzt am 2. September 2025 sicherheitsbezogen aktualisiert.
+Aktualisierte evidenz- und konsensbasierte klinische Leitlinie zur Erkennung, Beurteilung, Behandlung und langfristigen Versorgung bipolarer Störungen. Die Leitlinie wurde ursprünglich 2014 veröffentlicht und zuletzt am 2. September 2025 sicherheitsbezogen aktualisiert. Die aktuelle Webfassung und ihre Updateinformationen wurden am 4. August 2026 erneut geprüft.
 
 ## Population
 
