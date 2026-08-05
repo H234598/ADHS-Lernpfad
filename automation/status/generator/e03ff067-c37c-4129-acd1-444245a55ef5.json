@@ -2,10 +2,10 @@
   "schema_version": "3.0.0",
   "run_id": "e03ff067-c37c-4129-acd1-444245a55ef5",
   "workflow": "generator",
-  "revision": 4,
+  "revision": 5,
   "previous_status": "running",
-  "status": "running",
-  "phase": "wait_review",
+  "status": "failed",
+  "phase": "repair",
   "completed_phases": [
     "initialize",
     "load_main",
@@ -23,45 +23,57 @@
     "verify_pr"
   ],
   "created_at": "2026-08-04T04:00:44.000Z",
-  "updated_at": "2026-08-04T04:57:14.000Z",
-  "ended_at": null,
-  "duration_seconds": null,
-  "retention_until": "2026-09-03T04:57:14.000Z",
+  "updated_at": "2026-08-05T04:38:30.000Z",
+  "ended_at": "2026-08-05T04:38:30.000Z",
+  "duration_seconds": 88666.0,
+  "retention_until": "2026-11-03T04:38:30.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-19-bipolare-psychosen-episoden",
-    "commit_sha": "3729b388dd0c131e8aa741101ce755bcd2a4caf0",
+    "commit_sha": "84bebc76a9fc856c5cc39f865b88035757617e18",
     "pr_number": 49,
     "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/49",
-    "workflow_run": null
+    "workflow_run": {
+      "id": 30975548529,
+      "attempt": 1,
+      "job_id": "92208669021",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975548529",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975548529"
+    }
   },
   "metrics": {
     "unit_number": 19,
     "planned_topic": "Bipolare Störungen, Psychosen und andere episodische Veränderungen",
-    "prose_words": 1795,
-    "literature_sources": 48,
+    "prose_words_before_refresh": 1795,
+    "prose_words_after_refresh_in_workspace": 1952,
+    "literature_sources_before_refresh": 48,
+    "literature_sources_after_refresh_in_workspace": 49,
     "research_sources_selected": [
       "NICEBipolar2025",
       "WHO2024",
       "Schiweck2021",
       "Miskowiak2024",
-      "SalazarDePablo2025"
+      "SalazarDePablo2025",
+      "Jangra2026"
     ],
     "unrelated_open_pull_requests": [43, 46],
     "automatic_unit_pull_request_open": true,
     "review_eligible_at": "2026-08-04T06:36:07.000Z",
     "repair_eligible_at": "2026-08-04T18:00:00.000Z",
-    "policy_action": "wait_initial_review",
-    "project_validation": "success",
-    "export_build": "success",
+    "policy_action": "retry_same_phase",
+    "repair_cycle_count_this_watcher": 1,
+    "evidence_refresh_applied_in_workspace": true,
+    "evidence_refresh_committed": false,
+    "literature_regeneration": "success",
+    "project_validation_until_web_tests": "success",
+    "web_tests": "not_started_browser_missing",
     "remark_lint": "success",
-    "codacy": "success",
-    "qlty": "success",
-    "coderabbit": "success",
-    "unresolved_coderabbit_threads": 0,
+    "dependency_audit": "success_zero_vulnerabilities",
+    "pytest": "159_passed_2_subtests",
     "coderabbit_disagreement": false,
     "branch_behind_main": 0,
-    "mergeable": true
+    "mergeable": true,
+    "manual_merge_required": true
   },
   "artifacts": [
     {
@@ -90,8 +102,50 @@
       "sha256": null,
       "reusable": true,
       "recorded_at": "2026-08-04T04:51:26.000Z"
+    },
+    {
+      "type": "commit",
+      "value": "84bebc76a9fc856c5cc39f865b88035757617e18",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/84bebc76a9fc856c5cc39f865b88035757617e18",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-05T04:34:46.000Z"
+    },
+    {
+      "type": "workflow_run",
+      "value": "30975548529",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975548529",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-05T04:38:30.000Z"
+    },
+    {
+      "type": "diagnostic",
+      "value": "Playwright-Chromium-Browser im einmaligen Finalisierungsworkflow nicht installiert",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975548529",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-05T04:38:30.000Z"
     }
   ],
-  "error": null,
-  "recovery": null
+  "error": {
+    "class": "validation",
+    "code": "playwright_browser_missing",
+    "message": "Der Evidenzrefresh und alle Prüfungen bis einschließlich MkDocs waren erfolgreich; npm run test:web konnte nicht starten, weil der zum Lockfile passende Playwright-Chromium-Browser im einmaligen Finalisierungsworkflow nicht installiert war.",
+    "phase": "repair",
+    "occurred_at": "2026-08-05T04:35:46.000Z",
+    "retryable": true,
+    "redacted": false
+  },
+  "recovery": {
+    "level": "retry_same_phase",
+    "action": "Im nächsten zulässigen Reparaturzyklus vor npm run test:web den gepinnten Playwright-Chromium-Browser installieren, die vollständige Validierung erneut ausführen, den einmaligen Workflow entfernen und den validierten Evidenzcommit auf denselben PR-Branch pushen.",
+    "resume_phase": "repair",
+    "block_next_run": true,
+    "new_content_required": false,
+    "acknowledged": false
+  }
 }
