@@ -1,5 +1,6 @@
 name: Finalize unit 19 evidence refresh
 
+# One-time branch-local workflow. It removes itself after successful validation.
 on:
   push:
     branches:
