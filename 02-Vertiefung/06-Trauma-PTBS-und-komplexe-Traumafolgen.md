@@ -179,5 +179,5 @@ Weil Konzentrationsprobleme und Unruhe unspezifisch sind. Für ADHS müssen ein 
 ## Navigation
 
 - Zurück: [[02-Vertiefung/05-Zwangssymptome-und-Zwangsstoerung|Zwangssymptome, Zwangsstörung und ADHS]]
-- Weiter: [[ROADMAP#A2 · Angst, Zwang, Trauma und episodische Störungen — P0|Bipolare Störungen, Psychosen und episodische Veränderungen]] *(geplant)*
+- Weiter: [[02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen|Bipolare Störungen, Psychosen und episodische Veränderungen]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]

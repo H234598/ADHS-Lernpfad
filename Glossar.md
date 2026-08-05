@@ -1,7 +1,7 @@
 ---
 title: Glossar
 tags: [ADHS, Glossar]
-last_reviewed: 2026-08-02
+last_reviewed: 2026-08-04
 ---
 
 # Glossar
@@ -185,3 +185,27 @@ Konfrontation mit außergewöhnlicher Bedrohung, schwerer Gewalt, Verletzung ode
 
 ## Titration
 Kontrollierte schrittweise Veränderung einer Dosis, bis ein sinnvolles Verhältnis aus Nutzen, Wirkdauer und Nebenwirkungen erreicht ist oder ein Wechsel notwendig wird.
+
+## Bipolare Störung
+Psychische Störung mit klar abgrenzbaren manischen oder hypomanischen Episoden und häufig depressiven Episoden; die Diagnose beruht auf Verlauf, Symptomqualität, Funktionsbeeinträchtigung und Alternativerklärungen, nicht auf gewöhnlichen Stimmungsschwankungen.
+
+## Episode
+Zeitlich abgrenzbare qualitative Veränderung gegenüber dem persönlichen Ausgangsniveau, bei der mehrere zusammengehörige Symptome und Funktionsveränderungen auftreten; mehr als ein einzelner guter oder schlechter Tag.
+
+## Halluzination
+Wahrnehmungsähnliches Erlebnis ohne entsprechenden äußeren Reiz, beispielsweise Stimmenhören; diagnostisch nicht automatisch einer einzigen Störung zuzuordnen.
+
+## Hypomanie
+Episode mit deutlich veränderter Stimmung sowie erhöhter Energie und Aktivität, die gegenüber dem Ausgangsniveau auffällt, aber nicht die Schwere einer Manie erreicht; psychotische Symptome sprechen gegen eine bloße Hypomanie.
+
+## Manie
+Episode mit deutlich gehobener, gereizter oder expansiver Stimmung und gesteigerter Energie oder Aktivität, verbunden mit weiteren Symptomen und erheblicher Funktionsveränderung; kann psychotische Symptome oder stationären Behandlungsbedarf umfassen.
+
+## Psychose
+Syndrom mit relevanter Störung des Realitätsbezugs, häufig mit Halluzinationen, Wahn oder ausgeprägter Denkdesorganisation; kann bei unterschiedlichen psychischen, substanzbezogenen, neurologischen oder körperlichen Erkrankungen auftreten.
+
+## Vermindertes Schlafbedürfnis
+Deutlich weniger Schlaf als üblich bei subjektiv erhaltener oder gesteigerter Energie; von Schlafmangel mit Müdigkeit, Insomnie und zirkadianer Verschiebung zu unterscheiden.
+
+## Wahn
+Überzeugung, die trotz deutlicher Gegenbelege mit ungewöhnlicher Gewissheit festgehalten wird und nicht angemessen aus kulturellem oder religiösem Kontext erklärbar ist; genaue klinische Einordnung erfordert Fachdiagnostik.

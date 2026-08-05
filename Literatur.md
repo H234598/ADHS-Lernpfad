@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-08-02
+last_reviewed: 2026-08-05
 ---
 
 # Literatur
@@ -125,6 +125,14 @@ Hoskins, Jessica I., Gooch, Debbie, & Gilligan-Lee, Katie A. (2026). Symptoms of
 - PubMed: [PMID 42400277](https://pubmed.ncbi.nlm.nih.gov/42400277/)
 - Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
+## Jangra2026
+
+Jangra, Deepika, Tejwani, Ritika, Ahluwalia, Yashita, Sarkar, Siddharth, & Balhara, Yatan Pal Singh (2026). Stimulant-induced Psychosis: A Comparative Systematic Review and Meta-analysis of Psychotic Outcomes from Therapeutic and Nontherapeutic Use of Stimulants. *Journal of Addiction Medicine*.
+
+- DOI: [https://doi.org/10.1097/ADM.0000000000001656](https://doi.org/10.1097/ADM.0000000000001656)
+- PubMed: [PMID 41874961](https://pubmed.ncbi.nlm.nih.gov/41874961/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
+
 ## Kofler2020
 
 Kofler, M. J., et al. (2020). Working memory and short-term memory deficits in ADHD: A bifactor modeling approach.
@@ -178,9 +186,23 @@ Micai, M., Fatta, L. M., Gila, L., et al. (2023). Prevalence of co-occurring con
 - PubMed: [PMID 37913872](https://pubmed.ncbi.nlm.nih.gov/37913872/)
 - Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
 
+## Miskowiak2024
+
+Miskowiak, Kamilla W., Obel, Zacharias K., Guglielmo, Riccardo, et al. (2024). Efficacy and safety of established and off-label ADHD drug therapies for cognitive impairment or attention-deficit hyperactivity disorder symptoms in bipolar disorder: A systematic review by the ISBD Targeting Cognition Task Force. *Bipolar Disorders, 26*(3), 216–239.
+
+- DOI: [https://doi.org/10.1111/bdi.13414](https://doi.org/10.1111/bdi.13414)
+- PubMed: [PMID 38433530](https://pubmed.ncbi.nlm.nih.gov/38433530/)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `probable`
+
 ## NICE2018
 
 National Institute for Health and Care Excellence (2018). Attention deficit hyperactivity disorder: diagnosis and management (NICE guideline NG87).
+
+- Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
+
+## NICEBipolar2025
+
+National Institute for Health and Care Excellence (2025). Bipolar disorder: assessment and management (CG185), updated 2 September 2025.
 
 - Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
 
@@ -230,6 +252,22 @@ Rother, Y., Orlando, C. M., Warren, P., & Flory, K. (2025). ADHD and Suicidality
 - DOI: [https://doi.org/10.1007/s10567-025-00531-9](https://doi.org/10.1007/s10567-025-00531-9)
 - PubMed: [PMID 40536652](https://pubmed.ncbi.nlm.nih.gov/40536652/)
 - Evidenztyp: `systematic-review` · Evidenzgrad: `high` · Status: `consensus`
+
+## SalazarDePablo2025
+
+Salazar de Pablo, Gonzalo, Aymerich, Claudia, Chart-Pascual, Juan Pablo, et al. (2025). Occurrence of Psychosis and Bipolar Disorder in Individuals With Attention-Deficit/Hyperactivity Disorder Treated With Stimulants: A Systematic Review and Meta-Analysis. *JAMA Psychiatry, 82*(11), 1103–1112.
+
+- DOI: [https://doi.org/10.1001/jamapsychiatry.2025.2311](https://doi.org/10.1001/jamapsychiatry.2025.2311)
+- PubMed: [PMID 40900605](https://pubmed.ncbi.nlm.nih.gov/40900605/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
+
+## Schiweck2021
+
+Schiweck, Carmen, Arteaga-Henriquez, Gara, Aichholzer, Mareike, et al. (2021). Comorbidity of ADHD and adult bipolar disorder: A systematic review and meta-analysis. *Neuroscience & Biobehavioral Reviews, 124*, 100–123.
+
+- DOI: [https://doi.org/10.1016/j.neubiorev.2021.01.017](https://doi.org/10.1016/j.neubiorev.2021.01.017)
+- PubMed: [PMID 33515607](https://pubmed.ncbi.nlm.nih.gov/33515607/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## SerranoOrtiz2026
 

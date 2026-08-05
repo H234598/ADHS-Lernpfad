@@ -1,5 +1,13 @@
 # Änderungsverlauf
 
+## 0.21.0 – 2026-08-04
+
+- Einheit 19 „Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit“ ergänzt
+- entwicklungsbezogene ADHS-Merkmale von manischen, hypomanischen und psychotischen Episoden anhand Verlauf, Schlafbedürfnis, Stimmung, Energie und Realitätsbezug abgegrenzt
+- aktuelle NICE-Leitlinie, ICD-11-Diagnosemanual, Komorbiditäts-Meta-Analyse und systematische Evidenz zu Behandlung und Psychoserisiken ergänzt
+- Evidenz am 5. August 2026 mit Jangra et al. 2026 aktualisiert und therapeutische von nichtmedizinischer Stimulanzienexposition noch klarer getrennt
+- Sicherheitsgrenzen, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Wissensgraph-Planung aktualisiert
+
 ## 0.20.0 – 2026-08-02
 
 - Einheit 18 „Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS“ ergänzt
