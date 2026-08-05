@@ -2,10 +2,10 @@
   "schema_version": "3.0.0",
   "run_id": "e03ff067-c37c-4129-acd1-444245a55ef5",
   "workflow": "generator",
-  "revision": 6,
-  "previous_status": "failed",
-  "status": "recovering",
-  "phase": "repair",
+  "revision": 7,
+  "previous_status": "recovering",
+  "status": "recovered",
+  "phase": "cleanup",
   "completed_phases": [
     "initialize",
     "load_main",
@@ -21,25 +21,29 @@
     "push",
     "create_pr",
     "verify_pr",
-    "repair"
+    "repair",
+    "ready_for_review",
+    "verify_second_ci",
+    "merge",
+    "cleanup"
   ],
   "created_at": "2026-08-04T04:00:44.000Z",
-  "updated_at": "2026-08-05T04:40:21.000Z",
-  "ended_at": null,
-  "duration_seconds": null,
-  "retention_until": "2026-09-04T04:40:21.000Z",
+  "updated_at": "2026-08-05T04:53:20.000Z",
+  "ended_at": "2026-08-05T04:53:20.000Z",
+  "duration_seconds": 89556.0,
+  "retention_until": "2026-09-04T04:53:20.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-19-bipolare-psychosen-episoden",
-    "commit_sha": "cb9a3e7c915de95636dca3ee55830b9c3c6a62d1",
+    "commit_sha": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
     "pr_number": 49,
     "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/49",
     "workflow_run": {
-      "id": 30975714991,
+      "id": 30976162898,
       "attempt": 1,
-      "job_id": "92209166884",
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975714991",
-      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975714991"
+      "job_id": "92210471282",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30976162898",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30976162898"
     }
   },
   "metrics": {
@@ -56,22 +60,26 @@
       "Jangra2026"
     ],
     "unrelated_open_pull_requests": [43, 46],
-    "automatic_unit_pull_request_open": true,
-    "policy_action": "repair_existing_branch",
+    "automatic_unit_pull_request_open": false,
+    "policy_action": "merge",
     "repair_cycle_count_total": 2,
     "evidence_refresh_committed": true,
     "literature_regeneration": "success",
-    "project_validation": "success",
+    "first_project_ci": "success",
+    "second_project_ci": "success",
     "web_tests": "4_passed",
-    "remark_lint": "success",
+    "remark_lint_first": "success",
+    "remark_lint_second": "success",
     "dependency_audit": "success_zero_vulnerabilities",
     "pytest": "159_passed_2_subtests",
+    "codacy": "success",
+    "qlty": "success",
     "coderabbit": "success",
     "coderabbit_threads_unresolved": 0,
     "coderabbit_disagreement": false,
     "branch_behind_main": 0,
-    "mergeable": true,
-    "manual_merge_required": false
+    "merged": true,
+    "merge_commit": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a"
   },
   "artifacts": [
     {
@@ -111,19 +119,28 @@
       "recorded_at": "2026-08-05T04:40:21.000Z"
     },
     {
-      "type": "diagnostic",
-      "value": "Playwright-Browser installiert; Evidenzrefresh und vollständige Validierung erfolgreich wiederholt",
+      "type": "workflow_run",
+      "value": "30976162898",
       "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975714991",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30976162898",
       "sha256": null,
       "reusable": true,
-      "recorded_at": "2026-08-05T04:40:21.000Z"
+      "recorded_at": "2026-08-05T04:52:42.000Z"
+    },
+    {
+      "type": "commit",
+      "value": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-05T04:53:12.000Z"
     }
   ],
   "error": {
     "class": "validation",
     "code": "playwright_browser_missing",
-    "message": "Der vorherige Reparaturzyklus konnte die Browsertests nicht starten, weil der gepinnte Playwright-Chromium-Browser fehlte; die Ursache wurde im wiederaufgenommenen Lauf behoben.",
+    "message": "Der vorherige Reparaturzyklus konnte die Browsertests nicht starten, weil der gepinnte Playwright-Chromium-Browser fehlte; die Ursache wurde im wiederaufgenommenen Lauf vollständig behoben.",
     "phase": "repair",
     "occurred_at": "2026-08-05T04:35:46.000Z",
     "retryable": true,
@@ -131,9 +148,9 @@
   },
   "recovery": {
     "level": "retry_same_phase",
-    "action": "Playwright-Chromium installieren, Evidenz- und Literaturänderungen vollständig validieren und denselben Pull Request bis zum Merge fortsetzen.",
+    "action": "Die fehlende Browserinstallation wurde ergänzt; Evidenzrefresh, vollständige Validierung, Ready-Übergang, zweite CI und Merge wurden erfolgreich abgeschlossen.",
     "resume_phase": "repair",
-    "block_next_run": true,
+    "block_next_run": false,
     "new_content_required": false,
     "acknowledged": true
   }
