@@ -31,7 +31,7 @@ Jangra, Deepika, Tejwani, Ritika, Ahluwalia, Yashita, Sarkar, Siddharth, & Balha
 
 ## Evidenztyp und Design
 
-Systematische Übersicht und Meta-Analyse von 77 Studien mit insgesamt 687.912 Personen. Neun Studien untersuchten therapeutische Stimulanzienexposition, 68 nichtmedizinischen Konsum. Die Arbeit berichtete Inzidenz- und Prävalenzschätzungen getrennt nach Expositionskontext.
+Systematische Übersicht und Meta-Analyse von 77 Studien mit insgesamt 687.912 Personen. Neun Studien untersuchten therapeutische Stimulanzienexposition; 68 Studien untersuchten nichtmedizinischen Konsum. Die Arbeit berichtete Inzidenz- und Prävalenzschätzungen getrennt nach Expositionskontext.
 
 ## Population
 
