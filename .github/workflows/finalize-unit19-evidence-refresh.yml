@@ -2,9 +2,9 @@ name: Finalize unit 19 evidence refresh
 
 # One-time branch-local workflow. It removes itself after successful validation.
 on:
-  push:
-    branches:
-      - agent/einheit-19-bipolare-psychosen-episoden
+  pull_request:
+    types: [synchronize]
+    branches: [main]
 
 permissions:
   contents: write
@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   refresh:
+    if: github.head_ref == 'agent/einheit-19-bipolare-psychosen-episoden'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
