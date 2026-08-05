@@ -1,14 +1,18 @@
-ADHS-Automation – Laufstatus
+ADHS-Automation fehlgeschlagen
 Lauf: generator/e03ff067-c37c-4129-acd1-444245a55ef5
-Status: running
-Phase: wait_review
-Revision: 4
+Status: failed
+Phase: repair
+Revision: 5
 Erfolgreich: initialize, load_main, check_previous_run, check_existing_pr, read_prompts, research, create_branch, create_content, generate_outputs, validate, commit, push, create_pr, verify_pr
-Vorhanden: Branch agent/einheit-19-bipolare-psychosen-episoden, Commit 3729b388dd0c131e8aa741101ce755bcd2a4caf0, PR #49
-Erste Gates: Projektvalidierung success; Exportbuild success; Remark-lint success; Codacy success; qlty success; CodeRabbit success; ungelöste CodeRabbit-Threads 0; Dissens nein
-Branchzustand: konfliktfrei, mergebar, 0 Commits hinter main
-Policyaktion: wait_initial_review
-Ready for review frühestens: 2026-08-04T06:36:07Z (08:36:07 Europe/Berlin)
-Reparatur frühestens: 2026-08-04T18:00:00Z (20:00:00 Europe/Berlin)
+Vorhanden: Branch agent/einheit-19-bipolare-psychosen-episoden, Commit 84bebc76a9fc856c5cc39f865b88035757617e18, PR #49, Workflow-Run 30975548529
+Evidenzrefresh im temporären Worktree: angewendet; Jangra2026 bibliografisch validiert; 49 Literaturquellen reproduzierbar erzeugt
+Erfolgreiche Prüfungen: pip check; npm audit mit 0 Schwachstellen; Remark-lint; Prompt-Baselines; 159 Pytest-Tests und 2 Subtests; JavaScript-Syntax; Links; Wissensgraph; Kompendium; Gesamt-, Anki-, Dokumentations- und MkDocs-Build
+Fehlerklasse: validation
+Fehlercode: playwright_browser_missing
+Fehler: npm run test:web konnte nicht starten, weil der Playwright-Chromium-Browser im einmaligen Finalisierungsworkflow nicht installiert war.
+Recovery-Level: retry_same_phase
+Recovery: Im nächsten zulässigen Reparaturzyklus vor npm run test:web den gepinnten Playwright-Chromium-Browser installieren, die vollständige Validierung erneut ausführen, den einmaligen Workflow entfernen und den validierten Evidenzcommit auf denselben PR-Branch pushen.
 Neuer Inhalt erforderlich: nein
 Blockiert nächsten Generatorlauf: ja
+PR-Zustand: Draft; manual-merge-required; Merge blockiert
+CodeRabbit-Dissens: nein
