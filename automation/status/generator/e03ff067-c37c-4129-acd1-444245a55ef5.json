@@ -2,9 +2,9 @@
   "schema_version": "3.0.0",
   "run_id": "e03ff067-c37c-4129-acd1-444245a55ef5",
   "workflow": "generator",
-  "revision": 5,
-  "previous_status": "running",
-  "status": "failed",
+  "revision": 6,
+  "previous_status": "failed",
+  "status": "recovering",
   "phase": "repair",
   "completed_phases": [
     "initialize",
@@ -20,34 +20,33 @@
     "commit",
     "push",
     "create_pr",
-    "verify_pr"
+    "verify_pr",
+    "repair"
   ],
   "created_at": "2026-08-04T04:00:44.000Z",
-  "updated_at": "2026-08-05T04:38:30.000Z",
-  "ended_at": "2026-08-05T04:38:30.000Z",
-  "duration_seconds": 88666.0,
-  "retention_until": "2026-11-03T04:38:30.000Z",
+  "updated_at": "2026-08-05T04:40:21.000Z",
+  "ended_at": null,
+  "duration_seconds": null,
+  "retention_until": "2026-09-04T04:40:21.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-19-bipolare-psychosen-episoden",
-    "commit_sha": "84bebc76a9fc856c5cc39f865b88035757617e18",
+    "commit_sha": "cb9a3e7c915de95636dca3ee55830b9c3c6a62d1",
     "pr_number": 49,
     "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/49",
     "workflow_run": {
-      "id": 30975548529,
+      "id": 30975714991,
       "attempt": 1,
-      "job_id": "92208669021",
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975548529",
-      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975548529"
+      "job_id": "92209166884",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975714991",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975714991"
     }
   },
   "metrics": {
     "unit_number": 19,
     "planned_topic": "Bipolare Störungen, Psychosen und andere episodische Veränderungen",
-    "prose_words_before_refresh": 1795,
-    "prose_words_after_refresh_in_workspace": 1952,
-    "literature_sources_before_refresh": 48,
-    "literature_sources_after_refresh_in_workspace": 49,
+    "prose_words": 1952,
+    "literature_sources": 49,
     "research_sources_selected": [
       "NICEBipolar2025",
       "WHO2024",
@@ -58,22 +57,21 @@
     ],
     "unrelated_open_pull_requests": [43, 46],
     "automatic_unit_pull_request_open": true,
-    "review_eligible_at": "2026-08-04T06:36:07.000Z",
-    "repair_eligible_at": "2026-08-04T18:00:00.000Z",
-    "policy_action": "retry_same_phase",
-    "repair_cycle_count_this_watcher": 1,
-    "evidence_refresh_applied_in_workspace": true,
-    "evidence_refresh_committed": false,
+    "policy_action": "repair_existing_branch",
+    "repair_cycle_count_total": 2,
+    "evidence_refresh_committed": true,
     "literature_regeneration": "success",
-    "project_validation_until_web_tests": "success",
-    "web_tests": "not_started_browser_missing",
+    "project_validation": "success",
+    "web_tests": "4_passed",
     "remark_lint": "success",
     "dependency_audit": "success_zero_vulnerabilities",
     "pytest": "159_passed_2_subtests",
+    "coderabbit": "success",
+    "coderabbit_threads_unresolved": 0,
     "coderabbit_disagreement": false,
     "branch_behind_main": 0,
     "mergeable": true,
-    "manual_merge_required": true
+    "manual_merge_required": false
   },
   "artifacts": [
     {
@@ -81,15 +79,6 @@
       "value": "agent/einheit-19-bipolare-psychosen-episoden",
       "path": null,
       "url": null,
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-04T04:51:26.000Z"
-    },
-    {
-      "type": "commit",
-      "value": "3729b388dd0c131e8aa741101ce755bcd2a4caf0",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/3729b388dd0c131e8aa741101ce755bcd2a4caf0",
       "sha256": null,
       "reusable": true,
       "recorded_at": "2026-08-04T04:51:26.000Z"
@@ -105,36 +94,36 @@
     },
     {
       "type": "commit",
-      "value": "84bebc76a9fc856c5cc39f865b88035757617e18",
+      "value": "cb9a3e7c915de95636dca3ee55830b9c3c6a62d1",
       "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/84bebc76a9fc856c5cc39f865b88035757617e18",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/cb9a3e7c915de95636dca3ee55830b9c3c6a62d1",
       "sha256": null,
       "reusable": true,
-      "recorded_at": "2026-08-05T04:34:46.000Z"
+      "recorded_at": "2026-08-05T04:41:08.000Z"
     },
     {
       "type": "workflow_run",
-      "value": "30975548529",
+      "value": "30975714991",
       "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975548529",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975714991",
       "sha256": null,
       "reusable": true,
-      "recorded_at": "2026-08-05T04:38:30.000Z"
+      "recorded_at": "2026-08-05T04:40:21.000Z"
     },
     {
       "type": "diagnostic",
-      "value": "Playwright-Chromium-Browser im einmaligen Finalisierungsworkflow nicht installiert",
+      "value": "Playwright-Browser installiert; Evidenzrefresh und vollständige Validierung erfolgreich wiederholt",
       "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975548529",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975714991",
       "sha256": null,
       "reusable": true,
-      "recorded_at": "2026-08-05T04:38:30.000Z"
+      "recorded_at": "2026-08-05T04:40:21.000Z"
     }
   ],
   "error": {
     "class": "validation",
     "code": "playwright_browser_missing",
-    "message": "Der Evidenzrefresh und alle Prüfungen bis einschließlich MkDocs waren erfolgreich; npm run test:web konnte nicht starten, weil der zum Lockfile passende Playwright-Chromium-Browser im einmaligen Finalisierungsworkflow nicht installiert war.",
+    "message": "Der vorherige Reparaturzyklus konnte die Browsertests nicht starten, weil der gepinnte Playwright-Chromium-Browser fehlte; die Ursache wurde im wiederaufgenommenen Lauf behoben.",
     "phase": "repair",
     "occurred_at": "2026-08-05T04:35:46.000Z",
     "retryable": true,
@@ -142,10 +131,10 @@
   },
   "recovery": {
     "level": "retry_same_phase",
-    "action": "Im nächsten zulässigen Reparaturzyklus vor npm run test:web den gepinnten Playwright-Chromium-Browser installieren, die vollständige Validierung erneut ausführen, den einmaligen Workflow entfernen und den validierten Evidenzcommit auf denselben PR-Branch pushen.",
+    "action": "Playwright-Chromium installieren, Evidenz- und Literaturänderungen vollständig validieren und denselben Pull Request bis zum Merge fortsetzen.",
     "resume_phase": "repair",
     "block_next_run": true,
     "new_content_required": false,
-    "acknowledged": false
+    "acknowledged": true
   }
 }
