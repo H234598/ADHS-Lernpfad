@@ -179,7 +179,7 @@ jobs:
           changelog_path.write_text(changelog, encoding="utf-8")
           PY
 
-      - name: Install pinned dependencies
+      - name: Install pinned dependencies and browser
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -188,6 +188,7 @@ jobs:
           python -m pip check
           npm ci
           npm run audit:dependencies
+          npx playwright install --with-deps chromium
 
       - name: Generate literature and stage intended source of truth
         shell: bash
