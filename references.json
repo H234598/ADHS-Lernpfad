@@ -484,6 +484,44 @@
     "type": "article-journal"
   },
   {
+    "DOI": "10.1097/ADM.0000000000001656",
+    "PMID": "41874961",
+    "URL": "https://doi.org/10.1097/ADM.0000000000001656",
+    "author": [
+      {
+        "family": "Jangra",
+        "given": "Deepika"
+      },
+      {
+        "family": "Tejwani",
+        "given": "Ritika"
+      },
+      {
+        "family": "Ahluwalia",
+        "given": "Yashita"
+      },
+      {
+        "family": "Sarkar",
+        "given": "Siddharth"
+      },
+      {
+        "family": "Balhara",
+        "given": "Yatan Pal Singh"
+      }
+    ],
+    "container-title": "Journal of Addiction Medicine",
+    "id": "Jangra2026",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "title": "Stimulant-induced Psychosis: A Comparative Systematic Review and Meta-analysis of Psychotic Outcomes from Therapeutic and Nontherapeutic Use of Stimulants",
+    "type": "article-journal"
+  },
+  {
     "author": [
       {
         "family": "Kofler",

@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-08-04
+last_reviewed: 2026-08-05
 ---
 
 # Literatur
@@ -124,6 +124,14 @@ Hoskins, Jessica I., Gooch, Debbie, & Gilligan-Lee, Katie A. (2026). Symptoms of
 - DOI: [https://doi.org/10.1177/10870547261459712](https://doi.org/10.1177/10870547261459712)
 - PubMed: [PMID 42400277](https://pubmed.ncbi.nlm.nih.gov/42400277/)
 - Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
+
+## Jangra2026
+
+Jangra, Deepika, Tejwani, Ritika, Ahluwalia, Yashita, Sarkar, Siddharth, & Balhara, Yatan Pal Singh (2026). Stimulant-induced Psychosis: A Comparative Systematic Review and Meta-analysis of Psychotic Outcomes from Therapeutic and Nontherapeutic Use of Stimulants. *Journal of Addiction Medicine*.
+
+- DOI: [https://doi.org/10.1097/ADM.0000000000001656](https://doi.org/10.1097/ADM.0000000000001656)
+- PubMed: [PMID 41874961](https://pubmed.ncbi.nlm.nih.gov/41874961/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## Kofler2020
 

@@ -11,10 +11,10 @@ prerequisites:
   - 01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet
   - 02-Vertiefung/01-Pharmakologie-und-Psychotherapie
 tags: [ADHS, bipolare Störung, Manie, Hypomanie, Psychose, Differentialdiagnostik, Komorbidität, Behandlungssicherheit]
-last_reviewed: 2026-08-04
+last_reviewed: 2026-08-05
 evidence: high
 status: consensus
-references: [Faraone2021, AADPA2022, WHO2024, NICEBipolar2025, Schiweck2021, Miskowiak2024, SalazarDePablo2025]
+references: [Faraone2021, AADPA2022, WHO2024, NICEBipolar2025, Schiweck2021, Miskowiak2024, SalazarDePablo2025, Jangra2026]
 minimum_reading_minutes: 10
 maximum_reading_minutes: 20
 ---
@@ -29,7 +29,7 @@ Du kannst ein entwicklungsbezogenes ADHS-Muster von manischen, hypomanischen und
 
 ADHS ist eine heterogene Neuroentwicklungsstörung. Diagnostisch wird ein seit der Entwicklung bestehendes, in mehreren Lebensbereichen relevantes Muster von Unaufmerksamkeit und/oder Hyperaktivität-Impulsivität geprüft. Die sichtbare Stärke kann mit Anforderungen, Schlaf, Stress, Interesse, Unterstützung und Behandlung schwanken. Das Grundmuster ist jedoch nicht dadurch definiert, dass es nur für einige Tage als klar abgrenzbare Episode auftritt.
 
-Bipolare Störungen verlaufen dagegen typischerweise mit **Episoden**, in denen Stimmung, Energie und Aktivität gegenüber dem üblichen Zustand deutlich verändert sind. Bei einer Manie kann die Stimmung ungewöhnlich gehoben, expansiv oder stark reizbar sein. Häufig kommen mehrere weitere Veränderungen hinzu, etwa deutlich gesteigerter Antrieb, vermindertes Schlafbedürfnis, beschleunigtes Denken oder Sprechen, überhöhtes Selbstvertrauen, stärkere Ablenkbarkeit und riskantes oder enthemmtes Verhalten. Eine Hypomanie umfasst ein ähnliches, aber weniger schweres Muster; psychotische Symptome sprechen nicht für eine bloße Hypomanie.
+Bipolare Störungen verlaufen dagegen typischerweise mit **Episoden**, in denen Stimmung, Energie und Aktivität gegenüber dem üblichen Zustand deutlich verändert sind. Bei einer Manie kann die Stimmung ungewöhnlich gehoben, expansiv oder stark reizbar sein. Häufig kommen mehrere weitere Veränderungen hinzu, etwa deutlich gesteigerter Antrieb, vermindertes Schlafbedürfnis, beschleunigtes Denken oder Sprechen, überhöhtes Selbstvertrauen, stärkere Ablenkbarkeit und riskantes oder enthemmtes Verhalten. Eine Hypomanie umfasst ein ähnliches, aber weniger schweres Muster; psychotische Symptome schließen eine Hypomanie als Episodenklassifikation aus. Dann müssen unter anderem eine manische Episode sowie andere psychotische, substanz- oder medikamentenbezogene Ursachen geprüft werden.
 
 > [!evidence] Evidenz: diagnostischer und leitlinienbasierter Konsens / hoch
 > ADHS und bipolare Störungen sind unterscheidbare Erkrankungen und können gleichzeitig vorliegen. Für die Abgrenzung sind Entwicklungsgeschichte, Episodencharakter, deutliche Veränderung vom Ausgangsniveau, Dauer, Funktionsfolgen und Begleitsymptome wichtiger als einzelne überlappende Merkmale.
@@ -105,6 +105,8 @@ ADHS-Medikamente können sehr wirksam sein, benötigen aber wie jede Pharmakothe
 
 Eine 2025 veröffentlichte systematische Übersicht und Meta-Analyse schloss 16 Studien mit 391.043 stimulantienbehandelten Menschen mit ADHS ein. Psychotische Symptome, psychotische Störungen und bipolare Diagnosen wurden in einem kleinen, aber klinisch relevanten Anteil dokumentiert; die Schätzungen schwankten mit einer Heterogenität von über 95 Prozent. In drei Vergleichsstudien war die dokumentierte Psychosehäufigkeit unter Amphetaminen höher als unter Methylphenidat. Die eingeschlossenen Designs können jedoch **keine Kausalität beweisen**: Ausgangsrisiko, Indikation, Dosis, Nachbeobachtung, Komorbiditäten und diagnostische Erfassung unterschieden sich.
 
+Eine im März 2026 veröffentlichte systematische Übersicht und Meta-Analyse von Jangra und Kolleg:innen verglich 77 Studien mit insgesamt 687.912 Personen; nur neun Studien betrafen therapeutische Anwendung, 68 dagegen nichtmedizinischen Konsum. Für therapeutische Exposition wurde eine gepoolte Psychoseinzidenz von 0,6 Prozent (95-Prozent-Konfidenzintervall 0,3 bis 0,9) und eine Prävalenz von 0,2 Prozent berichtet, während die gepoolte Prävalenz in den überwiegend hoch dosierten, häufig methamphetaminbezogenen nichtmedizinischen Kontexten 32,8 Prozent betrug. **Inzidenz und Prävalenz sind unterschiedliche Maße**, und die beiden Expositionsgruppen waren weder hinsichtlich Dosis, Applikationsweg, Substanz noch Ausgangsrisiko direkt vergleichbar. Die Zahlen dürfen deshalb weder als kausaler Wirkstoffvergleich noch als persönliche Risikoprognose gelesen werden. Der Review stärkt vor allem die bereits wichtige Trennung zwischen ärztlich überwachter Behandlung, Fehlgebrauch und illegalem Stimulanzienkonsum.
+
 Drei Regeln sind deshalb wissenschaftlich und praktisch sauber:
 
 1. Ein Gruppenbefund bedeutet nicht, dass ein verordnetes Medikament bei einer bestimmten Person eine Episode verursachen wird.
@@ -164,6 +166,7 @@ Weil diese Merkmale unspezifisch sind. Für eine manische oder hypomanische Epis
 - [[references/Schiweck2021|Schiweck et al. 2021]] – systematische Übersicht und Meta-Analyse zur Koexistenz von ADHS und bipolarer Störung bei Erwachsenen.
 - [[references/Miskowiak2024|Miskowiak et al. 2024]] – systematischer Review zu Wirksamkeit und Sicherheit ADHS-bezogener Arzneimittel bei bipolarer Störung.
 - [[references/SalazarDePablo2025|Salazar de Pablo et al. 2025]] – systematische Übersicht und Meta-Analyse zu dokumentierten psychotischen und bipolaren Ereignissen unter Stimulanzien bei ADHS.
+- [[references/Jangra2026|Jangra et al. 2026]] – systematische Übersicht und Meta-Analyse, die therapeutische und nichtmedizinische Stimulanzienexposition ausdrücklich getrennt einordnet.
 
 ## Merksatz
 
