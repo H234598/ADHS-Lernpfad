@@ -2,10 +2,10 @@
   "schema_version": "3.0.0",
   "run_id": "e03ff067-c37c-4129-acd1-444245a55ef5",
   "workflow": "generator",
-  "revision": 7,
-  "previous_status": "recovering",
-  "status": "recovered",
-  "phase": "cleanup",
+  "revision": 8,
+  "previous_status": "recovered",
+  "status": "success",
+  "phase": "complete",
   "completed_phases": [
     "initialize",
     "load_main",
@@ -25,13 +25,14 @@
     "ready_for_review",
     "verify_second_ci",
     "merge",
-    "cleanup"
+    "cleanup",
+    "complete"
   ],
   "created_at": "2026-08-04T04:00:44.000Z",
-  "updated_at": "2026-08-05T04:53:20.000Z",
-  "ended_at": "2026-08-05T04:53:20.000Z",
-  "duration_seconds": 89556.0,
-  "retention_until": "2026-09-04T04:53:20.000Z",
+  "updated_at": "2026-08-05T04:53:30.000Z",
+  "ended_at": "2026-08-05T04:53:30.000Z",
+  "duration_seconds": 89566.0,
+  "retention_until": "2026-09-04T04:53:30.000Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-19-bipolare-psychosen-episoden",
@@ -79,7 +80,8 @@
     "coderabbit_disagreement": false,
     "branch_behind_main": 0,
     "merged": true,
-    "merge_commit": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a"
+    "merge_commit": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
+    "version": "0.21.0"
   },
   "artifacts": [
     {
@@ -137,21 +139,6 @@
       "recorded_at": "2026-08-05T04:53:12.000Z"
     }
   ],
-  "error": {
-    "class": "validation",
-    "code": "playwright_browser_missing",
-    "message": "Der vorherige Reparaturzyklus konnte die Browsertests nicht starten, weil der gepinnte Playwright-Chromium-Browser fehlte; die Ursache wurde im wiederaufgenommenen Lauf vollständig behoben.",
-    "phase": "repair",
-    "occurred_at": "2026-08-05T04:35:46.000Z",
-    "retryable": true,
-    "redacted": false
-  },
-  "recovery": {
-    "level": "retry_same_phase",
-    "action": "Die fehlende Browserinstallation wurde ergänzt; Evidenzrefresh, vollständige Validierung, Ready-Übergang, zweite CI und Merge wurden erfolgreich abgeschlossen.",
-    "resume_phase": "repair",
-    "block_next_run": false,
-    "new_content_required": false,
-    "acknowledged": true
-  }
+  "error": null,
+  "recovery": null
 }
