@@ -41,6 +41,30 @@ Die Workflows verwenden aktuelle GitHub-Actions-Majors mit Node-24-Runtime. Depe
 - der PDF-Export verwendet Pandoc, CiteProc und LuaLaTeX mit freien DejaVu-Schriften;
 - Pages-Deployments werden nicht während einer laufenden Veröffentlichung abgebrochen.
 
+## Variante B für schreibende Workflows
+
+`scripts/validate_ci_mutation_safety.py` ist ein blockierender, nur mit der
+Python-Standardbibliothek arbeitender Vertragscheck. Er verändert keine
+Berechtigungen und macht keinen read-only Workflow schreibend. Jeder einzelne
+Workflow-Schritt mit `git commit` oder `git push` muss vollständig enthalten:
+
+- einen No-op-Guard mit `git diff --cached --quiet` oder
+  `git diff --staged --quiet`;
+- `git status --short` beziehungsweise `--porcelain` sowie einen staged
+  `--name-status`- oder `--stat`-Diff vor dem Commit;
+- bei fragmentierten Payloads explizite Ist-/Soll-SHA-256-Ausgaben,
+  Fragmentgrößen und Fragmentprüfsummen sowie eine bestmögliche
+  `tar -tzf`-Diagnose im Fehlerfall;
+- einen tatsächlichen Ist-/Soll-Prüfsummenvergleich, der bei Abweichung mit
+  einem von null verschiedenen Exitcode endet;
+- weiterhin blockierende Audits: weder ein- noch mehrzeilige Shell-Bypässe wie
+  `|| true` noch `continue-on-error: true` sind für Audit-Schritte zulässig.
+
+Die Regeln sind durch synthetische Negativ- und Positivtests einschließlich
+eines Zwei-Writer-Angriffs abgesichert. Der bestehende Persistenzworkflow erfüllt
+denselben Vertrag und beendet einen idempotenten Lauf ohne Commit oder Push
+erfolgreich.
+
 ## Laufstatus und Graphdiagnose
 
 Die Workflows setzen `RUNTIME_STATUS_MANAGED=1`, starten genau einen Lauf und lassen die einzelnen Generatoren dessen Phase fortschreiben. Der kanonische Status liegt während des Builds in `build/runtime-status.json`. `scripts/graph_ci_summary.py` validiert ihn erneut, bevor es `build/graph-ci-summary.md` und die GitHub-Actions-Zusammenfassung erzeugt. Der vertrauenswürdige `workflow_run`-Persistenzworkflow veröffentlicht den PR-Kommentar mit den Markern `<!-- adhs-graph-ci-summary -->` und `<!-- adhs-automation-recovery-status -->`.
