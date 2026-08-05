@@ -1,0 +1,244 @@
+name: Finalize unit 19 evidence refresh
+
+on:
+  push:
+    branches:
+      - agent/einheit-19-bipolare-psychosen-episoden
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalize-unit19-evidence-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout fixed unit branch without persisted credentials
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-19-bipolare-psychosen-episoden
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Apply verified evidence update
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          unit_path = Path("02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md")
+          unit = unit_path.read_text(encoding="utf-8")
+
+          replacements = {
+              "last_reviewed: 2026-08-04": "last_reviewed: 2026-08-05",
+              "references: [Faraone2021, AADPA2022, WHO2024, NICEBipolar2025, Schiweck2021, Miskowiak2024, SalazarDePablo2025]":
+                  "references: [Faraone2021, AADPA2022, WHO2024, NICEBipolar2025, Schiweck2021, Miskowiak2024, SalazarDePablo2025, Jangra2026]",
+              "Eine Hypomanie umfasst ein ähnliches, aber weniger schweres Muster; psychotische Symptome sprechen nicht für eine bloße Hypomanie.":
+                  "Eine Hypomanie umfasst ein ähnliches, aber weniger schweres Muster; psychotische Symptome schließen eine Hypomanie als Episodenklassifikation aus. Dann müssen unter anderem eine manische Episode sowie andere psychotische, substanz- oder medikamentenbezogene Ursachen geprüft werden.",
+          }
+          for old, new in replacements.items():
+              count = unit.count(old)
+              if count != 1:
+                  raise SystemExit(f"Erwartete Textstelle nicht eindeutig gefunden ({count}): {old[:80]}")
+              unit = unit.replace(old, new, 1)
+
+          anchor = (
+              "Die eingeschlossenen Designs können jedoch **keine Kausalität beweisen**: "
+              "Ausgangsrisiko, Indikation, Dosis, Nachbeobachtung, Komorbiditäten und "
+              "diagnostische Erfassung unterschieden sich.\n"
+          )
+          addition = (
+              "\nEine im März 2026 veröffentlichte systematische Übersicht und Meta-Analyse "
+              "von Jangra und Kolleg:innen verglich 77 Studien mit insgesamt 687.912 "
+              "Personen; nur neun Studien betrafen therapeutische Anwendung, 68 dagegen "
+              "nichtmedizinischen Konsum. Für therapeutische Exposition wurde eine gepoolte "
+              "Psychoseinzidenz von 0,6 Prozent (95-Prozent-Konfidenzintervall 0,3 bis 0,9) "
+              "und eine Prävalenz von 0,2 Prozent berichtet, während die gepoolte Prävalenz "
+              "in den überwiegend hoch dosierten, häufig methamphetaminbezogenen "
+              "nichtmedizinischen Kontexten 32,8 Prozent betrug. **Inzidenz und Prävalenz "
+              "sind unterschiedliche Maße**, und die beiden Expositionsgruppen waren weder "
+              "hinsichtlich Dosis, Applikationsweg, Substanz noch Ausgangsrisiko direkt "
+              "vergleichbar. Die Zahlen dürfen deshalb weder als kausaler Wirkstoffvergleich "
+              "noch als persönliche Risikoprognose gelesen werden. Der Review stärkt vor "
+              "allem die bereits wichtige Trennung zwischen ärztlich überwachter Behandlung, "
+              "Fehlgebrauch und illegalem Stimulanzienkonsum.\n"
+          )
+          if unit.count(anchor) != 1:
+              raise SystemExit("Einfügeanker für Jangra2026 nicht eindeutig gefunden")
+          unit = unit.replace(anchor, anchor + addition, 1)
+
+          source_anchor = (
+              "- [[references/SalazarDePablo2025|Salazar de Pablo et al. 2025]] – "
+              "systematische Übersicht und Meta-Analyse zu dokumentierten psychotischen "
+              "und bipolaren Ereignissen unter Stimulanzien bei ADHS.\n"
+          )
+          source_addition = (
+              "- [[references/Jangra2026|Jangra et al. 2026]] – systematische Übersicht "
+              "und Meta-Analyse, die therapeutische und nichtmedizinische "
+              "Stimulanzienexposition ausdrücklich getrennt einordnet.\n"
+          )
+          if unit.count(source_anchor) != 1:
+              raise SystemExit("Quellenanker für Jangra2026 nicht eindeutig gefunden")
+          unit = unit.replace(source_anchor, source_anchor + source_addition, 1)
+          unit_path.write_text(unit, encoding="utf-8")
+
+          card = '''---
+          reference_id: Jangra2026
+          title: Jangra et al. 2026
+          evidence_type: systematic-review-and-meta-analysis
+          evidence_grade: moderate
+          status: probable
+          doi: "10.1097/ADM.0000000000001656"
+          pmid: "41874961"
+          last_checked: 2026-08-05
+          tags: [Literatur, ADHS, Stimulanzien, Psychose, Substanzgebrauch, Pharmakovigilanz, Meta-Analyse]
+          citation:
+            entry_type: article
+            csl_type: article-journal
+            authors:
+              - "Jangra, Deepika"
+              - "Tejwani, Ritika"
+              - "Ahluwalia, Yashita"
+              - "Sarkar, Siddharth"
+              - "Balhara, Yatan Pal Singh"
+            et_al: false
+            year: 2026
+            article_title: "Stimulant-induced Psychosis: A Comparative Systematic Review and Meta-analysis of Psychotic Outcomes from Therapeutic and Nontherapeutic Use of Stimulants"
+            journal: Journal of Addiction Medicine
+          ---
+
+          # Jangra et al. 2026
+
+          ## Vollständige Zitation
+
+          Jangra, Deepika, Tejwani, Ritika, Ahluwalia, Yashita, Sarkar, Siddharth, Balhara, Yatan Pal Singh (2026). Stimulant-induced Psychosis: A Comparative Systematic Review and Meta-analysis of Psychotic Outcomes from Therapeutic and Nontherapeutic Use of Stimulants. *Journal of Addiction Medicine*.
+
+          ## Evidenztyp und Design
+
+          Systematische Übersicht und Meta-Analyse von 77 Studien mit insgesamt 687.912 Personen. Neun Studien untersuchten therapeutische Stimulanzienexposition, 68 nichtmedizinischen Konsum. Die Arbeit berichtete Inzidenz- und Prävalenzschätzungen getrennt nach Expositionskontext.
+
+          ## Population
+
+          Die therapeutischen Studien umfassten ärztlich behandelte Populationen; die nichtmedizinischen Studien betrafen überwiegend hoch dosierte, häufig methamphetaminbezogene Expositionen mit unterschiedlichen Konsummustern und Applikationswegen. Populationen, Substanzen, Dosen und Ausgangsrisiken waren nicht direkt vergleichbar.
+
+          ## Kernaussage
+
+          Für therapeutische Stimulanzienexposition wurde eine gepoolte Psychoseinzidenz von 0,6 Prozent (95-Prozent-Konfidenzintervall 0,3 bis 0,9) und eine Prävalenz von 0,2 Prozent berichtet. In nichtmedizinischen Kontexten lag die gepoolte Prävalenz bei 32,8 Prozent. Die große Differenz unterstreicht, dass verordnete Behandlung, Fehlgebrauch und illegaler Konsum wissenschaftlich nicht als dieselbe Exposition behandelt werden dürfen.
+
+          ## Einschränkungen
+
+          Inzidenz und Prävalenz sind unterschiedliche epidemiologische Maße. Die eingeschlossenen Studien waren hinsichtlich Design, Definition psychotischer Ereignisse, Substanz, Dosis, Applikationsweg, Beobachtungszeit und Ausgangsrisiko heterogen. Die gepoolten Werte erlauben weder einen kausalen Direktvergleich der Expositionsgruppen noch eine individuelle Risikoprognose. Nichtmedizinische Daten dürfen nicht auf therapeutische orale Dosierungen übertragen werden.
+
+          ## Verhältnis zum bisherigen Konsens
+
+          Präzisiert den bisherigen Sicherheitskonsens und ergänzt Salazar de Pablo et al. 2025: Psychotische Ereignisse bleiben ein relevantes Monitoringthema, zugleich muss die ärztlich überwachte therapeutische Anwendung strikt von hoch dosiertem Fehlgebrauch und illegalem Konsum getrennt werden.
+
+          ## Links
+
+          - [DOI](https://doi.org/10.1097/ADM.0000000000001656)
+          - [PubMed](https://pubmed.ncbi.nlm.nih.gov/41874961/)
+          '''
+          import textwrap
+          Path("references/Jangra2026.md").write_text(textwrap.dedent(card), encoding="utf-8")
+
+          changelog_path = Path("CHANGELOG.md")
+          changelog = changelog_path.read_text(encoding="utf-8")
+          changelog_anchor = (
+              "- aktuelle NICE-Leitlinie, ICD-11-Diagnosemanual, Komorbiditäts-Meta-Analyse "
+              "und systematische Evidenz zu Behandlung und Psychoserisiken ergänzt\n"
+          )
+          changelog_addition = (
+              "- Evidenz am 5. August 2026 mit Jangra et al. 2026 aktualisiert und "
+              "therapeutische von nichtmedizinischer Stimulanzienexposition noch klarer getrennt\n"
+          )
+          if changelog.count(changelog_anchor) != 1:
+              raise SystemExit("CHANGELOG-Anker nicht eindeutig gefunden")
+          changelog = changelog.replace(
+              changelog_anchor,
+              changelog_anchor + changelog_addition,
+              1,
+          )
+          changelog_path.write_text(changelog, encoding="utf-8")
+          PY
+
+      - name: Install pinned dependencies
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python -m pip install --disable-pip-version-check \
+            -r requirements-docs.txt -r requirements-export.txt
+          python -m pip check
+          npm ci
+          npm run audit:dependencies
+
+      - name: Generate literature and stage intended source of truth
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python scripts/build_literature.py
+          git add -- \
+            02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md \
+            CHANGELOG.md \
+            references/Jangra2026.md \
+            Literatur.md references.bib references.json
+          python scripts/build_literature.py
+          git diff --exit-code -- Literatur.md references.bib references.json
+
+      - name: Run reproducible validation pipeline
+        shell: bash
+        env:
+          REMARK_BASE_SHA: origin/main
+          REMARK_HEAD_SHA: HEAD
+        run: |
+          set -Eeuo pipefail
+          npm run lint:markdown:changed
+          python -m compileall -q scripts tests
+          python scripts/validate_prompt_baselines.py
+          python -m pytest -q
+          npm test
+          python scripts/validate_links.py
+          python scripts/build_graph.py
+          python scripts/validate_graph.py
+          python scripts/validate_compendium.py
+          python scripts/build_combined.py
+          python scripts/build_anki.py
+          python scripts/build_docs.py
+          mkdocs build --strict
+          npm run test:web
+
+      - name: Commit validated refresh and remove one-time workflow
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm .github/workflows/finalize-unit19-evidence-refresh.yml
+          git add -u -- .github/workflows/finalize-unit19-evidence-refresh.yml
+          git diff --cached --check
+          git status --short
+          git diff --cached --stat
+          if git diff --cached --quiet; then
+            echo 'Keine validierte Änderung zu committen.' >&2
+            exit 1
+          fi
+          git commit -m 'fix: aktualisiere Evidenz für Einheit 19'
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin HEAD:agent/einheit-19-bipolare-psychosen-episoden
