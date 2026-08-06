@@ -163,6 +163,11 @@ def run_build(
                 root / "build" / "knowledge-graph" / "graph-report.md",
             )
             update_status(target, metrics=metrics, artifacts=_artifacts(root))
+            for error in validation.errors:
+                print(
+                    "GRAPH_ERROR " + json.dumps(error, ensure_ascii=False, sort_keys=True),
+                    file=sys.stderr,
+                )
             first = validation.errors[0]
             schema_failure = any(
                 error.get("code") in {"schema-error", "missing-schema", "invalid-schema-file"}
