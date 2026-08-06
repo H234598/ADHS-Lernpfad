@@ -2,10 +2,10 @@
   "schema_version": "3.0.0",
   "run_id": "e55d7dcb-2e86-4b6a-822e-b67262473bcb",
   "workflow": "generator",
-  "revision": 2,
+  "revision": 4,
   "previous_status": "running",
   "status": "running",
-  "phase": "create_branch",
+  "phase": "verify_pr",
   "completed_phases": [
     "initialize",
     "load_main",
@@ -13,30 +13,39 @@
     "check_existing_pr",
     "read_prompts",
     "research",
-    "create_branch"
+    "create_branch",
+    "create_content",
+    "generate_outputs",
+    "validate",
+    "commit",
+    "push",
+    "create_pr"
   ],
   "created_at": "2026-08-06T04:03:53Z",
-  "updated_at": "2026-08-06T04:18:42Z",
+  "updated_at": "2026-08-06T05:04:00Z",
   "ended_at": null,
   "duration_seconds": null,
   "retention_until": "2026-09-05T04:03:53Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-20-substanzgebrauch-abhaengigkeit",
-    "commit_sha": "229e7fa217ce5f5d4869ab67e33e0b9a4ae7bdb4",
-    "pr_number": null,
-    "pr_url": null,
-    "workflow_run": null
+    "commit_sha": "0194a461d0120b350096e7a5dc1b81e2e0a51a9e",
+    "pr_number": 50,
+    "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/50",
+    "workflow_run": {
+      "id": 31072527486,
+      "attempt": 1,
+      "job_id": "92523339136",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072527486",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072527486"
+    }
   },
   "metrics": {
     "unit_number": 20,
     "planned_topic": "Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung",
     "base_commit": "229e7fa217ce5f5d4869ab67e33e0b9a4ae7bdb4",
-    "unrelated_open_pull_requests": [
-      46
-    ],
-    "automatic_unit_pull_request_open": false,
-    "policy_action": "generate",
+    "prose_words": 1931,
+    "literature_sources": 53,
     "research_sources_selected": [
       "Comiskey2026",
       "Shanbhag2026",
@@ -46,7 +55,34 @@
       "Jangra2026"
     ],
     "research_consensus": "ADHS und Substanzgebrauchsstörungen getrennt diagnostizieren und koordiniert versorgen; therapeutische, fehlgebrauchte und nichtmedizinische Expositionen trennen",
-    "new_content_required": true
+    "unrelated_open_pull_requests": [46],
+    "automatic_unit_pull_request_open": true,
+    "policy_action": "wait_first_ci_and_review_window",
+    "new_content_required": false,
+    "draft_pull_request": 50,
+    "final_diff_files": 17,
+    "sensitive_paths_in_final_diff": false,
+    "manual_merge_required": false,
+    "finalization_workflow_run": 31072297971,
+    "finalization_workflow": "success_removed",
+    "literature_regeneration": "success_deterministic_53_sources",
+    "dependency_audit": "success_zero_vulnerabilities",
+    "pytest": "159_passed_2_subtests",
+    "web_tests": "4_passed",
+    "remark_lint_full": "success_104_files",
+    "knowledge_graph": "250_nodes_892_edges_0_errors_0_warnings",
+    "compendium_validation": "20_chapters_53_sources_0_warnings_0_errors",
+    "validate_and_build": "success",
+    "download_formats": "success",
+    "remark_lint_first": "success",
+    "codacy": "pending",
+    "qlty": "success",
+    "coderabbit": "pending",
+    "coderabbit_threads_unresolved": 0,
+    "coderabbit_disagreement": false,
+    "review_window_earliest": "2026-08-06T18:00:00Z",
+    "next_generator_blocked": true,
+    "version": "0.22.0"
   },
   "artifacts": [
     {
@@ -57,6 +93,42 @@
       "sha256": null,
       "reusable": true,
       "recorded_at": "2026-08-06T04:18:42Z"
+    },
+    {
+      "type": "pull_request",
+      "value": "#50",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/pull/50",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T04:31:15Z"
+    },
+    {
+      "type": "workflow_run",
+      "value": "31072297971",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072297971",
+      "sha256": "37b1993f64332c15e2335bdb51c117b7b9a011f2a030504319e7d59a8f32d254",
+      "reusable": true,
+      "recorded_at": "2026-08-06T04:50:59Z"
+    },
+    {
+      "type": "commit",
+      "value": "0194a461d0120b350096e7a5dc1b81e2e0a51a9e",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/0194a461d0120b350096e7a5dc1b81e2e0a51a9e",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T04:54:21Z"
+    },
+    {
+      "type": "workflow_run",
+      "value": "31072527486",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072527486",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T05:03:00Z"
     }
   ],
   "error": null,
