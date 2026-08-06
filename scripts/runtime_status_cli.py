@@ -97,8 +97,18 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _normalize_transient_workflow_alias(argv: list[str]) -> list[str]:
+    """Map the one-time unit finalizer to the schema-backed manual workflow."""
+    normalized = list(argv)
+    for index, value in enumerate(normalized[:-1]):
+        if value == "--workflow" and normalized[index + 1] == "finalize-unit20":
+            normalized[index + 1] = "manual"
+    return normalized
+
+
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    raw_argv = list(sys.argv[1:] if argv is None else argv)
+    args = build_parser().parse_args(_normalize_transient_workflow_alias(raw_argv))
     metrics = _metrics(args)
     artifacts = args.artifact or None
     if args.restore_from is not None:
