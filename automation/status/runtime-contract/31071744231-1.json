@@ -1,0 +1,36 @@
+{
+  "artifacts": [],
+  "completed_phases": [
+    "validate_graph",
+    "complete"
+  ],
+  "context": {
+    "branch": "agent/einheit-20-substanzgebrauch-abhaengigkeit",
+    "commit_sha": "b20bbef39d2ece4402d6a789de22bf3e59226831",
+    "pr_number": null,
+    "pr_url": null,
+    "repository": "H234598/ADHS-Lernpfad",
+    "workflow_run": {
+      "attempt": 1,
+      "id": 31071744231,
+      "job_id": "validate-runtime-status",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31071744231",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31071744231"
+    }
+  },
+  "created_at": "2026-08-06T04:37:06.655Z",
+  "duration_seconds": 0.102,
+  "ended_at": "2026-08-06T04:37:06.757Z",
+  "error": null,
+  "metrics": {},
+  "phase": "complete",
+  "previous_status": "running",
+  "recovery": null,
+  "retention_until": "2026-09-05T04:37:06.757Z",
+  "revision": 3,
+  "run_id": "31071744231-1",
+  "schema_version": "3.0.0",
+  "status": "success",
+  "updated_at": "2026-08-06T04:37:06.757Z",
+  "workflow": "runtime-contract"
+}
