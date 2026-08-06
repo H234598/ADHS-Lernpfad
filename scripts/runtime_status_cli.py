@@ -97,28 +97,8 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _normalize_transient_workflow_alias(argv: list[str]) -> list[str]:
-    """Map the one-time unit finalizer to the schema-backed manual workflow."""
-    normalized = list(argv)
-    transient = False
-    for index, value in enumerate(normalized[:-1]):
-        if value == "--workflow" and normalized[index + 1] == "finalize-unit20":
-            normalized[index + 1] = "manual"
-            transient = True
-    if transient:
-        placeholder = Path(".github/workflows/finalize-unit20.yml")
-        if not placeholder.exists():
-            placeholder.parent.mkdir(parents=True, exist_ok=True)
-            placeholder.write_text(
-                "# transient placeholder removed before the validated commit\n",
-                encoding="utf-8",
-            )
-    return normalized
-
-
 def main(argv: list[str] | None = None) -> int:
-    raw_argv = list(sys.argv[1:] if argv is None else argv)
-    args = build_parser().parse_args(_normalize_transient_workflow_alias(raw_argv))
+    args = build_parser().parse_args(argv)
     metrics = _metrics(args)
     artifacts = args.artifact or None
     if args.restore_from is not None:

@@ -1,95 +1,105 @@
 ---
-title: "Arbeitsgedächtnis: Informationen kurz halten und aktiv bearbeiten"
+title: Arbeitsgedächtnis
 level: Grundlagen
 estimated_time: 10–20 min
 difficulty: 2
-prerequisites:
-  - 01-Grundlagen/01-Was-ist-ADHS
-  - 01-Grundlagen/02-Inhibition-und-Handlungssteuerung
-tags: [ADHS, Arbeitsgedächtnis, Exekutive Funktionen, Alltag]
-last_reviewed: 2026-07-19
-evidence: high
-status: consensus
-references: [Kofler2020, Kofler2024, Faraone2021]
+prerequisites: [Inhibition und Handlungssteuerung]
+tags: [ADHS, Arbeitsgedächtnis, Exekutive-Funktionen]
+last_reviewed: 2026-07-13
+evidence: moderate
+status: probable
+references: [Kofler2020]
 minimum_reading_minutes: 10
 maximum_reading_minutes: 20
 ---
 
-# Einheit 4 – Arbeitsgedächtnis: Informationen kurz halten und aktiv bearbeiten
+# Einheit 4 – Arbeitsgedächtnis
 
 ## Lernziel
 
-Du kannst erklären, was das Arbeitsgedächtnis leistet, wie es sich von Langzeitgedächtnis und Aufmerksamkeit unterscheidet und warum eine begrenzte Arbeitsgedächtniskapazität bei ADHS viele scheinbar widersprüchliche Alltagssituationen verständlich macht. Außerdem kannst du Arbeitsgedächtnisprobleme von mangelndem Wissen oder fehlender Motivation abgrenzen und konkrete Entlastungsstrategien auswählen.
+Du kannst Kurzzeit- und Arbeitsgedächtnis unterscheiden und nachvollziehen, warum Unterbrechungen bei ADHS besonders teuer sein können. Du lernst außerdem, wie externe Zustandsinformationen den Wiedereinstieg erleichtern.
 
-## 1. Arbeitsgedächtnis ist ein mentaler Arbeitsplatz
+## 1. Kurzzeitgedächtnis und Arbeitsgedächtnis
 
-Das Arbeitsgedächtnis hält Informationen für kurze Zeit verfügbar und bearbeitet sie gleichzeitig. Es wird benötigt, wenn du eine Telefonnummer bis zum Eintippen behältst, eine mehrteilige Anweisung ausführst, beim Lesen den Anfang eines Satzes mit seinem Ende verbindest oder während eines Gesprächs eine Antwort vorbereitest, ohne den Gesprächsfaden zu verlieren.
+Das Kurzzeitgedächtnis hält Information für kurze Zeit verfügbar. Das Arbeitsgedächtnis hält Information aktiv **und bearbeitet sie gleichzeitig**.
 
-Es ist kein einzelner Speicherbehälter. Modelle unterscheiden verschiedene Teilprozesse, unter anderem sprachlich-akustische und visuell-räumliche Speicherung sowie eine übergeordnete Steuerung. Diese Modelle sind Vereinfachungen, helfen aber, unterschiedliche Fehlermuster zu verstehen.
+Beispiel Kurzzeitgedächtnis:
 
-> [!evidence] Evidenz: Meta-Analysen / hoch
-> Gruppen mit ADHS zeigen im Durchschnitt deutliche Arbeitsgedächtnisbeeinträchtigungen. Die Stärke variiert zwischen Personen, Aufgaben und Modalitäten. Arbeitsgedächtnis ist ein wichtiger, aber nicht alleiniger Mechanismus der ADHS.
+> „Der Code lautet 824917.“
 
-## 2. Drei Systeme, die leicht verwechselt werden
+Beispiel Arbeitsgedächtnis:
 
-| System | Leitfrage | Beispiel |
-|---|---|---|
-| Aufmerksamkeit | Was wird ausgewählt und weiterverarbeitet? | Einer Stimme im Raum folgen |
-| Arbeitsgedächtnis | Was bleibt gerade verfügbar und wird verändert? | Drei Schritte einer Anweisung im Kopf behalten |
-| Langzeitgedächtnis | Was wurde dauerhaft gespeichert und kann später abgerufen werden? | Wissen, wie eine Kaffeemaschine funktioniert |
+> „Merke 47, ziehe 9 ab und verwende das Ergebnis im nächsten Schritt.“
 
-Eine Person kann etwas im Langzeitgedächtnis wissen und es trotzdem im entscheidenden Moment nicht in den mentalen Arbeitsraum holen. Sie kann eine Aufgabe verstanden haben und dennoch Schritt zwei verlieren, sobald eine Unterbrechung auftritt. Das ist kein Widerspruch.
+Im Alltag hält das Arbeitsgedächtnis das aktuelle Ziel, den nächsten Handlungsschritt, Zwischenergebnisse, relevante Regeln und Information darüber, was gerade ignoriert werden soll.
 
-## 3. Kapazität ist nicht nur eine feste Zahl
+> [!evidence] Evidenz: gut gestützter Gruppenbefund
+> Arbeitsgedächtnisschwächen werden bei ADHS häufig gefunden. Sie sind jedoch heterogen, nicht bei jeder Person vorhanden und nicht diagnostisch spezifisch.
 
-Arbeitsgedächtnis wird häufig mit einer begrenzten Anzahl gleichzeitig aktiver Informationseinheiten beschrieben. Eine universelle persönliche Zahl ist jedoch zu grob. Leistung hängt unter anderem ab von:
+## 2. Der geistige Schreibtisch
 
-- Bedeutung und Vertrautheit der Informationen;
-- Gruppierung in größere Einheiten;
-- Dauer und Art der Ablenkung;
-- emotionaler Belastung und Stress;
-- Schlaf, körperlichem Zustand und Substanzen;
-- Möglichkeit, Informationen zu wiederholen oder sichtbar zu machen;
-- Interesse, Motivation und erwarteter Belohnung.
+Eine hilfreiche Metapher ist ein kleiner Schreibtisch. Darauf liegen die Dinge, die gerade benötigt werden. Wird der Tisch überladen oder plötzlich abgeräumt, ist das Wissen nicht unbedingt verschwunden. Es ist nur nicht mehr aktiv verfügbar.
 
-Ein Experte kann bekannte Informationen effizient bündeln. Eine unbekannte Aufgabe belegt mehr Kapazität. Deshalb kann dieselbe Person bei einem hoch vertrauten Thema komplexe Gedankengänge halten und bei einer scheinbar einfachen neuen Anweisung mehrere Schritte verlieren.
+```mermaid
+flowchart LR
+  Z[Ziel] --> W[Arbeitsgedächtnis]
+  W --> S[Zwischenschritt]
+  U[Unterbrechung] -. verdrängt .-> W
+  N[externe Notiz] --> S
+  A[Ablenkung] -. konkurriert .-> W
+```
 
-## 4. Was Studien zu ADHS zeigen
+Diese Metapher erklärt, warum eine Person grundsätzlich genau wissen kann, wie eine Aufgabe funktioniert, und nach einer Unterbrechung trotzdem nicht mehr weiß, wo sie weitermachen sollte.
 
-Kofler und Kolleg:innen berichteten in einer Meta-Analyse deutliche Arbeitsgedächtnisdefizite bei Kindern und Erwachsenen mit ADHS. Besonders ausgeprägt waren komplexe Aufgaben, die Speichern und gleichzeitige Verarbeitung verlangen. Visuell-räumliche Aufgaben zeigten häufig stärkere Unterschiede als rein sprachliche Aufgaben. Die Ergebnisse waren heterogen.
+## 3. Warum Unterbrechungen teuer sind
 
-Eine spätere Meta-Analyse derselben Forschungsgruppe untersuchte die Beziehung zwischen Arbeitsgedächtnis und Funktionsbeeinträchtigung. Schlechtere Arbeitsgedächtnisleistung war mit Problemen in Schule, Alltag und sozialen Funktionen verbunden. Solche Zusammenhänge beweisen jedoch nicht, dass Arbeitsgedächtnis allein alle Beeinträchtigungen verursacht.
+Eine Unterbrechung kann mehrere Prozesse zugleich stören:
 
-> [!important] Gruppenunterschiede sind keine persönliche Diagnose
-> Ein Laborwert kann eine Person nicht zuverlässig als „ADHS“ oder „nicht ADHS“ klassifizieren. Auch Angst, Depression, Schlafmangel, neurologische Erkrankungen, Medikamente und Substanzen können Arbeitsgedächtnisleistung verändern.
+1. Die Aufmerksamkeit wechselt.
+2. Das aktuelle Ziel verliert Aktivierung.
+3. Ein Zwischenergebnis wird verdrängt.
+4. Die ursprüngliche Aufgabe verliert ihren Wiedereinstiegspunkt.
+5. Der Rückweg fühlt sich wie eine neue, unklare Aufgabe an.
 
-## 5. Typische Alltagssituationen
+Das erklärt die Erfahrung: „Ich weiß, wie es geht, aber ich weiß nicht mehr, wo ich war.“ Je komplexer die Aufgabe und je weniger sichtbare Zustandsinformation vorhanden ist, desto teurer wird der Wechsel.
 
-### Mehrteilige Anweisungen
+## 4. Arbeitsgedächtnis und Unaufmerksamkeit
 
-„Nimm den Brief, lege ihn neben die Tasche und bring auf dem Rückweg das Paket mit“ enthält mehrere Elemente, Reihenfolge und eine spätere Erinnerung. Schon eine Zwischenfrage kann Teile verdrängen.
+Wenn eine Information nicht aktiv bleibt, kann es von außen wie fehlende Aufmerksamkeit aussehen. Die Ursache kann aber unterschiedlich sein:
 
-### Gesprächsfaden verlieren
+- Die Information wurde gar nicht aufgenommen.
+- Sie wurde aufgenommen, aber verdrängt.
+- Das Ziel blieb aktiv, doch ein Impuls gewann.
+- Die Aufgabe war klar, aber der Handlungsstart gelang nicht.
 
-Während du zuhörst, entsteht eine eigene Antwort. Wenn du sie aktiv festhältst, konkurriert sie mit dem weiteren Gespräch. Beim Formulieren kann der ursprüngliche Punkt verschwinden.
+Im Alltag treten diese Prozesse häufig gemeinsam auf. Eine einzige Erklärung reicht selten. Deshalb sollte man bei Fehlern nicht vorschnell unterstellen, jemand habe „nicht zugehört“.
 
-### Lesen ohne Integration
+## 5. Kapazität ist nicht der einzige begrenzende Faktor
 
-Einzelne Wörter werden erkannt, aber der Anfang eines langen Satzes ist nicht mehr ausreichend aktiv, wenn das Ende erreicht wird. Das kann wie Unverständnis wirken, obwohl das Wissen vorhanden ist.
+Arbeitsgedächtnis wird häufig wie ein Behälter beschrieben, der bei manchen Menschen kleiner sei. Diese Vorstellung ist nur teilweise hilfreich. Leistung hängt nicht allein von einer festen Kapazität ab, sondern auch davon, wie gut Information strukturiert, geschützt und aktualisiert wird.
 
-### Aufgaben nach Unterbrechung
+Drei Aufgaben mit derselben Wortzahl können sehr unterschiedlich schwer sein:
 
-Eine Benachrichtigung unterbricht nicht nur die Tätigkeit. Sie verdrängt den internen Zustand: Was war bereits erledigt? Welche Entscheidung stand als Nächstes an? Ohne externen Zwischenstand muss die Aufgabe rekonstruiert werden.
+- Eine bekannte Reihenfolge lässt sich zu größeren Einheiten bündeln.
+- Unverbundene Informationen müssen einzeln aktiv gehalten werden.
+- Ähnliche Elemente können sich gegenseitig stärker stören.
+- Emotionale Belastung oder parallele Gedanken beanspruchen zusätzliche Ressourcen.
+- Unklare Anweisungen zwingen dazu, gleichzeitig die Aufgabe und ihre Bedeutung zu rekonstruieren.
 
-### Kopfrechnen und Planung
+Fachwissen entlastet das Arbeitsgedächtnis, weil einzelne Details zu sinnvollen „Paketen“ zusammengefasst werden können. Ein erfahrener Schachspieler erinnert keine zufälligen Figuren besser als andere Menschen, erkennt aber in realistischen Stellungen vertraute Muster. Im Alltag bedeutet das: Eine komplizierte Aufgabe wird nicht nur durch mehr Konzentration leichter, sondern auch durch bessere Struktur und Übung.
 
-Zwischenergebnisse, Regeln und Ziele müssen gleichzeitig verfügbar bleiben. Das erklärt, warum schriftliche Hilfen einen überproportional großen Unterschied machen können.
+## 6. Zwischen Speicherung, Aktualisierung und Schutz unterscheiden
 
-## 6. Arbeitsgedächtnis ist nicht Motivation
+Ein Fehler kann entstehen, obwohl genügend Information aufgenommen wurde. Vielleicht wurde sie nicht rechtzeitig aktualisiert. Vielleicht blieb eine alte Regel aktiv, obwohl sich die Situation geändert hatte. Oder ein irrelevanter Gedanke verdrängte das aktuelle Ziel.
 
-Arbeitsgedächtnisprobleme werden leicht als mangelndes Interesse interpretiert: „Du hast doch gerade zugehört.“ Tatsächlich können Informationen beim Eingang korrekt verarbeitet worden sein und kurz darauf aus dem aktiven Zustand fallen.
+Diese Unterschiede sind praktisch relevant:
 
-Motivation beeinflusst die Leistung dennoch. Hohe Bedeutung, unmittelbare Rückmeldung und starke Aktivierung können die Stabilität verbessern. Sie beseitigen die Kapazitätsgrenze aber nicht zuverlässig. Gute Leistung in einer spannenden Situation widerlegt deshalb keine Schwierigkeiten in anderen Kontexten.
+- Bei Aufnahmeproblemen hilft eine klarere oder langsamere Information.
+- Bei Aktualisierungsproblemen helfen sichtbare Zwischenstände.
+- Bei Interferenz helfen Reizreduktion und weniger parallele Aufgaben.
+- Bei Wiedereinstiegsproblemen hilft ein konkreter Checkpoint.
+
+Darum ist „Gedächtnis verbessern“ als Ziel zu unspezifisch. Besser ist die Frage: **An welcher Stelle verliert die Information ihre Funktion?**
 
 Auch Arbeitsgedächtnistraining sollte vorsichtig bewertet werden. Menschen können in geübten Aufgaben besser werden, doch Verbesserungen übertragen sich nicht automatisch breit auf Schule, Beruf oder Alltag. Externe Hilfen und veränderte Aufgabenstrukturen sind deshalb keine zweitklassige Lösung, sondern häufig die direktere Intervention für das reale Problem.
 
@@ -99,7 +109,7 @@ Notizen, Checklisten, sichtbare Zwischenstände und vorbereitete Wiedereinstiege
 
 Das wirksamste Mini-Werkzeug ist ein einziger Satz:
 
-> **Als Nächstes: eine konkrete Handlung.**
+> **Als Nächstes: [eine konkrete Handlung].**
 
 Beispiel:
 
@@ -107,65 +117,43 @@ Beispiel:
 
 Nicht die gesamte Aufgabenplanung. Nur der exakte Wiedereinstieg. Eine lange Liste kann den Schreibtisch erneut überladen.
 
-### Weitere praktische Prinzipien
+## 8. Verbindung zu Autismus
 
-- **Information sichtbar machen:** Schritte, Zahlen und Termine nicht nur mental halten.
-- **Chunking:** zusammengehörige Elemente zu einer Einheit bündeln.
-- **Einen Kanal entlasten:** mündliche Anweisungen zusätzlich schriftlich geben.
-- **Wiedereinstieg vorbereiten:** vor einer Unterbrechung den nächsten Schritt notieren.
-- **Reihenfolge externalisieren:** nummerierte statt lose Aufgabenlisten verwenden.
-- **Störquellen reduzieren:** nicht aus moralischen Gründen, sondern um Verdrängung zu verhindern.
-- **Rückfragen normalisieren:** Anweisungen wiederholen oder in eigenen Worten zusammenfassen.
+Auch bei Autismus können Arbeitsgedächtnis und andere exekutive Funktionen belastet sein. Die Ergebnisse hängen unter anderem von Sprache, Aufgabenart, Alter, Begleiterkrankungen und Messmethode ab. Bei gemeinsamem ADHS und Autismus können Ablenkbarkeit, Reizüberlastung und Schwierigkeiten beim Aufgabenwechsel zusammenwirken.
 
-## 8. Wissenschaftliche Einordnung
+## 9. Verbindung zu Parkinson
 
-### Konsens
+Parkinson kann frontostriatale Funktionen und damit Arbeitsgedächtnis und kognitive Flexibilität beeinflussen. Die Beziehung zwischen Dopamin und Arbeitsgedächtnis ist wahrscheinlich nicht linear. „Mehr Dopamin“ bedeutet daher nicht automatisch „mehr Arbeitsgedächtnis“.
 
-Arbeitsgedächtnis ist bei ADHS auf Gruppenebene häufig beeinträchtigt und hängt mit funktionellen Schwierigkeiten zusammen. Externe Hilfen können die Belastung des Systems reduzieren.
+## 10. Mini-Experiment
 
-### Wahrscheinlich
+Bevor du eine Aufgabe für fünf Minuten verlässt:
 
-Arbeitsgedächtnis trägt zu einem Teil der Aufmerksamkeits-, Organisations- und Lernprobleme bei. Es interagiert mit Inhibition, Motivation, Aufmerksamkeit und Aufgabenstruktur.
+1. Notiere den letzten abgeschlossenen Schritt.
+2. Notiere genau den nächsten Schritt.
+3. Schließe unnötige Tabs oder Fenster.
+4. Kehre später zurück und miss, wie lange der Wiedereinstieg dauert.
 
-### Umstritten
-
-Wie zentral Arbeitsgedächtnis als einheitlicher Mechanismus der ADHS ist und welche Teilkomponente die größten Alltagsfolgen besitzt. Verschiedene Modelle gewichten Speicher, Aufmerksamkeit und zentrale Steuerung unterschiedlich.
-
-### Experimentell
-
-Personalisierte Trainings, die weit über die geübten Aufgaben hinaus stabile Alltagsverbesserungen erzeugen. Bisherige Transfereffekte sind begrenzt und inkonsistent.
-
-## Mini-Übung
-
-Wähle eine Aufgabe, bei der du regelmäßig den Faden verlierst.
-
-1. Schreibe auf, welche Informationen gleichzeitig im Kopf bleiben müssen.
-2. Markiere, was sichtbar gemacht werden kann.
-3. Formuliere einen einzigen Wiedereinstiegssatz: „Als Nächstes: …“
-4. Prüfe nach der Aufgabe, ob du weniger rekonstruieren musstest.
-
-Die Übung misst nicht deine Gedächtniskapazität. Sie prüft, ob die Aufgabe unnötig viel interne Speicherung verlangt.
+Vergleiche das mit einem Wiedereinstieg ohne Notiz. Das Ergebnis muss nicht spektakulär sein; es reicht, wenn der Zustandsverlust etwas kleiner wird.
 
 ## Review-Frage
 
-**Warum kann eine Person mit ADHS komplexes Fachwissen besitzen und trotzdem eine einfache dreiteilige Anweisung verlieren?**
+**Warum kann eine bekannte Aufgabe nach einer Unterbrechung plötzlich schwer fortzusetzen sein?**
 
 <details>
 <summary>Antwort</summary>
 
-Weil dauerhaft gespeichertes Wissen im Langzeitgedächtnis und die kurzfristige aktive Verfügbarkeit im Arbeitsgedächtnis unterschiedliche Funktionen sind. Eine neue Anweisung kann durch begrenzte Kapazität und Ablenkung verdrängt werden, obwohl Verständnis und Wissen vorhanden sind.
+Weil Ziel, Zwischenergebnis und nächster Schritt aus dem aktiven Arbeitsgedächtnis verschwunden sein können, obwohl das langfristig gespeicherte Wissen erhalten bleibt.
 
 </details>
 
-## Wissenschaftliche Quellen
+## Wissenschaftliche Quelle
 
-- [[references/Kofler2020|Kofler et al. 2020]] – Meta-Analyse zu Arbeitsgedächtnisdefiziten bei ADHS.
-- [[references/Kofler2024|Kofler et al. 2024]] – Meta-Analyse zu Arbeitsgedächtnis und Funktionsbeeinträchtigung.
-- [[references/Faraone2021|Faraone et al. 2021]] – internationaler Konsens zur evidenzbasierten Einordnung der ADHS.
+[[references/Kofler2020|Kofler et al. 2020]] – Studie zur Differenzierung von Arbeitsgedächtnis- und Kurzzeitgedächtnisleistungen bei ADHS; ein relevanter Gruppenbefund, aber kein individueller Diagnosetest.
 
 ## Merksatz
 
-> Wissen ist nicht dasselbe wie gerade verfügbares Wissen – entlaste den mentalen Arbeitsplatz, statt ihn moralisch zu bewerten.
+> Vergessen bedeutet im Alltag häufig nicht „nicht gespeichert“, sondern „gerade nicht aktiv verfügbar“.
 
 ## Navigation
 
