@@ -2,25 +2,27 @@
   "schema_version": "3.0.0",
   "run_id": "e55d7dcb-2e86-4b6a-822e-b67262473bcb",
   "workflow": "generator",
-  "revision": 1,
-  "previous_status": null,
+  "revision": 2,
+  "previous_status": "running",
   "status": "running",
-  "phase": "read_prompts",
+  "phase": "create_branch",
   "completed_phases": [
     "initialize",
     "load_main",
     "check_previous_run",
     "check_existing_pr",
-    "read_prompts"
+    "read_prompts",
+    "research",
+    "create_branch"
   ],
   "created_at": "2026-08-06T04:03:53Z",
-  "updated_at": "2026-08-06T04:03:53Z",
+  "updated_at": "2026-08-06T04:18:42Z",
   "ended_at": null,
   "duration_seconds": null,
   "retention_until": "2026-09-05T04:03:53Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
-    "branch": null,
+    "branch": "agent/einheit-20-substanzgebrauch-abhaengigkeit",
     "commit_sha": "229e7fa217ce5f5d4869ab67e33e0b9a4ae7bdb4",
     "pr_number": null,
     "pr_url": null,
@@ -34,9 +36,29 @@
       46
     ],
     "automatic_unit_pull_request_open": false,
-    "policy_action": "generate"
+    "policy_action": "generate",
+    "research_sources_selected": [
+      "Comiskey2026",
+      "Shanbhag2026",
+      "Forrest2025",
+      "Young2023",
+      "NICE2018",
+      "Jangra2026"
+    ],
+    "research_consensus": "ADHS und Substanzgebrauchsstörungen getrennt diagnostizieren und koordiniert versorgen; therapeutische, fehlgebrauchte und nichtmedizinische Expositionen trennen",
+    "new_content_required": true
   },
-  "artifacts": [],
+  "artifacts": [
+    {
+      "type": "branch",
+      "value": "agent/einheit-20-substanzgebrauch-abhaengigkeit",
+      "path": null,
+      "url": null,
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T04:18:42Z"
+    }
+  ],
   "error": null,
   "recovery": null
 }
