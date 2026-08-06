@@ -218,7 +218,7 @@ jobs:
           cmp Literatur.md /tmp/Literatur.md.first
           cmp references.bib /tmp/references.bib.first
           cmp references.json /tmp/references.json.first
-          python scripts/build_graph.py --status-file build/runtime-status.json
+          GITHUB_SHA="$HEAD_SHA" python scripts/build_graph.py --status-file build/runtime-status.json
           python scripts/validate_graph.py --expected-revision "$HEAD_SHA"
           python scripts/validate_links.py
           python scripts/validate_compendium.py
