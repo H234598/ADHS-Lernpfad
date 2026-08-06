@@ -1,0 +1,331 @@
+name: Finalize unit 20
+
+on:
+  push:
+    branches:
+      - agent/einheit-20-substanzgebrauch-abhaengigkeit
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalize-unit20
+  cancel-in-progress: false
+
+jobs:
+  finalize:
+    name: Generate, validate and commit unit 20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout fixed unit branch without persisted credentials
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-20-substanzgebrauch-abhaengigkeit
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements-docs.txt
+            requirements-export.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Apply researched unit and project integration
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          UNIT_PATH = Path('02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS.md')
+          UNIT_CONTENT = '---\ntitle: "Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung"\nlevel: Vertiefung\nestimated_time: 10–20 min\ndifficulty: 3\nprerequisites:\n  - 01-Grundlagen/08-Neuroentwicklung-und-Lebensspanne\n  - 01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik\n  - 01-Grundlagen/11-Schlaf-Bewegung-und-koerperliche-Gesundheit\n  - 01-Grundlagen/12-Komorbiditaet-Depression-und-Suizidalitaet\n  - 02-Vertiefung/01-Pharmakologie-und-Psychotherapie\n  - 02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen\ntags: [ADHS, Substanzgebrauch, Abhängigkeit, Substanzgebrauchsstörung, Differentialdiagnostik, Stimulanzien, Versorgung, Sicherheit]\nlast_reviewed: 2026-08-06\nevidence: high\nstatus: consensus\nreferences: [Faraone2021, AADPA2022, NICE2018, Jangra2026, Young2023, Forrest2025, Shanbhag2026, Comiskey2026]\nminimum_reading_minutes: 10\nmaximum_reading_minutes: 20\n---\n\n# Einheit 20 – Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung\n\n## Lernziel\n\nDu kannst gelegentlichen Substanzgebrauch, riskanten Gebrauch, Intoxikation, Entzug und eine Substanzgebrauchsstörung voneinander unterscheiden. Du verstehst, weshalb ADHS und Substanzprobleme häufiger gemeinsam vorkommen, ohne daraus eine einfache Ursache oder persönliche Prognose abzuleiten. Außerdem kannst du verordnete ADHS-Behandlung, Fehlgebrauch, nichtmedizinische Nutzung und Weitergabe klar trennen und erklären, warum Diagnostik und Versorgung beide Problembereiche koordiniert berücksichtigen müssen.\n\n## 1. Substanzgebrauch ist nicht automatisch eine Abhängigkeit\n\nDer Begriff **Substanzgebrauch** beschreibt zunächst nur, dass eine psychoaktive Substanz verwendet wurde. Daraus folgt noch keine Diagnose. Klinisch werden unter anderem Häufigkeit, Menge, Kontrollverlust, Priorisierung, Risiken, Folgen und der Verlauf betrachtet. Eine **Substanzgebrauchsstörung** liegt nicht deshalb vor, weil eine Person Alkohol trinkt, Nikotin nutzt oder einmal Cannabis konsumiert hat. Entscheidend ist ein anhaltendes Muster, bei dem Kontrolle, Gesundheit, Verpflichtungen, Beziehungen oder Sicherheit relevant beeinträchtigt sind.\n\nAuch **Abhängigkeit** ist kein moralisches Urteil. Biologische Anpassung, Lernen, psychische Belastung, soziale Bedingungen, Verfügbarkeit und individuelle Vulnerabilität können zusammenwirken. Scham und pauschale Schuldzuweisung erschweren häufig eine offene Anamnese und damit eine sichere Behandlung.\n\n> [!evidence] Evidenz: Leitlinien- und Konsenskonsens / hoch\n> ADHS und Substanzgebrauchsstörungen sind unterscheidbare Bedingungen, die gleichzeitig bestehen können. Eine fachliche Beurteilung prüft beide eigenständig und trennt Gebrauch, Intoxikation, Entzug, Fehlgebrauch und eine anhaltende Störung.\n\nMindestens fünf Zustände sollten nicht vermischt werden:\n\n- **bestimmungsgemäße Behandlung:** ein Medikament wird für die betreffende Person in der vereinbarten Form fachlich verordnet und überwacht;\n- **nichtmedizinische Nutzung:** eine Substanz oder ein Medikament wird außerhalb dieses Behandlungsrahmens verwendet;\n- **Fehlgebrauch:** die Nutzung weicht in Zweck, Menge oder Anwendung vom vereinbarten beziehungsweise vorgesehenen Gebrauch ab;\n- **Intoxikation:** vorübergehende Veränderungen während oder kurz nach einer Substanzwirkung;\n- **Entzug:** Beschwerden nach deutlicher Verringerung oder Beendigung eines zuvor regelmäßigen oder abhängigen Konsums.\n\nDiese Kategorien können sich überschneiden, sind aber nicht gleichbedeutend.\n\n## 2. Häufige Koexistenz ist ein Gruppenbefund, kein persönlicher Fahrplan\n\nMenschen mit ADHS sind in vielen Studien unter Personen mit Substanzgebrauchsstörungen überrepräsentiert. Die Richtung der Forschung variiert jedoch: Manche Studien fragen nach Substanzproblemen bei Menschen mit ADHS, andere nach ADHS in Suchthilfe- oder Klinikpopulationen. Diese Prozentwerte sind nicht austauschbar.\n\nEine 2026 veröffentlichte systematische Übersicht und Meta-Analyse von Comiskey und Kolleg:innen bündelte 84 Studien mit 99 Schätzungen und 34.036 Erwachsenen aus Akutversorgung, gemeindenahen Angeboten und Gefängnisgesundheitsdiensten. In diesen **behandlungs- und hilfesuchenden Substanzpopulationen** lag die gepoolte ADHS-Prävalenz bei 22 Prozent, das 95-Prozent-Konfidenzintervall bei 19 bis 25 Prozent. Zwischen den Studien bestand erhebliche Heterogenität. Für cannabisbezogene Gruppen wurde eine höhere Schätzung berichtet; einzelne geschlechts- und substanzbezogene Untergruppen waren jedoch unterschiedlich groß und teils unsicher.\n\nDer Wert von 22 Prozent bedeutet nicht, dass 22 Prozent aller Menschen, die irgendwann eine psychoaktive Substanz nutzen, ADHS haben. Die Stichproben stammen aus Versorgungssystemen und häufig aus hoch belasteten Gruppen. Diagnostische Verfahren, Substanzmuster, Länder und Rekrutierung unterschieden sich.\n\nEine zweite Meta-Analyse von Shanbhag und Kolleg:innen schloss 20 Studien ein. Bei Erwachsenen mit Substanzgebrauchsstörung wurde eine Vorgeschichte kindlicher ADHS mit 9,9 Prozent geschätzt. Personen mit kindlicher ADHS berichteten im Mittel einen etwa ein bis eineinhalb Jahre früheren Beginn von Tabak-, Alkohol- oder Cannabiskonsum. Auch das ist kein Kausalbeweis: Ein Teil der ADHS-Erfassung erfolgte rückblickend, und soziale, familiäre sowie weitere psychische Faktoren können beide Verläufe beeinflussen.\n\n> [!important] Relative und gepoolte Gruppenwerte sind keine Individualprognose\n> Eine Diagnose, ein früher Konsumbeginn oder eine einzelne Substanz erlaubt keine sichere Aussage darüber, wie eine bestimmte Person sich entwickeln wird. Ausgangsrisiko, Alter, Umfeld, Komorbiditäten, Konsummuster und Zugang zu Hilfe verändern die Bedeutung eines Gruppenbefunds.\n\n## 3. Die Zeitachse trennt Entwicklungsmerkmale von Substanzwirkungen\n\nADHS ist definitionsgemäß neuroentwicklungsbezogen. Relevante Merkmale beginnen früh und zeigen sich über mehr als einen Lebensbereich. Substanzwirkungen besitzen dagegen einen Bezug zu Exposition, Dosis, Zeitpunkt, Intoxikation, Entzug und chronischem Verlauf.\n\nKonzentrationsprobleme, Unruhe, Schlafstörungen, Reizbarkeit oder impulsives Verhalten können in beiden Zusammenhängen auftreten. Eine Momentaufnahme während Intoxikation oder Entzug eignet sich deshalb schlecht, um ein lebenslanges ADHS-Muster zu beurteilen.\n\n```mermaid\nflowchart TD\n  A[frühe Entwicklung und mehrere Kontexte] --> B[ADHS-Hypothese prüfen]\n  S[Substanz, Zeitpunkt, Menge und Verlauf] --> I[Intoxikation, Entzug oder chronische Wirkung prüfen]\n  M[Schlaf, Stimmung, Trauma, Medikamente und körperliche Ursachen] --> D[weitere Erklärungen prüfen]\n  B --> K[klinische Gesamtformulierung]\n  I --> K\n  D --> K\n  K --> Z[getrennte Ziele für ADHS, Substanzgebrauch und Sicherheit]\n```\n\nHilfreich sind vier getrennte Fragen:\n\n1. Welche Aufmerksamkeits-, Aktivitäts- und Impulskontrollprobleme bestanden bereits **vor** relevantem Substanzgebrauch?\n2. Welche Beschwerden treten nur während Konsum, Schlafentzug, Nachwirkung oder Entzug auf?\n3. Welche Veränderungen bleiben über längere substanzarme oder abstinente Phasen bestehen, soweit solche Phasen vorhanden und sicher beurteilbar sind?\n4. Welche weiteren Bedingungen erklären einen Teil des Bildes, etwa Depression, Angst, Trauma, Bipolarität, Psychose, Schmerzen oder Medikamente?\n\nEine vollständige Abstinenz ist nicht in jeder Versorgungssituation sofort erreichbar und darf nicht als Vorwand dienen, jede Diagnostik oder Hilfe unbegrenzt aufzuschieben. Gleichzeitig sollte Unsicherheit transparent bleiben, wenn der aktuelle Zustand eine zuverlässige Entwicklungsbeurteilung erschwert.\n\n## 4. Verschiedene Substanzen erzeugen verschiedene Muster\n\n„Drogen“ ist klinisch eine zu grobe Kategorie. Substanzen unterscheiden sich in Wirkung, Entzug, Risiken und sozialem Kontext.\n\n| Kategorie | Mögliche akute oder entzugsbezogene Veränderungen | Wichtige Grenze |\n|---|---|---|\n| Alkohol | Enthemmung, verlangsamte Reaktion, Gedächtnislücken; im Entzug Unruhe, Schlaf- und Angstbeschwerden | Alkoholprobleme sind nicht durch ADHS allein erklärt |\n| Nikotin | kurzfristige Aktivierung; im Entzug Reizbarkeit und Konzentrationsprobleme | subjektive kurzfristige Wirkung hebt Gesundheits- und Abhängigkeitsrisiken nicht auf |\n| Cannabis | veränderte Aufmerksamkeit, Zeitwahrnehmung und Gedächtnis; teils Angst oder psychotische Symptome | ein Zusammenhang mit ADHS beweist weder Selbstmedikation noch eine einheitliche Wirkung |\n| sedierende Medikamente oder Substanzen | Müdigkeit, verlangsamtes Denken, Gedächtnisprobleme; Entzug kann medizinisch gefährlich sein | verordnete Anwendung, Fehlgebrauch und Abhängigkeit müssen getrennt werden |\n| stimulierende Substanzen | Wachheit und Aktivierung, aber auch Schlafverlust, Kreislaufbelastung, Angst oder psychotische Symptome | therapeutische Einnahme ist nicht mit hoch dosiertem nichtmedizinischem Konsum gleichzusetzen |\n| Mischkonsum | Wirkungen können sich verstärken, verdecken oder unvorhersehbar verändern | aus einer einzelnen Substanz lässt sich das Gesamtrisiko nicht ableiten |\n\nDie Tabelle ist keine Anleitung zum Konsum und kein privates Entzugsschema. Besonders bei regelmäßigem Alkohol-, sedierendem Medikamenten- oder Mischkonsum kann abruptes eigenständiges Absetzen gefährlich sein. Eine sichere Veränderung gehört in medizinische beziehungsweise suchtmedizinische Begleitung.\n\nDie Meta-Analyse von Jangra und Kolleg:innen aus dem Jahr 2026 verdeutlicht eine wichtige methodische Grenze: Die in Studien beobachteten psychotischen Ereignisse unterschieden sich massiv zwischen ärztlich überwachten therapeutischen und überwiegend hoch dosierten nichtmedizinischen Stimulanzienkontexten. Die Gruppen waren bezüglich Substanz, Dosis, Applikation und Ausgangsrisiko nicht direkt vergleichbar. Nichtmedizinische Daten dürfen daher nicht auf eine verordnete orale ADHS-Behandlung übertragen werden.\n\n## 5. „Selbstmedikation“ ist eine mögliche Motivation, keine Gesamterklärung\n\nManche Menschen berichten, Substanzen zu verwenden, um innere Unruhe, Schlafprobleme, soziale Angst, belastende Erinnerungen oder Konzentrationsschwierigkeiten kurzfristig zu beeinflussen. Diese subjektive Funktion kann real und diagnostisch wichtig sein. Der Begriff **Selbstmedikation** darf jedoch nicht zur universellen Ursache werden.\n\nDrei Ebenen müssen getrennt bleiben:\n\n- **Motiv:** Was erhofft sich die Person unmittelbar von der Nutzung?\n- **kurzfristige Wirkung:** Welche Veränderung wird tatsächlich erlebt?\n- **langfristiger Verlauf:** Welche gesundheitlichen, psychischen, sozialen oder funktionellen Folgen entstehen?\n\nEine Substanz kann kurzfristig beruhigen und langfristig Schlaf, Stimmung oder Gedächtnis verschlechtern. Nikotinentzug kann Konzentrationsprobleme erzeugen, die durch erneute Nutzung kurzfristig verschwinden; dies beweist keine Behandlung der ADHS. Alkohol kann soziale Anspannung reduzieren und gleichzeitig Enthemmung, Konflikte und depressive Symptome verstärken.\n\nDie Aussage „Ich nutze es, um besser zu funktionieren“ verdient respektvolle Untersuchung. Sie rechtfertigt aber weder eine Diagnose noch die Annahme, die gewählte Substanz sei wirksam oder sicher.\n\n## 6. Verordnete Stimulanzien sind nicht dasselbe wie Fehlgebrauch oder Weitergabe\n\nStimulanzien gehören zu den wirksamen ADHS-Medikamenten. Gleichzeitig können verschreibungspflichtige Präparate missbräuchlich genutzt oder an andere Personen weitergegeben werden. Beides muss offen besprochen werden, ohne jede behandelte Person unter Generalverdacht zu stellen.\n\nDer systematische Review von Forrest und Kolleg:innen aus dem Jahr 2025 schloss zwölf Querschnittsbefragungen ein. Unter Personen mit einer Stimulanzienverordnung wurden gepoolt 22,6 Prozent nicht bestimmungsgemäße Nutzung im vergangenen Jahr, 18,2 Prozent Weitergabe im vergangenen Jahr und 17,9 Prozent Weitergabe über die Lebenszeit berichtet. Diese Schätzungen beruhen auf Selbstberichten und sehr unterschiedlichen Populationen; sie sind keine allgemeine Rate für jede Altersgruppe oder jedes Versorgungssystem.\n\nAls mögliche Risikofaktoren wurden unter anderem leicht verfügbare Restbestände, ein Umfeld mit nichtmedizinischer Nutzung und geringe Risikowahrnehmung beschrieben. Daraus folgen praktische Schutzprinzipien:\n\n- Medikamente nur wie vereinbart verwenden;\n- keine Weitergabe an andere Personen;\n- sichere, nicht frei zugängliche Aufbewahrung;\n- nicht benötigte Bestände nach lokalen fachlichen Vorgaben zurückgeben oder entsorgen;\n- Veränderungen von Druck, Nachfrage, Nutzungsmotiv oder Kontrollverlust offen ansprechen;\n- Risiko und Nutzen im Verlauf erneut bewerten.\n\nNICE empfiehlt, das Risiko von Fehlgebrauch und Weitergabe vor und während der Behandlung zu berücksichtigen und bei erhöhtem Risiko Präparate zu vermeiden, die sich leicht nicht bestimmungsgemäß verwenden lassen. Das ist eine fachliche Verschreibungsentscheidung und keine Anleitung zur Auswahl oder Manipulation eines Präparats.\n\n## 7. Koexistenz braucht koordinierte statt fragmentierte Versorgung\n\nEine Substanzgebrauchsstörung ist kein automatischer Beweis gegen ADHS. Umgekehrt erklärt eine ADHS-Diagnose nicht jeden Konsum und ersetzt keine suchtmedizinische Beurteilung. Das Expert:innenkonsensuspapier von Young und Kolleg:innen aus dem Jahr 2023 betont deshalb einen multimodalen und einrichtungsübergreifenden Ansatz.\n\nEine sinnvolle Versorgung kann umfassen:\n\n- getrennte, aber koordinierte Diagnostik beider Bedingungen;\n- Motivationsarbeit und schadensmindernde beziehungsweise abstinenzorientierte Ziele entsprechend Situation und Präferenz;\n- psychologische und soziale Unterstützung;\n- Behandlung von Schlaf, Depression, Angst, Trauma oder anderen Komorbiditäten;\n- ADHS-gerechte Termin-, Erinnerungs- und Organisationshilfen;\n- fachlich überwachte Medikamentenentscheidungen mit Verlaufskontrolle;\n- klare Zuständigkeiten zwischen ADHS-, psychiatrischer, hausärztlicher und Suchthilfeversorgung.\n\nDirekte Wirksamkeitsdaten für jede Kombination sind begrenzt. Ein Konsensuspapier ersetzt keine randomisierte Studie. Es adressiert jedoch ein reales Versorgungsproblem: Werden Menschen wegen Substanzgebrauchs aus der ADHS-Versorgung ausgeschlossen und wegen ADHS aus Suchthilfeangeboten weiterverwiesen, bleibt häufig beides unzureichend behandelt.\n\n## 8. Akute Sicherheit geht vor der langfristigen Diagnostik\n\n> [!warning] Sofortige Hilfe\n> Bewusstlosigkeit, nicht normale Atmung, Krampfanfälle, starke Brustschmerzen, schwere Verwirrtheit, ausgeprägte Überhitzung, akute psychotische oder manische Symptome, ein unmittelbar gefährlicher Entzug oder eine konkrete Suizidgefahr erfordern **112** beziehungsweise den örtlichen Notruf. Eine betroffene Person sollte bei akuter Gefahr nicht allein gelassen werden.\n\nBei nicht akutem, aber riskantem Konsum ist eine zeitnahe ärztliche, psychiatrische oder suchtmedizinische Abklärung sinnvoll. Das gilt besonders bei Kontrollverlust, wiederholten Entzügen, Mischkonsum, Schwangerschaft, schweren psychischen Symptomen oder relevanten körperlichen Erkrankungen.\n\n## 9. Mini-Übung: Drei Zeitachsen statt eines Etiketts\n\nWähle eine konkrete Schwierigkeit, zum Beispiel „Ich verliere morgens den Faden“. Notiere ohne Selbstdiagnose:\n\n1. **Entwicklungsachse:** Gab es vergleichbare Probleme bereits vor relevantem Substanzgebrauch?\n2. **Expositionsachse:** Was wurde wann genutzt, und wie veränderte sich der Zustand davor, währenddessen und danach?\n3. **Funktionsachse:** Welche Folgen entstehen für Gesundheit, Termine, Beziehungen, Arbeit oder Sicherheit?\n4. **Kontext:** Welche Rolle spielen Schlaf, Stimmung, Stress, Medikamente und soziale Umgebung?\n5. **Hilfe:** Welche Fachperson oder Beratungsstelle könnte beide Themen gemeinsam betrachten?\n\nZiel ist keine private Diagnose. Die Übung macht sichtbar, welche Informationen für eine sichere Beurteilung fehlen.\n\n## 10. Wissenschaftliche Einordnung und Grenzen\n\n**Konsens:** ADHS und Substanzgebrauchsstörungen sind unterscheidbare, häufig koexistierende Bedingungen. Diagnostik muss Entwicklung, Substanzzeitachse, Intoxikation, Entzug, Komorbiditäten und Beeinträchtigung berücksichtigen. Verordnete Behandlung, Fehlgebrauch und nichtmedizinische Nutzung sind getrennte Expositionen.\n\n**Wahrscheinlich:** ADHS ist in Suchthilfe- und SUD-Populationen deutlich häufiger als in der Allgemeinbevölkerung. Eine frühe und fortbestehende ADHS kann mit früherem Substanzbeginn und ungünstigeren Verläufen zusammenhängen. Integrierte, multimodale Versorgung dürfte Fragmentierung verringern.\n\n**Umstritten oder begrenzt:** Wie viel der Assoziation kausal auf ADHS selbst, geteilte Risiken, soziale Belastung, Verhaltensstörungen oder andere Komorbiditäten zurückgeht. Prävalenzschätzungen variieren stark nach Population, Substanz und Messmethode. Für viele kombinierte Behandlungsfragen fehlen große direkte Vergleichsstudien.\n\n**Experimentell:** präzise individuelle Risikomodelle, digitale Früherkennung und algorithmische Behandlungswahl. Derzeit kann kein Test aus Diagnose, Genetik oder Konsummuster zuverlässig den persönlichen Verlauf vorhersagen.\n\n## Review-Frage\n\n**Warum dürfen verordnete ADHS-Stimulanzien, Fehlgebrauch und nichtmedizinischer Stimulanzienkonsum nicht als dieselbe Exposition behandelt werden?**\n\n<details>\n<summary>Antwort</summary>\n\nWeil Person, Zweck, Dosis, Formulierung, Überwachung, Begleiterkrankungen und Konsumkontext unterschiedlich sind. Risiken aus hoch dosierten oder nichtmedizinischen Populationen lassen sich nicht direkt auf eine fachlich überwachte Behandlung übertragen; Fehlgebrauch und Weitergabe bleiben dennoch eigene Sicherheitsfragen.\n\n</details>\n\n## Wissenschaftliche Quellen\n\n- [[references/Comiskey2026|Comiskey et al. 2026]] – aktuelle systematische Übersicht und Meta-Analyse zur ADHS-Prävalenz in behandlungs- und hilfesuchenden Substanzpopulationen.\n- [[references/Shanbhag2026|Shanbhag et al. 2026]] – systematische Übersicht und Meta-Analyse zu kindlicher ADHS bei Erwachsenen mit Substanzgebrauchsstörung und dem Alter des Konsumbeginns.\n- [[references/Forrest2025|Forrest et al. 2025]] – systematischer Review zu Fehlgebrauch und Weitergabe verordneter Stimulanzien.\n- [[references/Young2023|Young et al. 2023]] – Expert:innenkonsensus zur Diagnostik und koordinierten Behandlung bei ADHS und Substanzgebrauchsstörung.\n- [[references/NICE2018|NICE NG87]] – Leitlinie zu ADHS-Diagnostik, Behandlung, Risikoabschätzung, sicherer Verschreibung und Monitoring.\n- [[references/Jangra2026|Jangra et al. 2026]] – Meta-Analyse zur strikten Trennung therapeutischer und nichtmedizinischer Stimulanzienexposition.\n\n## Merksatz\n\n> Substanzgebrauch erklärt ADHS nicht automatisch, ADHS rechtfertigt keinen Konsum – entscheidend sind getrennte Zeitachsen, konkrete Folgen und eine Versorgung, die beides gemeinsam behandelt.\n\n## Navigation\n\n- Zurück: [[02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen|Bipolare Störungen, Psychosen und episodische Veränderungen]]\n- Weiter: [[ROADMAP#A4 · Weitere neuroentwicklungsbezogene und verhaltensbezogene Komorbiditäten — P0|Weitere neuroentwicklungsbezogene und verhaltensbezogene Komorbiditäten]] *(geplant)*\n- [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]\n'
+          REFERENCE_CONTENT = {'Comiskey2026': '---\nreference_id: Comiskey2026\ntitle: Comiskey et al. 2026\nevidence_type: systematic-review-and-meta-analysis\nevidence_grade: moderate\nstatus: probable\ndoi: "10.1080/15504263.2026.2686088"\npmid: "42429286"\nlast_checked: 2026-08-06\ntags: [Literatur, ADHS, Substanzgebrauch, Abhängigkeit, Prävalenz, Meta-Analyse, Versorgung]\ncitation:\n  entry_type: article\n  csl_type: article-journal\n  authors:\n    - "Comiskey, Catherine"\n    - "McDonagh, David"\n    - "Banka-Cullen, Sonam Prakashini"\n    - "James, Philip"\n    - "Cafferkey, Sadie Lavelle"\n    - "Eustace-Cook, Jessica"\n  et_al: false\n  year: 2026\n  article_title: "Systematic Review and Meta-Analysis of Attention Deficit Hyperactivity Disorder: First Estimates of the Prevalence by Sex Amongst People Who Use Psychoactive Substances and Alcohol"\n  journal: Journal of Dual Diagnosis\n  pages: "1–12"\n---\n\n# Comiskey et al. 2026\n\n## Vollständige Zitation\n\nComiskey, Catherine, McDonagh, David, Banka-Cullen, Sonam Prakashini, James, Philip, Cafferkey, Sadie Lavelle, & Eustace-Cook, Jessica (2026). Systematic Review and Meta-Analysis of Attention Deficit Hyperactivity Disorder: First Estimates of the Prevalence by Sex Amongst People Who Use Psychoactive Substances and Alcohol. *Journal of Dual Diagnosis*, 1–12.\n\n## Evidenztyp und Design\n\nSystematische Übersicht und Meta-Analyse von 84 Studien mit 99 Prävalenzschätzungen und insgesamt 34.036 Erwachsenen. Eingeschlossen wurden Akutkrankenhäuser, gemeindenahe Behandlungs- und Unterstützungsangebote sowie Gefängnisgesundheitsdienste.\n\n## Population\n\nErwachsene, die wegen Alkohol- oder anderem psychoaktivem Substanzgebrauch mit Behandlungs- oder Unterstützungsangeboten in Kontakt standen. Die Ergebnisse beschreiben damit ausgewählte Versorgungspopulationen und nicht alle Menschen mit gelegentlichem Substanzgebrauch.\n\n## Kernaussage\n\nDie gepoolte ADHS-Prävalenz lag bei 22 Prozent (95-Prozent-Konfidenzintervall 19 bis 25). Für cannabisbezogene Gruppen wurde eine Schätzung von 33 Prozent berichtet. Weitere substanz- und geschlechtsbezogene Untergruppen unterschieden sich, waren jedoch unterschiedlich groß und teilweise unsicher.\n\n## Einschränkungen\n\nZwischen den Studien bestand erhebliche Heterogenität. Länder, Versorgungskontexte, Substanzmuster, diagnostische Verfahren und Stichprobenauswahl unterschieden sich. Prävalenzen aus hilfesuchenden oder inhaftierten Populationen dürfen nicht auf die Allgemeinbevölkerung übertragen werden. Untergruppenwerte sind keine individuelle Prognose und beweisen keine kausale Wirkung einer bestimmten Substanz.\n\n## Verhältnis zum bisherigen Konsens\n\nBestätigt, dass ADHS in Substanzhilfe- und SUD-Populationen häufig übersehen werden kann und in beiden Versorgungsrichtungen systematisch berücksichtigt werden sollte. Präzisiert den Konsens um aktuelle substanz- und geschlechtsbezogene, aber weiterhin heterogene Schätzungen.\n\n## Links\n\n- [DOI](https://doi.org/10.1080/15504263.2026.2686088)\n- [PubMed](https://pubmed.ncbi.nlm.nih.gov/42429286/)\n', 'Shanbhag2026': '---\nreference_id: Shanbhag2026\ntitle: Shanbhag et al. 2026\nevidence_type: systematic-review-and-meta-analysis\nevidence_grade: moderate\nstatus: probable\ndoi: "10.1080/10826084.2026.2670635"\npmid: "42152537"\nlast_checked: 2026-08-06\ntags: [Literatur, ADHS, Substanzgebrauchsstörung, Kindheit, Konsumbeginn, Meta-Analyse, Längsschnitt]\ncitation:\n  entry_type: article\n  csl_type: article-journal\n  authors:\n    - "Shanbhag, Trusha"\n    - "Rai, Shweta"\n    - "Praharaj, Samir Kumar"\n  et_al: false\n  year: 2026\n  article_title: "The Longitudinal Link: A Systematic Review of Childhood ADHD and Early Onset of Substance Use in Adulthood"\n  journal: Substance Use & Misuse\n  pages: "1–14"\n---\n\n# Shanbhag et al. 2026\n\n## Vollständige Zitation\n\nShanbhag, Trusha, Rai, Shweta, & Praharaj, Samir Kumar (2026). The Longitudinal Link: A Systematic Review of Childhood ADHD and Early Onset of Substance Use in Adulthood. *Substance Use & Misuse*, 1–14.\n\n## Evidenztyp und Design\n\nSystematische Übersicht und Meta-Analyse von 20 Beobachtungs- und Interventionsstudien. Untersucht wurden die Häufigkeit kindlicher ADHS bei Erwachsenen mit Substanzgebrauchsstörung sowie Unterschiede im Alter des ersten Substanzgebrauchs.\n\n## Population\n\nErwachsene mit Substanzgebrauchsstörung und dokumentierter oder rückblickend erhobener kindlicher ADHS. Die eingeschlossenen Studien unterschieden sich hinsichtlich Diagnoseverfahren, Substanz, Land und Versorgungskontext.\n\n## Kernaussage\n\nDie gepoolte Häufigkeit einer kindlichen ADHS-Vorgeschichte bei Erwachsenen mit Substanzgebrauchsstörung lag bei 9,9 Prozent (95-Prozent-Konfidenzintervall 6,1 bis 15,2). Personen mit kindlicher ADHS berichteten einen im Mittel früheren Beginn von Tabak-, Alkohol- und Cannabiskonsum; die mittleren Unterschiede lagen ungefähr zwischen einem und eineinhalb Jahren.\n\n## Einschränkungen\n\nEin Teil der ADHS-Erfassung erfolgte retrospektiv und kann Erinnerungs- oder Klassifikationsfehler enthalten. Die Studien waren nicht durchgehend populationsrepräsentativ. Frühere Nutzung ist ein Gruppenbefund und kein Beweis, dass ADHS bei einer Einzelperson den Konsum verursacht hat. Geteilte familiäre, soziale und klinische Faktoren können beitragen.\n\n## Verhältnis zum bisherigen Konsens\n\nStützt die Annahme eines erhöhten und teilweise früher einsetzenden Substanzrisikos bei fortbestehender kindlicher ADHS, ohne eine deterministische Entwicklung zu behaupten. Unterstreicht den Wert früher Erkennung und präventiver Unterstützung.\n\n## Links\n\n- [DOI](https://doi.org/10.1080/10826084.2026.2670635)\n- [PubMed](https://pubmed.ncbi.nlm.nih.gov/42152537/)\n', 'Forrest2025': '---\nreference_id: Forrest2025\ntitle: Forrest et al. 2025\nevidence_type: systematic-review-and-meta-analysis\nevidence_grade: moderate\nstatus: probable\ndoi: "10.3389/fpsyt.2025.1612785"\npmid: "40698051"\nlast_checked: 2026-08-06\ntags: [Literatur, ADHS, Stimulanzien, Fehlgebrauch, Weitergabe, Verschreibung, Meta-Analyse]\ncitation:\n  entry_type: article\n  csl_type: article-journal\n  authors:\n    - "Forrest, Jessica"\n    - "Chen, Winnie"\n    - "Jagadheesan, Karuppiah"\n  et_al: false\n  year: 2025\n  article_title: "Misuse and diversion of stimulant medications prescribed for the treatment of ADHD: a systematic review"\n  journal: Frontiers in Psychiatry\n  volume: "16"\n  article_number: "1612785"\n---\n\n# Forrest et al. 2025\n\n## Vollständige Zitation\n\nForrest, Jessica, Chen, Winnie, & Jagadheesan, Karuppiah (2025). Misuse and diversion of stimulant medications prescribed for the treatment of ADHD: a systematic review. *Frontiers in Psychiatry, 16*, 1612785.\n\n## Evidenztyp und Design\n\nSystematischer Review mit Meta-Analyse von zwölf Querschnittsbefragungen aus den Jahren 2012 bis 2023. Die Stichproben reichten von 88 bis 10.000 Befragten und erfassten selbstberichteten Fehlgebrauch und die Weitergabe verordneter Stimulanzien.\n\n## Population\n\nPersonen mit einer Stimulanzienverordnung zur ADHS-Behandlung. Alter, Land, Bildungs- und Versorgungskontext sowie Definitionen von Fehlgebrauch und Weitergabe unterschieden sich zwischen den Studien.\n\n## Kernaussage\n\nDie gepoolte Prävalenz nicht bestimmungsgemäßer Nutzung im vergangenen Jahr betrug 22,6 Prozent. Für Weitergabe wurden 18,2 Prozent im vergangenen Jahr und 17,9 Prozent über die Lebenszeit berichtet. Als mögliche Risikofaktoren wurden unter anderem Restbestände, ein Umfeld mit nichtmedizinischer Nutzung und eine geringe Wahrnehmung möglicher Risiken beschrieben.\n\n## Einschränkungen\n\nDie Daten stammen aus Querschnittsbefragungen und überwiegend aus Selbstberichten. Kausalität und zeitliche Richtung lassen sich nicht bestimmen. Definitionen, Altersgruppen und Versorgungssysteme waren heterogen; die gepoolten Werte sind nicht auf jede behandelte Person oder jedes Land übertragbar.\n\n## Verhältnis zum bisherigen Konsens\n\nBestätigt Fehlgebrauch und Weitergabe als relevante Monitoringthemen, ohne eine ordnungsgemäße Stimulanzienbehandlung mit nichtmedizinischer Nutzung gleichzusetzen. Stützt Risikoabschätzung, sichere Aufbewahrung, Bestandskontrolle und offene Verlaufsgespräche.\n\n## Links\n\n- [DOI](https://doi.org/10.3389/fpsyt.2025.1612785)\n- [PubMed](https://pubmed.ncbi.nlm.nih.gov/40698051/)\n- [PubMed Central](https://pmc.ncbi.nlm.nih.gov/articles/PMC12280905/)\n', 'Young2023': '---\nreference_id: Young2023\ntitle: Young et al. 2023\nevidence_type: expert-consensus\nevidence_grade: moderate\nstatus: consensus\ndoi: "10.5498/wjp.v13.i3.84"\npmid: "37033892"\nlast_checked: 2026-08-06\ntags: [Literatur, ADHS, Substanzgebrauchsstörung, Diagnostik, Behandlung, Versorgung, Konsensus]\ncitation:\n  entry_type: article\n  csl_type: article-journal\n  authors:\n    - "Young, Susan"\n    - "Abbasian, Cyrus"\n    - "Al-Attar, Zainab"\n  et_al: true\n  year: 2023\n  article_title: "Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement"\n  journal: World Journal of Psychiatry\n  volume: "13"\n  issue: "3"\n  pages: "84–112"\n---\n\n# Young et al. 2023\n\n## Vollständige Zitation\n\nYoung, Susan, Abbasian, Cyrus, Al-Attar, Zainab, et al. (2023). Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement. *World Journal of Psychiatry, 13*(3), 84–112.\n\n## Evidenztyp und Design\n\nInterdisziplinäres Expert:innenkonsensuspapier auf Basis einer Literaturübersicht, Fachvorträgen und strukturierter Gruppendiskussionen. Das Papier entwickelt praxisorientierte Empfehlungen für Erkennung, Diagnostik, pharmakologische und psychologische Behandlung sowie einrichtungsübergreifende Zusammenarbeit.\n\n## Population\n\nJugendliche und Erwachsene mit möglicher oder diagnostizierter ADHS und gleichzeitigem Substanzgebrauch beziehungsweise einer Substanzgebrauchsstörung in psychiatrischen, gemeindenahen und suchtmedizinischen Versorgungskontexten.\n\n## Kernaussage\n\nADHS und Substanzgebrauchsstörung sollen in beide Richtungen erkannt und eigenständig beurteilt werden. Empfohlen wird ein multimodaler und multiinstitutioneller Ansatz, der Diagnostik, psychologische, soziale und gegebenenfalls pharmakologische Behandlung koordiniert, statt Betroffene zwischen getrennten Diensten weiterzureichen.\n\n## Einschränkungen\n\nExpert:innenkonsens liegt unter direkten systematischen Wirksamkeitsvergleichen. Die Empfehlungen können durch Zusammensetzung des Panels und das britische Versorgungssystem beeinflusst sein. Für viele konkrete Behandlungssequenzen und Untergruppen fehlt robuste randomisierte Evidenz.\n\n## Verhältnis zum bisherigen Konsens\n\nStützt die diagnostische Trennung bei gleichzeitiger integrierter Versorgung. Eine Substanzgebrauchsstörung ist weder ein automatischer Ausschluss einer ADHS-Diagnose noch eine Begründung für unkritische Medikation; Sicherheit, Ziele und Verlauf müssen gemeinsam geplant werden.\n\n## Links\n\n- [DOI](https://doi.org/10.5498/wjp.v13.i3.84)\n- [PubMed](https://pubmed.ncbi.nlm.nih.gov/37033892/)\n- [PubMed Central](https://pmc.ncbi.nlm.nih.gov/articles/PMC10075023/)\n'}
+          GLOSSARY_ADD = '\n## Abhängigkeit\nKlinisch relevantes Muster mit eingeschränkter Kontrolle, zunehmender Priorität der Substanz und fortgesetzter Nutzung trotz schädlicher Folgen; kein moralisches Urteil und nicht mit jedem Substanzgebrauch gleichzusetzen.\n\n## Diversion\nWeitergabe eines für eine bestimmte Person verordneten Medikaments an andere, beispielsweise durch Verschenken, Tauschen oder Verkaufen; von bestimmungsgemäßer Einnahme und eigenem Fehlgebrauch zu unterscheiden.\n\n## Entzug\nKörperliche oder psychische Beschwerden nach deutlicher Verringerung oder Beendigung eines zuvor regelmäßigen oder abhängigen Substanzgebrauchs; Art und medizinisches Risiko hängen von der Substanz und dem Verlauf ab.\n\n## Intoxikation\nVorübergehender Zustand während oder kurz nach einer Substanzwirkung mit Veränderungen von Wahrnehmung, Denken, Stimmung, Verhalten oder körperlichen Funktionen.\n\n## Mischkonsum\nZeitnahe Nutzung mehrerer psychoaktiver Substanzen; Wirkungen können sich verstärken, verdecken oder unvorhersehbar verändern.\n\n## Nichtmedizinische Stimulanziennutzung\nNutzung eines Stimulans außerhalb einer fachlich verordneten und überwachten Behandlung oder in deutlicher Abweichung von der Vereinbarung; wissenschaftlich von bestimmungsgemäßer therapeutischer Einnahme zu trennen.\n\n## Substanzgebrauchsstörung\nAnhaltendes Substanzgebrauchsmuster mit relevantem Kontrollverlust, Priorisierung, Risiken oder Beeinträchtigungen; gelegentlicher Gebrauch oder ein einzelnes Symptom reicht nicht für die Diagnose.\n'
+          CARD_ADD = '- id: 1020\n  unit: 20\n  front: Warum dürfen verordnete ADHS-Stimulanzien, Fehlgebrauch und nichtmedizinischer Stimulanzienkonsum nicht als dieselbe Exposition behandelt werden?\n  back: Weil Person, Zweck, Dosis, Formulierung, Überwachung, Begleiterkrankungen und Konsumkontext verschieden sind; Risiken aus hoch dosierten oder nichtmedizinischen Populationen lassen sich nicht direkt auf eine fachlich überwachte Behandlung übertragen.\n  tags:\n  - ADHS\n  - Substanzgebrauch\n  - Abhaengigkeit\n  - Stimulanzien\n  - Vertiefung\n  - Differentialdiagnostik\n  - Einheit_20\n'
+          CHANGELOG_SECTION = '## 0.22.0 – 2026-08-06\n\n- Einheit 20 „Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung“ ergänzt\n- Gebrauch, Substanzgebrauchsstörung, Intoxikation, Entzug, Fehlgebrauch und Weitergabe voneinander abgegrenzt\n- aktuelle Meta-Analysen von 2025 und 2026 zu ADHS in Substanzpopulationen, früherem Konsumbeginn sowie Fehlgebrauch verordneter Stimulanzien eingeordnet\n- therapeutische Stimulanzienbehandlung strikt von nichtmedizinischer Nutzung und hoch dosierten Konsumkontexten getrennt\n- substanzspezifische Differentialdiagnostik, akute Sicherheitsgrenzen und koordinierte Versorgung ergänzt\n- vier Studienkarten, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Literaturausgaben aktualisiert\n\n'
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise RuntimeError(f"{path}: erwartete genau eine Fundstelle, gefunden {count} für {old[:80]!r}")
+              file.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          UNIT_PATH.parent.mkdir(parents=True, exist_ok=True)
+          UNIT_PATH.write_text(UNIT_CONTENT, encoding="utf-8")
+
+          for ref_id, content in REFERENCE_CONTENT.items():
+              Path("references", f"{ref_id}.md").write_text(content, encoding="utf-8")
+
+          replace_once(
+              "02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md",
+              "- Weiter: [[ROADMAP#A3 · Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung — P0|Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung]] *(geplant)*",
+              "- Weiter: [[02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS|Substanzgebrauch, Abhängigkeit und ADHS]]",
+          )
+
+          readme = Path("README.md").read_text(encoding="utf-8")
+          for old, new in [
+              ("version: 0.21.0", "version: 0.22.0"),
+              ("last_reviewed: 2026-08-04", "last_reviewed: 2026-08-06"),
+              (
+                  "tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Zwangsstörung, Trauma, PTBS, bipolare Störung, Psychose, Lernpfad]",
+                  "tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Zwangsstörung, Trauma, PTBS, bipolare Störung, Psychose, Substanzgebrauch, Abhängigkeit, Lernpfad]",
+              ),
+          ]:
+              if readme.count(old) != 1:
+                  raise RuntimeError(f"README.md: unerwartete Fundstellenzahl für {old!r}")
+              readme = readme.replace(old, new, 1)
+          unit19_line = "19. [[02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen|Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit]]"
+          unit20_line = "20. [[02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS|Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung]]"
+          if unit20_line not in readme:
+              if readme.count(unit19_line) != 1:
+                  raise RuntimeError("README.md: Einheit-19-Zeile fehlt oder ist mehrdeutig")
+              readme = readme.replace(unit19_line, unit19_line + "\n" + unit20_line, 1)
+          Path("README.md").write_text(readme, encoding="utf-8")
+
+          roadmap = Path("ROADMAP.md").read_text(encoding="utf-8")
+          for old, new in [
+              ("last_reviewed: 2026-08-04", "last_reviewed: 2026-08-06"),
+              ("Der Lernpfad umfasst derzeit 19 fortlaufende Einheiten:", "Der Lernpfad umfasst derzeit 20 fortlaufende Einheiten:"),
+          ]:
+              if roadmap.count(old) != 1:
+                  raise RuntimeError(f"ROADMAP.md: unerwartete Fundstellenzahl für {old!r}")
+              roadmap = roadmap.replace(old, new, 1)
+          roadmap_19 = "19. Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit"
+          roadmap_20 = "20. Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung"
+          if roadmap_20 not in roadmap:
+              if roadmap.count(roadmap_19) != 1:
+                  raise RuntimeError("ROADMAP.md: Einheit-19-Stand fehlt oder ist mehrdeutig")
+              roadmap = roadmap.replace(roadmap_19, roadmap_19 + "\n" + roadmap_20, 1)
+          old_a3 = """### A3 · Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung — P0
+
+          - [ ] Prävalenz- und Risikobefunde mit absoluten Risiken, Konfundierung und Heterogenität darstellen.
+          - [ ] Alkohol, Nikotin, Cannabis, sedierende Substanzen, stimulierende Substanzen und Mischkonsum differenzieren.
+          - [ ] „Selbstmedikation“ als mögliche individuelle Erklärung, nicht als universelle Ursache oder Rechtfertigung behandeln.
+          - [ ] Intoxikation, Entzug und chronischer Konsum als mögliche Alternativ- oder Zusatzursachen von Aufmerksamkeitssymptomen erklären.
+          - [ ] verordnete Behandlung, Fehlgebrauch, Weitergabe, sichere Aufbewahrung und kontrollierte Verschreibung voneinander abgrenzen.
+          - [ ] besondere Behandlungs- und Versorgungsfragen bei gleichzeitig bestehender Substanzgebrauchsstörung darstellen.
+          - [ ] keine Stigmatisierung und keine Anleitung zum Konsum oder zur Manipulation von Verschreibungen enthalten."""
+          new_a3 = """### A3 · Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung — P0; umgesetzt als Einheit 20
+
+          - [x] Prävalenz- und Risikobefunde mit absoluten Risiken, Konfundierung und Heterogenität darstellen.
+          - [x] Alkohol, Nikotin, Cannabis, sedierende Substanzen, stimulierende Substanzen und Mischkonsum differenzieren.
+          - [x] „Selbstmedikation“ als mögliche individuelle Erklärung, nicht als universelle Ursache oder Rechtfertigung behandeln.
+          - [x] Intoxikation, Entzug und chronischer Konsum als mögliche Alternativ- oder Zusatzursachen von Aufmerksamkeitssymptomen erklären.
+          - [x] verordnete Behandlung, Fehlgebrauch, Weitergabe, sichere Aufbewahrung und kontrollierte Verschreibung voneinander abgrenzen.
+          - [x] besondere Behandlungs- und Versorgungsfragen bei gleichzeitig bestehender Substanzgebrauchsstörung darstellen.
+          - [x] keine Stigmatisierung und keine Anleitung zum Konsum oder zur Manipulation von Verschreibungen enthalten."""
+          if roadmap.count(old_a3) != 1:
+              raise RuntimeError("ROADMAP.md: A3-Block entspricht nicht der erwarteten Baseline")
+          roadmap = roadmap.replace(old_a3, new_a3, 1)
+          Path("ROADMAP.md").write_text(roadmap, encoding="utf-8")
+
+          index_path = Path("index.json")
+          index = json.loads(index_path.read_text(encoding="utf-8"))
+          if index.get("version") != "0.21.0":
+              raise RuntimeError(f"index.json: unerwartete Ausgangsversion {index.get('version')}")
+          index["version"] = "0.22.0"
+          index["last_reviewed"] = "2026-08-06"
+          chapters = index.get("chapters", [])
+          if any(ch.get("number") == 20 for ch in chapters):
+              raise RuntimeError("index.json: Einheit 20 existiert bereits")
+          if [ch.get("number") for ch in chapters] != list(range(1, 20)):
+              raise RuntimeError("index.json: bestehende Kapitelnummern sind nicht 1–19")
+          chapters.append({
+              "number": 20,
+              "path": '02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS.md',
+              "title": "Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung",
+          })
+          index_path.write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+          mkdocs = Path("mkdocs.yml").read_text(encoding="utf-8")
+          mkdocs_anchor = "      - Bipolare Störungen, Psychosen und ADHS: 02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md"
+          mkdocs_new = "      - Substanzgebrauch, Abhängigkeit und ADHS: 02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS.md"
+          if mkdocs_new not in mkdocs:
+              if mkdocs.count(mkdocs_anchor) != 1:
+                  raise RuntimeError("mkdocs.yml: Einheit-19-Navigation fehlt oder ist mehrdeutig")
+              mkdocs = mkdocs.replace(mkdocs_anchor, mkdocs_anchor + "\n" + mkdocs_new, 1)
+          Path("mkdocs.yml").write_text(mkdocs, encoding="utf-8")
+
+          cards_path = Path("cards/cards.yaml")
+          cards = cards_path.read_text(encoding="utf-8").rstrip() + "\n"
+          if "  unit: 20\n" in cards or "- id: 1020\n" in cards:
+              raise RuntimeError("cards/cards.yaml: Einheit 20 oder Karten-ID 1020 existiert bereits")
+          cards_path.write_text(cards + CARD_ADD, encoding="utf-8")
+
+          glossary_path = Path("Glossar.md")
+          glossary = glossary_path.read_text(encoding="utf-8")
+          if glossary.count("last_reviewed: 2026-08-04") != 1:
+              raise RuntimeError("Glossar.md: unerwartetes last_reviewed")
+          glossary = glossary.replace("last_reviewed: 2026-08-04", "last_reviewed: 2026-08-06", 1)
+          old_hypomania = "psychotische Symptome sprechen gegen eine bloße Hypomanie."
+          new_hypomania = "psychotische Symptome schließen eine Hypomanie als Episodenklassifikation aus."
+          if glossary.count(old_hypomania) == 1:
+              glossary = glossary.replace(old_hypomania, new_hypomania, 1)
+          elif glossary.count(new_hypomania) != 1:
+              raise RuntimeError("Glossar.md: Hypomanie-Definition ist unerwartet")
+          for heading in ["## Abhängigkeit", "## Diversion", "## Entzug", "## Intoxikation", "## Mischkonsum", "## Nichtmedizinische Stimulanziennutzung", "## Substanzgebrauchsstörung"]:
+              if heading in glossary:
+                  raise RuntimeError(f"Glossar.md: {heading} existiert bereits")
+          glossary_path.write_text(glossary.rstrip() + "\n" + GLOSSARY_ADD, encoding="utf-8")
+
+          changelog_path = Path("CHANGELOG.md")
+          changelog = changelog_path.read_text(encoding="utf-8")
+          if "## 0.22.0 – 2026-08-06" in changelog:
+              raise RuntimeError("CHANGELOG.md: Version 0.22.0 existiert bereits")
+          header = "# Änderungsverlauf\n\n"
+          if not changelog.startswith(header):
+              raise RuntimeError("CHANGELOG.md: unerwarteter Kopf")
+          changelog_path.write_text(header + CHANGELOG_SECTION + changelog[len(header):], encoding="utf-8")
+
+          print("Inhalte für Einheit 20 angewendet")
+          PY
+
+      - name: Install pinned dependencies and browser
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python -m pip install --disable-pip-version-check             -r requirements-docs.txt -r requirements-export.txt
+          python -m pip check
+          npm ci
+          npm run audit:dependencies
+          npx playwright install --with-deps chromium
+
+      - name: Generate literature and run complete validation
+        shell: bash
+        env:
+          RUNTIME_STATUS_MANAGED: '1'
+        run: |
+          set -Eeuo pipefail
+          export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+          mkdir -p build
+          python scripts/runtime_status_cli.py build/runtime-status.json             --new-run --workflow finalize-unit20             --run-id "${{ github.run_id }}-${{ github.run_attempt }}"             --git-sha "$GITHUB_SHA"
+
+          git diff --check
+          python -m compileall -q scripts tests
+          python scripts/validate_prompt_baselines.py
+          find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
+          pwsh -NoProfile -Command '
+            $failed = $false
+            Get-ChildItem Sync -Recurse -Filter *.ps1 | ForEach-Object {
+              $tokens = $null
+              $errors = $null
+              [System.Management.Automation.Language.Parser]::ParseFile(
+                $_.FullName, [ref]$tokens, [ref]$errors
+              ) | Out-Null
+              if ($errors.Count -gt 0) {
+                $failed = $true
+                Write-Host "PowerShell-Parserfehler in $($_.FullName):"
+                $errors | ForEach-Object { Write-Host "  $($_.Message)" }
+              }
+            }
+            if ($failed) { exit 1 }
+          '
+          bash Sync/tests/test-posix-sync.sh 2>&1 | tee build/sync-test.log
+
+          RUNTIME_STATUS_MANAGED=0 python -m pytest -q
+          npm test
+          npm run lint:markdown:all
+
+          python scripts/build_literature.py
+          cp Literatur.md /tmp/Literatur.md.first
+          cp references.bib /tmp/references.bib.first
+          cp references.json /tmp/references.json.first
+          python scripts/build_literature.py
+          cmp Literatur.md /tmp/Literatur.md.first
+          cmp references.bib /tmp/references.bib.first
+          cmp references.json /tmp/references.json.first
+
+          python scripts/build_graph.py --status-file build/runtime-status.json
+          python scripts/validate_graph.py --expected-revision "$GITHUB_SHA"
+          python scripts/validate_links.py
+          python scripts/validate_compendium.py
+          python scripts/build_combined.py --status-file build/runtime-status.json
+          python scripts/build_anki.py
+          cp build/runtime-status.json build/runtime-status-pre-final.json
+          python scripts/runtime_status_cli.py build/runtime-status.json             --finish success --phase complete
+          python scripts/validate_runtime_status.py build/runtime-status.json
+          python scripts/build_docs.py
+          mkdocs build --strict
+          npm run test:web
+
+      - name: Commit validated unit, remove one-time workflow and push
+        shell: bash
+        env:
+          PUSH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          rm .github/workflows/finalize-unit20.yml
+
+          allowed_paths=(
+            ".github/workflows/finalize-unit20.yml"
+            "02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md"
+            "02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS.md"
+            "CHANGELOG.md"
+            "Glossar.md"
+            "Literatur.md"
+            "README.md"
+            "ROADMAP.md"
+            "cards/cards.yaml"
+            "index.json"
+            "mkdocs.yml"
+            "references.bib"
+            "references.json"
+            "references/Comiskey2026.md"
+            "references/Forrest2025.md"
+            "references/Shanbhag2026.md"
+            "references/Young2023.md"
+          )
+
+          git add -A -- "${allowed_paths[@]}"
+          git diff --cached --check
+
+          declare -A allowed=()
+          for path in "${allowed_paths[@]}"; do
+            allowed["$path"]=1
+          done
+          while IFS= read -r path; do
+            if [[ -z "${allowed[$path]+x}" ]]; then
+              echo "Unerwartete gestagte Datei: $path" >&2
+              exit 1
+            fi
+          done < <(git diff --cached --name-only)
+
+          test -f 02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS.md
+          test ! -e .github/workflows/finalize-unit20.yml
+          git diff --cached --name-only | grep -Fx             "02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS.md"
+
+          git config user.name "H234598"
+          git config user.email "54270221+H234598@users.noreply.github.com"
+          git commit -m "feat: ergänze Einheit 20 zu Substanzgebrauch und ADHS"
+
+          auth="$(printf 'x-access-token:%s' "$PUSH_TOKEN" | base64 -w0)"
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $auth"             push origin HEAD:agent/einheit-20-substanzgebrauch-abhaengigkeit
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: finalize-unit20-diagnostics-${{ github.run_attempt }}
+          path: |
+            build/runtime-status.json
+            build/runtime-status-validation-report.json
+            build/runtime-status-validation-report.md
+            build/validation-report.txt
+            build/sync-test.log
+            build/playwright-results/
+          if-no-files-found: warn
+          retention-days: 14
