@@ -1,144 +1,42 @@
 {
   "schema_version": "3.0.0",
-  "run_id": "e03ff067-c37c-4129-acd1-444245a55ef5",
+  "run_id": "e55d7dcb-2e86-4b6a-822e-b67262473bcb",
   "workflow": "generator",
-  "revision": 8,
-  "previous_status": "recovered",
-  "status": "success",
-  "phase": "complete",
+  "revision": 1,
+  "previous_status": null,
+  "status": "running",
+  "phase": "read_prompts",
   "completed_phases": [
     "initialize",
     "load_main",
     "check_previous_run",
     "check_existing_pr",
-    "read_prompts",
-    "research",
-    "create_branch",
-    "create_content",
-    "generate_outputs",
-    "validate",
-    "commit",
-    "push",
-    "create_pr",
-    "verify_pr",
-    "repair",
-    "ready_for_review",
-    "verify_second_ci",
-    "merge",
-    "cleanup",
-    "complete"
+    "read_prompts"
   ],
-  "created_at": "2026-08-04T04:00:44.000Z",
-  "updated_at": "2026-08-05T04:53:30.000Z",
-  "ended_at": "2026-08-05T04:53:30.000Z",
-  "duration_seconds": 89566.0,
-  "retention_until": "2026-09-04T04:53:30.000Z",
+  "created_at": "2026-08-06T04:03:53Z",
+  "updated_at": "2026-08-06T04:03:53Z",
+  "ended_at": null,
+  "duration_seconds": null,
+  "retention_until": "2026-09-05T04:03:53Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
-    "branch": "agent/einheit-19-bipolare-psychosen-episoden",
-    "commit_sha": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
-    "pr_number": 49,
-    "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/49",
-    "workflow_run": {
-      "id": 30976162898,
-      "attempt": 1,
-      "job_id": "92210471282",
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30976162898",
-      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30976162898"
-    }
+    "branch": null,
+    "commit_sha": "229e7fa217ce5f5d4869ab67e33e0b9a4ae7bdb4",
+    "pr_number": null,
+    "pr_url": null,
+    "workflow_run": null
   },
   "metrics": {
-    "unit_number": 19,
-    "planned_topic": "Bipolare Störungen, Psychosen und andere episodische Veränderungen",
-    "prose_words": 1952,
-    "literature_sources": 49,
-    "research_sources_selected": [
-      "NICEBipolar2025",
-      "WHO2024",
-      "Schiweck2021",
-      "Miskowiak2024",
-      "SalazarDePablo2025",
-      "Jangra2026"
+    "unit_number": 20,
+    "planned_topic": "Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung",
+    "base_commit": "229e7fa217ce5f5d4869ab67e33e0b9a4ae7bdb4",
+    "unrelated_open_pull_requests": [
+      46
     ],
-    "unrelated_open_pull_requests": [43, 46],
     "automatic_unit_pull_request_open": false,
-    "policy_action": "merge",
-    "repair_cycle_count_total": 2,
-    "evidence_refresh_committed": true,
-    "literature_regeneration": "success",
-    "first_project_ci": "success",
-    "second_project_ci": "success",
-    "web_tests": "4_passed",
-    "remark_lint_first": "success",
-    "remark_lint_second": "success",
-    "dependency_audit": "success_zero_vulnerabilities",
-    "pytest": "159_passed_2_subtests",
-    "codacy": "success",
-    "qlty": "success",
-    "coderabbit": "success",
-    "coderabbit_threads_unresolved": 0,
-    "coderabbit_disagreement": false,
-    "branch_behind_main": 0,
-    "merged": true,
-    "merge_commit": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
-    "version": "0.21.0"
+    "policy_action": "generate"
   },
-  "artifacts": [
-    {
-      "type": "branch",
-      "value": "agent/einheit-19-bipolare-psychosen-episoden",
-      "path": null,
-      "url": null,
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-04T04:51:26.000Z"
-    },
-    {
-      "type": "pull_request",
-      "value": "#49",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/pull/49",
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-04T04:51:26.000Z"
-    },
-    {
-      "type": "commit",
-      "value": "cb9a3e7c915de95636dca3ee55830b9c3c6a62d1",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/cb9a3e7c915de95636dca3ee55830b9c3c6a62d1",
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-05T04:41:08.000Z"
-    },
-    {
-      "type": "workflow_run",
-      "value": "30975714991",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30975714991",
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-05T04:40:21.000Z"
-    },
-    {
-      "type": "workflow_run",
-      "value": "30976162898",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30976162898",
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-05T04:52:42.000Z"
-    },
-    {
-      "type": "commit",
-      "value": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-05T04:53:12.000Z"
-    }
-  ],
+  "artifacts": [],
   "error": null,
   "recovery": null
 }
