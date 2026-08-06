@@ -31,7 +31,7 @@ Der Begriff **Substanzgebrauch** beschreibt zunächst nur, dass eine psychoaktiv
 
 Auch **Abhängigkeit** ist kein moralisches Urteil. Biologische Anpassung, Lernen, psychische Belastung, soziale Bedingungen, Verfügbarkeit und individuelle Vulnerabilität können zusammenwirken. Scham und pauschale Schuldzuweisung erschweren häufig eine offene Anamnese und damit eine sichere Behandlung.
 
-> [!evidence] Evidenz: Leitlinien- und Konsenskonsens / hoch
+> [!evidence] Evidenz: Leitlinien- und Expert:innenkonsens / hoch
 > ADHS und Substanzgebrauchsstörungen sind unterscheidbare Bedingungen, die gleichzeitig bestehen können. Eine fachliche Beurteilung prüft beide eigenständig und trennt Gebrauch, Intoxikation, Entzug, Fehlgebrauch und eine anhaltende Störung.
 
 Mindestens fünf Zustände sollten nicht vermischt werden:
@@ -150,9 +150,9 @@ Direkte Wirksamkeitsdaten für jede Kombination sind begrenzt. Ein Konsensuspapi
 ## 8. Akute Sicherheit geht vor der langfristigen Diagnostik
 
 > [!warning] Sofortige Hilfe
-> Bewusstlosigkeit, nicht normale Atmung, Krampfanfälle, starke Brustschmerzen, schwere Verwirrtheit, ausgeprägte Überhitzung, akute psychotische oder manische Symptome, ein unmittelbar gefährlicher Entzug oder eine konkrete Suizidgefahr erfordern **112** beziehungsweise den örtlichen Notruf. Eine betroffene Person sollte bei akuter Gefahr nicht allein gelassen werden.
+> Bewusstlosigkeit, nicht normale Atmung, Krampfanfälle, starke Brustschmerzen, ausgeprägte Überhitzung, unmittelbare Lebensgefahr, schwere körperliche Beeinträchtigung, schwere Verwirrtheit mit nicht gewährleisteter Sicherheit, ein unmittelbar gefährlicher Entzug oder eine konkrete Suizidgefahr erfordern **112** beziehungsweise den örtlichen Notruf. Eine betroffene Person sollte bei akuter Gefahr nicht allein gelassen werden.
 
-Bei nicht akutem, aber riskantem Konsum ist eine zeitnahe ärztliche, psychiatrische oder suchtmedizinische Abklärung sinnvoll. Das gilt besonders bei Kontrollverlust, wiederholten Entzügen, Mischkonsum, Schwangerschaft, schweren psychischen Symptomen oder relevanten körperlichen Erkrankungen.
+Neue psychotische oder manische Symptome ohne unmittelbare Gefährdung erfordern eine dringende psychiatrische beziehungsweise suchtmedizinische Abklärung. Bei nicht akutem, aber riskantem Konsum ist eine zeitnahe ärztliche, psychiatrische oder suchtmedizinische Abklärung sinnvoll. Das gilt besonders bei Kontrollverlust, wiederholten Entzügen, Mischkonsum, Schwangerschaft, schweren psychischen Symptomen oder relevanten körperlichen Erkrankungen.
 
 ## 9. Mini-Übung: Drei Zeitachsen statt eines Etiketts
 

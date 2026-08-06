@@ -388,7 +388,7 @@ Young, S., Hollingdale, J., Absoud, M., et al. (2020). Guidance for identificati
 
 ## Young2023
 
-Young, Susan, Abbasian, Cyrus, Al-Attar, Zainab, et al. (2023). Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement. *World Journal of Psychiatry, 13*(3), 84–112.
+Young, Susan, Abbasian, Cyrus, Al-Attar, Zainab, Branney, Polly, Colley, Bill, Cortese, Samuele, Cubbin, Sally, Deeley, Quinton, Gudjonsson, Gisli Hannes, Hill, Peter, Hollingdale, Jack, Jenden, Steve, Johnson, Joe, Judge, Deborah, Lewis, Alexandra, Mason, Peter, Mukherjee, Raja, Nutt, David, Roberts, Jane, Robinson, Fiona, Woodhouse, Emma, & Cocallis, Kelly (2023). Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement. *World Journal of Psychiatry, 13*(3), 84–112.
 
 - DOI: [https://doi.org/10.5498/wjp.v13.i3.84](https://doi.org/10.5498/wjp.v13.i3.84)
 - PubMed: [PMID 37033892](https://pubmed.ncbi.nlm.nih.gov/37033892/)

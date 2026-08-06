@@ -211,7 +211,7 @@ Deutlich weniger Schlaf als üblich bei subjektiv erhaltener oder gesteigerter E
 Überzeugung, die trotz deutlicher Gegenbelege mit ungewöhnlicher Gewissheit festgehalten wird und nicht angemessen aus kulturellem oder religiösem Kontext erklärbar ist; genaue klinische Einordnung erfordert Fachdiagnostik.
 
 ## Abhängigkeit
-Klinisch relevantes Muster mit eingeschränkter Kontrolle, zunehmender Priorität der Substanz und fortgesetzter Nutzung trotz schädlicher Folgen; kein moralisches Urteil und nicht mit jedem Substanzgebrauch gleichzusetzen.
+Im ICD-11 bezeichnet das Abhängigkeitssyndrom eine Störung der Regulation des Substanzgebrauchs mit eingeschränkter Kontrolle, zunehmender Priorität der Substanz und fortgesetzter Nutzung trotz schädlicher Folgen. Toleranz und Entzug können auftreten, sind für das Syndrom aber nicht zwingend erforderlich; der Begriff ist kein moralisches Urteil.
 
 ## Diversion
 Weitergabe eines für eine bestimmte Person verordneten Medikaments an andere, beispielsweise durch Verschenken, Tauschen oder Verkaufen; von bestimmungsgemäßer Einnahme und eigenem Fehlgebrauch zu unterscheiden.
@@ -229,4 +229,4 @@ Zeitnahe Nutzung mehrerer psychoaktiver Substanzen; Wirkungen können sich verst
 Nutzung eines Stimulans außerhalb einer fachlich verordneten und überwachten Behandlung oder in deutlicher Abweichung von der Vereinbarung; wissenschaftlich von bestimmungsgemäßer therapeutischer Einnahme zu trennen.
 
 ## Substanzgebrauchsstörung
-Anhaltendes Substanzgebrauchsmuster mit relevantem Kontrollverlust, Priorisierung, Risiken oder Beeinträchtigungen; gelegentlicher Gebrauch oder ein einzelnes Symptom reicht nicht für die Diagnose.
+Klassifikationsabhängiger Oberbegriff: Im DSM-5/DSM-5-TR bezeichnet er eine nach Schweregrad abgestufte Diagnose anhand eines breiten Kriterienkatalogs. Das ICD-11 kodiert unter anderem schädliche Gebrauchsmuster und das Abhängigkeitssyndrom getrennt. Gelegentlicher Gebrauch oder ein einzelnes Symptom reicht in keinem System für eine Diagnose.

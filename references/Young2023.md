@@ -15,7 +15,26 @@ citation:
     - "Young, Susan"
     - "Abbasian, Cyrus"
     - "Al-Attar, Zainab"
-  et_al: true
+    - "Branney, Polly"
+    - "Colley, Bill"
+    - "Cortese, Samuele"
+    - "Cubbin, Sally"
+    - "Deeley, Quinton"
+    - "Gudjonsson, Gisli Hannes"
+    - "Hill, Peter"
+    - "Hollingdale, Jack"
+    - "Jenden, Steve"
+    - "Johnson, Joe"
+    - "Judge, Deborah"
+    - "Lewis, Alexandra"
+    - "Mason, Peter"
+    - "Mukherjee, Raja"
+    - "Nutt, David"
+    - "Roberts, Jane"
+    - "Robinson, Fiona"
+    - "Woodhouse, Emma"
+    - "Cocallis, Kelly"
+  et_al: false
   year: 2023
   article_title: "Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement"
   journal: World Journal of Psychiatry
@@ -28,7 +47,7 @@ citation:
 
 ## Vollständige Zitation
 
-Young, Susan, Abbasian, Cyrus, Al-Attar, Zainab, et al. (2023). Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement. *World Journal of Psychiatry, 13*(3), 84–112.
+Young, Susan, Abbasian, Cyrus, Al-Attar, Zainab, Branney, Polly, Colley, Bill, Cortese, Samuele, Cubbin, Sally, Deeley, Quinton, Gudjonsson, Gisli Hannes, Hill, Peter, Hollingdale, Jack, Jenden, Steve, Johnson, Joe, Judge, Deborah, Lewis, Alexandra, Mason, Peter, Mukherjee, Raja, Nutt, David, Roberts, Jane, Robinson, Fiona, Woodhouse, Emma, & Cocallis, Kelly (2023). Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement. *World Journal of Psychiatry, 13*(3), 84–112.
 
 ## Evidenztyp und Design
 
