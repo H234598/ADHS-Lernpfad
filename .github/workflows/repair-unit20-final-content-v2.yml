@@ -1,0 +1,142 @@
+name: Repair unit 20 final content v2
+
+on:
+  pull_request:
+    types: [synchronize]
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repair-unit20-final-content-v2
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    name: Reuse verified repair with PR revision
+    if: github.event.pull_request.number == 50
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout fixed unit branch without persisted credentials
+        uses: actions/checkout@v7
+        with:
+          ref: agent/einheit-20-substanzgebrauch-abhaengigkeit
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements-docs.txt
+            requirements-export.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Extract verified repair steps and correct revision expectation
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import os
+
+          source = Path('.github/workflows/repair-unit20-final-content.yml').read_text(encoding='utf-8')
+
+          def extract(name: str) -> str:
+              lines = source.splitlines()
+              marker = f'      - name: {name}'
+              marker_index = lines.index(marker)
+              run_index = None
+              for index in range(marker_index + 1, len(lines)):
+                  if lines[index].startswith('      - name: '):
+                      break
+                  if lines[index] == '        run: |':
+                      run_index = index
+                      break
+              if run_index is None:
+                  raise RuntimeError(f'run-Block fehlt: {name}')
+              body = []
+              for line in lines[run_index + 1:]:
+                  if line.startswith('      - name: '):
+                      break
+                  if line.startswith('          '):
+                      body.append(line[10:])
+                  elif not line.strip():
+                      body.append('')
+                  else:
+                      raise RuntimeError(f'Unerwartete Einrückung in {name}: {line!r}')
+              return '\n'.join(body).rstrip() + '\n'
+
+          scripts = {
+              'install.sh': extract('Install pinned dependencies and Chromium'),
+              'apply.sh': extract('Apply verified CodeRabbit fixes'),
+              'regenerate.sh': extract('Regenerate literature deterministically'),
+              'validate.sh': extract('Run complete validation pipeline'),
+              'commit.sh': extract('Commit and push validated content only'),
+          }
+          validate = scripts['validate.sh']
+          validate = validate.replace(
+              'HEAD_SHA="$(git rev-parse HEAD)"',
+              'CHECK_REVISION="$GITHUB_SHA"',
+          )
+          validate = validate.replace('--git-sha "$HEAD_SHA"', '--git-sha "$CHECK_REVISION"')
+          validate = validate.replace('--expected-revision "$HEAD_SHA"', '--expected-revision "$CHECK_REVISION"')
+          scripts['validate.sh'] = validate
+
+          temp = Path(os.environ['RUNNER_TEMP'])
+          for filename, content in scripts.items():
+              path = temp / filename
+              path.write_text(content, encoding='utf-8')
+          PY
+          for script in install apply regenerate validate commit; do
+            bash -n "$RUNNER_TEMP/$script.sh"
+          done
+
+      - name: Install pinned dependencies and Chromium
+        shell: bash
+        run: bash "$RUNNER_TEMP/install.sh"
+
+      - name: Apply verified CodeRabbit fixes
+        shell: bash
+        run: bash "$RUNNER_TEMP/apply.sh"
+
+      - name: Regenerate literature deterministically
+        shell: bash
+        run: bash "$RUNNER_TEMP/regenerate.sh"
+
+      - name: Run complete validation pipeline
+        shell: bash
+        env:
+          RUNTIME_STATUS_MANAGED: '1'
+        run: bash "$RUNNER_TEMP/validate.sh"
+
+      - name: Commit and push validated content only
+        shell: bash
+        env:
+          PUSH_TOKEN: ${{ github.token }}
+        run: bash "$RUNNER_TEMP/commit.sh"
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit20-final-content-repair-v2-${{ github.run_attempt }}
+          path: |
+            build/runtime-status.json
+            build/runtime-status-validation-report.json
+            build/runtime-status-validation-report.md
+            build/validation-report.txt
+            build/sync-test.log
+            build/playwright-results/
+          if-no-files-found: warn
+          retention-days: 14
