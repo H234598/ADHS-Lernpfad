@@ -2,10 +2,10 @@
   "schema_version": "3.0.0",
   "run_id": "e55d7dcb-2e86-4b6a-822e-b67262473bcb",
   "workflow": "generator",
-  "revision": 4,
+  "revision": 5,
   "previous_status": "running",
-  "status": "running",
-  "phase": "verify_pr",
+  "status": "failed",
+  "phase": "repair",
   "completed_phases": [
     "initialize",
     "load_main",
@@ -19,25 +19,26 @@
     "validate",
     "commit",
     "push",
-    "create_pr"
+    "create_pr",
+    "verify_pr"
   ],
   "created_at": "2026-08-06T04:03:53Z",
-  "updated_at": "2026-08-06T05:04:00Z",
-  "ended_at": null,
-  "duration_seconds": null,
+  "updated_at": "2026-08-06T05:13:32Z",
+  "ended_at": "2026-08-06T05:13:32Z",
+  "duration_seconds": 4179,
   "retention_until": "2026-09-05T04:03:53Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-20-substanzgebrauch-abhaengigkeit",
-    "commit_sha": "0194a461d0120b350096e7a5dc1b81e2e0a51a9e",
+    "commit_sha": "408e78da90ac6809aa3612b83752f8e0ce7206dd",
     "pr_number": 50,
     "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/50",
     "workflow_run": {
-      "id": 31072527486,
+      "id": 31073307921,
       "attempt": 1,
-      "job_id": "92523339136",
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072527486",
-      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072527486"
+      "job_id": "92525627089",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073307921",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073307921"
     }
   },
   "metrics": {
@@ -54,35 +55,38 @@
       "NICE2018",
       "Jangra2026"
     ],
-    "research_consensus": "ADHS und Substanzgebrauchsstörungen getrennt diagnostizieren und koordiniert versorgen; therapeutische, fehlgebrauchte und nichtmedizinische Expositionen trennen",
     "unrelated_open_pull_requests": [46],
     "automatic_unit_pull_request_open": true,
-    "policy_action": "wait_first_ci_and_review_window",
+    "policy_action": "manual_architecture_review_before_next_repair",
     "new_content_required": false,
     "draft_pull_request": 50,
     "final_diff_files": 17,
-    "sensitive_paths_in_final_diff": false,
-    "manual_merge_required": false,
+    "sensitive_paths_in_current_diff": false,
+    "manual_merge_required": true,
     "finalization_workflow_run": 31072297971,
-    "finalization_workflow": "success_removed",
-    "literature_regeneration": "success_deterministic_53_sources",
+    "baseline_content_validation": "success",
+    "literature_regeneration": "success_deterministic_53_sources_before_review_fixes",
     "dependency_audit": "success_zero_vulnerabilities",
     "pytest": "159_passed_2_subtests",
     "web_tests": "4_passed",
     "remark_lint_full": "success_104_files",
     "knowledge_graph": "250_nodes_892_edges_0_errors_0_warnings",
     "compendium_validation": "20_chapters_53_sources_0_warnings_0_errors",
-    "validate_and_build": "success",
-    "download_formats": "success",
-    "remark_lint_first": "success",
-    "codacy": "pending",
-    "qlty": "success",
-    "coderabbit": "pending",
-    "coderabbit_threads_unresolved": 0,
+    "coderabbit_threads_unresolved": 5,
     "coderabbit_disagreement": false,
+    "coderabbit_numeric_correction": "Young2023 has 22 authors in PubMed and PMC, not 23",
+    "repair_cycle_count_total": 3,
+    "repair_attempt_1": "failed_exact_author_block_match",
+    "repair_attempt_2": "failed_yaml_author_indentation",
+    "repair_attempt_3": "failed_intended_generated_diff_misclassified",
+    "repair_attempt_3_frontmatter_authors": 22,
+    "repair_attempt_3_literature_generation": "success_53_sources",
+    "repair_attempt_3_pytest": "159_passed_2_subtests",
+    "repair_attempt_3_remark": "success",
     "review_window_earliest": "2026-08-06T18:00:00Z",
     "next_generator_blocked": true,
-    "version": "0.22.0"
+    "version": "0.22.0",
+    "merged": false
   },
   "artifacts": [
     {
@@ -108,29 +112,62 @@
       "value": "31072297971",
       "path": null,
       "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072297971",
-      "sha256": "37b1993f64332c15e2335bdb51c117b7b9a011f2a030504319e7d59a8f32d254",
+      "sha256": null,
       "reusable": true,
       "recorded_at": "2026-08-06T04:50:59Z"
     },
     {
-      "type": "commit",
-      "value": "0194a461d0120b350096e7a5dc1b81e2e0a51a9e",
+      "type": "workflow_run",
+      "value": "31073025928",
       "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/0194a461d0120b350096e7a5dc1b81e2e0a51a9e",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073025928",
       "sha256": null,
       "reusable": true,
-      "recorded_at": "2026-08-06T04:54:21Z"
+      "recorded_at": "2026-08-06T05:07:00Z"
     },
     {
       "type": "workflow_run",
-      "value": "31072527486",
+      "value": "31073132989",
       "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072527486",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073132989",
       "sha256": null,
       "reusable": true,
-      "recorded_at": "2026-08-06T05:03:00Z"
+      "recorded_at": "2026-08-06T05:09:00Z"
+    },
+    {
+      "type": "workflow_run",
+      "value": "31073307921",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073307921",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T05:12:00Z"
+    },
+    {
+      "type": "commit",
+      "value": "408e78da90ac6809aa3612b83752f8e0ce7206dd",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/408e78da90ac6809aa3612b83752f8e0ce7206dd",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T05:12:01Z"
     }
   ],
-  "error": null,
-  "recovery": null
+  "error": {
+    "class": "configuration",
+    "code": "repair_generated_diff_misclassified",
+    "message": "After three repair attempts, the third workflow correctly applied and parsed all 22 Young2023 authors, regenerated 53 literature sources and passed dependency, sync, pytest, JavaScript and Remark checks, but then treated the intended generated changes in Literatur.md, references.bib and references.json as an error via git diff --exit-code. A fourth repair attempt requires review of the repair and staging architecture.",
+    "phase": "repair",
+    "occurred_at": "2026-08-06T05:11:53Z",
+    "retryable": true,
+    "redacted": true
+  },
+  "recovery": {
+    "level": "manual_intervention",
+    "action": "Review the repair workflow architecture so regenerated literature files are accepted as intended changes, then continue the existing branch and PR 50. Do not create a new unit or run ID. Apply the four valid CodeRabbit content fixes, regenerate outputs, run the complete validation, commit the clean 17-file content diff, re-run CodeRabbit and CI, and respect the review window.",
+    "resume_phase": "repair",
+    "block_next_run": true,
+    "new_content_required": false,
+    "acknowledged": false
+  }
 }
