@@ -2,10 +2,10 @@
   "schema_version": "3.0.0",
   "run_id": "e55d7dcb-2e86-4b6a-822e-b67262473bcb",
   "workflow": "generator",
-  "revision": 5,
-  "previous_status": "running",
-  "status": "failed",
-  "phase": "repair",
+  "revision": 6,
+  "previous_status": "failed",
+  "status": "running",
+  "phase": "wait_review",
   "completed_phases": [
     "initialize",
     "load_main",
@@ -20,25 +20,26 @@
     "commit",
     "push",
     "create_pr",
-    "verify_pr"
+    "verify_pr",
+    "repair"
   ],
   "created_at": "2026-08-06T04:03:53Z",
-  "updated_at": "2026-08-06T05:13:32Z",
-  "ended_at": "2026-08-06T05:13:32Z",
-  "duration_seconds": 4179,
+  "updated_at": "2026-08-06T05:41:30Z",
+  "ended_at": null,
+  "duration_seconds": null,
   "retention_until": "2026-09-05T04:03:53Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-20-substanzgebrauch-abhaengigkeit",
-    "commit_sha": "408e78da90ac6809aa3612b83752f8e0ce7206dd",
+    "commit_sha": "d7ce58cfefb5501ce006ee9f8c32add5a184cc14",
     "pr_number": 50,
     "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/50",
     "workflow_run": {
-      "id": 31073307921,
+      "id": 31074836338,
       "attempt": 1,
-      "job_id": "92525627089",
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073307921",
-      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073307921"
+      "job_id": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31074836338",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31074836338"
     }
   },
   "metrics": {
@@ -47,6 +48,7 @@
     "base_commit": "229e7fa217ce5f5d4869ab67e33e0b9a4ae7bdb4",
     "prose_words": 1931,
     "literature_sources": 53,
+    "anki_cards": 20,
     "research_sources_selected": [
       "Comiskey2026",
       "Shanbhag2026",
@@ -57,32 +59,30 @@
     ],
     "unrelated_open_pull_requests": [46],
     "automatic_unit_pull_request_open": true,
-    "policy_action": "manual_architecture_review_before_next_repair",
+    "policy_action": "wait_for_first_ci_coderabbit_and_review_window",
     "new_content_required": false,
     "draft_pull_request": 50,
     "final_diff_files": 17,
     "sensitive_paths_in_current_diff": false,
-    "manual_merge_required": true,
-    "finalization_workflow_run": 31072297971,
-    "baseline_content_validation": "success",
-    "literature_regeneration": "success_deterministic_53_sources_before_review_fixes",
+    "manual_merge_required": false,
+    "validated_content_workflow_run": 31074034736,
+    "full_content_validation": "success",
+    "literature_regeneration": "success_deterministic_53_sources",
     "dependency_audit": "success_zero_vulnerabilities",
     "pytest": "159_passed_2_subtests",
     "web_tests": "4_passed",
     "remark_lint_full": "success_104_files",
-    "knowledge_graph": "250_nodes_892_edges_0_errors_0_warnings",
-    "compendium_validation": "20_chapters_53_sources_0_warnings_0_errors",
-    "coderabbit_threads_unresolved": 5,
+    "knowledge_graph": "success_no_errors_or_warnings",
+    "compendium_validation": "20_chapters_53_sources_success",
+    "young2023_authors_verified": 22,
+    "first_ci_validate": "queued",
+    "first_ci_export": "queued",
+    "first_ci_remark": "queued",
+    "first_ci_codacy": "queued",
+    "qlty": "success_on_pre_cleanup_content_head",
+    "coderabbit": "review_requested_for_clean_head",
+    "coderabbit_threads_unresolved": 0,
     "coderabbit_disagreement": false,
-    "coderabbit_numeric_correction": "Young2023 has 22 authors in PubMed and PMC, not 23",
-    "repair_cycle_count_total": 3,
-    "repair_attempt_1": "failed_exact_author_block_match",
-    "repair_attempt_2": "failed_yaml_author_indentation",
-    "repair_attempt_3": "failed_intended_generated_diff_misclassified",
-    "repair_attempt_3_frontmatter_authors": 22,
-    "repair_attempt_3_literature_generation": "success_53_sources",
-    "repair_attempt_3_pytest": "159_passed_2_subtests",
-    "repair_attempt_3_remark": "success",
     "review_window_earliest": "2026-08-06T18:00:00Z",
     "next_generator_blocked": true,
     "version": "0.22.0",
@@ -109,65 +109,50 @@
     },
     {
       "type": "workflow_run",
-      "value": "31072297971",
+      "value": "31074034736",
       "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31072297971",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31074034736",
       "sha256": null,
       "reusable": true,
-      "recorded_at": "2026-08-06T04:50:59Z"
-    },
-    {
-      "type": "workflow_run",
-      "value": "31073025928",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073025928",
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-06T05:07:00Z"
-    },
-    {
-      "type": "workflow_run",
-      "value": "31073132989",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073132989",
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-06T05:09:00Z"
-    },
-    {
-      "type": "workflow_run",
-      "value": "31073307921",
-      "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31073307921",
-      "sha256": null,
-      "reusable": true,
-      "recorded_at": "2026-08-06T05:12:00Z"
+      "recorded_at": "2026-08-06T05:34:00Z"
     },
     {
       "type": "commit",
-      "value": "408e78da90ac6809aa3612b83752f8e0ce7206dd",
+      "value": "d7ce58cfefb5501ce006ee9f8c32add5a184cc14",
       "path": null,
-      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/408e78da90ac6809aa3612b83752f8e0ce7206dd",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/d7ce58cfefb5501ce006ee9f8c32add5a184cc14",
       "sha256": null,
       "reusable": true,
-      "recorded_at": "2026-08-06T05:12:01Z"
+      "recorded_at": "2026-08-06T05:40:40Z"
+    },
+    {
+      "type": "workflow_run",
+      "value": "31074836338",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31074836338",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T05:41:00Z"
+    },
+    {
+      "type": "workflow_run",
+      "value": "31074836341",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31074836341",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T05:41:00Z"
+    },
+    {
+      "type": "workflow_run",
+      "value": "31074836327",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31074836327",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-06T05:41:00Z"
     }
   ],
-  "error": {
-    "class": "configuration",
-    "code": "repair_generated_diff_misclassified",
-    "message": "After three repair attempts, the third workflow correctly applied and parsed all 22 Young2023 authors, regenerated 53 literature sources and passed dependency, sync, pytest, JavaScript and Remark checks, but then treated the intended generated changes in Literatur.md, references.bib and references.json as an error via git diff --exit-code. A fourth repair attempt requires review of the repair and staging architecture.",
-    "phase": "repair",
-    "occurred_at": "2026-08-06T05:11:53Z",
-    "retryable": true,
-    "redacted": true
-  },
-  "recovery": {
-    "level": "manual_intervention",
-    "action": "Review the repair workflow architecture so regenerated literature files are accepted as intended changes, then continue the existing branch and PR 50. Do not create a new unit or run ID. Apply the four valid CodeRabbit content fixes, regenerate outputs, run the complete validation, commit the clean 17-file content diff, re-run CodeRabbit and CI, and respect the review window.",
-    "resume_phase": "repair",
-    "block_next_run": true,
-    "new_content_required": false,
-    "acknowledged": false
-  }
+  "error": null,
+  "recovery": null
 }
