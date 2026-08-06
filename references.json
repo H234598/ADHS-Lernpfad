@@ -262,6 +262,49 @@
     "volume": "10"
   },
   {
+    "DOI": "10.1080/15504263.2026.2686088",
+    "PMID": "42429286",
+    "URL": "https://doi.org/10.1080/15504263.2026.2686088",
+    "author": [
+      {
+        "family": "Comiskey",
+        "given": "Catherine"
+      },
+      {
+        "family": "McDonagh",
+        "given": "David"
+      },
+      {
+        "family": "Banka-Cullen",
+        "given": "Sonam Prakashini"
+      },
+      {
+        "family": "James",
+        "given": "Philip"
+      },
+      {
+        "family": "Cafferkey",
+        "given": "Sadie Lavelle"
+      },
+      {
+        "family": "Eustace-Cook",
+        "given": "Jessica"
+      }
+    ],
+    "container-title": "Journal of Dual Diagnosis",
+    "id": "Comiskey2026",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "page": "1–12",
+    "title": "Systematic Review and Meta-Analysis of Attention Deficit Hyperactivity Disorder: First Estimates of the Prevalence by Sex Amongst People Who Use Psychoactive Substances and Alcohol",
+    "type": "article-journal"
+  },
+  {
     "DOI": "10.1080/14737175.2024.2353692",
     "PMID": "38738544",
     "URL": "https://doi.org/10.1080/14737175.2024.2353692",
@@ -418,6 +461,38 @@
     "title": "The World Federation of ADHD International Consensus Statement: 208 evidence-based conclusions about the disorder",
     "type": "article-journal",
     "volume": "128"
+  },
+  {
+    "DOI": "10.3389/fpsyt.2025.1612785",
+    "PMID": "40698051",
+    "URL": "https://doi.org/10.3389/fpsyt.2025.1612785",
+    "author": [
+      {
+        "family": "Forrest",
+        "given": "Jessica"
+      },
+      {
+        "family": "Chen",
+        "given": "Winnie"
+      },
+      {
+        "family": "Jagadheesan",
+        "given": "Karuppiah"
+      }
+    ],
+    "container-title": "Frontiers in Psychiatry",
+    "id": "Forrest2025",
+    "issued": {
+      "date-parts": [
+        [
+          2025
+        ]
+      ]
+    },
+    "number": "1612785",
+    "title": "Misuse and diversion of stimulant medications prescribed for the treatment of ADHD: a systematic review",
+    "type": "article-journal",
+    "volume": "16"
   },
   {
     "DOI": "10.1002/brb3.70618",
@@ -1117,6 +1192,37 @@
     "volume": "91"
   },
   {
+    "DOI": "10.1080/10826084.2026.2670635",
+    "PMID": "42152537",
+    "URL": "https://doi.org/10.1080/10826084.2026.2670635",
+    "author": [
+      {
+        "family": "Shanbhag",
+        "given": "Trusha"
+      },
+      {
+        "family": "Rai",
+        "given": "Shweta"
+      },
+      {
+        "family": "Praharaj",
+        "given": "Samir Kumar"
+      }
+    ],
+    "container-title": "Substance Use & Misuse",
+    "id": "Shanbhag2026",
+    "issued": {
+      "date-parts": [
+        [
+          2026
+        ]
+      ]
+    },
+    "page": "1–14",
+    "title": "The Longitudinal Link: A Systematic Review of Childhood ADHD and Early Onset of Substance Use in Adulthood",
+    "type": "article-journal"
+  },
+  {
     "DOI": "10.1176/appi.ajp.2017.17030298",
     "PMID": "29070684",
     "URL": "https://doi.org/10.1176/appi.ajp.2017.17030298",
@@ -1536,6 +1642,40 @@
     "title": "Guidance for identification and treatment of individuals with attention deficit/hyperactivity disorder and autism spectrum disorder based upon expert consensus",
     "type": "article-journal",
     "volume": "18"
+  },
+  {
+    "DOI": "10.5498/wjp.v13.i3.84",
+    "PMID": "37033892",
+    "URL": "https://doi.org/10.5498/wjp.v13.i3.84",
+    "author": [
+      {
+        "family": "Young",
+        "given": "Susan"
+      },
+      {
+        "family": "Abbasian",
+        "given": "Cyrus"
+      },
+      {
+        "family": "Al-Attar",
+        "given": "Zainab"
+      }
+    ],
+    "container-title": "World Journal of Psychiatry",
+    "id": "Young2023",
+    "issue": "3",
+    "issued": {
+      "date-parts": [
+        [
+          2023
+        ]
+      ]
+    },
+    "note": "Die Studienkarte enthält eine ausdrücklich gekennzeichnete, abgekürzte Autorenliste.",
+    "page": "84–112",
+    "title": "Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement",
+    "type": "article-journal",
+    "volume": "13"
   },
   {
     "DOI": "10.1016/j.jpsychires.2024.12.022",
