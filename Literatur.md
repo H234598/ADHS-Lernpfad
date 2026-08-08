@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-08-05
+last_reviewed: 2026-08-06
 ---
 
 # Literatur
@@ -71,6 +71,14 @@ Castellanos, F. X., Sonuga-Barke, E. J. S., Milham, M. P., & Tannock, R. (2006).
 - DOI: [https://doi.org/10.1016/j.tics.2006.01.011](https://doi.org/10.1016/j.tics.2006.01.011)
 - Evidenztyp: `review` · Evidenzgrad: `moderate` · Status: `consensus`
 
+## Comiskey2026
+
+Comiskey, Catherine, McDonagh, David, Banka-Cullen, Sonam Prakashini, James, Philip, Cafferkey, Sadie Lavelle, & Eustace-Cook, Jessica (2026). Systematic Review and Meta-Analysis of Attention Deficit Hyperactivity Disorder: First Estimates of the Prevalence by Sex Amongst People Who Use Psychoactive Substances and Alcohol. *Journal of Dual Diagnosis*, 1–12.
+
+- DOI: [https://doi.org/10.1080/15504263.2026.2686088](https://doi.org/10.1080/15504263.2026.2686088)
+- PubMed: [PMID 42429286](https://pubmed.ncbi.nlm.nih.gov/42429286/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
+
 ## Cortese2024
 
 Cortese, S., Veronesi, G. F., Gabellone, A., et al. (2024). The management of sleep disturbances in children with attention-deficit/hyperactivity disorder (ADHD): an update of the literature. *Expert Review of Neurotherapeutics, 24*(6), 585–596.
@@ -108,6 +116,14 @@ Faraone, S. V., Banaschewski, T., Coghill, D., et al. (2021). The World Federati
 - DOI: [https://doi.org/10.1016/j.neubiorev.2021.01.022](https://doi.org/10.1016/j.neubiorev.2021.01.022)
 - PubMed: [PMID 33549739](https://pubmed.ncbi.nlm.nih.gov/33549739/)
 - Evidenztyp: `consensus` · Evidenzgrad: `high` · Status: `consensus`
+
+## Forrest2025
+
+Forrest, Jessica, Chen, Winnie, & Jagadheesan, Karuppiah (2025). Misuse and diversion of stimulant medications prescribed for the treatment of ADHD: a systematic review. *Frontiers in Psychiatry, 16*, 1612785.
+
+- DOI: [https://doi.org/10.3389/fpsyt.2025.1612785](https://doi.org/10.3389/fpsyt.2025.1612785)
+- PubMed: [PMID 40698051](https://pubmed.ncbi.nlm.nih.gov/40698051/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## Garas2025
 
@@ -277,6 +293,14 @@ Serrano-Ortiz, Marina, Llopis-Sánchez, Blanca, & Orgilés, Mireia (2026). Curre
 - PubMed: [PMID 41762804](https://pubmed.ncbi.nlm.nih.gov/41762804/)
 - Evidenztyp: `umbrella-review` · Evidenzgrad: `high` · Status: `consensus`
 
+## Shanbhag2026
+
+Shanbhag, Trusha, Rai, Shweta, & Praharaj, Samir Kumar (2026). The Longitudinal Link: A Systematic Review of Childhood ADHD and Early Onset of Substance Use in Adulthood. *Substance Use & Misuse*, 1–14.
+
+- DOI: [https://doi.org/10.1080/10826084.2026.2670635](https://doi.org/10.1080/10826084.2026.2670635)
+- PubMed: [PMID 42152537](https://pubmed.ncbi.nlm.nih.gov/42152537/)
+- Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `probable`
+
 ## Sibley2018
 
 Sibley, M. H., Rohde, L. A., Swanson, J. M., et al. (2018). Late-onset ADHD reconsidered with comprehensive repeated assessments between ages 10 and 25. *American Journal of Psychiatry, 175*(2), 140–149.
@@ -360,6 +384,14 @@ Young, S., Hollingdale, J., Absoud, M., et al. (2020). Guidance for identificati
 
 - DOI: [https://doi.org/10.1186/s12916-020-01585-y](https://doi.org/10.1186/s12916-020-01585-y)
 - PubMed: [PMID 32448170](https://pubmed.ncbi.nlm.nih.gov/32448170/)
+- Evidenztyp: `expert-consensus` · Evidenzgrad: `moderate` · Status: `consensus`
+
+## Young2023
+
+Young, Susan, Abbasian, Cyrus, Al-Attar, Zainab, Branney, Polly, Colley, Bill, Cortese, Samuele, Cubbin, Sally, Deeley, Quinton, Gudjonsson, Gisli Hannes, Hill, Peter, Hollingdale, Jack, Jenden, Steve, Johnson, Joe, Judge, Deborah, Lewis, Alexandra, Mason, Peter, Mukherjee, Raja, Nutt, David, Roberts, Jane, Robinson, Fiona, Woodhouse, Emma, & Cocallis, Kelly (2023). Identification and treatment of individuals with attention-deficit/hyperactivity disorder and substance use disorder: An expert consensus statement. *World Journal of Psychiatry, 13*(3), 84–112.
+
+- DOI: [https://doi.org/10.5498/wjp.v13.i3.84](https://doi.org/10.5498/wjp.v13.i3.84)
+- PubMed: [PMID 37033892](https://pubmed.ncbi.nlm.nih.gov/37033892/)
 - Evidenztyp: `expert-consensus` · Evidenzgrad: `moderate` · Status: `consensus`
 
 ## Zhang2025

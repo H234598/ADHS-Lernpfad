@@ -175,5 +175,5 @@ Weil diese Merkmale unspezifisch sind. Für eine manische oder hypomanische Epis
 ## Navigation
 
 - Zurück: [[02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen|Trauma, PTBS und komplexe Traumafolgen]]
-- Weiter: [[ROADMAP#A3 · Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung — P0|Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung]] *(geplant)*
+- Weiter: [[02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS|Substanzgebrauch, Abhängigkeit und ADHS]]
 - [[Glossar]] · [[Literatur]] · [[knowledge-graph/README|Wissensgraph]]
