@@ -6,7 +6,7 @@ evidence_grade: moderate
 status: probable
 doi: "10.1080/15504263.2026.2686088"
 pmid: "42429286"
-last_checked: 2026-08-06
+last_checked: 2026-08-08
 tags: [Literatur, ADHS, Substanzgebrauch, Abhängigkeit, Prävalenz, Meta-Analyse, Versorgung]
 citation:
   entry_type: article
@@ -49,7 +49,7 @@ Zwischen den Studien bestand erhebliche Heterogenität. Länder, Versorgungskont
 
 ## Verhältnis zum bisherigen Konsens
 
-Bestätigt, dass ADHS in Substanzhilfe- und SUD-Populationen häufig übersehen werden kann und in beiden Versorgungsrichtungen systematisch berücksichtigt werden sollte. Präzisiert den Konsens um aktuelle substanz- und geschlechtsbezogene, aber weiterhin heterogene Schätzungen.
+Zeigt eine relevante ADHS-Prävalenz in behandlungs- und hilfesuchenden Substanzpopulationen und präzisiert den bisherigen Wissensstand um aktuelle substanz- und geschlechtsbezogene, aber weiterhin heterogene Schätzungen. Empfehlungen zur wechselseitigen Erkennung von ADHS und Substanzgebrauchsstörungen sowie zur koordinierten Versorgung stützen sich auf Young2023 und nicht auf diese Prävalenzanalyse.
 
 ## Links
 
