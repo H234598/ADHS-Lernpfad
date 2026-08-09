@@ -2,8 +2,8 @@
   "schema_version": "3.0.0",
   "run_id": "e55d7dcb-2e86-4b6a-822e-b67262473bcb",
   "workflow": "generator",
-  "revision": 7,
-  "previous_status": "running",
+  "revision": 8,
+  "previous_status": "failed",
   "status": "failed",
   "phase": "repair",
   "completed_phases": [
@@ -24,22 +24,22 @@
     "repair"
   ],
   "created_at": "2026-08-06T04:03:53Z",
-  "updated_at": "2026-08-08T04:16:09Z",
+  "updated_at": "2026-08-09T04:09:04Z",
   "ended_at": null,
   "duration_seconds": null,
   "retention_until": "2026-09-05T04:03:53Z",
   "context": {
     "repository": "H234598/ADHS-Lernpfad",
     "branch": "agent/einheit-20-substanzgebrauch-abhaengigkeit",
-    "commit_sha": "55d50abb978f2f89c4f02d8dca1ce8e005e02793",
+    "commit_sha": "c57f5bdf315b587cd9dbf253ffa4c35624e17bae",
     "pr_number": 50,
     "pr_url": "https://github.com/H234598/ADHS-Lernpfad/pull/50",
     "workflow_run": {
-      "id": 31238902177,
+      "id": 31293890245,
       "attempt": 1,
-      "job_id": "93056380639",
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31238902177",
-      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31238902177"
+      "job_id": "93195693473",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31293890245",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31293890245"
     }
   },
   "metrics": {
@@ -57,7 +57,9 @@
       "NICE2018",
       "Jangra2026"
     ],
-    "unrelated_open_pull_requests": [46],
+    "unrelated_open_pull_requests": [
+      46
+    ],
     "automatic_unit_pull_request_open": true,
     "policy_action": "retry_repair_same_phase_on_next_watcher",
     "new_content_required": false,
@@ -74,16 +76,26 @@
     "latest_validation_workflow_run": 31238902177,
     "latest_validation_job": 93056380639,
     "latest_validation": "failure_generated_literature_header_drift",
-    "literature_regeneration": "requires_commit_of_Literatur.md_last_reviewed_2026-08-08",
+    "literature_regeneration": "deterministic_output_verified_but_not_committed",
+    "deterministic_literature_expected_diff": "Literatur.md last_reviewed 2026-08-06 -> 2026-08-08",
+    "repair_attempt_workflow_commit": "30b605cdb14df205a9a44575addd42671cd3403c",
+    "repair_attempt_workflow_run": 31293890245,
+    "repair_attempt_job": 93195693473,
+    "repair_attempt": "failure_noncanonical_npx_remark_cli",
+    "repair_attempt_generator_output": "53_sources_Literatur_md_only_last_reviewed_2026-08-08",
+    "repair_attempt_canonical_changed_remark_lint": "success_12_files",
+    "repair_attempt_dependency_audit": "success_zero_vulnerabilities",
+    "repair_attempt_cleanup_commit": "c57f5bdf315b587cd9dbf253ffa4c35624e17bae",
+    "temporary_repair_workflow_removed": true,
     "dependency_audit": "success_zero_vulnerabilities",
-    "pytest": "159_passed_2_subtests",
+    "pytest": "159_passed_2_subtests_on_previous_validation",
     "web_tests_previous_full_validation": "4_passed",
     "remark_lint_full": "success_104_files",
     "first_ci_validate": "failure",
     "first_ci_export": "skipped_due_to_validate_failure",
     "first_ci_remark": "success",
-    "first_ci_codacy": "in_progress_at_status_snapshot",
-    "qlty": "success",
+    "qlty_previous_content_head": "success",
+    "qlty_current_cleanup_head": "pending_at_status_snapshot",
     "coderabbit": "success",
     "coderabbit_threads_unresolved": 0,
     "coderabbit_disagreement": false,
@@ -173,20 +185,47 @@
       "sha256": null,
       "reusable": true,
       "recorded_at": "2026-08-08T04:13:12Z"
+    },
+    {
+      "type": "commit",
+      "value": "30b605cdb14df205a9a44575addd42671cd3403c",
+      "path": ".github/workflows/repair-unit20-literature-sync.yml",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/30b605cdb14df205a9a44575addd42671cd3403c",
+      "sha256": null,
+      "reusable": false,
+      "recorded_at": "2026-08-09T04:07:16Z"
+    },
+    {
+      "type": "workflow_run",
+      "value": "31293890245",
+      "path": null,
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31293890245",
+      "sha256": null,
+      "reusable": false,
+      "recorded_at": "2026-08-09T04:08:20Z"
+    },
+    {
+      "type": "commit",
+      "value": "c57f5bdf315b587cd9dbf253ffa4c35624e17bae",
+      "path": ".github/workflows/repair-unit20-literature-sync.yml",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/commit/c57f5bdf315b587cd9dbf253ffa4c35624e17bae",
+      "sha256": null,
+      "reusable": true,
+      "recorded_at": "2026-08-09T04:09:04Z"
     }
   ],
   "error": {
     "class": "validation",
-    "code": "generated_literature_header_drift",
-    "message": "Nach der evidenzbasierten Aktualisierung von Comiskey2026 auf last_checked 2026-08-08 regeneriert scripts/build_literature.py Literatur.md deterministisch mit last_reviewed 2026-08-08; diese generierte Änderung fehlt noch im PR-Head.",
-    "occurred_at": "2026-08-08T04:12:48.742Z",
+    "code": "repair_workflow_noncanonical_remark_cli",
+    "message": "Der Reparaturlauf bestätigte den deterministischen Literatur-Output und bestand den kanonischen changed-Remark-lint, brach danach aber an der zusätzlich eingefügten, im Repository nicht bereitgestellten Prüfung 'npx remark Literatur.md -q' mit 'could not determine executable to run' ab. Literatur.md wurde deshalb nicht committed; der temporäre Workflow wurde anschließend wieder aus dem PR-Diff entfernt.",
+    "occurred_at": "2026-08-09T04:08:16.889Z",
     "phase": "repair",
     "redacted": false,
     "retryable": true
   },
   "recovery": {
     "acknowledged": false,
-    "action": "regenerate_literature_and_commit_generated_header",
+    "action": "retry_literature_sync_without_noncanonical_npx_remark_cli",
     "block_next_run": true,
     "level": "retry_same_phase",
     "new_content_required": false,
