@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-08-06
+last_reviewed: 2026-08-08
 ---
 
 # Literatur
