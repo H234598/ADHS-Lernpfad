@@ -136,6 +136,8 @@ def test_codacy_workflow_preserves_explicit_fail_closed_analyzer_coverage() -> N
         "tool-timeout": codacy["with"]["tool-timeout"] == "${{ matrix.tool_timeout }}",
         "fail-if-incomplete": codacy["with"]["fail-if-incomplete"] is True,
         "finding-policy": codacy["with"]["max-allowed-issues"] == 2147483647,
+        "sarif-after-failure": upload.get("if")
+        == "${{ !cancelled() && hashFiles('results.sarif') != '' }}",
         "sarif-category": upload["with"]["category"] == "codacy-${{ matrix.tool }}",
         "aggregate-name": gate["name"] == "Codacy Security Scan",
         "aggregate-needs": gate["needs"] == "codacy-analysis",
