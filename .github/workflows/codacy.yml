@@ -17,6 +17,7 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
+    # The branches below must be a subset of the branches above
     branches: [ "main" ]
   schedule:
     - cron: '17 8 * * 1'
@@ -27,27 +28,45 @@ permissions:
 jobs:
   codacy-security-scan:
     permissions:
-      contents: read
-      security-events: write
-      actions: read
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     name: Codacy Security Scan
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
+      # Checkout the repository to the GitHub Actions runner
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
+      # Execute the security-focused Codacy analyzer and generate SARIF.
+      # The unrestricted default analyzer set currently includes several
+      # project-inapplicable tools whose configuration failures make the
+      # security gate incomplete and can crash SARIF post-processing.
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@562ee3e92b8e92df8b67e0a5ff8aa8e261919c08
         with:
+          # Check https://github.com/codacy/codacy-analysis-cli#project-token to get your project token from your Codacy repository
+          # You can also omit the token and run tools that support default configurations.
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           verbose: true
           output: results.sarif
           format: sarif
+          # Restrict this hard security gate to an analyzer that has a valid
+          # default configuration for this repository. Broad quality checks
+          # remain covered by the dedicated lint/quality workflows.
+          tool: bandit
+          # Adjust severity of non-security issues
           gh-code-scanning-compat: true
+          # Force 0 exit code for findings so GitHub code scanning owns alert policy.
+          # Analyzer execution itself remains fail-closed via fail-if-incomplete.
           max-allowed-issues: 2147483647
           tool-timeout: 10minutes
+          fail-if-incomplete: true
 
+      # Upload the SARIF file generated in the previous step
       - name: Upload SARIF results file
         uses: github/codeql-action/upload-sarif@v4
         with:
