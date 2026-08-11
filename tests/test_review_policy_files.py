@@ -96,6 +96,7 @@ def test_codacy_workflow_preserves_explicit_fail_closed_analyzer_coverage() -> N
         "stylelint": "10minutes",
     }
     matrix = analysis["strategy"]["matrix"]["include"]
+    tool_names = [entry["tool"] for entry in matrix]
     actual_timeouts = {
         entry["tool"]: entry["tool_timeout"]
         for entry in matrix
@@ -114,6 +115,12 @@ def test_codacy_workflow_preserves_explicit_fail_closed_analyzer_coverage() -> N
         for step in analysis["steps"]
         if str(step.get("uses", "")).startswith("github/codeql-action/upload-sarif@")
     )
+    enforcement = next(
+        step
+        for step in gate["steps"]
+        if step.get("name") == "Enforce complete analyzer matrix"
+    )
+    enforcement_run = enforcement.get("run", "")
 
     checks = {
         "permissions": analysis["permissions"]
@@ -122,6 +129,8 @@ def test_codacy_workflow_preserves_explicit_fail_closed_analyzer_coverage() -> N
         "job-timeout": analysis["timeout-minutes"] == 20,
         "fail-fast": analysis["strategy"]["fail-fast"] is False,
         "max-parallel": analysis["strategy"]["max-parallel"] == 4,
+        "matrix-size": len(matrix) == len(expected_timeouts),
+        "matrix-unique": len(set(tool_names)) == len(tool_names),
         "matrix": actual_timeouts == expected_timeouts,
         "checkout-credentials": checkout["with"]["persist-credentials"] is False,
         "tool-selection": codacy["with"]["tool"] == "${{ matrix.tool }}",
@@ -131,7 +140,14 @@ def test_codacy_workflow_preserves_explicit_fail_closed_analyzer_coverage() -> N
         "sarif-category": upload["with"]["category"] == "codacy-${{ matrix.tool }}",
         "aggregate-name": gate["name"] == "Codacy Security Scan",
         "aggregate-needs": gate["needs"] == "codacy-analysis",
+        "aggregate-always": gate.get("if") == "${{ always() }}",
         "aggregate-timeout": gate["timeout-minutes"] == 5,
+        "aggregate-result-env": enforcement.get("env", {}).get("ANALYZER_RESULT")
+        == "${{ needs.codacy-analysis.result }}",
+        "aggregate-rejects-non-success": (
+            '[[ "$ANALYZER_RESULT" != "success" ]]' in enforcement_run
+            and "exit 1" in enforcement_run
+        ),
     }
     failed = sorted(name for name, passed in checks.items() if not passed)
     if failed:
