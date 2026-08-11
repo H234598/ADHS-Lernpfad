@@ -87,8 +87,6 @@ def test_codacy_workflow_preserves_explicit_fail_closed_analyzer_coverage() -> N
         "prospector": "10minutes",
         "pylintpython3": "10minutes",
         "ruff": "10minutes",
-        # Historical unrestricted scans exceeded ten minutes in Opengrep.
-        "opengrep": "15minutes",
         "shellcheck": "10minutes",
         "psscriptanalyzer": "10minutes",
         "eslint-9": "10minutes",
@@ -132,6 +130,7 @@ def test_codacy_workflow_preserves_explicit_fail_closed_analyzer_coverage() -> N
         "matrix-size": len(matrix) == len(expected_timeouts),
         "matrix-unique": len(set(tool_names)) == len(tool_names),
         "matrix": actual_timeouts == expected_timeouts,
+        "opengrep-excluded": "opengrep" not in actual_timeouts,
         "checkout-credentials": checkout["with"]["persist-credentials"] is False,
         "tool-selection": codacy["with"]["tool"] == "${{ matrix.tool }}",
         "tool-timeout": codacy["with"]["tool-timeout"] == "${{ matrix.tool_timeout }}",
