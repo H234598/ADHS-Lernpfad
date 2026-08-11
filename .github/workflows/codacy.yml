@@ -46,6 +46,9 @@ jobs:
             tool_timeout: 10minutes
           - tool: ruff
             tool_timeout: 10minutes
+          # Opengrep exceeded ten minutes in a prior unrestricted run; give
+          # this analyzer a documented 15-minute exception inside the 20-minute
+          # job limit while all other analyzers remain capped at 10 minutes.
           - tool: opengrep
             tool_timeout: 15minutes
           - tool: shellcheck
