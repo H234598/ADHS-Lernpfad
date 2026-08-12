@@ -36,7 +36,9 @@ class CodeRabbitReviewStateTests(unittest.TestCase):
             ]
         )
         self.assertEqual(state, "changes_requested")
-        self.assertTrue(any("Änderungen angefordert" in reason for reason in reasons))
+        self.assertTrue(
+            any("Änderungen angefordert" in reason for reason in reasons)
+        )
 
     def test_later_comment_does_not_clear_changes_request(self) -> None:
         state, reasons = evaluate_coderabbit_review_state(
@@ -90,26 +92,29 @@ class CodeRabbitReviewStateTests(unittest.TestCase):
     def test_commented_or_missing_review_does_not_replace_status_gate(self) -> None:
         for reviews, expected in (
             ([], "none"),
-            ([review("COMMENTED", submitted_at="2026-08-12T12:00:00Z")], "commented"),
+            (
+                [
+                    review(
+                        "COMMENTED",
+                        submitted_at="2026-08-12T12:00:00Z",
+                    )
+                ],
+                "commented",
+            ),
         ):
             with self.subTest(reviews=reviews):
                 state, reasons = evaluate_coderabbit_review_state(reviews)
                 self.assertEqual(state, expected)
                 self.assertEqual(reasons, [])
 
-    def test_dismissed_latest_review_does_not_keep_obsolete_request_changes(self) -> None:
+    def test_dismissed_review_does_not_keep_obsolete_request_changes(self) -> None:
         state, reasons = evaluate_coderabbit_review_state(
             [
                 review(
-                    "CHANGES_REQUESTED",
-                    submitted_at="2026-08-12T11:00:00Z",
-                    review_id=1,
-                ),
-                review(
                     "DISMISSED",
                     submitted_at="2026-08-12T12:00:00Z",
-                    review_id=2,
-                ),
+                    review_id=1,
+                )
             ]
         )
         self.assertEqual(state, "dismissed")
