@@ -2,14 +2,17 @@ import { test, expect } from "@playwright/test";
 
 async function learningCategory(page, title) {
   const label = page.locator(
-    ".md-sidebar--primary label.md-nav__link",
-    { hasText: title },
-  ).first();
+    ".md-sidebar--primary nav[data-md-level=\"0\"] > ul.md-nav__list > "
+      + "li.md-nav__item--nested > label.md-nav__link",
+    { hasText: new RegExp(`^\\s*${title}\\s*$`) },
+  );
+  await expect(label).toHaveCount(1);
   await expect(label).toBeVisible();
 
-  const item = label.locator("xpath=parent::li");
+  const item = label.locator("xpath=..");
+  const toggle = item.locator(":scope > input.md-nav__toggle");
   const nestedNavigation = item.locator(":scope > nav.md-nav");
-  return { label, nestedNavigation };
+  return { label, toggle, nestedNavigation };
 }
 
 test("Lernkategorien sind beim Einstieg geschlossen und gezielt aufklappbar", async ({ page }) => {
@@ -19,10 +22,14 @@ test("Lernkategorien sind beim Einstieg geschlossen und gezielt aufklappbar", as
   const foundations = await learningCategory(page, "Grundlagen");
   const advanced = await learningCategory(page, "Vertiefung");
 
+  await expect(foundations.toggle).not.toBeChecked();
+  await expect(advanced.toggle).not.toBeChecked();
   await expect(foundations.nestedNavigation).toBeHidden();
   await expect(advanced.nestedNavigation).toBeHidden();
 
   await foundations.label.click();
+  await expect(foundations.toggle).toBeChecked();
+  await expect(advanced.toggle).not.toBeChecked();
   await expect(foundations.nestedNavigation).toBeVisible();
   await expect(advanced.nestedNavigation).toBeHidden();
 });
@@ -33,6 +40,8 @@ test("Ein Direktlink öffnet nur die Kategorie der aktiven Lernkarte", async ({ 
 
   let foundations = await learningCategory(page, "Grundlagen");
   let advanced = await learningCategory(page, "Vertiefung");
+  await expect(foundations.toggle).toBeChecked();
+  await expect(advanced.toggle).not.toBeChecked();
   await expect(foundations.nestedNavigation).toBeVisible();
   await expect(advanced.nestedNavigation).toBeHidden();
   await expect(
@@ -48,6 +57,8 @@ test("Ein Direktlink öffnet nur die Kategorie der aktiven Lernkarte", async ({ 
 
   foundations = await learningCategory(page, "Grundlagen");
   advanced = await learningCategory(page, "Vertiefung");
+  await expect(foundations.toggle).not.toBeChecked();
+  await expect(advanced.toggle).toBeChecked();
   await expect(foundations.nestedNavigation).toBeHidden();
   await expect(advanced.nestedNavigation).toBeVisible();
   await expect(
