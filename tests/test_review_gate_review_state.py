@@ -7,7 +7,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from review_gate import evaluate_coderabbit_review_state
+from coderabbit_review_state import evaluate_coderabbit_review_state
 
 
 def review(
@@ -37,6 +37,24 @@ class CodeRabbitReviewStateTests(unittest.TestCase):
         )
         self.assertEqual(state, "changes_requested")
         self.assertTrue(any("Änderungen angefordert" in reason for reason in reasons))
+
+    def test_later_comment_does_not_clear_changes_request(self) -> None:
+        state, reasons = evaluate_coderabbit_review_state(
+            [
+                review(
+                    "CHANGES_REQUESTED",
+                    submitted_at="2026-08-12T11:00:00Z",
+                    review_id=1,
+                ),
+                review(
+                    "COMMENTED",
+                    submitted_at="2026-08-12T12:00:00Z",
+                    review_id=2,
+                ),
+            ]
+        )
+        self.assertEqual(state, "changes_requested")
+        self.assertTrue(reasons)
 
     def test_later_approval_clears_earlier_changes_request(self) -> None:
         state, reasons = evaluate_coderabbit_review_state(
