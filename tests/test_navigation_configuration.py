@@ -13,7 +13,9 @@ def test_learning_categories_use_native_collapsible_navigation() -> None:
 
     config = yaml.load(
         (ROOT / "mkdocs.yml").read_text(encoding="utf-8"),
-        Loader=yaml.BaseLoader,
+        # safe_load rejects MkDocs' !!python/name Superfences tag. BaseLoader
+        # returns strings and containers without constructing Python objects.
+        Loader=yaml.BaseLoader,  # noqa: S506
     )
     features = set(config["theme"]["features"])
 
