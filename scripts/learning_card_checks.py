@@ -36,6 +36,15 @@ class PolicyDecision:
     reasons: tuple[str, ...]
 
 
+def _creation_key(run: dict[str, Any]) -> tuple[str, int]:
+    """GitHubs monotone Erzeugungsreihenfolge eines Check-Runs abbilden."""
+
+    return (
+        str(run.get("created_at") or ""),
+        int(run.get("id") or 0),
+    )
+
+
 def select_latest_check_runs(
     check_runs: Iterable[dict[str, Any]],
     *,
@@ -51,20 +60,8 @@ def select_latest_check_runs(
         name = str(run.get("name") or "")
         if name not in names or str(run.get("head_sha") or "") != head_sha:
             continue
-        timestamp = str(
-            run.get("completed_at") or run.get("started_at") or run.get("created_at") or ""
-        )
         current = latest.get(name)
-        current_key = ("", 0) if current is None else (
-            str(
-                current.get("completed_at")
-                or current.get("started_at")
-                or current.get("created_at")
-                or ""
-            ),
-            int(current.get("id") or 0),
-        )
-        if current is None or (timestamp, int(run.get("id") or 0)) >= current_key:
+        if current is None or _creation_key(run) >= _creation_key(current):
             latest[name] = run
     return latest
 
@@ -96,7 +93,9 @@ def _summary(run: dict[str, Any] | None) -> dict[str, str]:
     return {
         "state": _state(run),
         "url": "" if run is None else str(run.get("html_url") or ""),
-        "completed_at": "" if run is None else str(run.get("completed_at") or ""),
+        "completed_at": (
+            "" if run is None else str(run.get("completed_at") or "")
+        ),
     }
 
 
@@ -110,12 +109,14 @@ def evaluate_policy(
 
     if not re.fullmatch(r"[0-9a-f]{40}", head_sha):
         raise ValueError("head_sha muss ein vollständiger Git-SHA sein")
-    marker_missing = scope.manual_merge_required and not scope.manual_merge_marker
+    marker_missing = (
+        scope.manual_merge_required and not scope.manual_merge_marker
+    )
     reasons = list(scope.reasons)
     if marker_missing:
         reasons.append(
-            "Automations- oder sicherheitssensitive Dateien sind betroffen, aber "
-            "der Marker manual-merge-required fehlt."
+            "Automations- oder sicherheitssensitive Dateien sind betroffen, "
+            "aber der Marker manual-merge-required fehlt."
         )
 
     if not scope.requires_semantic_review:
@@ -133,7 +134,9 @@ def evaluate_policy(
         )
 
     selected = select_latest_check_runs(
-        check_runs, head_sha=head_sha, names=set(REQUIRED_POLICY_CHECKS)
+        check_runs,
+        head_sha=head_sha,
+        names=set(REQUIRED_POLICY_CHECKS),
     )
     review = _state(selected.get("CodeRabbit review gate (blocking)"))
     complete = _build_state(
@@ -152,10 +155,15 @@ def evaluate_policy(
     )
     return PolicyDecision(
         head_sha=head_sha,
-        passed=all(state == "success" for state in subgates.values())
-        and not marker_missing,
+        passed=(
+            all(state == "success" for state in subgates.values())
+            and not marker_missing
+        ),
         subgates=subgates,
-        required_checks={name: _summary(selected.get(name)) for name in REQUIRED_POLICY_CHECKS},
+        required_checks={
+            name: _summary(selected.get(name))
+            for name in REQUIRED_POLICY_CHECKS
+        },
         manual_merge_required=scope.manual_merge_required,
         reasons=tuple(reasons),
     )
