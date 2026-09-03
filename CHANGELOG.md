@@ -1,5 +1,14 @@
 # Änderungsverlauf
 
+## 0.22.0 – 2026-08-06
+
+- Einheit 20 „Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung“ ergänzt
+- Gebrauch, Substanzgebrauchsstörung, Intoxikation, Entzug, Fehlgebrauch und Weitergabe voneinander abgegrenzt
+- aktuelle Meta-Analysen von 2025 und 2026 zu ADHS in Substanzpopulationen, früherem Konsumbeginn sowie Fehlgebrauch verordneter Stimulanzien eingeordnet
+- therapeutische Stimulanzienbehandlung strikt von nichtmedizinischer Nutzung und hoch dosierten Konsumkontexten getrennt
+- substanzspezifische Differentialdiagnostik, akute Sicherheitsgrenzen und koordinierte Versorgung ergänzt
+- vier Studienkarten, Glossarbegriffe, Anki-Karte, Navigation, Roadmap und Literaturausgaben aktualisiert
+
 ## 0.21.0 – 2026-08-04
 
 - Einheit 19 „Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit“ ergänzt

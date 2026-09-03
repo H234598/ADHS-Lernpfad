@@ -72,6 +72,89 @@ def test_codacy_delegates_only_remark_markdown_analysis() -> None:
     assert "pylint" not in config
 
 
+def test_codacy_workflow_preserves_explicit_fail_closed_analyzer_coverage() -> None:
+    """Keep the local Codacy matrix explicit, bounded, isolated, and fail closed."""
+
+    workflow = yaml.safe_load(
+        (ROOT / ".github/workflows/codacy.yml").read_text(encoding="utf-8")
+    )
+    jobs = workflow["jobs"]
+    analysis = jobs["codacy-analysis"]
+    gate = jobs["codacy-security-scan"]
+
+    expected_timeouts = {
+        "bandit": "10minutes",
+        "prospector": "10minutes",
+        "pylintpython3": "10minutes",
+        "ruff": "10minutes",
+        "shellcheck": "10minutes",
+        "psscriptanalyzer": "10minutes",
+        "eslint-9": "10minutes",
+        "biome": "10minutes",
+        "stylelint": "10minutes",
+    }
+    matrix = analysis["strategy"]["matrix"]["include"]
+    tool_names = [entry["tool"] for entry in matrix]
+    actual_timeouts = {
+        entry["tool"]: entry["tool_timeout"]
+        for entry in matrix
+    }
+
+    checkout = next(
+        step for step in analysis["steps"] if step.get("name") == "Checkout code"
+    )
+    codacy = next(
+        step
+        for step in analysis["steps"]
+        if str(step.get("uses", "")).startswith("codacy/codacy-analysis-cli-action@")
+    )
+    upload = next(
+        step
+        for step in analysis["steps"]
+        if str(step.get("uses", "")).startswith("github/codeql-action/upload-sarif@")
+    )
+    enforcement = next(
+        step
+        for step in gate["steps"]
+        if step.get("name") == "Enforce complete analyzer matrix"
+    )
+    enforcement_run = enforcement.get("run", "")
+
+    checks = {
+        "permissions": analysis["permissions"]
+        == {"contents": "read", "security-events": "write"},
+        "no-actions-read": "actions" not in analysis["permissions"],
+        "job-timeout": analysis["timeout-minutes"] == 20,
+        "fail-fast": analysis["strategy"]["fail-fast"] is False,
+        "max-parallel": analysis["strategy"]["max-parallel"] == 4,
+        "matrix-size": len(matrix) == len(expected_timeouts),
+        "matrix-unique": len(set(tool_names)) == len(tool_names),
+        "matrix": actual_timeouts == expected_timeouts,
+        "opengrep-excluded": "opengrep" not in actual_timeouts,
+        "checkout-credentials": checkout["with"]["persist-credentials"] is False,
+        "tool-selection": codacy["with"]["tool"] == "${{ matrix.tool }}",
+        "tool-timeout": codacy["with"]["tool-timeout"] == "${{ matrix.tool_timeout }}",
+        "fail-if-incomplete": codacy["with"]["fail-if-incomplete"] is True,
+        "finding-policy": codacy["with"]["max-allowed-issues"] == 2147483647,
+        "sarif-after-failure": upload.get("if")
+        == "${{ !cancelled() && hashFiles('results.sarif') != '' }}",
+        "sarif-category": upload["with"]["category"] == "codacy-${{ matrix.tool }}",
+        "aggregate-name": gate["name"] == "Codacy Security Scan",
+        "aggregate-needs": gate["needs"] == "codacy-analysis",
+        "aggregate-always": gate.get("if") == "${{ always() }}",
+        "aggregate-timeout": gate["timeout-minutes"] == 5,
+        "aggregate-result-env": enforcement.get("env", {}).get("ANALYZER_RESULT")
+        == "${{ needs.codacy-analysis.result }}",
+        "aggregate-rejects-non-success": (
+            '[[ "$ANALYZER_RESULT" != "success" ]]' in enforcement_run
+            and "exit 1" in enforcement_run
+        ),
+    }
+    failed = sorted(name for name, passed in checks.items() if not passed)
+    if failed:
+        raise AssertionError("Codacy workflow policy mismatch: " + ", ".join(failed))
+
+
 def test_remark_lint_sanitizes_project_specific_obsidian_syntax() -> None:
     script = (ROOT / "scripts/remark_lint.mjs").read_text(encoding="utf-8")
     assert "const WIKILINK_RE = /\\[\\[([\\s\\S]*?)\\]\\]/g" in script

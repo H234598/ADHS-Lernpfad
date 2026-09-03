@@ -109,7 +109,7 @@ Notizen, Checklisten, sichtbare Zwischenstände und vorbereitete Wiedereinstiege
 
 Das wirksamste Mini-Werkzeug ist ein einziger Satz:
 
-> **Als Nächstes: [eine konkrete Handlung].**
+> **Als Nächstes: eine konkrete Handlung.**
 
 Beispiel:
 

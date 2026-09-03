@@ -192,3 +192,15 @@ cards:
   - Vertiefung
   - Differentialdiagnostik
   - Einheit_19
+- id: 1020
+  unit: 20
+  front: Warum dürfen verordnete ADHS-Stimulanzien, Fehlgebrauch und nichtmedizinischer Stimulanzienkonsum nicht als dieselbe Exposition behandelt werden?
+  back: Weil Person, Zweck, Dosis, Formulierung, Überwachung, Begleiterkrankungen und Konsumkontext verschieden sind; Risiken aus hoch dosierten oder nichtmedizinischen Populationen lassen sich nicht direkt auf eine fachlich überwachte Behandlung übertragen.
+  tags:
+  - ADHS
+  - Substanzgebrauch
+  - Abhaengigkeit
+  - Stimulanzien
+  - Vertiefung
+  - Differentialdiagnostik
+  - Einheit_20

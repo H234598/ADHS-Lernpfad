@@ -1,7 +1,7 @@
 ---
 title: Fachliche Roadmap
 tags: [ADHS, Roadmap, Wissenschaft, Lernpfad, Diagnostik, Behandlung, Versorgung, Forschung]
-last_reviewed: 2026-08-04
+last_reviewed: 2026-08-06
 status: fortlaufend
 ---
 
@@ -41,7 +41,7 @@ Ein Themenblock kann mehrere Einheiten erfordern. Er gilt erst dann als abgeschl
 
 ## Aktueller Stand des Lernpfads
 
-Der Lernpfad umfasst derzeit 19 fortlaufende Einheiten:
+Der Lernpfad umfasst derzeit 20 fortlaufende Einheiten:
 
 1. Was ist ADHS?
 2. Inhibition und Handlungssteuerung
@@ -62,6 +62,7 @@ Der Lernpfad umfasst derzeit 19 fortlaufende Einheiten:
 17. Zwangssymptome, Zwangsstörung und ADHS: Funktion, Abgrenzung und Koexistenz
 18. Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS
 19. Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit
+20. Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung
 
 Die vorhandenen Kapitel bilden Kernmechanismen, diagnostische Grundlagen, erste Lebensspannenfragen, Genetik und Umwelt, Schlaf und Gesundheit, Depression und Suizidalität sowie einen Behandlungsüberblick gut ab. Die größten fachlichen Lücken liegen nun bei der Breite der Komorbiditäten, spezifischen Lebensphasen und Populationen, Funktions- und Versorgungsthemen, differenzierter Behandlungssicherheit, sozialer Ungleichheit, digitaler Diagnostik sowie dem systematischen Übergang auf Forschungsniveau.
 
@@ -128,15 +129,15 @@ Die folgende Liste erhält sämtliche Themen der bisherigen Roadmap. Bereits vor
 > [!note] Umsetzung
 > Dieser Block ist wegen Umfang und unterschiedlicher Evidenz in mindestens zwei, wahrscheinlich drei reguläre Einheiten zu teilen. Keine Unterfrage darf aus Platzgründen entfallen.
 
-### A3 · Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung — P0
+### A3 · Substanzgebrauch, Abhängigkeit und nichtmedizinische Stimulanziennutzung — P0; umgesetzt als Einheit 20
 
-- [ ] Prävalenz- und Risikobefunde mit absoluten Risiken, Konfundierung und Heterogenität darstellen.
-- [ ] Alkohol, Nikotin, Cannabis, sedierende Substanzen, stimulierende Substanzen und Mischkonsum differenzieren.
-- [ ] „Selbstmedikation“ als mögliche individuelle Erklärung, nicht als universelle Ursache oder Rechtfertigung behandeln.
-- [ ] Intoxikation, Entzug und chronischer Konsum als mögliche Alternativ- oder Zusatzursachen von Aufmerksamkeitssymptomen erklären.
-- [ ] verordnete Behandlung, Fehlgebrauch, Weitergabe, sichere Aufbewahrung und kontrollierte Verschreibung voneinander abgrenzen.
-- [ ] besondere Behandlungs- und Versorgungsfragen bei gleichzeitig bestehender Substanzgebrauchsstörung darstellen.
-- [ ] keine Stigmatisierung und keine Anleitung zum Konsum oder zur Manipulation von Verschreibungen enthalten.
+- [x] Prävalenz- und Risikobefunde mit absoluten Risiken, Konfundierung und Heterogenität darstellen.
+- [x] Alkohol, Nikotin, Cannabis, sedierende Substanzen, stimulierende Substanzen und Mischkonsum differenzieren.
+- [x] „Selbstmedikation“ als mögliche individuelle Erklärung, nicht als universelle Ursache oder Rechtfertigung behandeln.
+- [x] Intoxikation, Entzug und chronischer Konsum als mögliche Alternativ- oder Zusatzursachen von Aufmerksamkeitssymptomen erklären.
+- [x] verordnete Behandlung, Fehlgebrauch, Weitergabe, sichere Aufbewahrung und kontrollierte Verschreibung voneinander abgrenzen.
+- [x] besondere Behandlungs- und Versorgungsfragen bei gleichzeitig bestehender Substanzgebrauchsstörung darstellen.
+- [x] keine Stigmatisierung und keine Anleitung zum Konsum oder zur Manipulation von Verschreibungen enthalten.
 
 ### A4 · Weitere neuroentwicklungsbezogene und verhaltensbezogene Komorbiditäten — P0
 
