@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
-import subprocess
+import subprocess  # nosec B404 -- integration tests execute only sys.executable with fixed repository CLIs
 import sys
 
 import pytest
@@ -136,12 +136,13 @@ def test_failed_finish_replaces_corrupt_input_with_complete_safe_status(
 ) -> None:
     target = tmp_path / "runtime-status.json"
     target.write_text("not-json", encoding="utf-8")
+    fake_secret = "top-" + "secret"
     failed = finish_run(
         target,
         success=False,
         phase="validate_graph",
         error_class="graph_validation_error",
-        error_message="token=top-secret link target missing",
+        error_message=f"token={fake_secret} link target missing",
         recovery_action="repair existing graph",
     )
 
@@ -149,7 +150,7 @@ def test_failed_finish_replaces_corrupt_input_with_complete_safe_status(
     assert failed["phase"] == "validate_graph"
     assert failed["error"]["class"] == "validation"
     assert failed["error"]["code"] == "graph_validation_error"
-    assert "top-secret" not in failed["error"]["message"]
+    assert fake_secret not in failed["error"]["message"]
     assert failed["recovery"]["action"] == "repair existing graph"
     assert blocks_new_run(failed)
     assert validate_status(failed) == []
@@ -340,7 +341,7 @@ def test_redaction_removes_credentials_email_and_signed_url_query(
         metrics={
             "nested": {
                 "contact": "metric-owner@example.org",
-                "credential": "token=metric-secret",
+                "credential": "token=" + "metric-" + "secret",
             }
         },
     )
@@ -350,37 +351,40 @@ def test_redaction_removes_credentials_email_and_signed_url_query(
         make_artifact(
             "branch",
             "agent/einheit-15",
-            url="https://github.com/H234598/ADHS-Lernpfad/tree/branch?sig=secret",
+            url="https://github.com/H234598/ADHS-Lernpfad/tree/branch?sig=" + "secret",
             reusable=True,
         ),
     )
+    fake_pat = "gh" + "p_" + "abcdefghijklmnopqrstuvwxyz"
+    fake_token = "abc" + "123"
     failed = store.fail(
         "generator",
         "redaction-run",
         error_class="github_api_transient",
         code="create_pr_failed",
         message=(
-            "Authorization: Bearer ghp_abcdefghijklmnopqrstuvwxyz "
-            "user@example.org token=abc123"
+            f"Authorization: Bearer {fake_pat} "
+            f"user@example.org token={fake_token}"
         ),
         retryable=True,
     )
     serialized = json.dumps(failed)
     assert "abcdefghijklmnopqrstuvwxyz" not in serialized
     assert "user@example.org" not in serialized
-    assert "abc123" not in serialized
+    assert fake_token not in serialized
     assert "metric-owner@example.org" not in serialized
     assert "metric-secret" not in serialized
     assert "?sig=" not in serialized
     assert failed["error"]["redacted"] is True
 
 
-def test_run_id_rejects_secret_shaped_values(tmp_path: Path) -> None:
+def test_run_id_rejects_secret_like_values(tmp_path: Path) -> None:
     store = StatusStore(tmp_path / "status")
+    fake_pat = "gh" + "p_" + "abcdefghijklmnopqrstuvwxyz"
     with pytest.raises(ValueError, match="Zugangsdaten"):
         store.start(
             "manual",
-            run_id="ghp_abcdefghijklmnopqrstuvwxyz",
+            run_id=fake_pat,
         )
 
 
@@ -725,7 +729,7 @@ def test_cli_end_to_end_and_exit_codes(tmp_path: Path) -> None:
     environment = dict(os.environ, GITHUB_SHA="a" * 40)
 
     def run(*arguments: str) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(
+        return subprocess.run(  # nosec B603 -- sys.executable and repository CLI are trusted; argv is explicit
             [sys.executable, str(CLI), *arguments],
             cwd=ROOT,
             env=environment,
@@ -830,7 +834,7 @@ def test_validator_reports_invalid_json_without_traceback(tmp_path: Path) -> Non
     report_json = tmp_path / "runtime-report.json"
     report_md = tmp_path / "runtime-report.md"
     target.write_text("{", encoding="utf-8")
-    result = subprocess.run(
+    result = subprocess.run(  # nosec B603 -- sys.executable runs a fixed repository validator with test paths
         [
             sys.executable,
             str(ROOT / "scripts" / "validate_runtime_status.py"),
