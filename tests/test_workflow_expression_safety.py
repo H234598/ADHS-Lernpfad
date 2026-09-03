@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import unittest
 
 import yaml
@@ -10,6 +11,7 @@ WORKFLOWS = (
     ".github/workflows/coderabbit-hard-gate.yml",
     ".github/workflows/learning-card-policy.yml",
 )
+SHA_PIN = re.compile(r"^[^@]+@[0-9a-f]{40}$")
 
 
 class WorkflowExpressionSafetyTests(unittest.TestCase):
@@ -39,6 +41,22 @@ class WorkflowExpressionSafetyTests(unittest.TestCase):
                         step.get("env", {}).get("TARGET_PR"),
                         "${{ steps.pr.outputs.number }}",
                     )
+
+    def test_third_party_actions_are_pinned_to_full_commit_sha(self) -> None:
+        for relative_path in WORKFLOWS:
+            with self.subTest(workflow=relative_path):
+                workflow = yaml.safe_load(
+                    (ROOT / relative_path).read_text(encoding="utf-8")
+                )
+                uses_values = [
+                    str(step["uses"])
+                    for job in workflow["jobs"].values()
+                    for step in job.get("steps", [])
+                    if "uses" in step
+                ]
+                self.assertTrue(uses_values)
+                for value in uses_values:
+                    self.assertRegex(value, SHA_PIN)
 
 
 if __name__ == "__main__":
