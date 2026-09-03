@@ -68,10 +68,11 @@ def test_git_sha_fallback_returns_none_without_git(monkeypatch) -> None:
 
 
 def test_graph_source_revision_executes_an_absolute_git_path(monkeypatch, tmp_path) -> None:
-    """Graph revision discovery must not pass a relative Git executable to subprocess."""
+    """Graph revision discovery must execute exactly the Git path it resolves."""
 
     monkeypatch.delenv("GITHUB_SHA", raising=False)
-    monkeypatch.setattr(graph_relations.shutil, "which", lambda _name: "tools/git")
+    discovered_git = "tools/git"
+    monkeypatch.setattr(graph_relations.shutil, "which", lambda _name: discovered_git)
     observed: dict[str, object] = {}
 
     def fake_run(command: list[str], **kwargs: object) -> SimpleNamespace:
@@ -88,5 +89,6 @@ def test_graph_source_revision_executes_an_absolute_git_path(monkeypatch, tmp_pa
     command = observed["command"]
     assert isinstance(command, list)  # nosec B101 -- pytest assertion
     assert Path(command[0]).is_absolute()  # nosec B101 -- pytest assertion
+    assert command[0] == str(Path(discovered_git).resolve())  # nosec B101 -- pytest assertion
     assert command[1:] == ["rev-parse", "HEAD"]  # nosec B101 -- pytest assertion
     _assert_safe_subprocess_kwargs(observed["kwargs"])
