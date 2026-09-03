@@ -6,7 +6,8 @@ from __future__ import annotations
 from collections import Counter
 import os
 from pathlib import Path
-import subprocess
+import shutil
+import subprocess  # nosec B404 -- fixed argv, resolved trusted git executable only
 from typing import Any, Callable
 
 from content_links import scan_wikilinks
@@ -20,9 +21,12 @@ from graph_model import GraphBuilder, SCHEMA_VERSION
 def _source_revision(root: Path) -> str | None:
     if os.getenv("GITHUB_SHA"):
         return os.environ["GITHUB_SHA"]
+    git = shutil.which("git")
+    if git is None:
+        return None
     try:
-        return subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=root, check=True,
+        return subprocess.run(  # nosec B603 -- executable resolved by shutil.which; argv is constant
+            [git, "rev-parse", "HEAD"], cwd=root, check=True,
             capture_output=True, text=True,
         ).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
