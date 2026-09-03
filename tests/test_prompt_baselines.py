@@ -82,7 +82,9 @@ def test_validator_rejects_manifest_tampering(
     elif tampering == "renamed":
         data["prompts"][0]["path"] = "prompts/RENAMED.md"
     elif tampering == "absolute":
-        data["prompts"][0]["path"] = "/tmp/AUTOMATION-PROMPT.md"
+        data["prompts"][0]["path"] = str(
+            Path("/") / "synthetic-absolute" / "AUTOMATION-PROMPT.md"
+        )
     elif tampering == "traversal":
         data["prompts"][0]["path"] = "../AUTOMATION-PROMPT.md"
     elif tampering == "wrong_version":
