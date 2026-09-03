@@ -25,7 +25,8 @@ import math
 import os
 from pathlib import Path, PurePosixPath
 import re
-import subprocess
+import shutil
+import subprocess  # nosec B404 -- fixed non-shell git fallback with resolved executable
 import sys
 import tempfile
 import time
@@ -271,9 +272,13 @@ def _canonical_status(value: Any) -> str:
 def _git_sha(value: Any = None) -> str | None:
     candidate = value or os.environ.get("GITHUB_SHA")
     if not candidate:
+        git_executable = shutil.which("git")
+        if not git_executable:
+            return None
         try:
-            candidate = subprocess.run(
-                ["git", "rev-parse", "HEAD"],
+            # Fixed argv, absolute executable, and no shell boundary.
+            candidate = subprocess.run(  # nosec B603
+                [str(Path(git_executable).resolve()), "rev-parse", "HEAD"],
                 cwd=ROOT,
                 check=True,
                 capture_output=True,

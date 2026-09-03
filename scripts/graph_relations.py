@@ -25,8 +25,8 @@ def _source_revision(root: Path) -> str | None:
     if git is None:
         return None
     try:
-        return subprocess.run(  # nosec B603 -- executable resolved by shutil.which; argv is constant
-            [git, "rev-parse", "HEAD"], cwd=root, check=True,
+        return subprocess.run(  # nosec B603 -- executable is resolved absolutely; argv is constant
+            [str(Path(git).resolve()), "rev-parse", "HEAD"], cwd=root, check=True,
             capture_output=True, text=True,
         ).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
