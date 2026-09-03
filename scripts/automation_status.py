@@ -26,7 +26,7 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import shutil
-import subprocess
+import subprocess  # nosec B404 -- fixed non-shell git fallback with resolved executable
 import sys
 import tempfile
 import time
@@ -276,7 +276,7 @@ def _git_sha(value: Any = None) -> str | None:
         if not git_executable:
             return None
         try:
-            candidate = subprocess.run(
+            candidate = subprocess.run(  # nosec B603 -- executable resolved absolutely; argv constant; shell never used
                 [str(Path(git_executable).resolve()), "rev-parse", "HEAD"],
                 cwd=ROOT,
                 check=True,
