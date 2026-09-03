@@ -1,7 +1,7 @@
 ---
 title: Literatur
 generated: true
-last_reviewed: 2026-08-08
+last_reviewed: 2026-09-04
 ---
 
 # Literatur
@@ -31,6 +31,14 @@ Baiamonte, L., Bellante, G., Allegra, P., et al. (2026). Attention Deficit/Hyper
 - DOI: [https://doi.org/10.3390/brainsci16060646](https://doi.org/10.3390/brainsci16060646)
 - PubMed: [PMID 42352655](https://pubmed.ncbi.nlm.nih.gov/42352655/)
 - Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `moderate` · Status: `disputed`
+
+## Barbaresi2020
+
+Barbaresi, W. J., Campbell, L., Diekroger, E. A., et al. (2020). Society for Developmental and Behavioral Pediatrics Clinical Practice Guideline for the Assessment and Treatment of Children and Adolescents with Complex Attention-Deficit/Hyperactivity Disorder. *Journal of Developmental & Behavioral Pediatrics, 41*(Suppl 2S), S35–S57.
+
+- DOI: [https://doi.org/10.1097/DBP.0000000000000770](https://doi.org/10.1097/DBP.0000000000000770)
+- PubMed: [PMID 31996577](https://pubmed.ncbi.nlm.nih.gov/31996577/)
+- Evidenztyp: `clinical-practice-guideline` · Evidenzgrad: `high` · Status: `consensus`
 
 ## Becker2023
 
@@ -178,12 +186,28 @@ Liu, C.-I., Hua, M.-H., Lu, M.-L., & Goh, K. K. (2023). Effectiveness of cogniti
 - PubMed: [PMID 36794797](https://pubmed.ncbi.nlm.nih.gov/36794797/)
 - Evidenztyp: `meta-analysis-randomized-controlled-trials` · Evidenzgrad: `moderate` · Status: `probable`
 
+## Lueke2023
+
+Lüke, C., Kauschke, C., Dohmen, A., et al. (2023). Definition and terminology of developmental language disorders—Interdisciplinary consensus across German-speaking countries. *PLOS ONE, 18*(11), e0293736.
+
+- DOI: [https://doi.org/10.1371/journal.pone.0293736](https://doi.org/10.1371/journal.pone.0293736)
+- PubMed: [PMID 37943803](https://pubmed.ncbi.nlm.nih.gov/37943803/)
+- Evidenztyp: `interdisciplinary-consensus` · Evidenzgrad: `high` · Status: `consensus`
+
 ## Magdi2025
 
 Magdi, Hussein M., Abousoliman, Ali D., lbrahim, Ateya Megahed, Elsehrawy, Mohamed Gamal, EL-Gazar, Heba Emad, & Zoromba, Mohamed Ali (2025). Attention-deficit/hyperactivity disorder and post-traumatic stress disorder adult comorbidity: a systematic review. *Systematic Reviews, 14*(1), 41.
 
 - DOI: [https://doi.org/10.1186/s13643-025-02774-7](https://doi.org/10.1186/s13643-025-02774-7)
 - PubMed: [PMID 39953536](https://pubmed.ncbi.nlm.nih.gov/39953536/)
+- Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `probable`
+
+## MendezFreije2024
+
+Méndez-Freije, I., Areces, D., & Rodríguez, C. (2024). Language Skills in Children with Attention Deficit Hyperactivity Disorder and Developmental Language Disorder: A Systematic Review. *Children, 11*(1), 14.
+
+- DOI: [https://doi.org/10.3390/children11010014](https://doi.org/10.3390/children11010014)
+- PubMed: [PMID 38275435](https://pubmed.ncbi.nlm.nih.gov/38275435/)
 - Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `probable`
 
 ## Metcalfe2024
@@ -409,6 +433,14 @@ Zhong, Q. & Porter, M. (2026). Autism Spectrum Disorder Symptoms in Individuals 
 - DOI: [https://doi.org/10.1007/s40489-024-00443-4](https://doi.org/10.1007/s40489-024-00443-4)
 - Evidenztyp: `systematic-review` · Evidenzgrad: `moderate` · Status: `probable`
 
+## vanBergen2025
+
+van Bergen, E., de Zeeuw, E. L., Hart, S. A., Boomsma, D. I., de Geus, E. J. C., & Kan, K.-J. (2025). Co-Occurrence and Causality Among ADHD, Dyslexia, and Dyscalculia. *Psychological Science, 36*(3), 204–217.
+
+- DOI: [https://doi.org/10.1177/09567976241293999](https://doi.org/10.1177/09567976241293999)
+- PubMed: [PMID 40098496](https://pubmed.ncbi.nlm.nih.gov/40098496/)
+- Evidenztyp: `twin-sibling-cohort` · Evidenzgrad: `moderate` · Status: `probable`
+
 ## vanDerPlas2026
 
 van der Plas, N. E., Noordermeer, S. D. S., Oosterlaan, J., & Luman, M. (2026). Systematic Review and Meta-Analysis: Predictors of Adult Psychiatric Outcomes of Childhood Attention-Deficit/Hyperactivity Disorder. *Journal of the American Academy of Child & Adolescent Psychiatry, 65*(2), 231–249.
@@ -416,4 +448,3 @@ van der Plas, N. E., Noordermeer, S. D. S., Oosterlaan, J., & Luman, M. (2026). 
 - DOI: [https://doi.org/10.1016/j.jaac.2025.04.012](https://doi.org/10.1016/j.jaac.2025.04.012)
 - PubMed: [PMID 40287009](https://pubmed.ncbi.nlm.nih.gov/40287009/)
 - Evidenztyp: `systematic-review-and-meta-analysis` · Evidenzgrad: `high` · Status: `consensus`
-
