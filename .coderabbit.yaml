@@ -16,30 +16,43 @@ reviews:
       - name: "content-scope"
         mode: "error"
         instructions: >-
-          Pass if the pull request changes no Markdown below 01-Grundlagen/ or
-          02-Vertiefung/ and no scientific support file under references/ or in
-          Glossar.md, Literatur.md, references.bib, references.json, or
-          cards/cards.yaml. Otherwise compare base and head content plus the
-          surrounding learning context. Fail when the revision removes or
-          displaces a learning objective, required differential distinction,
-          uncertainty, safety boundary, or scope limit; turns association into
-          causation; turns group evidence into an individual conclusion;
-          overstates guideline, consensus, observational, or trial evidence; or
-          adds unsafe diagnostic, dosing, withdrawal, or self-treatment advice.
-          Do not infer a pass when context is insufficient: return inconclusive
-          and request the missing context so the error-mode check remains
-          blocking.
+          Scope this check strictly to the current pull request diff against its
+          current base branch. Ignore historical commits, merge-parent contents,
+          and files that are unchanged relative to the current base. First inspect
+          the current changed-file list. Pass immediately as not applicable if it
+          contains no Markdown below 01-Grundlagen/ or 02-Vertiefung/ and no
+          scientific support file under references/ or in Glossar.md, Literatur.md,
+          references.bib, references.json, or cards/cards.yaml. Do not inspect or
+          fail on scientific content outside that current changed-file set.
+          Otherwise compare only the changed learning/scientific files plus the
+          minimum surrounding context needed to understand them. Fail when the
+          revision removes or displaces a learning objective, required differential
+          distinction, uncertainty, safety boundary, or scope limit; turns
+          association into causation; turns group evidence into an individual
+          conclusion; overstates guideline, consensus, observational, or trial
+          evidence; or adds unsafe diagnostic, dosing, withdrawal, or
+          self-treatment advice. Do not infer a pass when relevant changed-file
+          context is insufficient: return inconclusive and request that context so
+          the error-mode check remains blocking.
       - name: "claim-source-entailment"
         mode: "error"
         instructions: >-
-          Pass if no scientific claim or supporting reference changed. For every
-          changed scientific claim, identify its cited structured source card and
-          verify that population, design, comparator, exposure, outcome, effect
-          measure, uncertainty, publication status, and evidentiary direction
-          support exactly the wording and scope used. Fail unsupported claims,
+          Scope this check strictly to the current pull request diff against its
+          current base branch. Ignore historical commits, merge-parent contents,
+          and scientific files that are unchanged relative to the current base.
+          First inspect the current changed-file list. Pass immediately as not
+          applicable if that list contains no changed learning/scientific Markdown,
+          structured source card, Glossar.md, Literatur.md, references.bib,
+          references.json, or cards/cards.yaml. Do not inspect or fail on claims in
+          files outside the current changed-file set merely because they occur in
+          branch history. For every scientific claim that actually changed in the
+          current diff, identify its cited structured source card and verify that
+          population, design, comparator, exposure, outcome, effect measure,
+          uncertainty, publication status, and evidentiary direction support
+          exactly the wording and scope used. Fail unsupported changed claims,
           citation mismatch, omitted material limitations, source-type inflation,
           association-to-causation drift, group-to-individual extrapolation, or
           broader claims than the cited evidence permits. A bibliography entry or
-          plausible topic match is not entailment. If the cited source or required
-          context cannot be inspected, return inconclusive and request it rather
-          than passing.
+          plausible topic match is not entailment. If a source required for an
+          actually changed claim cannot be inspected, return inconclusive and
+          request it rather than passing.

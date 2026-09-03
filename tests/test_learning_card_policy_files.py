@@ -23,11 +23,7 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         self.assertEqual(permissions.get("checks"), "write")
         self.assertEqual(permissions.get("statuses"), "none")
         self.assertEqual(
-            {
-                key
-                for key, value in permissions.items()
-                if value == "write"
-            },
+            {key for key, value in permissions.items() if value == "write"},
             {"checks"},
         )
 
@@ -40,7 +36,7 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         self.assertIn("--publish-check", text)
         self.assertNotIn("paths:", text)
 
-    def test_coderabbit_config_enforces_two_semantic_error_checks(self) -> None:
+    def test_coderabbit_config_enforces_scoped_semantic_error_checks(self) -> None:
         config = yaml.safe_load(
             (ROOT / ".coderabbit.yaml").read_text(encoding="utf-8")
         )
@@ -49,8 +45,7 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         pre_merge = reviews["pre_merge_checks"]
         self.assertTrue(pre_merge["override_requested_reviewers_only"])
         checks = {
-            check["name"]: check
-            for check in pre_merge["custom_checks"]
+            check["name"]: check for check in pre_merge["custom_checks"]
         }
         self.assertEqual(
             set(checks),
@@ -59,14 +54,14 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         self.assertTrue(
             all(check["mode"] == "error" for check in checks.values())
         )
-        self.assertIn(
-            "association",
-            checks["content-scope"]["instructions"],
-        )
-        self.assertIn(
-            "population",
-            checks["claim-source-entailment"]["instructions"],
-        )
+        self.assertIn("association", checks["content-scope"]["instructions"])
+        self.assertIn("population", checks["claim-source-entailment"]["instructions"])
+        for check in checks.values():
+            instructions = check["instructions"]
+            self.assertIn("current pull request diff", instructions)
+            self.assertIn("current base branch", instructions)
+            self.assertIn("Ignore historical commits", instructions)
+            self.assertIn("Pass immediately as not applicable", instructions)
 
     def test_hard_gate_enforces_coderabbit_review_state(self) -> None:
         workflow = yaml.safe_load(
@@ -108,8 +103,7 @@ class LearningCardPolicyFileTests(unittest.TestCase):
     def test_ruleset_target_is_valid_json_and_requires_aggregator(self) -> None:
         target = json.loads(
             (
-                ROOT
-                / "automation/rulesets/main-required-gates.target.json"
+                ROOT / "automation/rulesets/main-required-gates.target.json"
             ).read_text(encoding="utf-8")
         )
         status_rule = next(
@@ -119,9 +113,7 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         )
         names = {
             check["context"]
-            for check in status_rule["parameters"][
-                "required_status_checks"
-            ]
+            for check in status_rule["parameters"]["required_status_checks"]
         }
         self.assertIn("Learning card policy (blocking)", names)
         self.assertNotIn("content-scope", names)
