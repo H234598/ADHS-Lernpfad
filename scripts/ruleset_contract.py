@@ -9,6 +9,11 @@ from pathlib import Path
 from typing import Any
 
 OLD_CONTEXTS = {"content-scope", "claim-source-entailment", "complete-build"}
+OLD_PROVIDER_BINDINGS = {
+    "content-scope": 347564,
+    "claim-source-entailment": 347564,
+    "complete-build": None,
+}
 NEW_CONTEXT = "Learning card policy (blocking)"
 PRESERVED_CONTEXTS = {
     "Validate and build",
@@ -166,6 +171,16 @@ def _validate_common(current: dict[str, Any], target: dict[str, Any]) -> None:
         )
 
 
+def _validate_raw_provider_bindings(checks: dict[str, int | None]) -> None:
+    """Die drei historischen Rohchecks an ihre kanonischen Provider binden."""
+
+    for context, expected in OLD_PROVIDER_BINDINGS.items():
+        if context in checks and checks[context] != expected:
+            raise ValueError(
+                f"Providerbindung von {context} darf nicht verändert werden"
+            )
+
+
 def _transition(
     current: dict[str, Any],
     target: dict[str, Any],
@@ -188,6 +203,8 @@ def _transition(
             raise ValueError(
                 f"Providerbindung von {context} darf nicht geändert werden"
             )
+    _validate_raw_provider_bindings(current_checks)
+    _validate_raw_provider_bindings(target_checks)
     if NEW_CONTEXT in target_checks and target_checks[NEW_CONTEXT] != 15368:
         raise ValueError("Learning card policy muss von GitHub Actions stammen")
     if NEW_CONTEXT in current_checks and current_checks[NEW_CONTEXT] != 15368:
