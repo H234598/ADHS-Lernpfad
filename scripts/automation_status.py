@@ -25,6 +25,7 @@ import math
 import os
 from pathlib import Path, PurePosixPath
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -271,9 +272,12 @@ def _canonical_status(value: Any) -> str:
 def _git_sha(value: Any = None) -> str | None:
     candidate = value or os.environ.get("GITHUB_SHA")
     if not candidate:
+        git_executable = shutil.which("git")
+        if not git_executable:
+            return None
         try:
             candidate = subprocess.run(
-                ["git", "rev-parse", "HEAD"],
+                [str(Path(git_executable).resolve()), "rev-parse", "HEAD"],
                 cwd=ROOT,
                 check=True,
                 capture_output=True,
