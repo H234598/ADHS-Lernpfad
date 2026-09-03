@@ -48,6 +48,8 @@ def test_git_sha_fallback_executes_an_absolute_git_path(monkeypatch) -> None:
     assert command[0] == "/opt/test/bin/git"  # nosec B101 -- pytest assertion
     assert command[1:] == ["rev-parse", "HEAD"]  # nosec B101 -- pytest assertion
     _assert_safe_subprocess_kwargs(observed["kwargs"])
+    assert isinstance(observed["kwargs"], dict)  # nosec B101 -- pytest assertion
+    assert observed["kwargs"].get("cwd") == automation_status.ROOT  # nosec B101 -- pytest assertion
 
 
 def test_git_sha_fallback_returns_none_without_git(monkeypatch) -> None:
@@ -92,3 +94,5 @@ def test_graph_source_revision_executes_an_absolute_git_path(monkeypatch, tmp_pa
     assert command[0] == str(Path(discovered_git).resolve())  # nosec B101 -- pytest assertion
     assert command[1:] == ["rev-parse", "HEAD"]  # nosec B101 -- pytest assertion
     _assert_safe_subprocess_kwargs(observed["kwargs"])
+    assert isinstance(observed["kwargs"], dict)  # nosec B101 -- pytest assertion
+    assert observed["kwargs"].get("cwd") == tmp_path  # nosec B101 -- pytest assertion
