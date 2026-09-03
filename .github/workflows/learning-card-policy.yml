@@ -66,10 +66,11 @@ jobs:
         if: steps.pr.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          TARGET_PR: ${{ steps.pr.outputs.number }}
         run: |
           python scripts/learning_card_policy.py \
             --repository "$GITHUB_REPOSITORY" \
-            --pr-number "${{ steps.pr.outputs.number }}"
+            --pr-number "$TARGET_PR"
 
       - name: Upload learning-card policy report
         if: always() && steps.pr.outputs.skip != 'true'

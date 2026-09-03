@@ -66,19 +66,21 @@ jobs:
         if: steps.pr.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          TARGET_PR: ${{ steps.pr.outputs.number }}
         run: |
           python scripts/review_gate.py \
             --repository "$GITHUB_REPOSITORY" \
-            --pr-number "${{ steps.pr.outputs.number }}"
+            --pr-number "$TARGET_PR"
 
       - name: Enforce current CodeRabbit review state
         if: steps.pr.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          TARGET_PR: ${{ steps.pr.outputs.number }}
         run: |
           python scripts/coderabbit_review_state.py \
             --repository "$GITHUB_REPOSITORY" \
-            --pr-number "${{ steps.pr.outputs.number }}"
+            --pr-number "$TARGET_PR"
 
       - name: Upload review-gate report
         if: always() && steps.pr.outputs.skip != 'true'
