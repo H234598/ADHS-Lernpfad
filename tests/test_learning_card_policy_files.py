@@ -37,6 +37,30 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         self.assertIn("--publish-check", text)
         self.assertNotIn("paths:", text)
 
+    def test_manual_merge_authorization_is_explicit_trusted_dispatch_input(self) -> None:
+        workflow = yaml.safe_load(
+            (ROOT / ".github/workflows/learning-card-policy.yml").read_text(
+                encoding="utf-8"
+            )
+        )
+        dispatch = workflow[True]["workflow_dispatch"] if True in workflow else workflow["on"]["workflow_dispatch"]
+        inputs = dispatch["inputs"]
+        authorization = inputs["manual_merge_authorized"]
+        self.assertEqual(authorization["type"], "boolean")
+        self.assertFalse(authorization["default"])
+        step = next(
+            step
+            for step in workflow["jobs"]["policy"]["steps"]
+            if step.get("name") == "Evaluate and publish current-head learning-card policy"
+        )
+        self.assertEqual(
+            step["env"]["MANUAL_MERGE_AUTHORIZED"],
+            "${{ inputs.manual_merge_authorized }}",
+        )
+        run = str(step["run"])
+        self.assertNotIn("inputs.manual_merge_authorized", run)
+        self.assertIn("--manual-merge-authorized", run)
+
     def test_coderabbit_config_enforces_scoped_semantic_error_checks(self) -> None:
         config = yaml.safe_load(
             (ROOT / ".coderabbit.yaml").read_text(encoding="utf-8")
@@ -100,6 +124,8 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         self.assertIn("Workflow- oder Gatecode ohne Lernkarte", text)
         self.assertIn("checks: write", text)
         self.assertIn("PR-Head", text)
+        self.assertIn("workflow_dispatch", text)
+        self.assertIn("manual_merge_authorized", text)
 
     def test_ruleset_target_is_valid_json_and_requires_aggregator(self) -> None:
         target = json.loads(

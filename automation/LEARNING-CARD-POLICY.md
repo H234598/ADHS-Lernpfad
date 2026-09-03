@@ -15,6 +15,7 @@ updates:
   - "2026-08-12: Workflow- und Gatecode als orthogonale manuelle Sicherheitsklasse festgelegt."
   - "2026-09-03: Aggregator veröffentlicht seinen Check explizit auf dem ausgewerteten PR-Head; Checks-Write ist auf diese Publikation begrenzt."
   - "2026-09-03: Rulesetmigration mit lokalem Exklusivlock und zweitem Live-Snapshot unmittelbar vor PUT gehärtet."
+  - "2026-09-03: manual-merge-required als Deklaration von vertrauenswürdiger Human-Freigabe getrennt; sensible PRs bleiben bis zum expliziten workflow_dispatch fail-closed."
 date: 2026-09-03
 created: 2026-08-12T20:22:24+02:00
 ---
@@ -80,7 +81,9 @@ sind dokumentierte Provenienzsignale, aber niemals die Schutzgrenze. Eine Lernka
 
 ### `content-scope`
 
-Der CodeRabbit-Custom-Check vergleicht Basis, Head und Lernkontext. Er blockiert insbesondere:
+Der CodeRabbit-Custom-Check vergleicht ausschließlich den aktuellen PR-Diff mit der aktuellen Base. Historische Branch-Commits, Merge-Parents und gegenüber der Base unveränderte wissenschaftliche Dateien sind nicht Teil der Bewertung. Ist im aktuellen Diff keine Lernkarte und keine wissenschaftliche Begleitdatei betroffen, ist der Check explizit nicht anwendbar.
+
+Bei anwendbarem Scope blockiert er insbesondere:
 
 - entfernte oder verdrängte Lernziele;
 - abgeschwächte Differentialabgrenzungen, Unsicherheiten oder Sicherheitsgrenzen;
@@ -94,7 +97,7 @@ Fehlender Kontext ist kein Erfolg, sondern ein blockierender unklarer Befund.
 
 ### `claim-source-entailment`
 
-Der zweite Custom-Check prüft jede geänderte wissenschaftliche Behauptung gegen die tatsächlich zitierte strukturierte Quellenkarte, insbesondere:
+Der zweite Custom-Check prüft ausschließlich wissenschaftliche Behauptungen, die im aktuellen PR-Diff tatsächlich verändert wurden, gegen die zitierte strukturierte Quellenkarte. Geprüft werden insbesondere:
 
 - Population und Setting;
 - Design und Evidenzart;
@@ -152,11 +155,24 @@ requires_semantic_review: false
 manual_merge_required: true
 ```
 
-Als sensitiv gelten insbesondere `.github/`, `automation/`, `prompts/`, `scripts/`, `.coderabbit.yaml`, `.codacy.yml`, Paket- und Requirementsdateien. Fehlt `<!-- manual-merge-required -->`, blockiert die Policy. Mit Marker kann der Check grün werden; die bestehende Mergepolicy verbietet dennoch den automatischen Merge.
+Als sensitiv gelten insbesondere `.github/`, `automation/`, `prompts/`, `scripts/`, `.coderabbit.yaml`, `.codacy.yml`, Paket- und Requirementsdateien.
+
+`<!-- manual-merge-required -->` ist **nur eine Deklaration**, dass sensible Infrastruktur betroffen ist. Der Marker ist PR-Inhalt und daher keine vertrauenswürdige Freigabe. Auf automatischen PR-, Review-, Kommentar- und `workflow_run`-Ereignissen bleibt `Learning card policy (blocking)` für sensible PRs fail-closed rot – auch wenn der Marker vorhanden ist.
+
+Eine vertrauenswürdige Human-Freigabe kann ausschließlich über den auf `main` liegenden `workflow_dispatch` des Policy-Workflows erfolgen:
+
+```text
+pr_number: <PR>
+manual_merge_authorized: true
+```
+
+Der Dispatch wird von einer Person mit Workflow-Schreibrecht ausgelöst und bewertet erneut den **aktuellen PR-Head**. Erst wenn Marker, Human-Freigabe und alle sonst anwendbaren Gates zusammenpassen, darf der aggregierte Check für diesen Head grün werden. Eine spätere PR-Änderung erzeugt einen neuen Head beziehungsweise neue Ereignisse und blockiert erneut, bis bewusst neu freigegeben wird.
+
+Die bestehende Repositorypolicy verlangt anschließend weiterhin einen tatsächlichen menschlichen Merge; der Dispatch ist keine Auto-Merge-Erlaubnis.
 
 ### Lernkarte plus sensible Automation
 
-Alle wissenschaftlichen Subgates müssen bestehen; der Merge bleibt zusätzlich manuell.
+Alle wissenschaftlichen Subgates müssen bestehen; zusätzlich gelten Deklarationsmarker und vertrauenswürdige Human-Freigabe. Der Merge bleibt manuell.
 
 ## Vertrauensmodell des Workflows
 
@@ -166,14 +182,16 @@ Alle wissenschaftlichen Subgates müssen bestehen; der Merge bleibt zusätzlich 
 - nutzt `pull_request_target`, Review-, Kommentar-, `workflow_run`- und Dispatch-Ereignisse;
 - checkt ausschließlich die Implementierung von `main` aus;
 - verwendet `persist-credentials: false`;
+- pinnt Drittanbieter-Actions kryptografisch auf vollständige Commit-SHAs;
 - besitzt lesende Berechtigungen für Repository-/PR-/Issue-Daten;
 - besitzt ausschließlich zusätzlich `checks: write`, um das aggregierte Ergebnis als GitHub-Check auf dem **ausgewerteten PR-Head** zu veröffentlichen;
 - setzt `statuses: none` und besitzt keine Contents-/PR-/Issue-Schreibrechte;
 - führt keinen PR-kontrollierten Code aus;
 - veröffentlicht `Learning card policy (blocking)` explizit auf `pull_request.head.sha`, statt sich auf den Basis-SHA des `pull_request_target`-Workflowruns zu verlassen;
+- behandelt `manual_merge_authorized` ausschließlich als vertrauenswürdigen booleschen `workflow_dispatch`-Input und übergibt ihn über eine Shell-Umgebungsvariable;
 - speichert JSON- und Markdownberichte als Artefakt.
 
-Der publizierte Check wird erst nach erneuter Prüfung von Head, Body und vollständigem Dateiscope erzeugt. Bei einem Snapshotwechsel wird fail-closed ein blockierendes Ergebnis auf dem nun aktuellen Head veröffentlicht; ein veralteter Erfolg wird nicht übernommen.
+Der publizierte Check wird erst nach erneuter Prüfung von Head, Body, vollständigem Dateiscope und – bei semantischem Scope – nochmals frisch geladenen Check-Runs erzeugt. Bei einem Snapshotwechsel wird fail-closed ein blockierendes Ergebnis auf dem nun aktuellen Head veröffentlicht; ein veralteter Erfolg wird nicht übernommen.
 
 ## Ruleset-Zielvertrag
 
@@ -206,31 +224,11 @@ automation/rulesets/main-required-gates.before.json
 automation/rulesets/main-required-gates.target.json
 ```
 
-`scripts/ruleset_migration.py` liest das Live-Ruleset, vergleicht kanonische SHA-256-Digests, erhält Bypass-Akteure, Branchbedingungen, alle nicht kontextbezogenen `required_status_checks`-Parameter und alle anderen Regeln. Erlaubt ist nur der Austausch der drei Rohkontexte gegen den Aggregator.
+`scripts/ruleset_migration.py` liest das Live-Ruleset, vergleicht kanonische SHA-256-Digests, erhält Bypass-Akteure, Branchbedingungen, alle nicht kontextbezogenen `required_status_checks`-Parameter und alle anderen Regeln. Die Reihenfolge von `bypass_actors` ist dabei semantisch irrelevant; verglichen wird ein reihenfolgeunabhängiges Multiset, während die Rohsnapshots unverändert protokolliert bleiben. Erlaubt ist nur der Austausch der drei Rohkontexte gegen den Aggregator.
 
 Da GitHubs Ruleset-Update-API keinen dokumentierten serverseitigen `If-Match`-/Versions-Precondition-Write anbietet, erfolgt `--apply` bewusst nur in einem **exklusiven administrativen Änderungsfenster**. Zusätzlich serialisiert ein lokaler Interprozess-Lock konkurrierende Migrationen dieses Tools, und unmittelbar vor dem `PUT` wird ein zweiter Live-Snapshot gelesen und gegen den validierten Ausgangszustand verglichen. Jede erkannte Drift bricht fail-closed vor dem Schreibzugriff ab. Nach dem `PUT` wird der Vertrag erneut frisch gelesen und verifiziert.
 
 `--apply` benötigt ein Administration-Write-Token. `--rollback --apply` verwendet denselben Lock-, Drift- und Digestschutz.
-
-```bash
-python scripts/ruleset_migration.py --repository H234598/ADHS-Lernpfad
-
-GITHUB_TOKEN='<Administration:write>' \
-python scripts/ruleset_migration.py \
-  --repository H234598/ADHS-Lernpfad \
-  --ruleset-id 20499620 \
-  --apply
-```
-
-Rollback:
-
-```bash
-GITHUB_TOKEN='<Administration:write>' \
-python scripts/ruleset_migration.py \
-  --repository H234598/ADHS-Lernpfad \
-  --ruleset-id 20499620 \
-  --rollback --apply
-```
 
 ## Shadow-Abnahme
 
@@ -242,10 +240,11 @@ Vor der Rulesetumschaltung werden mindestens geprüft:
 4. Rename oder Löschung → Semantik anwendbar;
 5. Marker ohne Karte → nicht anwendbar;
 6. Karte ohne Marker → anwendbar, fail-closed;
-7. Workflow-only → manuell;
-8. Karte plus Workflow → semantisch und manuell;
-9. absichtlich roter Build → `complete_build` blockiert;
-10. publizierter Aggregator-Check erscheint auf dem tatsächlichen PR-Head und nicht nur auf dem Basis-SHA des `pull_request_target`-Runs.
+7. Workflow-only ohne Human-Freigabe → manuell und rot;
+8. Workflow-only mit Marker plus vertrauenswürdigem Dispatch → Policy kann auf exakt diesem Head grün werden, Merge bleibt manuell;
+9. Karte plus Workflow → semantisch und manuell;
+10. absichtlich roter Build → `complete_build` blockiert;
+11. publizierter Aggregator-Check erscheint auf dem tatsächlichen PR-Head und nicht nur auf dem Basis-SHA des `pull_request_target`-Runs.
 
 ## Nicht verhandelbare Grenzen
 
@@ -255,7 +254,8 @@ Vor der Rulesetumschaltung werden mindestens geprüft:
 - Nur der aktuelle Head kann freigeben.
 - Neutral oder skipped zählt für anwendbare Subgates nicht als Erfolg.
 - Ein aktives CodeRabbit-`CHANGES_REQUESTED` bleibt blockierend.
-- Workflow- und Gateänderungen bleiben manuell.
+- Der PR-Marker ist keine Human-Freigabe.
+- Workflow- und Gateänderungen bleiben bis zum expliziten vertrauenswürdigen Dispatch blockiert und werden anschließend trotzdem manuell gemergt.
 - Die Rulesetmigration erfolgt erst nach Merge und Shadow-Abnahme.
 - Das Live-Ruleset wird nur in einem exklusiven administrativen Änderungsfenster geschrieben.
 

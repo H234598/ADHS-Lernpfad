@@ -132,11 +132,7 @@ def _write_report(
     payload = {
         "repository": repository,
         "pull_request": number,
-        "checked_at": (
-            datetime.now(timezone.utc)
-            .isoformat()
-            .replace("+00:00", "Z")
-        ),
+        "checked_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "scope": asdict(scope),
         "decision": asdict(decision),
     }
@@ -151,25 +147,13 @@ def _write_report(
         f"- Pull Request: `#{number}`",
         f"- Head: `{decision.head_sha}`",
         f"- Klassifikation: **{scope.classification}**",
-        (
-            "- Semantische Prüfung: **"
-            f"{'ja' if scope.requires_semantic_review else 'nein'}**"
-        ),
-        (
-            "- Manueller Merge: **"
-            f"{'ja' if scope.manual_merge_required else 'nein'}**"
-        ),
-        (
-            "- Ergebnis: **"
-            f"{'bestanden' if decision.passed else 'blockiert'}**"
-        ),
+        f"- Semantische Prüfung: **{'ja' if scope.requires_semantic_review else 'nein'}**",
+        f"- Manueller Merge: **{'ja' if scope.manual_merge_required else 'nein'}**",
+        f"- Ergebnis: **{'bestanden' if decision.passed else 'blockiert'}**",
         "",
         "## Subgates",
         "",
-        *(
-            f"- `{name}`: **{state}**"
-            for name, state in decision.subgates.items()
-        ),
+        *(f"- `{name}`: **{state}**" for name, state in decision.subgates.items()),
         "",
         "## Begründung",
         "",
@@ -193,8 +177,7 @@ def _publish_check(
     summary = (
         "Alle anwendbaren Lernkarten-Subgates sind erfolgreich."
         if decision.passed
-        else "; ".join(decision.reasons)
-        or "Lernkarten-Policy ist blockiert."
+        else "; ".join(decision.reasons) or "Lernkarten-Policy ist blockiert."
     )
     payload = {
         "name": POLICY_CHECK_NAME,
@@ -219,10 +202,7 @@ def _parse_args() -> argparse.Namespace:
     """CLI-Argumente validieren und als Namespace zurückgeben."""
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--repository",
-        default=os.getenv("GITHUB_REPOSITORY"),
-    )
+    parser.add_argument("--repository", default=os.getenv("GITHUB_REPOSITORY"))
     parser.add_argument("--pr-number", type=int)
     parser.add_argument("--token", default=os.getenv("GITHUB_TOKEN"))
     parser.add_argument(
@@ -233,14 +213,28 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--max-wait-seconds", type=int, default=480)
     parser.add_argument("--poll-interval-seconds", type=int, default=10)
     parser.add_argument("--publish-check", action="store_true")
+    parser.add_argument("--manual-merge-authorized", action="store_true")
     args = parser.parse_args()
     if not args.repository or not args.token or not args.pr_number:
         parser.error("repository, token und pr-number sind erforderlich")
     if args.max_wait_seconds < 0 or args.poll_interval_seconds < 1:
-        parser.error(
-            "Wartezeiten müssen nichtnegativ beziehungsweise positiv sein"
-        )
+        parser.error("Wartezeiten müssen nichtnegativ beziehungsweise positiv sein")
     return args
+
+
+def _evaluate(
+    *,
+    scope: ScopeDecision,
+    check_runs: list[dict[str, Any]],
+    head_sha: str,
+    manual_merge_authorized: bool,
+) -> PolicyDecision:
+    return evaluate_policy(
+        scope=scope,
+        check_runs=check_runs,
+        head_sha=head_sha,
+        manual_merge_authorized=manual_merge_authorized,
+    )
 
 
 def main() -> int:
@@ -251,9 +245,7 @@ def main() -> int:
     files_url = f"{pull_url}/files"
     pull = _mapping(_request_json(pull_url, args.token))
     if pull.get("state") != "open":
-        print(
-            f"PR #{args.pr_number} ist nicht offen; Policy wird übersprungen."
-        )
+        print(f"PR #{args.pr_number} ist nicht offen; Policy wird übersprungen.")
         return 0
     files = _paginated(files_url, args.token)
     initial_snapshot = build_pull_snapshot(pull, files)
@@ -266,10 +258,11 @@ def main() -> int:
         head_ref=initial_snapshot.head_ref,
         body=initial_snapshot.body,
     )
-    decision = evaluate_policy(
+    decision = _evaluate(
         scope=scope,
         check_runs=[],
         head_sha=head_sha,
+        manual_merge_authorized=args.manual_merge_authorized,
     )
     started = time.monotonic()
     while scope.requires_semantic_review:
@@ -278,10 +271,11 @@ def main() -> int:
             args.token,
             key="check_runs",
         )
-        decision = evaluate_policy(
+        decision = _evaluate(
             scope=scope,
             check_runs=runs,
             head_sha=head_sha,
+            manual_merge_authorized=args.manual_merge_authorized,
         )
         if decision.passed or "failure" in decision.subgates.values():
             break
@@ -316,26 +310,17 @@ def main() -> int:
             args.token,
             key="check_runs",
         )
-        decision = evaluate_policy(
+        decision = _evaluate(
             scope=scope,
             check_runs=final_runs,
             head_sha=head_sha,
+            manual_merge_authorized=args.manual_merge_authorized,
         )
 
-    _write_report(
-        args.repository,
-        args.pr_number,
-        scope,
-        decision,
-        args.output_dir,
-    )
+    _write_report(args.repository, args.pr_number, scope, decision, args.output_dir)
     if args.publish_check:
         _publish_check(args.repository, args.token, decision)
-    print(
-        (args.output_dir / "learning-card-policy.md").read_text(
-            encoding="utf-8"
-        )
-    )
+    print((args.output_dir / "learning-card-policy.md").read_text(encoding="utf-8"))
     return 0 if decision.passed else 1
 
 

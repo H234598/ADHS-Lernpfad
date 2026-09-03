@@ -71,11 +71,29 @@ def ruleset_payload(document: dict[str, Any]) -> dict[str, Any]:
     return payload
 
 
+def _canonical_bypass_actors(value: Any) -> list[dict[str, Any]]:
+    """Bypass-Akteure als reihenfolgeunabhängiges Multiset kanonisieren."""
+
+    actors = value if isinstance(value, list) else []
+    encoded = sorted(
+        json.dumps(actor, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        for actor in actors
+    )
+    return [json.loads(item) for item in encoded]
+
+
+def _canonical_payload(document: dict[str, Any]) -> dict[str, Any]:
+    payload = ruleset_payload(document)
+    canonical = dict(payload)
+    canonical["bypass_actors"] = _canonical_bypass_actors(payload.get("bypass_actors"))
+    return canonical
+
+
 def canonical_digest(document: dict[str, Any]) -> str:
     """Den schreibbaren Rulesetvertrag kanonisch hashen."""
 
     canonical = json.dumps(
-        ruleset_payload(document),
+        _canonical_payload(document),
         ensure_ascii=False,
         sort_keys=True,
         separators=(",", ":"),
@@ -131,7 +149,9 @@ def _validate_common(current: dict[str, Any], target: dict[str, Any]) -> None:
     for key in ("name", "target", "enforcement", "conditions"):
         if current.get(key) != target.get(key):
             raise ValueError(f"Unzulässiger Ruleset-Drift in {key}")
-    if current.get("bypass_actors", []) != target.get("bypass_actors", []):
+    if _canonical_bypass_actors(current.get("bypass_actors")) != _canonical_bypass_actors(
+        target.get("bypass_actors")
+    ):
         raise ValueError(
             "Bypass-Akteure oder Bypass-Modi dürfen nicht verändert werden"
         )

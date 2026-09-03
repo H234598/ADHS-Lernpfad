@@ -18,6 +18,11 @@ on:
         description: Pull-Request-Nummer
         required: true
         type: number
+      manual_merge_authorized:
+        description: Sensible Infrastruktur für manuellen Merge auf diesem PR-Head freigeben
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -67,11 +72,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           TARGET_PR: ${{ steps.pr.outputs.number }}
+          MANUAL_MERGE_AUTHORIZED: ${{ inputs.manual_merge_authorized }}
         run: |
+          set -euo pipefail
+          EXTRA_ARGS=()
+          if [[ "$MANUAL_MERGE_AUTHORIZED" == "true" ]]; then
+            EXTRA_ARGS+=(--manual-merge-authorized)
+          fi
           python scripts/learning_card_policy.py \
             --repository "$GITHUB_REPOSITORY" \
             --pr-number "$TARGET_PR" \
-            --publish-check
+            --publish-check \
+            "${EXTRA_ARGS[@]}"
 
       - name: Upload learning-card policy report
         if: always() && steps.pr.outputs.skip != 'true'

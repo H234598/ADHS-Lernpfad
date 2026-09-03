@@ -99,30 +99,50 @@ def _summary(run: dict[str, Any] | None) -> dict[str, str]:
     }
 
 
+def _manual_gate_state(
+    scope: ScopeDecision,
+    *,
+    manual_merge_authorized: bool,
+) -> tuple[bool, list[str]]:
+    """Deklarationsmarker von einer vertrauenswürdigen Human-Freigabe trennen."""
+
+    if not scope.manual_merge_required:
+        return True, []
+    reasons: list[str] = []
+    if not scope.manual_merge_marker:
+        reasons.append(
+            "Automations- oder sicherheitssensitive Dateien sind betroffen, "
+            "aber der Marker manual-merge-required fehlt."
+        )
+    if not manual_merge_authorized:
+        reasons.append(
+            "Sensible Infrastruktur benötigt zusätzlich eine explizite, "
+            "vertrauenswürdige Human-Freigabe per Workflow-Dispatch."
+        )
+    return not reasons, reasons
+
+
 def evaluate_policy(
     *,
     scope: ScopeDecision,
     check_runs: list[dict[str, Any]],
     head_sha: str,
+    manual_merge_authorized: bool = False,
 ) -> PolicyDecision:
-    """Anwendbare Subgates aggregieren, ohne Scheinstatus zu erzeugen."""
+    """Anwendbare Subgates und vertrauenswürdige Manual-Freigabe aggregieren."""
 
     if not re.fullmatch(r"[0-9a-f]{40}", head_sha):
         raise ValueError("head_sha muss ein vollständiger Git-SHA sein")
-    marker_missing = (
-        scope.manual_merge_required and not scope.manual_merge_marker
+    manual_ok, manual_reasons = _manual_gate_state(
+        scope,
+        manual_merge_authorized=manual_merge_authorized,
     )
-    reasons = list(scope.reasons)
-    if marker_missing:
-        reasons.append(
-            "Automations- oder sicherheitssensitive Dateien sind betroffen, "
-            "aber der Marker manual-merge-required fehlt."
-        )
+    reasons = [*scope.reasons, *manual_reasons]
 
     if not scope.requires_semantic_review:
         return PolicyDecision(
             head_sha=head_sha,
-            passed=not marker_missing,
+            passed=manual_ok,
             subgates={
                 "content_scope": "not_applicable",
                 "claim_source_entailment": "not_applicable",
@@ -157,7 +177,7 @@ def evaluate_policy(
         head_sha=head_sha,
         passed=(
             all(state == "success" for state in subgates.values())
-            and not marker_missing
+            and manual_ok
         ),
         subgates=subgates,
         required_checks={
