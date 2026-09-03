@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime, timezone
 import argparse
 import json
@@ -10,12 +11,23 @@ import os
 from pathlib import Path
 import re
 from typing import Any
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+
+from github_api import request_json
 
 API = "https://api.github.com"
 AUTHOR_RE = re.compile(r"^coderabbitai(?:\[bot\])?$", re.IGNORECASE)
 FORMAL_STATES = {"approved", "changes_requested", "dismissed"}
+
+
+@dataclass(frozen=True)
+class ReviewStateReport:
+    """Daten für den persistierten formellen CodeRabbit-Reviewzustand."""
+
+    repository: str
+    number: int
+    head_sha: str
+    state: str
+    reasons: tuple[str, ...]
 
 
 def _mapping(value: Any) -> dict[str, Any]:
@@ -62,20 +74,18 @@ def evaluate_coderabbit_review_state(
 
 
 def _request_json(url: str, token: str) -> Any:
-    request = Request(url)
-    request.add_header("Accept", "application/vnd.github+json")
-    request.add_header("X-GitHub-Api-Version", "2022-11-28")
-    request.add_header("Authorization", f"Bearer {token}")
-    request.add_header("User-Agent", "ADHS-Lernpfad-coderabbit-review-state")
-    try:
-        with urlopen(request, timeout=30) as response:
-            return json.load(response)
-    except HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"GitHub API {exc.code} für {url}: {detail[:500]}") from exc
+    """GitHub-JSON über den zentralen hostgebundenen API-Client abrufen."""
+
+    return request_json(
+        url,
+        token,
+        user_agent="ADHS-Lernpfad-coderabbit-review-state",
+    )
 
 
 def _reviews(repository: str, number: int, token: str) -> list[dict[str, Any]]:
+    """Alle PR-Reviews paginiert laden."""
+
     result: list[dict[str, Any]] = []
     page = 1
     while True:
@@ -92,24 +102,18 @@ def _reviews(repository: str, number: int, token: str) -> list[dict[str, Any]]:
         page += 1
 
 
-def _write_report(
-    output_dir: Path,
-    *,
-    repository: str,
-    number: int,
-    head_sha: str,
-    state: str,
-    reasons: list[str],
-) -> None:
+def _write_report(output_dir: Path, report: ReviewStateReport) -> None:
+    """JSON- und Markdownbericht für den formellen Reviewzustand schreiben."""
+
     output_dir.mkdir(parents=True, exist_ok=True)
-    passed = state != "changes_requested"
+    passed = report.state != "changes_requested"
     payload = {
-        "repository": repository,
-        "pull_request": number,
-        "head_sha": head_sha,
-        "state": state,
+        "repository": report.repository,
+        "pull_request": report.number,
+        "head_sha": report.head_sha,
+        "state": report.state,
         "passed": passed,
-        "reasons": reasons,
+        "reasons": list(report.reasons),
         "checked_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     }
     (output_dir / "coderabbit-review-state.json").write_text(
@@ -118,17 +122,17 @@ def _write_report(
     lines = [
         "# CodeRabbit review state",
         "",
-        f"- Repository: `{repository}`",
-        f"- Pull Request: `#{number}`",
-        f"- Head: `{head_sha}`",
-        f"- Reviewzustand: **{state}**",
+        f"- Repository: `{report.repository}`",
+        f"- Pull Request: `#{report.number}`",
+        f"- Head: `{report.head_sha}`",
+        f"- Reviewzustand: **{report.state}**",
         f"- Ergebnis: **{'bestanden' if passed else 'blockiert'}**",
         "",
         "## Begründung",
         "",
-        *(f"- {reason}" for reason in reasons),
+        *(f"- {reason}" for reason in report.reasons),
     ]
-    if not reasons:
+    if not report.reasons:
         lines.append(
             "- Kein aktiver CodeRabbit-Changes-Requested-Review blockiert den PR."
         )
@@ -138,6 +142,8 @@ def _write_report(
 
 
 def main() -> int:
+    """Aktuellen PR-Head und formellen CodeRabbit-Reviewzustand prüfen."""
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", default=os.getenv("GITHUB_REPOSITORY"))
     parser.add_argument("--pr-number", type=int)
@@ -164,11 +170,13 @@ def main() -> int:
     )
     _write_report(
         args.output_dir,
-        repository=args.repository,
-        number=args.pr_number,
-        head_sha=head_sha,
-        state=state,
-        reasons=reasons,
+        ReviewStateReport(
+            repository=args.repository,
+            number=args.pr_number,
+            head_sha=head_sha,
+            state=state,
+            reasons=tuple(reasons),
+        ),
     )
     print((args.output_dir / "coderabbit-review-state.md").read_text(encoding="utf-8"))
     return 1 if state == "changes_requested" else 0

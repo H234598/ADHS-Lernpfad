@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from copy import deepcopy
-import os
+import multiprocessing
 from pathlib import Path
-import subprocess
 import sys
 from tempfile import TemporaryDirectory
 import unittest
@@ -18,6 +17,17 @@ from ruleset_migration import (
     load_json,
     validate_transition,
 )
+
+
+def _try_lock_in_child(lock_path: str) -> None:
+    """In einem getrennten Prozess denselben Lock anfordern."""
+
+    try:
+        with exclusive_ruleset_lock(Path(lock_path)):
+            pass
+    except RuntimeError:
+        raise SystemExit(23) from None
+    raise SystemExit(0)
 
 
 class RulesetParameterDriftTests(unittest.TestCase):
@@ -66,38 +76,16 @@ class RulesetLockTests(unittest.TestCase):
     def test_competing_process_migration_is_rejected(self) -> None:
         with TemporaryDirectory() as directory:
             lock_path = Path(directory) / "ruleset.lock"
-            scripts = str(ROOT / "scripts")
-            child = (
-                "from pathlib import Path\n"
-                "from ruleset_migration import exclusive_ruleset_lock\n"
-                "try:\n"
-                f"    with exclusive_ruleset_lock(Path({str(lock_path)!r})):\n"
-                "        pass\n"
-                "except RuntimeError:\n"
-                "    raise SystemExit(23)\n"
-                "raise SystemExit(0)\n"
-            )
-            env = os.environ.copy()
-            env["PYTHONPATH"] = (
-                scripts
-                if not env.get("PYTHONPATH")
-                else scripts + os.pathsep + env["PYTHONPATH"]
-            )
-
+            context = multiprocessing.get_context("spawn")
             with exclusive_ruleset_lock(lock_path):
-                result = subprocess.run(
-                    [sys.executable, "-c", child],
-                    env=env,
-                    capture_output=True,
-                    text=True,
-                    check=False,
+                child = context.Process(
+                    target=_try_lock_in_child,
+                    args=(str(lock_path),),
                 )
-
-            self.assertEqual(
-                result.returncode,
-                23,
-                msg=result.stdout + result.stderr,
-            )
+                child.start()
+                child.join(timeout=20)
+                self.assertFalse(child.is_alive())
+                self.assertEqual(child.exitcode, 23)
 
     def test_migration_entrypoint_holds_lock_around_live_transition(self) -> None:
         with TemporaryDirectory() as directory:

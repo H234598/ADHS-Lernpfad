@@ -12,9 +12,8 @@ from pathlib import Path
 import re
 import time
 from typing import Any
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
 
+from github_api import request_json
 from learning_card_checks import (
     PolicyDecision,
     REQUIRED_POLICY_CHECKS,
@@ -84,19 +83,13 @@ def build_pull_snapshot(
 
 
 def _request_json(url: str, token: str) -> Any:
-    request = Request(url)
-    request.add_header("Accept", "application/vnd.github+json")
-    request.add_header("X-GitHub-Api-Version", "2022-11-28")
-    request.add_header("Authorization", f"Bearer {token}")
-    request.add_header("User-Agent", "ADHS-Lernpfad-learning-card-policy")
-    try:
-        with urlopen(request, timeout=30) as response:
-            return json.load(response)
-    except HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(
-            f"GitHub API {exc.code} für {url}: {detail[:500]}"
-        ) from exc
+    """GitHub-JSON über den zentralen hostgebundenen API-Client abrufen."""
+
+    return request_json(
+        url,
+        token,
+        user_agent="ADHS-Lernpfad-learning-card-policy",
+    )
 
 
 def _paginated(
@@ -105,6 +98,8 @@ def _paginated(
     *,
     key: str | None = None,
 ) -> list[dict[str, Any]]:
+    """GitHub-Listen mit 100 Einträgen pro Seite vollständig laden."""
+
     result: list[dict[str, Any]] = []
     page = 1
     while True:
@@ -129,6 +124,8 @@ def _write_report(
     decision: PolicyDecision,
     output_dir: Path,
 ) -> None:
+    """Maschinen- und menschenlesbaren Policybericht persistieren."""
+
     output_dir.mkdir(parents=True, exist_ok=True)
     payload = {
         "repository": repository,
@@ -182,7 +179,9 @@ def _write_report(
     )
 
 
-def main() -> int:
+def _parse_args() -> argparse.Namespace:
+    """CLI-Argumente validieren und als Namespace zurückgeben."""
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--repository",
@@ -204,7 +203,13 @@ def main() -> int:
         parser.error(
             "Wartezeiten müssen nichtnegativ beziehungsweise positiv sein"
         )
+    return args
 
+
+def main() -> int:
+    """PR-Scope bestimmen, aktuelle Gates auswerten und fail-closed berichten."""
+
+    args = _parse_args()
     pull_url = f"{API}/repos/{args.repository}/pulls/{args.pr_number}"
     files_url = f"{pull_url}/files"
     pull = _mapping(_request_json(pull_url, args.token))
@@ -265,10 +270,6 @@ def main() -> int:
             ),
         )
     elif scope.requires_semantic_review:
-        # Der stabile PR-Snapshot allein reicht nicht: zwischen dem letzten
-        # Poll und der Veröffentlichung kann ein neuer Check-Run für denselben
-        # Head entstanden sein. Deshalb die Check-Runs nach der Snapshot-
-        # Bestätigung noch einmal frisch lesen und fail-closed neu bewerten.
         final_runs = _paginated(
             f"{API}/repos/{args.repository}/commits/{head_sha}/check-runs",
             args.token,

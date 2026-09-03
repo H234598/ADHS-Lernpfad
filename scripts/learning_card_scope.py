@@ -42,6 +42,8 @@ class ScopeDecision:
 
 
 def _normalize_path(value: Any) -> str:
+    """Repositorypfade vereinheitlichen."""
+
     path = str(value or "").strip()
     while path.startswith("./"):
         path = path[2:]
@@ -49,6 +51,8 @@ def _normalize_path(value: Any) -> str:
 
 
 def _candidate_paths(raw_file: dict[str, Any]) -> tuple[str, ...]:
+    """Aktuellen und vorherigen Dateipfad für Rename-Sicherheit liefern."""
+
     paths = {
         _normalize_path(raw_file.get("filename")),
         _normalize_path(raw_file.get("previous_filename")),
@@ -71,6 +75,68 @@ def _is_scientific_support_path(path: str) -> bool:
 
 def _is_automation_path(path: str) -> bool:
     return path in AUTOMATION_EXACT or path.startswith(AUTOMATION_PREFIXES)
+
+
+def _classification(
+    learning: set[str],
+    scientific: set[str],
+    automation: set[str],
+) -> str:
+    """Die Schutzklasse aus den drei deterministischen Pfadmengen ableiten."""
+
+    if automation and (learning or scientific):
+        return "learning_card_sensitive"
+    if learning:
+        return "learning_card"
+    if scientific:
+        return "scientific_support"
+    if automation:
+        return "automation_only"
+    return "not_applicable"
+
+
+def _reasons(
+    *,
+    learning: set[str],
+    scientific: set[str],
+    automation: set[str],
+    provenance: bool,
+    manual_marker: bool,
+) -> tuple[str, ...]:
+    """Begründungen deklarativ aufbauen, ohne den Router zu verzweigen."""
+
+    semantic = bool(learning or scientific)
+    manual = bool(automation)
+    candidates = (
+        (bool(learning), f"{len(learning)} Lernkartendatei(en) betroffen."),
+        (
+            bool(scientific),
+            f"{len(scientific)} wissenschaftliche Begleitdatei(en) betroffen.",
+        ),
+        (
+            bool(automation),
+            f"{len(automation)} automations- oder sicherheitssensitive Datei(en) betroffen.",
+        ),
+        (
+            semantic and not provenance,
+            "Wissenschaftlicher Scope ohne Einheiten-Provenienz; die semantische "
+            "Prüfung bleibt fail-closed anwendbar.",
+        ),
+        (
+            provenance and not semantic,
+            "Einheiten-Provenienz ohne wissenschaftliche Dateiänderung aktiviert "
+            "keine semantische Prüfung.",
+        ),
+        (
+            manual and not manual_marker,
+            "Sensible Automation benötigt den Marker manual-merge-required und "
+            "eine bewusste Infrastrukturprüfung.",
+        ),
+    )
+    reasons = tuple(text for active, text in candidates if active)
+    return reasons or (
+        "Keine Lernkarte oder wissenschaftliche Begleitdatei betroffen.",
+    )
 
 
 def classify_pull_request(
@@ -100,46 +166,8 @@ def classify_pull_request(
     semantic = bool(learning or scientific)
     manual = bool(automation)
 
-    if semantic and manual:
-        classification = "learning_card_sensitive"
-    elif learning:
-        classification = "learning_card"
-    elif scientific:
-        classification = "scientific_support"
-    elif manual:
-        classification = "automation_only"
-    else:
-        classification = "not_applicable"
-
-    reasons: list[str] = []
-    if learning:
-        reasons.append(f"{len(learning)} Lernkartendatei(en) betroffen.")
-    if scientific:
-        reasons.append(f"{len(scientific)} wissenschaftliche Begleitdatei(en) betroffen.")
-    if automation:
-        reasons.append(
-            f"{len(automation)} automations- oder sicherheitssensitive Datei(en) betroffen."
-        )
-    if semantic and not provenance:
-        reasons.append(
-            "Wissenschaftlicher Scope ohne Einheiten-Provenienz; die semantische "
-            "Prüfung bleibt fail-closed anwendbar."
-        )
-    if provenance and not semantic:
-        reasons.append(
-            "Einheiten-Provenienz ohne wissenschaftliche Dateiänderung aktiviert "
-            "keine semantische Prüfung."
-        )
-    if manual and not manual_marker:
-        reasons.append(
-            "Sensible Automation benötigt den Marker manual-merge-required und "
-            "eine bewusste Infrastrukturprüfung."
-        )
-    if not reasons:
-        reasons.append("Keine Lernkarte oder wissenschaftliche Begleitdatei betroffen.")
-
     return ScopeDecision(
-        classification=classification,
+        classification=_classification(learning, scientific, automation),
         requires_semantic_review=semantic,
         manual_merge_required=manual,
         learning_provenance=provenance,
@@ -147,5 +175,11 @@ def classify_pull_request(
         learning_paths=tuple(sorted(learning)),
         scientific_support_paths=tuple(sorted(scientific)),
         automation_paths=tuple(sorted(automation)),
-        reasons=tuple(reasons),
+        reasons=_reasons(
+            learning=learning,
+            scientific=scientific,
+            automation=automation,
+            provenance=provenance,
+            manual_marker=manual_marker,
+        ),
     )

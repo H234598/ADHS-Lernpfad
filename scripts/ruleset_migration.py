@@ -10,9 +10,8 @@ import json
 import os
 from pathlib import Path
 from typing import Any, Iterator
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
 
+from github_api import request_json
 from ruleset_contract import (
     NEW_CONTEXT,
     OLD_CONTEXTS,
@@ -84,27 +83,15 @@ def _request_json(
     method: str = "GET",
     data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    request = Request(
+    """GitHub-Ruleset-JSON hostgebunden abrufen und Typ verifizieren."""
+
+    payload = request_json(
         url,
-        data=None if data is None else json.dumps(data).encode("utf-8"),
+        token,
+        user_agent="ADHS-Lernpfad-ruleset-migration",
         method=method,
+        data=data,
     )
-    request.add_header("Accept", "application/vnd.github+json")
-    request.add_header("X-GitHub-Api-Version", "2022-11-28")
-    request.add_header("User-Agent", "ADHS-Lernpfad-ruleset-migration")
-    if token:
-        request.add_header("Authorization", f"Bearer {token}")
-    if data is not None:
-        request.add_header("Content-Type", "application/json")
-    try:
-        with urlopen(request, timeout=30) as response:
-            payload = json.load(response)
-    except HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")
-        hint = " Mit GITHUB_TOKEN erneut ausführen." if not token else ""
-        raise RuntimeError(
-            f"GitHub API {exc.code} für {url}: {detail[:500]}.{hint}"
-        ) from exc
     if not isinstance(payload, dict):
         raise RuntimeError("GitHub lieferte kein Ruleset-Objekt")
     return payload
@@ -118,6 +105,8 @@ def _write_report(
     live_before: dict[str, Any],
     live_after: dict[str, Any] | None,
 ) -> None:
+    """Ruleset-Snapshots und Transitionsbericht persistieren."""
+
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "ruleset-before.json").write_text(
         json.dumps(live_before, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
@@ -139,6 +128,8 @@ def _write_report(
 
 
 def main() -> int:
+    """Rulesetvertrag prüfen und optional driftgeschützt anwenden/rollbacken."""
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", default=os.getenv("GITHUB_REPOSITORY"))
     parser.add_argument("--ruleset-id", type=int, default=20499620)
