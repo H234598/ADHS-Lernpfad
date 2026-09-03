@@ -24,7 +24,10 @@ Die Workflows verwenden aktuelle GitHub-Actions-Majors mit Node-24-Runtime. Depe
 - Dependency-Caching nur anhand versionierter Lock- und Requirements-Dateien;
 - `npm ci` und `npm audit --audit-level=high` sichern die Markdown-Prüfkette reproduzierbar ab;
 - Remark verarbeitet Obsidian-spezifische Wikilink-, Embed- und Callout-Syntax über deterministische Sanitierung, während die eigentliche Linksemantik weiterhin durch die Projektvalidatoren geprüft wird;
-- `.codacy.yml` schließt Markdown ausschließlich aus Codacys nicht Obsidian-kompatiblem `remark-lint` aus; Bandit-, Prospector-, Pylint- und sonstige Codacy-Analysen bleiben aktiv;
+- `.codacy.yml` schließt Markdown ausschließlich aus Codacys nicht Obsidian-kompatiblem `remark-lint` aus; die Auswahl des lokalen Codacy-Hardgates wird im Workflow explizit und testbar festgelegt;
+- `codacy.yml` führt die repositoryrelevanten Analyzer Bandit, Prospector, Pylint (`pylintpython3`), Ruff, ShellCheck, PSScriptAnalyzer, ESLint 9, Biome und Stylelint isoliert in einer fail-closed Matrix aus; jeder Analyzer besitzt ein 10-Minuten-Werkzeuglimit, jede Matrixzeile eine eigene SARIF-Kategorie und jeder Matrixjob ein 20-Minuten-Gesamtlimit;
+- Opengrep ist bewusst nicht Teil dieses lokalen Codacy-Pflichtgates: Codacy Analysis CLI 7.9.25 startet bei `--tool opengrep` innerhalb eines einzigen Aufrufs wiederholt Opengrep-Container; mehrere Läufe enden schnell erfolgreich, während ein weiterer reproduzierbar bis zum 15-Minuten-Tooltimeout hängen kann. Das bloße Erhöhen des Timeouts würde den Hänger nur verlängern. Eine spätere Codacy-CLI-Migration kann Opengrep separat wieder qualifizieren;
+- bekannte inkompatible, redundante oder ohne Projektkonfiguration nicht ausführbare Legacy-/Default-Analyzer werden ebenfalls nicht in das lokale Pflichtgate aufgenommen;
 - die Markdown-Qualität bleibt durch den projektinternen Pflichtcheck und die separate Obsidian-Linkvalidierung blockierend abgesichert;
 - Zeitlimits und Concurrency-Gruppen verhindern hängende oder überholte Läufe;
 - Obsidian-Wikilinks müssen eindeutig auflösbar sein und werden erst im Build umgewandelt;

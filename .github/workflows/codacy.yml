@@ -26,36 +26,79 @@ permissions:
   contents: read
 
 jobs:
-  codacy-security-scan:
+  codacy-analysis:
     permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
-    name: Codacy Security Scan
+      contents: read
+      security-events: write
+    name: Codacy analyzer (${{ matrix.tool }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - tool: bandit
+            tool_timeout: 10minutes
+          - tool: prospector
+            tool_timeout: 10minutes
+          - tool: pylintpython3
+            tool_timeout: 10minutes
+          - tool: ruff
+            tool_timeout: 10minutes
+          - tool: shellcheck
+            tool_timeout: 10minutes
+          - tool: psscriptanalyzer
+            tool_timeout: 10minutes
+          - tool: eslint-9
+            tool_timeout: 10minutes
+          - tool: biome
+            tool_timeout: 10minutes
+          - tool: stylelint
+            tool_timeout: 10minutes
     steps:
-      # Checkout the repository to the GitHub Actions runner
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
-      # Execute Codacy Analysis CLI and generate a SARIF output with the security issues identified during the analysis
-      - name: Run Codacy Analysis CLI
+      # Run each repository-relevant analyzer in isolation. This preserves the
+      # stable Codacy coverage while preventing one incompatible legacy analyzer
+      # from corrupting another tool's SARIF output or blocking the whole job.
+      - name: Run Codacy ${{ matrix.tool }}
         uses: codacy/codacy-analysis-cli-action@562ee3e92b8e92df8b67e0a5ff8aa8e261919c08
         with:
-          # Check https://github.com/codacy/codacy-analysis-cli#project-token to get your project token from your Codacy repository
-          # You can also omit the token and run the tools that support default configurations
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           verbose: true
           output: results.sarif
           format: sarif
-          # Adjust severity of non-security issues
+          tool: ${{ matrix.tool }}
           gh-code-scanning-compat: true
-          # Force 0 exit code to allow SARIF file generation
-          # This will handover control about PR rejection to the GitHub side
+          # Findings are uploaded to GitHub code scanning; execution failures
+          # and timeouts still fail this gate via fail-if-incomplete.
           max-allowed-issues: 2147483647
+          tool-timeout: ${{ matrix.tool_timeout }}
+          fail-if-incomplete: true
 
-      # Upload the SARIF file generated in the previous step
       - name: Upload SARIF results file
+        if: ${{ !cancelled() && hashFiles('results.sarif') != '' }}
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: results.sarif
+          category: codacy-${{ matrix.tool }}
+
+  codacy-security-scan:
+    name: Codacy Security Scan
+    runs-on: ubuntu-latest
+    needs: codacy-analysis
+    if: ${{ always() }}
+    timeout-minutes: 5
+    steps:
+      - name: Enforce complete analyzer matrix
+        env:
+          ANALYZER_RESULT: ${{ needs.codacy-analysis.result }}
+        run: |
+          if [[ "$ANALYZER_RESULT" != "success" ]]; then
+            echo "Codacy analyzer matrix did not complete successfully: $ANALYZER_RESULT" >&2
+            exit 1
+          fi
