@@ -45,6 +45,8 @@ class RulesetMigrationTests(unittest.TestCase):
         )
 
     def test_target_preserves_extra_approval_for_unattributed_changes(self) -> None:
+        """Keep GitHub's live extra-approval requirement unchanged in both snapshots."""
+
         current_params = self.current["rules"][1]["parameters"]
         target_params = self.target["rules"][1]["parameters"]
         self.assertTrue(
