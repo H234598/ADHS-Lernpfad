@@ -44,6 +44,17 @@ class RulesetMigrationTests(unittest.TestCase):
             )
         )
 
+    def test_target_preserves_extra_approval_for_unattributed_changes(self) -> None:
+        current_params = self.current["rules"][1]["parameters"]
+        target_params = self.target["rules"][1]["parameters"]
+        self.assertTrue(
+            current_params["require_extra_approval_for_unattributed_changes"]
+        )
+        self.assertEqual(
+            target_params["require_extra_approval_for_unattributed_changes"],
+            current_params["require_extra_approval_for_unattributed_changes"],
+        )
+
     def test_bypass_actor_order_is_semantically_irrelevant(self) -> None:
         actors = [
             {
