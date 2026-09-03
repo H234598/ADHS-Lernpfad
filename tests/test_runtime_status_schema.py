@@ -74,7 +74,7 @@ def test_schema_rejects_unknown_top_level_fields(tmp_path: Path) -> None:
         "manual",
         run_id="unknown-field-test",
     )
-    payload["secret_surprise"] = "must not pass"
+    payload["unexpected_property"] = "forbidden-value"
     errors = sorted(
         jsonschema.Draft202012Validator(_schema()).iter_errors(payload),
         key=lambda error: list(error.absolute_path),
@@ -98,5 +98,7 @@ def test_schema_and_runtime_require_explicit_utc_timestamps(tmp_path: Path) -> N
     )
     assert errors
     assert any("pattern" in error.schema_path for error in errors)
-    assert any("updated_at muss ein ISO-8601-UTC-Zeitstempel sein" in error
-               for error in validate_status(payload))
+    assert any(
+        "updated_at muss ein ISO-8601-UTC-Zeitstempel sein" in error
+        for error in validate_status(payload)
+    )
