@@ -276,7 +276,8 @@ def _git_sha(value: Any = None) -> str | None:
         if not git_executable:
             return None
         try:
-            candidate = subprocess.run(  # nosec B603 -- executable resolved absolutely; argv constant; shell never used
+            # Fixed argv, absolute executable, and no shell boundary.
+            candidate = subprocess.run(  # nosec B603
                 [str(Path(git_executable).resolve()), "rev-parse", "HEAD"],
                 cwd=ROOT,
                 check=True,
