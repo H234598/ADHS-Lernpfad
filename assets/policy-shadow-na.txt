@@ -1,0 +1,2 @@
+Temporary shadow fixture for Learning card policy N/A validation.
+This branch is not intended to merge.
