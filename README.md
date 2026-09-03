@@ -3,9 +3,9 @@ title: ADHS-Lernpfad
 subtitle: Wissenschaftlich fundierte Lerneinheiten von den Grundlagen bis zur Forschung
 language: de
 status: fortlaufend
-version: 0.22.0
-last_reviewed: 2026-08-06
-tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Zwangsstörung, Trauma, PTBS, bipolare Störung, Psychose, Substanzgebrauch, Abhängigkeit, Lernpfad]
+version: 0.23.0
+last_reviewed: 2026-09-04
+tags: [ADHS, Neurobiologie, Autismus, Parkinson, Angststörungen, Zwangsstörung, Trauma, PTBS, bipolare Störung, Psychose, Substanzgebrauch, Abhängigkeit, Lernstörung, Sprachentwicklungsstörung, Lernpfad]
 ---
 
 [🛠️](WARTUNG.md "Wartung, Automatisierung und CI")
@@ -64,6 +64,7 @@ Jede reguläre Einheit ist als **10- bis 20-minütige Lerneinheit** angelegt. Si
 18. [[02-Vertiefung/06-Trauma-PTBS-und-komplexe-Traumafolgen|Trauma, PTBS und komplexe Traumafolgen: Zeitachsen, Abgrenzung und Koexistenz mit ADHS]]
 19. [[02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen|Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit]]
 20. [[02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS|Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung]]
+21. [[02-Vertiefung/09-Lern-Sprach-und-intellektuelle-Entwicklungsstoerungen|Lernstörungen, Sprachentwicklungsstörungen und intellektuelle Beeinträchtigung bei ADHS]]
 
 ## Wissenssystem
 
