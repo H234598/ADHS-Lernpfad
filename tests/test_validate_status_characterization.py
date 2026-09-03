@@ -39,9 +39,18 @@ def test_validate_status_rejects_updated_at_before_created_at(tmp_path: Path) ->
     )
 
 
-def test_validate_status_rejects_end_fields_on_non_final_status(tmp_path: Path) -> None:
+def test_validate_status_rejects_ended_at_on_non_final_status(tmp_path: Path) -> None:
     payload = _running_status(tmp_path)
     payload["ended_at"] = payload["updated_at"]
+
+    assert (  # nosec B101 -- pytest assertion
+        "Nicht finaler Status darf keine Endzeit oder Laufzeit besitzen"
+        in validate_status(payload)
+    )
+
+
+def test_validate_status_rejects_duration_on_non_final_status(tmp_path: Path) -> None:
+    payload = _running_status(tmp_path)
     payload["duration_seconds"] = 0.0
 
     assert (  # nosec B101 -- pytest assertion
