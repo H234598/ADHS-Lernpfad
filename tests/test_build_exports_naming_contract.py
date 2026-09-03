@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
+import importlib
+import sys
 import unittest
+from pathlib import Path
 
-from scripts import build_exports
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+build_exports = importlib.import_module("scripts.build_exports")
 
 
 EXPECTED_ARTIFACT_FILENAMES = {
