@@ -76,6 +76,8 @@ class RulesetMigrationTests(unittest.TestCase):
 
     def test_unattributed_copilot_approval_default_is_preserved(self) -> None:
         def pull_request_parameters(document: dict) -> dict:
+            """Pull-Request-Regelparameter aus einem Ruleset-Snapshot lesen."""
+
             rule = next(
                 item for item in document["rules"] if item["type"] == "pull_request"
             )
