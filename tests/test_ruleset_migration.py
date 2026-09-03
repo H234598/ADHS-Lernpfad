@@ -62,7 +62,10 @@ class RulesetMigrationTests(unittest.TestCase):
         current["bypass_actors"] = actors
         target["bypass_actors"] = list(reversed(actors))
 
-        self.assertEqual(canonical_digest(current), canonical_digest({**current, "bypass_actors": list(reversed(actors))}))
+        self.assertEqual(
+            canonical_digest(current),
+            canonical_digest({**current, "bypass_actors": list(reversed(actors))}),
+        )
         summary = validate_transition(current, target)
         self.assertTrue(summary.bypass_actors_preserved)
 
@@ -77,6 +80,26 @@ class RulesetMigrationTests(unittest.TestCase):
         self.assertEqual(summary.removed_contexts, (NEW_CONTEXT,))
         self.assertEqual(set(summary.added_contexts), OLD_CONTEXTS)
         self.assertTrue(summary.bypass_actors_preserved)
+
+    def test_rollback_rejects_mutated_raw_check_provider_bindings(self) -> None:
+        canonical = required_checks(self.current)
+        for context in sorted(OLD_CONTEXTS):
+            with self.subTest(context=context):
+                drifted = deepcopy(self.current)
+                status_rule = next(
+                    rule
+                    for rule in drifted["rules"]
+                    if rule["type"] == "required_status_checks"
+                )
+                check = next(
+                    item
+                    for item in status_rule["parameters"]["required_status_checks"]
+                    if item["context"] == context
+                )
+                expected = canonical[context]
+                check["integration_id"] = 999999 if expected != 999999 else 888888
+                with self.assertRaisesRegex(ValueError, "Providerbindung"):
+                    validate_rollback(self.target, drifted)
 
     def test_unrelated_rule_drift_is_rejected(self) -> None:
         drifted = deepcopy(self.target)
