@@ -74,6 +74,16 @@ def test_validate_status_rejects_non_json_metric_values(tmp_path: Path) -> None:
     )
 
 
+def test_validate_status_rejects_non_serializable_metric_values(tmp_path: Path) -> None:
+    """Reject metric payloads whose values cannot be JSON-serialized at all."""
+    payload = _running_status(tmp_path)
+    payload["metrics"] = {"not_serializable": object()}
+
+    assert (  # nosec B101 -- pytest assertion
+        "metrics enthält keine reinen JSON-Werte" in validate_status(payload)
+    )
+
+
 def test_validate_status_rejects_duplicate_artifact_identity(tmp_path: Path) -> None:
     """Reject duplicate artifact identities with the same type and value."""
     payload = _running_status(tmp_path)
