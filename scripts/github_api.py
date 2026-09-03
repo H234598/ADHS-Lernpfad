@@ -2,16 +2,15 @@
 
 from __future__ import annotations
 
+from http.client import HTTPSConnection
 import json
 from typing import Any
-from urllib.error import HTTPError
 from urllib.parse import urlsplit
-from urllib.request import Request, urlopen
 
 GITHUB_API_HOST = "api.github.com"
 
 
-def _validate_github_api_url(url: str) -> str:
+def _validated_path(url: str) -> str:
     """Nur HTTPS-Ziele auf dem kanonischen GitHub-API-Host zulassen."""
 
     try:
@@ -25,12 +24,13 @@ def _validate_github_api_url(url: str) -> str:
         or port not in {None, 443}
         or parsed.username is not None
         or parsed.password is not None
+        or not parsed.path.startswith("/")
     ):
         raise RuntimeError(
             "GitHub-API-Aufruf auf unerwartetes Ziel abgelehnt: "
             f"{parsed.scheme}://{parsed.netloc}"
         )
-    return url
+    return parsed.path + (f"?{parsed.query}" if parsed.query else "")
 
 
 def request_json(
@@ -41,28 +41,35 @@ def request_json(
     method: str = "GET",
     data: dict[str, Any] | None = None,
 ) -> Any:
-    """JSON von GitHubs REST API abrufen oder mit begrenztem Fehlertext abbrechen."""
+    """JSON ausschließlich über eine TLS-Verbindung zu api.github.com abrufen."""
 
-    validated_url = _validate_github_api_url(url)
-    request = Request(
-        validated_url,
-        data=None if data is None else json.dumps(data).encode("utf-8"),
-        method=method,
-    )
-    request.add_header("Accept", "application/vnd.github+json")
-    request.add_header("X-GitHub-Api-Version", "2022-11-28")
-    request.add_header("User-Agent", user_agent)
+    path = _validated_path(url)
+    body = None if data is None else json.dumps(data).encode("utf-8")
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": user_agent,
+    }
     if token:
-        request.add_header("Authorization", f"Bearer {token}")
-    if data is not None:
-        request.add_header("Content-Type", "application/json")
+        headers["Authorization"] = f"Bearer {token}"
+    if body is not None:
+        headers["Content-Type"] = "application/json"
+
+    connection = HTTPSConnection(GITHUB_API_HOST, 443, timeout=30)
     try:
-        # B310 ist hier bewusst lokal unterdrückt: Scheme, Host, Port und
-        # Credentials wurden unmittelbar zuvor explizit allow-listed.
-        with urlopen(request, timeout=30) as response:  # nosec B310
-            return json.load(response)
-    except HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")
+        connection.request(method, path, body=body, headers=headers)
+        response = connection.getresponse()
+        raw = response.read()
+    finally:
+        connection.close()
+
+    text = raw.decode("utf-8", errors="replace")
+    if not 200 <= response.status < 300:
         raise RuntimeError(
-            f"GitHub API {exc.code} für {validated_url}: {detail[:500]}"
-        ) from exc
+            f"GitHub API {response.status} für https://{GITHUB_API_HOST}{path}: "
+            f"{text[:500]}"
+        )
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("GitHub API lieferte kein gültiges JSON") from exc
