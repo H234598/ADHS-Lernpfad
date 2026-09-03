@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pathlib import Path
 import json
 import unittest
+from pathlib import Path
 
 import yaml
 
@@ -10,24 +10,26 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class LearningCardPolicyFileTests(unittest.TestCase):
-    def test_policy_workflow_is_always_reporting_and_read_only(self) -> None:
+    def test_policy_workflow_uses_least_privilege_and_can_publish_check(self) -> None:
         path = ROOT / ".github/workflows/learning-card-policy.yml"
         text = path.read_text(encoding="utf-8")
         parsed = yaml.safe_load(text)
         self.assertIsInstance(parsed, dict)
         permissions = parsed.get("permissions")
         self.assertIsInstance(permissions, dict)
-        self.assertTrue(
-            all(value in {"read", "none"} for value in permissions.values())
+        self.assertEqual(permissions.get("contents"), "read")
+        self.assertEqual(permissions.get("pull-requests"), "read")
+        self.assertEqual(permissions.get("issues"), "read")
+        self.assertEqual(permissions.get("checks"), "write")
+        self.assertEqual(permissions.get("statuses"), "none")
+        self.assertEqual(
+            {
+                key
+                for key, value in permissions.items()
+                if value == "write"
+            },
+            {"checks"},
         )
-        for permission in (
-            "contents",
-            "pull-requests",
-            "issues",
-            "checks",
-            "statuses",
-        ):
-            self.assertEqual(permissions.get(permission), "read")
 
         self.assertIn("Learning card policy (blocking)", text)
         self.assertIn("pull_request_target", text)
@@ -35,8 +37,8 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         self.assertIn('"CodeRabbit hard gate"', text)
         self.assertIn("ref: main", text)
         self.assertIn("persist-credentials: false", text)
+        self.assertIn("--publish-check", text)
         self.assertNotIn("paths:", text)
-        self.assertNotIn("write", text)
 
     def test_coderabbit_config_enforces_two_semantic_error_checks(self) -> None:
         config = yaml.safe_load(
@@ -100,6 +102,8 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         self.assertIn("claim-source-entailment", text)
         self.assertIn("complete-build", text)
         self.assertIn("Workflow- oder Gatecode ohne Lernkarte", text)
+        self.assertIn("checks: write", text)
+        self.assertIn("PR-Head", text)
 
     def test_ruleset_target_is_valid_json_and_requires_aggregator(self) -> None:
         target = json.loads(

@@ -23,8 +23,8 @@ permissions:
   contents: read
   pull-requests: read
   issues: read
-  checks: read
-  statuses: read
+  checks: write
+  statuses: none
 
 concurrency:
   group: learning-card-policy-${{ github.event.pull_request.number || github.event.issue.number || github.event.workflow_run.pull_requests[0].number || inputs.pr_number || github.run_id }}
@@ -62,7 +62,7 @@ jobs:
             echo 'skip=false' >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Evaluate current-head learning-card policy
+      - name: Evaluate and publish current-head learning-card policy
         if: steps.pr.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -70,7 +70,8 @@ jobs:
         run: |
           python scripts/learning_card_policy.py \
             --repository "$GITHUB_REPOSITORY" \
-            --pr-number "$TARGET_PR"
+            --pr-number "$TARGET_PR" \
+            --publish-check
 
       - name: Upload learning-card policy report
         if: always() && steps.pr.outputs.skip != 'true'

@@ -13,7 +13,9 @@ status: in-review
 updates:
   - "2026-08-12: Deterministischen Anwendbarkeitsrouter, semantische CodeRabbit-Prüfung und Buildaggregation implementiert."
   - "2026-08-12: Workflow- und Gatecode als orthogonale manuelle Sicherheitsklasse festgelegt."
-date: 2026-08-12
+  - "2026-09-03: Aggregator veröffentlicht seinen Check explizit auf dem ausgewerteten PR-Head; Checks-Write ist auf diese Publikation begrenzt."
+  - "2026-09-03: Rulesetmigration mit lokalem Exklusivlock und zweitem Live-Snapshot unmittelbar vor PUT gehärtet."
+date: 2026-09-03
 created: 2026-08-12T20:22:24+02:00
 ---
 
@@ -164,10 +166,14 @@ Alle wissenschaftlichen Subgates müssen bestehen; der Merge bleibt zusätzlich 
 - nutzt `pull_request_target`, Review-, Kommentar-, `workflow_run`- und Dispatch-Ereignisse;
 - checkt ausschließlich die Implementierung von `main` aus;
 - verwendet `persist-credentials: false`;
-- besitzt nur lesende Berechtigungen;
+- besitzt lesende Berechtigungen für Repository-/PR-/Issue-Daten;
+- besitzt ausschließlich zusätzlich `checks: write`, um das aggregierte Ergebnis als GitHub-Check auf dem **ausgewerteten PR-Head** zu veröffentlichen;
+- setzt `statuses: none` und besitzt keine Contents-/PR-/Issue-Schreibrechte;
 - führt keinen PR-kontrollierten Code aus;
-- liefert `Learning card policy (blocking)`;
+- veröffentlicht `Learning card policy (blocking)` explizit auf `pull_request.head.sha`, statt sich auf den Basis-SHA des `pull_request_target`-Workflowruns zu verlassen;
 - speichert JSON- und Markdownberichte als Artefakt.
+
+Der publizierte Check wird erst nach erneuter Prüfung von Head, Body und vollständigem Dateiscope erzeugt. Bei einem Snapshotwechsel wird fail-closed ein blockierendes Ergebnis auf dem nun aktuellen Head veröffentlicht; ein veralteter Erfolg wird nicht übernommen.
 
 ## Ruleset-Zielvertrag
 
@@ -200,7 +206,11 @@ automation/rulesets/main-required-gates.before.json
 automation/rulesets/main-required-gates.target.json
 ```
 
-`scripts/ruleset_migration.py` liest das Live-Ruleset, vergleicht kanonische SHA-256-Digests, erhält Bypass-Akteure, Branchbedingungen und alle anderen Regeln und erlaubt nur den Austausch der drei Rohkontexte gegen den Aggregator. `--apply` benötigt ein Administration-Write-Token; nach PUT wird der Vertrag frisch zurückgelesen. `--rollback --apply` verwendet denselben Drift- und Digestschutz.
+`scripts/ruleset_migration.py` liest das Live-Ruleset, vergleicht kanonische SHA-256-Digests, erhält Bypass-Akteure, Branchbedingungen, alle nicht kontextbezogenen `required_status_checks`-Parameter und alle anderen Regeln. Erlaubt ist nur der Austausch der drei Rohkontexte gegen den Aggregator.
+
+Da GitHubs Ruleset-Update-API keinen dokumentierten serverseitigen `If-Match`-/Versions-Precondition-Write anbietet, erfolgt `--apply` bewusst nur in einem **exklusiven administrativen Änderungsfenster**. Zusätzlich serialisiert ein lokaler Interprozess-Lock konkurrierende Migrationen dieses Tools, und unmittelbar vor dem `PUT` wird ein zweiter Live-Snapshot gelesen und gegen den validierten Ausgangszustand verglichen. Jede erkannte Drift bricht fail-closed vor dem Schreibzugriff ab. Nach dem `PUT` wird der Vertrag erneut frisch gelesen und verifiziert.
+
+`--apply` benötigt ein Administration-Write-Token. `--rollback --apply` verwendet denselben Lock-, Drift- und Digestschutz.
 
 ```bash
 python scripts/ruleset_migration.py --repository H234598/ADHS-Lernpfad
@@ -234,7 +244,8 @@ Vor der Rulesetumschaltung werden mindestens geprüft:
 6. Karte ohne Marker → anwendbar, fail-closed;
 7. Workflow-only → manuell;
 8. Karte plus Workflow → semantisch und manuell;
-9. absichtlich roter Build → `complete_build` blockiert.
+9. absichtlich roter Build → `complete_build` blockiert;
+10. publizierter Aggregator-Check erscheint auf dem tatsächlichen PR-Head und nicht nur auf dem Basis-SHA des `pull_request_target`-Runs.
 
 ## Nicht verhandelbare Grenzen
 
@@ -246,6 +257,7 @@ Vor der Rulesetumschaltung werden mindestens geprüft:
 - Ein aktives CodeRabbit-`CHANGES_REQUESTED` bleibt blockierend.
 - Workflow- und Gateänderungen bleiben manuell.
 - Die Rulesetmigration erfolgt erst nach Merge und Shadow-Abnahme.
+- Das Live-Ruleset wird nur in einem exklusiven administrativen Änderungsfenster geschrieben.
 
 ## Verknüpfungen
 

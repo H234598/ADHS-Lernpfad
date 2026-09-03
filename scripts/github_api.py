@@ -18,18 +18,19 @@ def _validated_path(url: str) -> str:
         port = parsed.port
     except ValueError as exc:
         raise RuntimeError(f"Ungültige GitHub-API-URL: {url!r}") from exc
-    if (
-        parsed.scheme != "https"
-        or parsed.hostname != GITHUB_API_HOST
-        or port not in {None, 443}
-        or parsed.username is not None
-        or parsed.password is not None
-        or not parsed.path.startswith("/")
-    ):
+
+    if (parsed.scheme, parsed.hostname, port) not in {
+        ("https", GITHUB_API_HOST, None),
+        ("https", GITHUB_API_HOST, 443),
+    }:
         raise RuntimeError(
             "GitHub-API-Aufruf auf unerwartetes Ziel abgelehnt: "
             f"{parsed.scheme}://{parsed.netloc}"
         )
+    if parsed.username is not None or parsed.password is not None:
+        raise RuntimeError("Credentials in GitHub-API-URLs sind unzulässig")
+    if not parsed.path.startswith("/"):
+        raise RuntimeError("GitHub-API-Pfad muss absolut sein")
     return parsed.path + (f"?{parsed.query}" if parsed.query else "")
 
 

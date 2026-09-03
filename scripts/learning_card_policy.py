@@ -23,6 +23,7 @@ from learning_card_checks import (
 from learning_card_scope import ScopeDecision, classify_pull_request
 
 __all__ = [
+    "POLICY_CHECK_NAME",
     "PolicyDecision",
     "PullSnapshot",
     "REQUIRED_POLICY_CHECKS",
@@ -34,6 +35,7 @@ __all__ = [
 ]
 
 API = "https://api.github.com"
+POLICY_CHECK_NAME = "Learning card policy (blocking)"
 
 
 @dataclass(frozen=True)
@@ -179,6 +181,40 @@ def _write_report(
     )
 
 
+def _publish_check(
+    repository: str,
+    token: str,
+    decision: PolicyDecision,
+) -> None:
+    """Den aggregierten Check explizit dem ausgewerteten PR-Head zuordnen."""
+
+    if not re.fullmatch(r"[0-9a-f]{40}", decision.head_sha):
+        raise RuntimeError("Policy-Check benötigt einen vollständigen Git-SHA")
+    summary = (
+        "Alle anwendbaren Lernkarten-Subgates sind erfolgreich."
+        if decision.passed
+        else "; ".join(decision.reasons)
+        or "Lernkarten-Policy ist blockiert."
+    )
+    payload = {
+        "name": POLICY_CHECK_NAME,
+        "head_sha": decision.head_sha,
+        "status": "completed",
+        "conclusion": "success" if decision.passed else "failure",
+        "output": {
+            "title": POLICY_CHECK_NAME,
+            "summary": summary[:65535],
+        },
+    }
+    request_json(
+        f"{API}/repos/{repository}/check-runs",
+        token,
+        user_agent="ADHS-Lernpfad-learning-card-policy",
+        method="POST",
+        data=payload,
+    )
+
+
 def _parse_args() -> argparse.Namespace:
     """CLI-Argumente validieren und als Namespace zurückgeben."""
 
@@ -196,6 +232,7 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--max-wait-seconds", type=int, default=480)
     parser.add_argument("--poll-interval-seconds", type=int, default=10)
+    parser.add_argument("--publish-check", action="store_true")
     args = parser.parse_args()
     if not args.repository or not args.token or not args.pr_number:
         parser.error("repository, token und pr-number sind erforderlich")
@@ -258,8 +295,12 @@ def main() -> int:
     fresh_files = _paginated(files_url, args.token)
     fresh_snapshot = build_pull_snapshot(fresh_pull, fresh_files)
     if fresh_snapshot != initial_snapshot:
+        current_head = fresh_snapshot.head_sha
+        if not re.fullmatch(r"[0-9a-f]{40}", current_head):
+            current_head = head_sha
         decision = replace(
             decision,
+            head_sha=current_head,
             passed=False,
             reasons=(
                 *decision.reasons,
@@ -288,6 +329,8 @@ def main() -> int:
         decision,
         args.output_dir,
     )
+    if args.publish_check:
+        _publish_check(args.repository, args.token, decision)
     print(
         (args.output_dir / "learning-card-policy.md").read_text(
             encoding="utf-8"

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pathlib import Path
 import re
 import unittest
+from pathlib import Path
 
 import yaml
 
@@ -35,7 +35,7 @@ class WorkflowExpressionSafetyTests(unittest.TestCase):
                 self.assertTrue(target_steps)
                 for step in target_steps:
                     run = str(step["run"])
-                    self.assertNotIn("${{ steps.pr.outputs.number }}", run)
+                    self.assertNotIn("steps.pr.outputs.number", run)
                     self.assertIn('"$TARGET_PR"', run)
                     self.assertEqual(
                         step.get("env", {}).get("TARGET_PR"),
