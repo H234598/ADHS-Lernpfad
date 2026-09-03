@@ -14,6 +14,16 @@ sys.path.insert(0, str(ROOT / "scripts"))
 graph_relations = importlib.import_module("graph_relations")
 
 
+def _assert_safe_subprocess_kwargs(kwargs: object) -> None:
+    """Verify the fixed Git fallbacks remain non-shell and fail-fast."""
+
+    assert isinstance(kwargs, dict)  # nosec B101 -- pytest assertion
+    assert "shell" not in kwargs  # nosec B101 -- pytest assertion
+    assert kwargs.get("check") is True  # nosec B101 -- pytest assertion
+    assert kwargs.get("capture_output") is True  # nosec B101 -- pytest assertion
+    assert kwargs.get("text") is True  # nosec B101 -- pytest assertion
+
+
 def test_git_sha_fallback_executes_an_absolute_git_path(monkeypatch) -> None:
     """Automation-status Git execution must use an absolute executable path."""
 
@@ -37,6 +47,7 @@ def test_git_sha_fallback_executes_an_absolute_git_path(monkeypatch) -> None:
     assert Path(command[0]).is_absolute()  # nosec B101 -- pytest assertion
     assert command[0] == "/opt/test/bin/git"  # nosec B101 -- pytest assertion
     assert command[1:] == ["rev-parse", "HEAD"]  # nosec B101 -- pytest assertion
+    _assert_safe_subprocess_kwargs(observed["kwargs"])
 
 
 def test_git_sha_fallback_returns_none_without_git(monkeypatch) -> None:
@@ -78,3 +89,4 @@ def test_graph_source_revision_executes_an_absolute_git_path(monkeypatch, tmp_pa
     assert isinstance(command, list)  # nosec B101 -- pytest assertion
     assert Path(command[0]).is_absolute()  # nosec B101 -- pytest assertion
     assert command[1:] == ["rev-parse", "HEAD"]  # nosec B101 -- pytest assertion
+    _assert_safe_subprocess_kwargs(observed["kwargs"])
