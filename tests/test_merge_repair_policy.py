@@ -89,7 +89,7 @@ class MergeRepairPolicyTests(unittest.TestCase):
         self.assertEqual(result.action, "repair_existing_branch")
         self.assertTrue(result.repair_allowed)
 
-    def test_disagreement_is_manual_hard_blocker(self) -> None:
+    def test_disagreement_requires_manual_hard_blocker(self) -> None:
         result = self.evaluate(21, ci_state="success", disagreement=True)
         self.assertEqual(result.action, "manual_intervention")
         self.assertTrue(result.hard_blocker)

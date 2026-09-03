@@ -1,6 +1,7 @@
 name: Persist automation status
 
 on:
+  # zizmor: ignore[dangerous-triggers] -- Same-Repo-Gate, trusted main und validierte Artefakte als Daten vor jedem Schreibzugriff.
   workflow_run:
     workflows:
       - Validate compendium

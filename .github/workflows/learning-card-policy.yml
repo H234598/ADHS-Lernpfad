@@ -1,18 +1,16 @@
-name: CodeRabbit hard gate
+name: Learning card policy
 
 on:
-  # zizmor: ignore[dangerous-triggers] -- Ausführung bleibt auf main; nur read-Rechte, kein PR-Code wird ausgeführt.
   pull_request_target:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
   pull_request_review:
     types: [submitted, edited, dismissed]
   pull_request_review_comment:
     types: [created, edited, deleted]
   issue_comment:
     types: [created, edited, deleted]
-  # zizmor: ignore[dangerous-triggers] -- workflow_run liefert nur die PR-Nummer; Gatecode wird erneut aus main geladen.
   workflow_run:
-    workflows: ["Validate compendium", "Remark lint"]
+    workflows: ["Validate compendium", "CodeRabbit hard gate", "Remark lint"]
     types: [completed]
   workflow_dispatch:
     inputs:
@@ -20,26 +18,31 @@ on:
         description: Pull-Request-Nummer
         required: true
         type: number
+      manual_merge_authorized:
+        description: Sensible Infrastruktur für manuellen Merge auf diesem PR-Head freigeben
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
   pull-requests: read
   issues: read
-  checks: read
-  statuses: read
+  checks: write
+  statuses: none
 
 concurrency:
-  group: coderabbit-gate-${{ github.event.pull_request.number || github.event.issue.number || github.event.workflow_run.pull_requests[0].number || inputs.pr_number || github.run_id }}
+  group: learning-card-policy-${{ github.event.pull_request.number || github.event.issue.number || github.event.workflow_run.pull_requests[0].number || inputs.pr_number || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  review-gate:
-    name: CodeRabbit review gate (blocking)
+  policy:
+    name: Learning card policy (blocking)
     if: github.event_name != 'issue_comment' || github.event.issue.pull_request
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Checkout trusted gate implementation from main
+      - name: Checkout trusted policy implementation from main
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: main
@@ -58,37 +61,35 @@ jobs:
           PR_NUMBER="${INPUT_PR:-${EVENT_PR:-${ISSUE_PR:-${WORKFLOW_PR:-}}}}"
           if [[ -z "$PR_NUMBER" ]]; then
             echo 'skip=true' >> "$GITHUB_OUTPUT"
-            echo 'Kein Pull Request im Ereignis; Gate wird übersprungen.'
+            echo 'Kein Pull Request im Ereignis; Policy wird übersprungen.'
           else
             echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
             echo 'skip=false' >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Evaluate current-head CodeRabbit gate
+      - name: Evaluate and publish current-head learning-card policy
         if: steps.pr.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           TARGET_PR: ${{ steps.pr.outputs.number }}
+          MANUAL_MERGE_AUTHORIZED: ${{ inputs.manual_merge_authorized }}
         run: |
-          python scripts/review_gate.py \
+          set -euo pipefail
+          EXTRA_ARGS=()
+          if [[ "$MANUAL_MERGE_AUTHORIZED" == "true" ]]; then
+            EXTRA_ARGS+=(--manual-merge-authorized)
+          fi
+          python scripts/learning_card_policy.py \
             --repository "$GITHUB_REPOSITORY" \
-            --pr-number "$TARGET_PR"
+            --pr-number "$TARGET_PR" \
+            --publish-check \
+            "${EXTRA_ARGS[@]}"
 
-      - name: Enforce current CodeRabbit review state
-        if: steps.pr.outputs.skip != 'true'
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          TARGET_PR: ${{ steps.pr.outputs.number }}
-        run: |
-          python scripts/coderabbit_review_state.py \
-            --repository "$GITHUB_REPOSITORY" \
-            --pr-number "$TARGET_PR"
-
-      - name: Upload review-gate report
+      - name: Upload learning-card policy report
         if: always() && steps.pr.outputs.skip != 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: coderabbit-review-gate-${{ steps.pr.outputs.number }}-${{ github.run_attempt }}
-          path: build/review-gate/
+          name: learning-card-policy-${{ steps.pr.outputs.number }}-${{ github.run_attempt }}
+          path: build/learning-card-policy/
           if-no-files-found: warn
           retention-days: 30

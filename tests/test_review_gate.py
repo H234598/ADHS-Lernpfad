@@ -244,7 +244,7 @@ class ReviewGateTests(unittest.TestCase):
         self.assertFalse(disagreement)
         self.assertEqual(reasons, [])
 
-    def test_coderabbit_can_resolve_disagreement(self) -> None:
+    def test_coderabbit_may_resolve_disagreement(self) -> None:
         state, unresolved, reasons, disagreement = self.evaluate(
             signals=self.success_signal(),
             threads=[],
