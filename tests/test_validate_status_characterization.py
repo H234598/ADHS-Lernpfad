@@ -9,6 +9,7 @@ from scripts.automation_status import make_artifact, start_run, validate_status
 
 
 def _running_status(tmp_path: Path) -> dict:
+    """Return a canonical running status payload for characterization tests."""
     return start_run(
         tmp_path / "status.json",
         "manual",
@@ -20,6 +21,7 @@ def _running_status(tmp_path: Path) -> dict:
 def test_validate_status_rejects_boolean_revision_even_though_bool_is_int_subclass(
     tmp_path: Path,
 ) -> None:
+    """Reject boolean revisions even though bool inherits from int in Python."""
     payload = _running_status(tmp_path)
     payload["revision"] = True
 
@@ -29,6 +31,7 @@ def test_validate_status_rejects_boolean_revision_even_though_bool_is_int_subcla
 
 
 def test_validate_status_rejects_updated_at_before_created_at(tmp_path: Path) -> None:
+    """Reject a status whose update timestamp precedes its creation timestamp."""
     payload = _running_status(tmp_path)
     payload["created_at"] = "2026-09-04T02:00:00.000Z"
     payload["updated_at"] = "2026-09-04T01:59:59.999Z"
@@ -40,6 +43,7 @@ def test_validate_status_rejects_updated_at_before_created_at(tmp_path: Path) ->
 
 
 def test_validate_status_rejects_ended_at_on_non_final_status(tmp_path: Path) -> None:
+    """Reject ended_at when a status has not reached a final state."""
     payload = _running_status(tmp_path)
     payload["ended_at"] = payload["updated_at"]
 
@@ -50,6 +54,7 @@ def test_validate_status_rejects_ended_at_on_non_final_status(tmp_path: Path) ->
 
 
 def test_validate_status_rejects_duration_on_non_final_status(tmp_path: Path) -> None:
+    """Reject duration_seconds when a status has not reached a final state."""
     payload = _running_status(tmp_path)
     payload["duration_seconds"] = 0.0
 
@@ -60,6 +65,7 @@ def test_validate_status_rejects_duration_on_non_final_status(tmp_path: Path) ->
 
 
 def test_validate_status_rejects_non_json_metric_values(tmp_path: Path) -> None:
+    """Reject metric payloads that are not strict JSON values."""
     payload = _running_status(tmp_path)
     payload["metrics"] = {"not_json": float("nan")}
 
@@ -69,6 +75,7 @@ def test_validate_status_rejects_non_json_metric_values(tmp_path: Path) -> None:
 
 
 def test_validate_status_rejects_duplicate_artifact_identity(tmp_path: Path) -> None:
+    """Reject duplicate artifact identities with the same type and value."""
     payload = _running_status(tmp_path)
     artifact = make_artifact(
         "report",
@@ -84,6 +91,7 @@ def test_validate_status_rejects_duplicate_artifact_identity(tmp_path: Path) -> 
 
 
 def test_validate_status_rejects_unknown_top_level_field(tmp_path: Path) -> None:
+    """Reject unknown top-level fields instead of silently accepting them."""
     payload = _running_status(tmp_path)
     payload["future_contract_field"] = "must-not-be-silently-accepted"
 
