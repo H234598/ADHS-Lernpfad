@@ -1,0 +1,3 @@
+Learning-card policy shadow smoke test.
+
+This file intentionally changes only test-fixture scope so the scientific semantic checks must be not applicable while the global repository checks still run.
