@@ -10,7 +10,7 @@ import json
 import os
 from pathlib import Path
 import shutil
-import subprocess
+import subprocess  # nosec B404 -- subprocess is restricted to the resolved pandoc executable
 import sys
 from typing import Final
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
@@ -89,7 +89,16 @@ VAULT_DIRECTORIES: Final = (
 
 
 def run(command: list[str]) -> None:
-    subprocess.run(command, cwd=ROOT, check=True)
+    """Run the one explicitly supported external exporter with fixed argv semantics."""
+
+    if not command or command[0] != "pandoc":
+        raise ValueError("Nur der interne Pandoc-Export ist als Subprozess erlaubt")
+    executable = shutil.which("pandoc")
+    if executable is None:
+        raise FileNotFoundError("pandoc wurde im kontrollierten PATH nicht gefunden")
+    subprocess.run(  # nosec B603 -- executable is allowlisted and resolved; shell is never used
+        [executable, *command[1:]], cwd=ROOT, check=True
+    )
 
 
 def require_file(path: Path) -> Path:
