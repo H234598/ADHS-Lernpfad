@@ -74,6 +74,27 @@ class RulesetMigrationTests(unittest.TestCase):
         self.assertEqual(checks[NEW_CONTEXT], 15368)
         self.assertTrue(OLD_CONTEXTS.isdisjoint(checks))
 
+    def test_unattributed_copilot_approval_default_is_preserved(self) -> None:
+        def pull_request_parameters(document: dict) -> dict:
+            """Pull-Request-Regelparameter aus einem Ruleset-Snapshot lesen."""
+
+            rule = next(
+                item for item in document["rules"] if item["type"] == "pull_request"
+            )
+            return rule["parameters"]
+
+        current = pull_request_parameters(self.current)
+        target = pull_request_parameters(self.target)
+        self.assertIs(current["require_extra_approval_for_unattributed_changes"], True)
+        self.assertIs(target["require_extra_approval_for_unattributed_changes"], True)
+
+        drifted = deepcopy(self.target)
+        pull_request_parameters(drifted)[
+            "require_extra_approval_for_unattributed_changes"
+        ] = False
+        with self.assertRaisesRegex(ValueError, "außerhalb"):
+            validate_transition(self.current, drifted)
+
     def test_rollback_restores_only_raw_learning_contexts(self) -> None:
         summary = validate_rollback(self.target, self.current)
         self.assertEqual(summary.direction, "rollback")
