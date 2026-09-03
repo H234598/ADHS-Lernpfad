@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import importlib
-from pathlib import Path
 import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 from scripts import automation_status
@@ -39,7 +39,7 @@ def test_git_sha_fallback_executes_an_absolute_git_path(monkeypatch) -> None:
         return SimpleNamespace(stdout=("a" * 40) + "\n")
 
     monkeypatch.setattr(automation_status.subprocess, "run", fake_run)
-    git_sha = getattr(automation_status, "_git_sha")
+    git_sha = automation_status._git_sha  # pylint: disable=protected-access
 
     assert git_sha() == "a" * 40  # nosec B101 -- pytest assertion
     command = observed["command"]
@@ -62,7 +62,7 @@ def test_git_sha_fallback_returns_none_without_git(monkeypatch) -> None:
         raise AssertionError("subprocess.run must not be called when Git is unavailable")
 
     monkeypatch.setattr(automation_status.subprocess, "run", unexpected_run)
-    git_sha = getattr(automation_status, "_git_sha")
+    git_sha = automation_status._git_sha  # pylint: disable=protected-access
 
     assert git_sha() is None  # nosec B101 -- pytest assertion
 
@@ -83,7 +83,7 @@ def test_graph_source_revision_executes_an_absolute_git_path(monkeypatch, tmp_pa
         return SimpleNamespace(stdout=("b" * 40) + "\n")
 
     monkeypatch.setattr(graph_relations.subprocess, "run", fake_run)
-    source_revision = getattr(graph_relations, "_source_revision")
+    source_revision = graph_relations._source_revision  # pylint: disable=protected-access
 
     assert source_revision(tmp_path) == "b" * 40  # nosec B101 -- pytest assertion
     command = observed["command"]
