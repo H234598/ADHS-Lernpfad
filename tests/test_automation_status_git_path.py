@@ -26,3 +26,17 @@ def test_git_sha_fallback_executes_an_absolute_git_path(monkeypatch) -> None:
     assert isinstance(command, list)
     assert Path(command[0]).is_absolute()
     assert command[1:] == ["rev-parse", "HEAD"]
+
+
+def test_git_sha_fallback_returns_none_without_git(monkeypatch) -> None:
+    """Missing Git must fail closed without attempting a subprocess."""
+
+    monkeypatch.delenv("GITHUB_SHA", raising=False)
+    monkeypatch.setattr(automation_status.shutil, "which", lambda _name: None)
+
+    def unexpected_run(*_args: object, **_kwargs: object) -> SimpleNamespace:
+        raise AssertionError("subprocess.run must not be called when Git is unavailable")
+
+    monkeypatch.setattr(automation_status.subprocess, "run", unexpected_run)
+
+    assert automation_status._git_sha() is None
