@@ -11,8 +11,8 @@ import os
 from pathlib import Path
 import re
 from typing import Any
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+
+from github_api import request_json
 
 API = "https://api.github.com"
 GRAPHQL = "https://api.github.com/graphql"
@@ -77,20 +77,15 @@ def _items(value: Any) -> list[Any]:
 
 
 def _request_json(url: str, token: str, *, data: dict[str, Any] | None = None) -> Any:
-    body = None if data is None else json.dumps(data).encode("utf-8")
-    request = Request(url, data=body)
-    request.add_header("Accept", "application/vnd.github+json")
-    request.add_header("X-GitHub-Api-Version", "2022-11-28")
-    request.add_header("Authorization", f"Bearer {token}")
-    request.add_header("User-Agent", "ADHS-Lernpfad-review-gate")
-    if data is not None:
-        request.add_header("Content-Type", "application/json")
-    try:
-        with urlopen(request, timeout=30) as response:
-            return json.load(response)
-    except HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"GitHub API {exc.code} für {url}: {detail[:500]}") from exc
+    """GitHub-JSON ausschließlich über den hostgebundenen API-Client abrufen."""
+
+    return request_json(
+        url,
+        token,
+        user_agent="ADHS-Lernpfad-review-gate",
+        method="POST" if data is not None else "GET",
+        data=data,
+    )
 
 
 def _latest_coderabbit_signals(
