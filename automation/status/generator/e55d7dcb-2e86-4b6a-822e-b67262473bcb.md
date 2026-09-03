@@ -1,20 +1,47 @@
-ADHS-Automation – Laufstatus
-Lauf: generator/e55d7dcb-2e86-4b6a-822e-b67262473bcb
-Status: blocked
-Phase: wait_review
-Revision: 13
-Erfolgreich: initialize, load_main, check_previous_run, check_existing_pr, read_prompts, research, create_branch, create_content, generate_outputs, validate, commit, push, create_pr, verify_pr, repair
-Vorhanden: Draft-PR #50 auf Branch agent/einheit-20-substanzgebrauch-abhaengigkeit; Unit-Head a89572b938201d36c85e73b91e9d2710b2406897; Infrastruktur-PR #51 auf Branch fix/codacy-timeout, Head 3ee002683ea0245f34fb66755a4aef105ad26541.
-Aktueller main: db908011ba0d16fd0c3b0508fc84edab57d4e0a1; Unit-Branch ist 1 Commit hinter main und weiterhin mergebar.
-Einheit-20-Reparatur: Literatur mit 53 Quellen deterministisch; Literatur.md last_reviewed=2026-08-08; vollständige Reparaturvalidierung erfolgreich; 159 Pytest-Tests plus 2 Subtests, npm-Audit 0 Schwachstellen, 4 Playwright-Webtests, 250 Graphknoten / 892 Kanten, 20 Kapitel / 53 Quellen.
-Erster regulärer Unit-CI-Zyklus: Validate compendium Run 31354538933 Attempt 2 = success; Validate and build Job 93647145580 = success; Build all download formats Job 93647462779 = success; Remark lint Run 31354538922 Attempt 2 = success; CodeRabbit = success; qlty = success; ungelöste CodeRabbit-Threads = 0; Dissens = nein. Codacy Security Scan Run 31354538928 Attempt 2 hing im Legacy-CLI-Schritt und wurde nach mehr als fünf Stunden abgebrochen; der erste Unit-CI-Zyklus ist deshalb nicht vollständig grün.
-Infrastrukturreparatur: PR #51 behebt den Legacy-Codacy-Hänger. Auf Head 3ee002683ea0245f34fb66755a4aef105ad26541 sind Validate compendium Run 31665706102, Remark lint Run 31665706117, Codacy Security Scan Run 31665706165, qlty, CodeRabbit und CodeRabbit hard gate Run 31665704873 Attempt 2 erfolgreich; alle Reviewthreads sind gelöst; kein Dissens; PR ist mergebar.
-Fehlerklasse: security_policy
-Fehlercode: sensitive_infrastructure_merge_required
-Fehler: PR #51 ändert .github/workflows/codacy.yml. Die Repositorypolicy verbietet den automatischen Merge sensibler Infrastruktur durch den Einheiten-Wächter.
-Recovery-Level: manual_intervention
-Recovery: PR #51 menschlich nach main mergen. Danach denselben Generatorlauf fortsetzen, PR #50 mit dem neuen main synchronisieren und einen neuen vollständigen ersten Unit-CI-Zyklus ausführen. Erst bei vollständig grünem ersten Zyklus Ready for review; Merge erst nach dem vorgeschriebenen zweiten vollständig grünen Zyklus.
-Neuer Inhalt erforderlich: nein
-Ready for review: nein
-Merge: nein
-Blockiert neuen Generatorlauf: ja
+# Generatorstatus – Einheit 20 – Revision 14
+
+## Zustand
+
+- Run-ID: `e55d7dcb-2e86-4b6a-822e-b67262473bcb`
+- Status: `running`
+- Phase: `wait_review`
+- PR: `#50`
+- Branch: `agent/einheit-20-substanzgebrauch-abhaengigkeit`
+- Head: `daad16b1ee45c1ed2523dab48548c3a2f386506e`
+- aktueller `main`: `450a608f5ad9aa2853c86847d2f129b717be77fc`
+- Branch hinter `main`: `0`
+- neue Einheit erforderlich: `nein`
+
+## Recovery-Fortsetzung
+
+Der bisherige manuelle Infrastrukturblocker ist erfüllt: PR #51 wurde als
+`450a608f5ad9aa2853c86847d2f129b717be77fc` nach `main` gemergt.
+
+PR #50 wurde anschließend konfliktbewusst mit dem aktuellen `main`
+synchronisiert. Der gemeinsame Pfad `mkdocs.yml` wurde so aufgelöst, dass
+sowohl die Änderung aus `main` (Entfernung von `navigation.sections`) als auch
+der Unit-20-Navigationseintrag erhalten bleiben.
+
+Der Netto-Diff gegen aktuellen `main` umfasst weiterhin genau 17 reguläre
+Inhalts-, Navigations-, Metadaten- und Literaturdateien; keine sensible
+`.github/`-Infrastruktur verbleibt im Unit-Diff.
+
+## Erster regulärer CI-Zyklus nach Synchronisation
+
+- Validate compendium: `in_progress` – Run `33713568051`
+- Remark lint: `in_progress` – Run `33713568060`
+- Codacy Security Scan: `queued` – Run `33713568054`
+- CodeRabbit aktueller Head: noch abzuwarten
+- ungelöste historische CodeRabbit-Threads: `0`
+- dokumentierter CodeRabbit-Dissens: `nein`
+
+## Nächster zulässiger Schritt
+
+Alle erwarteten ersten Gates auf exakt Head
+`daad16b1ee45c1ed2523dab48548c3a2f386506e` abwarten.
+
+Nur wenn Validate, Export, Remark, Codacy, qlty, CodeRabbit und
+`CodeRabbit review gate (blocking)` vollständig erfolgreich sind, alle
+Reviewthreads gelöst bleiben, kein Dissens besteht und der PR mergebar bleibt,
+darf ein späterer Wächter `Draft -> Ready for review` setzen und muss danach
+ohne Merge enden.
