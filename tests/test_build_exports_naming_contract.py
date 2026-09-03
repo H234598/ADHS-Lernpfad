@@ -1,13 +1,10 @@
+"""Regression tests for the canonical public export artifact naming contract."""
+
 from __future__ import annotations
 
-from pathlib import Path
-import sys
 import unittest
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "scripts"))
-
-import build_exports
+from scripts import build_exports
 
 
 EXPECTED_ARTIFACT_FILENAMES = {
@@ -36,7 +33,11 @@ EXPECTED_ARTIFACT_FILENAMES = {
 
 
 class ExportNamingContractTests(unittest.TestCase):
+    """Protect stable public filenames and shared media-type constants."""
+
     def test_public_artifact_filenames_have_one_canonical_registry(self) -> None:
+        """Keep every public artifact filename in one exact canonical registry."""
+
         self.assertEqual(build_exports.ARTIFACT_FILENAMES, EXPECTED_ARTIFACT_FILENAMES)
         self.assertEqual(
             set(build_exports.ARTIFACT_METADATA),
@@ -48,6 +49,8 @@ class ExportNamingContractTests(unittest.TestCase):
         )
 
     def test_shared_media_types_have_canonical_constants(self) -> None:
+        """Keep shared ZIP, JSON and Markdown media types canonical."""
+
         self.assertEqual(build_exports.MEDIA_TYPE_ZIP, "application/zip")
         self.assertEqual(build_exports.MEDIA_TYPE_JSON, "application/json")
         self.assertEqual(build_exports.MEDIA_TYPE_MARKDOWN, "text/markdown")
