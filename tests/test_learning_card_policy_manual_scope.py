@@ -17,13 +17,19 @@ def changed(filename: str) -> dict[str, str]:
 
 
 class ManualAutomationPolicyTests(unittest.TestCase):
-    def test_sensitive_automation_without_marker_blocks_policy(self) -> None:
-        scope = classify_pull_request(
+    def scope(self, *, marker: bool):
+        return classify_pull_request(
             files=[changed(".github/workflows/validate.yml")],
             head_ref="feature/ci",
-            body="",
+            body="<!-- manual-merge-required -->" if marker else "",
         )
-        result = evaluate_policy(scope=scope, check_runs=[], head_sha=HEAD)
+
+    def test_sensitive_automation_without_marker_blocks_policy(self) -> None:
+        result = evaluate_policy(
+            scope=self.scope(marker=False),
+            check_runs=[],
+            head_sha=HEAD,
+        )
         self.assertFalse(result.passed)
         self.assertTrue(result.manual_merge_required)
         self.assertTrue(
@@ -33,16 +39,47 @@ class ManualAutomationPolicyTests(unittest.TestCase):
             )
         )
 
-    def test_sensitive_automation_with_marker_is_explicitly_manual_but_not_semantic(self) -> None:
-        scope = classify_pull_request(
-            files=[changed(".github/workflows/validate.yml")],
-            head_ref="feature/ci",
-            body="<!-- manual-merge-required -->",
+    def test_marker_alone_is_not_trusted_manual_authorization(self) -> None:
+        result = evaluate_policy(
+            scope=self.scope(marker=True),
+            check_runs=[],
+            head_sha=HEAD,
         )
-        result = evaluate_policy(scope=scope, check_runs=[], head_sha=HEAD)
+        self.assertFalse(result.passed)
+        self.assertTrue(result.manual_merge_required)
+        self.assertTrue(
+            any(
+                "vertrauenswürdige Human-Freigabe" in reason
+                for reason in result.reasons
+            )
+        )
+        self.assertEqual(result.subgates["content_scope"], "not_applicable")
+
+    def test_dispatch_authorization_plus_marker_allows_automation_only_policy(self) -> None:
+        result = evaluate_policy(
+            scope=self.scope(marker=True),
+            check_runs=[],
+            head_sha=HEAD,
+            manual_merge_authorized=True,
+        )
         self.assertTrue(result.passed)
         self.assertTrue(result.manual_merge_required)
         self.assertEqual(result.subgates["content_scope"], "not_applicable")
+
+    def test_trusted_authorization_without_declaration_marker_still_blocks(self) -> None:
+        result = evaluate_policy(
+            scope=self.scope(marker=False),
+            check_runs=[],
+            head_sha=HEAD,
+            manual_merge_authorized=True,
+        )
+        self.assertFalse(result.passed)
+        self.assertTrue(
+            any(
+                "Marker manual-merge-required fehlt" in reason
+                for reason in result.reasons
+            )
+        )
 
 
 if __name__ == "__main__":

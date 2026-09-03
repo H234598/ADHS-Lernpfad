@@ -17,14 +17,15 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         self.assertIsInstance(parsed, dict)
         permissions = parsed.get("permissions")
         self.assertIsInstance(permissions, dict)
-        self.assertEqual(permissions.get("contents"), "read")
-        self.assertEqual(permissions.get("pull-requests"), "read")
-        self.assertEqual(permissions.get("issues"), "read")
-        self.assertEqual(permissions.get("checks"), "write")
-        self.assertEqual(permissions.get("statuses"), "none")
         self.assertEqual(
-            {key for key, value in permissions.items() if value == "write"},
-            {"checks"},
+            permissions,
+            {
+                "contents": "read",
+                "pull-requests": "read",
+                "issues": "read",
+                "checks": "write",
+                "statuses": "none",
+            },
         )
 
         self.assertIn("Learning card policy (blocking)", text)

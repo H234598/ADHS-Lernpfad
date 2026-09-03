@@ -44,11 +44,32 @@ class RulesetMigrationTests(unittest.TestCase):
             )
         )
 
+    def test_bypass_actor_order_is_semantically_irrelevant(self) -> None:
+        actors = [
+            {
+                "actor_id": 5,
+                "actor_type": "RepositoryRole",
+                "bypass_mode": "pull_request",
+            },
+            {
+                "actor_id": 2,
+                "actor_type": "RepositoryRole",
+                "bypass_mode": "pull_request",
+            },
+        ]
+        current = deepcopy(self.current)
+        target = deepcopy(self.target)
+        current["bypass_actors"] = actors
+        target["bypass_actors"] = list(reversed(actors))
+
+        self.assertEqual(canonical_digest(current), canonical_digest({**current, "bypass_actors": list(reversed(actors))}))
+        summary = validate_transition(current, target)
+        self.assertTrue(summary.bypass_actors_preserved)
+
     def test_target_uses_github_actions_policy_provider(self) -> None:
         checks = required_checks(self.target)
         self.assertEqual(checks[NEW_CONTEXT], 15368)
         self.assertTrue(OLD_CONTEXTS.isdisjoint(checks))
-
 
     def test_rollback_restores_only_raw_learning_contexts(self) -> None:
         summary = validate_rollback(self.target, self.current)
