@@ -3,12 +3,13 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from dataclasses import asdict
 import argparse
 import json
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -31,6 +32,7 @@ __all__ = [
     "PRESERVED_CONTEXTS",
     "TransitionSummary",
     "canonical_digest",
+    "exclusive_ruleset_lock",
     "load_json",
     "required_checks",
     "ruleset_payload",
@@ -39,6 +41,40 @@ __all__ = [
 ]
 
 API = "https://api.github.com"
+
+
+@contextmanager
+def exclusive_ruleset_lock(path: Path) -> Iterator[None]:
+    """Lokale parallele Ruleset-Migrationen fail-closed serialisieren.
+
+    Der Lock ist absichtlich ein atomar erzeugtes Verzeichnis statt nur eine
+    Markerdatei. Dadurch konkurrieren getrennte Prozesse auf allen unterstützten
+    Plattformen um dieselbe atomare Dateisystemoperation. Ein nach einem Crash
+    stehengebliebener Lock blockiert sicher und muss bewusst entfernt werden.
+    """
+
+    path = path.resolve()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        path.mkdir()
+    except FileExistsError as exc:
+        raise RuntimeError(
+            f"Ruleset-Migration ist lokal gesperrt: {path}"
+        ) from exc
+
+    owner = path / "owner.json"
+    try:
+        owner.write_text(
+            json.dumps({"pid": os.getpid()}, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        yield
+    finally:
+        owner.unlink(missing_ok=True)
+        try:
+            path.rmdir()
+        except FileNotFoundError:
+            pass
 
 
 def _request_json(
@@ -120,6 +156,9 @@ def main() -> int:
     parser.add_argument(
         "--output-dir", type=Path, default=Path("build/ruleset-migration")
     )
+    parser.add_argument(
+        "--lock-path", type=Path, default=Path("build/ruleset-migration.lock")
+    )
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--rollback", action="store_true")
     args = parser.parse_args()
@@ -133,22 +172,41 @@ def main() -> int:
     expected, desired = (target, before) if args.rollback else (before, target)
     validator = validate_rollback if args.rollback else validate_transition
     url = f"{API}/repos/{args.repository}/rulesets/{args.ruleset_id}"
-    live = _request_json(url, args.token)
-    if canonical_digest(live) != canonical_digest(expected):
-        raise RuntimeError(
-            "Live-Ruleset weicht vom geprüften Ausgangssnapshot ab; "
-            "Transition abgebrochen."
-        )
-    summary = validator(live, desired)
 
     after: dict[str, Any] | None = None
-    if args.apply:
-        _request_json(url, args.token, method="PUT", data=ruleset_payload(desired))
-        after = _request_json(url, args.token)
-        if canonical_digest(after) != canonical_digest(desired):
+    with exclusive_ruleset_lock(args.lock_path):
+        live = _request_json(url, args.token)
+        if canonical_digest(live) != canonical_digest(expected):
             raise RuntimeError(
-                "GitHub-Ruleset entspricht nach PUT nicht dem Zielvertrag"
+                "Live-Ruleset weicht vom geprüften Ausgangssnapshot ab; "
+                "Transition abgebrochen."
             )
+        summary = validator(live, desired)
+
+        if args.apply:
+            # Das Ruleset-Update-API bietet keinen dokumentierten If-Match/CAS-
+            # Schreibparameter. Deshalb minimieren wir das verbleibende externe
+            # Race: nach lokaler Serialisierung wird unmittelbar vor dem PUT ein
+            # zweiter Live-Snapshot geprüft. Drift bricht fail-closed ab.
+            fresh_live = _request_json(url, args.token)
+            if canonical_digest(fresh_live) != canonical_digest(live):
+                raise RuntimeError(
+                    "Live-Ruleset wurde während der Transition verändert; "
+                    "PUT wird nicht ausgeführt."
+                )
+            summary = validator(fresh_live, desired)
+            live = fresh_live
+            _request_json(
+                url,
+                args.token,
+                method="PUT",
+                data=ruleset_payload(desired),
+            )
+            after = _request_json(url, args.token)
+            if canonical_digest(after) != canonical_digest(desired):
+                raise RuntimeError(
+                    "GitHub-Ruleset entspricht nach PUT nicht dem Zielvertrag"
+                )
 
     _write_report(
         args.output_dir,

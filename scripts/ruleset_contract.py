@@ -119,6 +119,14 @@ def _rules_without_status(document: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+def _status_parameters_without_checks(document: dict[str, Any]) -> dict[str, Any]:
+    """Nicht-Kontext-Parameter der Required-Checks driftgeschützt vergleichen."""
+
+    parameters = dict(_mapping(_status_rule(document).get("parameters")))
+    parameters.pop("required_status_checks", None)
+    return parameters
+
+
 def _validate_common(current: dict[str, Any], target: dict[str, Any]) -> None:
     for key in ("name", "target", "enforcement", "conditions"):
         if current.get(key) != target.get(key):
@@ -129,6 +137,13 @@ def _validate_common(current: dict[str, Any], target: dict[str, Any]) -> None:
         )
     if _rules_without_status(current) != _rules_without_status(target):
         raise ValueError("Regeln außerhalb required_status_checks dürfen nicht driften")
+    if _status_parameters_without_checks(current) != _status_parameters_without_checks(
+        target
+    ):
+        raise ValueError(
+            "Parameter von required_status_checks außerhalb der Kontextliste dürfen "
+            "nicht driften"
+        )
 
 
 def _transition(

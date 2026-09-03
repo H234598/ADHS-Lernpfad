@@ -264,6 +264,21 @@ def main() -> int:
                 f"aktueller Head: {fresh_snapshot.head_sha}.",
             ),
         )
+    elif scope.requires_semantic_review:
+        # Der stabile PR-Snapshot allein reicht nicht: zwischen dem letzten
+        # Poll und der Veröffentlichung kann ein neuer Check-Run für denselben
+        # Head entstanden sein. Deshalb die Check-Runs nach der Snapshot-
+        # Bestätigung noch einmal frisch lesen und fail-closed neu bewerten.
+        final_runs = _paginated(
+            f"{API}/repos/{args.repository}/commits/{head_sha}/check-runs",
+            args.token,
+            key="check_runs",
+        )
+        decision = evaluate_policy(
+            scope=scope,
+            check_runs=final_runs,
+            head_sha=head_sha,
+        )
 
     _write_report(
         args.repository,

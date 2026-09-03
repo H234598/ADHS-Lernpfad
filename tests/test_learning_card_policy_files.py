@@ -67,11 +67,26 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         )
 
     def test_hard_gate_enforces_coderabbit_review_state(self) -> None:
-        text = (
-            ROOT / ".github/workflows/coderabbit-hard-gate.yml"
-        ).read_text(encoding="utf-8")
-        self.assertIn("coderabbit_review_state.py", text)
-        self.assertIn("Enforce current CodeRabbit review state", text)
+        workflow = yaml.safe_load(
+            (ROOT / ".github/workflows/coderabbit-hard-gate.yml").read_text(
+                encoding="utf-8"
+            )
+        )
+        job = workflow["jobs"]["review-gate"]
+        steps = job["steps"]
+        enforcement = [
+            step
+            for step in steps
+            if step.get("name") == "Enforce current CodeRabbit review state"
+        ]
+        self.assertEqual(len(enforcement), 1)
+        step = enforcement[0]
+        self.assertEqual(step.get("if"), "steps.pr.outputs.skip != 'true'")
+        self.assertIsNot(step.get("continue-on-error"), True)
+        run = str(step.get("run") or "")
+        self.assertIn("python scripts/coderabbit_review_state.py", run)
+        self.assertIn("--repository", run)
+        self.assertIn("--pr-number", run)
 
     def test_policy_document_separates_router_semantics_and_build(self) -> None:
         text = (ROOT / "automation/LEARNING-CARD-POLICY.md").read_text(

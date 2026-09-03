@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import sys
+from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import learning_card_policy
 from learning_card_policy import (
     build_pull_snapshot,
     select_latest_check_runs,
@@ -33,6 +37,27 @@ def run(
         "created_at": created_at,
         "started_at": started_at,
         "completed_at": completed_at,
+    }
+
+
+def policy_run(
+    name: str,
+    *,
+    status: str = "completed",
+    conclusion: str | None = "success",
+    created_at: str = "2026-08-12T10:00:00Z",
+    run_id: int,
+) -> dict[str, object]:
+    return {
+        "id": run_id,
+        "name": name,
+        "head_sha": HEAD,
+        "status": status,
+        "conclusion": conclusion,
+        "created_at": created_at,
+        "started_at": created_at,
+        "completed_at": created_at if status == "completed" else None,
+        "html_url": f"https://example.invalid/check/{run_id}",
     }
 
 
@@ -71,6 +96,7 @@ class CheckOrderingTests(unittest.TestCase):
 class PullSnapshotTests(unittest.TestCase):
     def setUp(self) -> None:
         self.pull = {
+            "state": "open",
             "head": {"sha": HEAD, "ref": "feature/card"},
             "body": "initial body",
         }
@@ -126,12 +152,126 @@ class PullSnapshotTests(unittest.TestCase):
         )
 
     def test_main_revalidates_snapshot_before_reporting(self) -> None:
-        source = (ROOT / "scripts/learning_card_policy.py").read_text(
-            encoding="utf-8"
+        initial_pull = {
+            "state": "open",
+            "head": {"sha": HEAD, "ref": "feature/docs"},
+            "body": "initial body",
+        }
+        changed_pull = {**initial_pull, "body": "changed body"}
+        files = [{"filename": "README.md", "status": "modified"}]
+
+        with TemporaryDirectory() as directory:
+            output_dir = Path(directory)
+            argv = [
+                "learning_card_policy.py",
+                "--repository",
+                "H234598/ADHS-Lernpfad",
+                "--pr-number",
+                "53",
+                "--token",
+                "test-token",
+                "--output-dir",
+                str(output_dir),
+            ]
+            with (
+                patch.object(
+                    learning_card_policy,
+                    "_request_json",
+                    side_effect=[initial_pull, changed_pull],
+                ),
+                patch.object(
+                    learning_card_policy,
+                    "_paginated",
+                    side_effect=[files, files],
+                ),
+                patch.object(sys, "argv", argv),
+            ):
+                result = learning_card_policy.main()
+
+            report = json.loads(
+                (output_dir / "learning-card-policy.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+
+        self.assertEqual(result, 1)
+        self.assertFalse(report["decision"]["passed"])
+        self.assertTrue(
+            any(
+                "während der Auswertung geändert" in reason
+                for reason in report["decision"]["reasons"]
+            )
         )
-        self.assertIn("initial_snapshot = build_pull_snapshot", source)
-        self.assertIn("fresh_snapshot = build_pull_snapshot", source)
-        self.assertIn("fresh_snapshot != initial_snapshot", source)
+
+    def test_main_reloads_check_runs_after_stable_snapshot(self) -> None:
+        pull = {
+            "state": "open",
+            "head": {"sha": HEAD, "ref": "agent/einheit-21-test"},
+            "body": "<!-- adhs-daily-unit -->",
+        }
+        files = [
+            {
+                "filename": "01-Grundlagen/01-Was-ist-ADHS.md",
+                "status": "modified",
+            }
+        ]
+        initial_runs = [
+            policy_run("Validate and build", run_id=1),
+            policy_run("Build all download formats", run_id=2),
+            policy_run("CodeRabbit review gate (blocking)", run_id=3),
+        ]
+        final_runs = [
+            *initial_runs,
+            policy_run(
+                "Validate and build",
+                status="in_progress",
+                conclusion=None,
+                created_at="2026-08-12T11:00:00Z",
+                run_id=4,
+            ),
+        ]
+
+        with TemporaryDirectory() as directory:
+            output_dir = Path(directory)
+            argv = [
+                "learning_card_policy.py",
+                "--repository",
+                "H234598/ADHS-Lernpfad",
+                "--pr-number",
+                "53",
+                "--token",
+                "test-token",
+                "--output-dir",
+                str(output_dir),
+            ]
+            with (
+                patch.object(
+                    learning_card_policy,
+                    "_request_json",
+                    side_effect=[pull, pull],
+                ),
+                patch.object(
+                    learning_card_policy,
+                    "_paginated",
+                    side_effect=[files, initial_runs, files, final_runs],
+                ),
+                patch.object(sys, "argv", argv),
+            ):
+                result = learning_card_policy.main()
+
+            report = json.loads(
+                (output_dir / "learning-card-policy.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+
+        self.assertEqual(result, 1)
+        self.assertFalse(report["decision"]["passed"])
+        self.assertEqual(report["decision"]["subgates"]["complete_build"], "pending")
+        self.assertEqual(
+            report["decision"]["required_checks"]["Validate and build"]["state"],
+            "pending",
+        )
 
 
 if __name__ == "__main__":
