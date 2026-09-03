@@ -1,0 +1,192 @@
+name: Temporary S1192 export refactor
+
+on:
+  push:
+    branches:
+      - refactor/canonical-export-artifact-names
+
+permissions:
+  contents: write
+
+jobs:
+  refactor:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: refactor/canonical-export-artifact-names
+          fetch-depth: 1
+      - name: Apply exact naming refactor
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('scripts/build_exports.py')
+          text = path.read_text(encoding='utf-8')
+
+          start = text.index('ROOT: Final = Path(__file__).resolve().parents[1]')
+          end = text.index('\n\n\ndef run(command: list[str]) -> None:')
+          replacement = '''ROOT: Final = Path(__file__).resolve().parents[1]
+BUILD: Final = ROOT / "build"
+ARTIFACTS: Final = BUILD / "artifacts"
+GRAPH_BUILD: Final = BUILD / "knowledge-graph"
+
+ARTIFACT_FILENAMES: Final[dict[str, str]] = {
+    "pdf": "ADHS-Lernpfad.pdf",
+    "epub": "ADHS-Lernpfad.epub",
+    "html": "ADHS-Lernpfad.html",
+    "latex": "ADHS-Lernpfad.tex",
+    "combined_markdown": "ADHS-Lernpfad-Gesamtdokument.md",
+    "obsidian_vault": "ADHS-Lernpfad-Obsidian-Vault.zip",
+    "anki": "ADHS-Lernpfad.apkg",
+    "references_bib": "references.bib",
+    "references_json": "references.json",
+    "sync_linux": "ADHS-Lernpfad-Sync-Linux.zip",
+    "sync_android": "ADHS-Lernpfad-Sync-Android.zip",
+    "sync_windows": "ADHS-Lernpfad-Sync-Windows.zip",
+    "sync_macos": "ADHS-Lernpfad-Sync-macOS.zip",
+    "sync_ios": "ADHS-Lernpfad-Sync-iOS.zip",
+    "sync_bsd": "ADHS-Lernpfad-Sync-BSD.zip",
+    "knowledge_graph_json": "knowledge-graph.json",
+    "knowledge_graph_graphml": "knowledge-graph.graphml",
+    "knowledge_graph_mermaid": "knowledge-graph.mmd",
+    "graph_report_markdown": "graph-report.md",
+    "graph_report_json": "graph-report.json",
+    "runtime_status": "runtime-status.json",
+}
+
+MEDIA_TYPE_ZIP: Final = "application/zip"
+MEDIA_TYPE_JSON: Final = "application/json"
+MEDIA_TYPE_MARKDOWN: Final = "text/markdown"
+
+COMBINED: Final = BUILD / ARTIFACT_FILENAMES["combined_markdown"]
+RUNTIME_STATUS: Final = BUILD / ARTIFACT_FILENAMES["runtime_status"]
+
+ARTIFACT_METADATA: Final[dict[str, tuple[str, str]]] = {
+    ARTIFACT_FILENAMES["pdf"]: ("PDF", "application/pdf"),
+    ARTIFACT_FILENAMES["epub"]: ("EPUB 3", "application/epub+zip"),
+    ARTIFACT_FILENAMES["html"]: ("Offline-HTML", "text/html"),
+    ARTIFACT_FILENAMES["latex"]: ("LaTeX", "application/x-tex"),
+    ARTIFACT_FILENAMES["combined_markdown"]: ("Markdown", MEDIA_TYPE_MARKDOWN),
+    ARTIFACT_FILENAMES["obsidian_vault"]: ("Obsidian Vault", MEDIA_TYPE_ZIP),
+    ARTIFACT_FILENAMES["anki"]: ("Anki", "application/octet-stream"),
+    ARTIFACT_FILENAMES["references_bib"]: ("BibTeX", "application/x-bibtex"),
+    ARTIFACT_FILENAMES["references_json"]: ("CSL JSON", MEDIA_TYPE_JSON),
+    ARTIFACT_FILENAMES["sync_linux"]: ("Sync-Paket Linux", MEDIA_TYPE_ZIP),
+    ARTIFACT_FILENAMES["sync_android"]: ("Sync-Paket Android", MEDIA_TYPE_ZIP),
+    ARTIFACT_FILENAMES["sync_windows"]: ("Sync-Paket Windows", MEDIA_TYPE_ZIP),
+    ARTIFACT_FILENAMES["sync_macos"]: ("Sync-Paket macOS", MEDIA_TYPE_ZIP),
+    ARTIFACT_FILENAMES["sync_ios"]: ("Sync-Paket iOS/iPadOS", MEDIA_TYPE_ZIP),
+    ARTIFACT_FILENAMES["sync_bsd"]: ("Sync-Paket BSD", MEDIA_TYPE_ZIP),
+    ARTIFACT_FILENAMES["knowledge_graph_json"]: ("Wissensgraph JSON", MEDIA_TYPE_JSON),
+    ARTIFACT_FILENAMES["knowledge_graph_graphml"]: (
+        "Wissensgraph GraphML", "application/graphml+xml"
+    ),
+    ARTIFACT_FILENAMES["knowledge_graph_mermaid"]: ("Wissensgraph Mermaid", "text/plain"),
+    ARTIFACT_FILENAMES["graph_report_markdown"]: (
+        "Graphbericht Markdown", MEDIA_TYPE_MARKDOWN
+    ),
+    ARTIFACT_FILENAMES["graph_report_json"]: ("Graphbericht JSON", MEDIA_TYPE_JSON),
+    ARTIFACT_FILENAMES["runtime_status"]: ("Generator-Laufstatus", MEDIA_TYPE_JSON),
+}
+
+ARTIFACT_DESCRIPTIONS: Final[dict[str, str]] = {
+    ARTIFACT_FILENAMES["pdf"]: "Gesetzte Lesefassung des vollständigen Lernpfads.",
+    ARTIFACT_FILENAMES["epub"]: "Anpassbare EPUB-3-Fassung für E-Reader.",
+    ARTIFACT_FILENAMES["html"]: "Eigenständige Offline-HTML-Fassung.",
+    ARTIFACT_FILENAMES["latex"]: "Von Pandoc erzeugter LaTeX-Quelltext.",
+    ARTIFACT_FILENAMES["combined_markdown"]: "Zusammengeführte Markdown-Fassung aller Kapitel.",
+    ARTIFACT_FILENAMES["obsidian_vault"]: "Reproduzierbares Obsidian-Vault-Archiv.",
+    ARTIFACT_FILENAMES["anki"]: "Anki-Lernkartendeck.",
+    ARTIFACT_FILENAMES["references_bib"]: "Bibliografie im BibTeX-Format.",
+    ARTIFACT_FILENAMES["references_json"]: "Bibliografie im CSL-JSON-Format.",
+    ARTIFACT_FILENAMES["sync_linux"]: "Installations- und Sync-Paket für Linux.",
+    ARTIFACT_FILENAMES["sync_android"]: "Installations- und Sync-Paket für Android/Termux.",
+    ARTIFACT_FILENAMES["sync_windows"]: "Installations- und Sync-Paket für Windows.",
+    ARTIFACT_FILENAMES["sync_macos"]: "Installations- und Sync-Paket für macOS.",
+    ARTIFACT_FILENAMES["sync_ios"]: "Installations- und Sync-Paket für iOS/iPadOS mit iSH.",
+    ARTIFACT_FILENAMES["sync_bsd"]: "Installations- und Sync-Paket für BSD/TrueNAS.",
+    ARTIFACT_FILENAMES["knowledge_graph_json"]: "Kanonischer, typisierter Wissensgraph mit Qualitätsdaten.",
+    ARTIFACT_FILENAMES["knowledge_graph_graphml"]: "GraphML-Austauschdatei für Graphwerkzeuge.",
+    ARTIFACT_FILENAMES["knowledge_graph_mermaid"]: "Mermaid-Diagnoseansicht des Wissensgraphen.",
+    ARTIFACT_FILENAMES["graph_report_markdown"]: "Menschenlesbarer Wissensgraph-Qualitätsbericht.",
+    ARTIFACT_FILENAMES["graph_report_json"]: "Maschinenlesbarer Wissensgraph-Qualitätsbericht.",
+    ARTIFACT_FILENAMES["runtime_status"]: "Finaler schema-validierter Status des Generatorlaufs.",
+}
+
+VAULT_ROOT_FILES: Final = (
+    "README.md", "00-Einfuehrung.md", "Glossar.md", "Literatur.md",
+    "ROADMAP.md", "DOWNLOADS.md",
+    ARTIFACT_FILENAMES["references_bib"], ARTIFACT_FILENAMES["references_json"],
+)
+VAULT_DIRECTORIES: Final = (
+    "01-Grundlagen", "02-Vertiefung", "references", "knowledge-graph",
+    "cards", "figures", "assets",
+)'''
+          text = text[:start] + replacement + text[end:]
+
+          replacements = {
+              "f\"--bibliography={require_file(ROOT / 'references.bib')}\"":
+                  "f\"--bibliography={require_file(ROOT / ARTIFACT_FILENAMES['references_bib'])}\"",
+              'str(ARTIFACTS / "ADHS-Lernpfad.epub")': 'str(ARTIFACTS / ARTIFACT_FILENAMES["epub"])',
+              'str(ARTIFACTS / "ADHS-Lernpfad.html")': 'str(ARTIFACTS / ARTIFACT_FILENAMES["html"])',
+              'str(ARTIFACTS / "ADHS-Lernpfad.tex")': 'str(ARTIFACTS / ARTIFACT_FILENAMES["latex"])',
+              'str(ARTIFACTS / "ADHS-Lernpfad.pdf")': 'str(ARTIFACTS / ARTIFACT_FILENAMES["pdf"])',
+              'COMBINED: ARTIFACTS / "ADHS-Lernpfad-Gesamtdokument.md"':
+                  'COMBINED: ARTIFACTS / ARTIFACT_FILENAMES["combined_markdown"]',
+              'ROOT / "references.bib": ARTIFACTS / "references.bib"':
+                  'ROOT / ARTIFACT_FILENAMES["references_bib"]: ARTIFACTS / ARTIFACT_FILENAMES["references_bib"]',
+              'ROOT / "references.json": ARTIFACTS / "references.json"':
+                  'ROOT / ARTIFACT_FILENAMES["references_json"]: ARTIFACTS / ARTIFACT_FILENAMES["references_json"]',
+              'BUILD / "ADHS-Lernpfad.apkg": ARTIFACTS / "ADHS-Lernpfad.apkg"':
+                  'BUILD / ARTIFACT_FILENAMES["anki"]: ARTIFACTS / ARTIFACT_FILENAMES["anki"]',
+              'destination = ARTIFACTS / "ADHS-Lernpfad-Obsidian-Vault.zip"':
+                  'destination = ARTIFACTS / ARTIFACT_FILENAMES["obsidian_vault"]',
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'expected text missing: {old}')
+              text = text.replace(old, new, 1)
+
+          old_graph = '''    sources = {
+        "knowledge-graph.json": GRAPH_BUILD / "knowledge-graph.json",
+        "knowledge-graph.graphml": GRAPH_BUILD / "knowledge-graph.graphml",
+        "knowledge-graph.mmd": GRAPH_BUILD / "knowledge-graph.mmd",
+        "graph-report.md": GRAPH_BUILD / "graph-report.md",
+        "graph-report.json": GRAPH_BUILD / "graph-report.json",
+    }
+    if include_runtime:
+        sources["runtime-status.json"] = runtime_source'''
+          new_graph = '''    sources = {
+        ARTIFACT_FILENAMES["knowledge_graph_json"]:
+            GRAPH_BUILD / ARTIFACT_FILENAMES["knowledge_graph_json"],
+        ARTIFACT_FILENAMES["knowledge_graph_graphml"]:
+            GRAPH_BUILD / ARTIFACT_FILENAMES["knowledge_graph_graphml"],
+        ARTIFACT_FILENAMES["knowledge_graph_mermaid"]:
+            GRAPH_BUILD / ARTIFACT_FILENAMES["knowledge_graph_mermaid"],
+        ARTIFACT_FILENAMES["graph_report_markdown"]:
+            GRAPH_BUILD / ARTIFACT_FILENAMES["graph_report_markdown"],
+        ARTIFACT_FILENAMES["graph_report_json"]:
+            GRAPH_BUILD / ARTIFACT_FILENAMES["graph_report_json"],
+    }
+    if include_runtime:
+        sources[ARTIFACT_FILENAMES["runtime_status"]] = runtime_source'''
+          if old_graph not in text:
+              raise SystemExit('graph source block changed unexpectedly')
+          text = text.replace(old_graph, new_graph, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+          python -m pytest -q tests/test_build_exports_naming_contract.py tests/test_build_exports_manifest.py
+          git diff --check
+
+          rm .github/workflows/tmp-s1192-export-refactor.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/build_exports.py .github/workflows/tmp-s1192-export-refactor.yml
+          git commit -m 'refactor: zentralisiere Export-Artefaktnamen'
+          git push origin HEAD:refactor/canonical-export-artifact-names
