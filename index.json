@@ -1,7 +1,7 @@
 {
   "project": "ADHS-Lernpfad",
-  "version": "0.21.0",
-  "last_reviewed": "2026-08-04",
+  "version": "0.22.0",
+  "last_reviewed": "2026-08-06",
   "chapters": [
     {
       "number": 1,
@@ -97,6 +97,11 @@
       "number": 19,
       "path": "02-Vertiefung/07-Bipolare-Stoerungen-Psychosen-und-episodische-Veraenderungen.md",
       "title": "Bipolare Störungen, Psychosen und ADHS: Episoden, Abgrenzung und Sicherheit"
+    },
+    {
+      "number": 20,
+      "path": "02-Vertiefung/08-Substanzgebrauch-Abhaengigkeit-und-ADHS.md",
+      "title": "Substanzgebrauch, Abhängigkeit und ADHS: Abgrenzung, Risiken und sichere Versorgung"
     }
   ]
 }
