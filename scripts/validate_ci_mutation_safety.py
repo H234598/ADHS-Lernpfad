@@ -54,10 +54,6 @@ AUDIT_FALLBACK = re.compile(
     r"\baudit(?:[:\w-]*)?\b[^#]*(?:\|\||;)\s*(?P<fallback>.+)$",
     re.IGNORECASE,
 )
-BLOCKING_AUDIT_FALLBACK = re.compile(
-    r"^exit\s+[1-9][0-9]*\b",
-    re.IGNORECASE,
-)
 CONTINUE_ON_ERROR = re.compile(
     r"(?mi)^\s*continue-on-error\s*:\s*(?P<value>[^#\r\n]+?)\s*(?:#.*)?$"
 )
@@ -75,8 +71,7 @@ ACTUAL_ASSIGNMENT = re.compile(
     r"(?:actual|computed)(?:_payload)?_?checksum[^\n]*sha256sum",
     re.IGNORECASE,
 )
-ACTUAL_OUTPUT = re.compile(
-    r"\b(?:echo|printf)\b[^\n]*"
+ACTUAL_REFERENCE = re.compile(
     r"\$\{?(?:actual|computed)(?:_payload)?_?checksum\}?",
     re.IGNORECASE,
 )
@@ -84,8 +79,7 @@ EXPECTED_VALUE = re.compile(
     r"expected(?:_payload)?_?checksum",
     re.IGNORECASE,
 )
-EXPECTED_OUTPUT = re.compile(
-    r"\b(?:echo|printf)\b[^\n]*"
+EXPECTED_REFERENCE = re.compile(
     r"\$\{?expected(?:_payload)?_?checksum\}?",
     re.IGNORECASE,
 )
@@ -106,11 +100,14 @@ CHECKSUM_COMPARISON = re.compile(
     r"[^;\n]*(?:!=|-ne)[^;\n]*(?:actual|computed)(?:_payload)?_?checksum",
     re.IGNORECASE,
 )
-IF_BLOCK = re.compile(
-    r"\bif\b(?P<condition>.*?)\bthen\b(?P<body>.*?)\bfi\b",
-    re.IGNORECASE | re.DOTALL,
+OUTPUT_COMMAND = re.compile(r"^(?:echo|printf)\b", re.IGNORECASE)
+DEV_NULL_REDIRECT = re.compile(
+    r"(?:^|\s)(?:[012]?>>?|&>)\s*/dev/null(?:\s|$)",
+    re.IGNORECASE,
 )
-NONZERO_EXIT = re.compile(r"\bexit\s+[1-9][0-9]*\b")
+STATIC_NONZERO_EXIT = re.compile(r"^exit\s+[1-9][0-9]*;?$")
+IF_START = re.compile(r"^if\b.*\bthen\s*$", re.IGNORECASE)
+FI_ONLY = re.compile(r"^fi\s*;?$", re.IGNORECASE)
 SHELL_OPERATOR_END = re.compile(r"(?:\|\||&&|;)\s*$")
 
 
@@ -222,6 +219,58 @@ def staged_diff(line: str, quiet: bool) -> bool:
     is_staged = "--cached" in line or "--staged" in line
     has_quiet = "--quiet" in line
     return has_diff and is_staged and (has_quiet is quiet)
+
+
+def _strip_shell_comment(line: str) -> str:
+    """Strip an unquoted shell comment while preserving quoted hash signs."""
+
+    single = False
+    double = False
+    escaped = False
+    for index, char in enumerate(line):
+        if escaped:
+            escaped = False
+            continue
+        if char == "\\" and not single:
+            escaped = True
+            continue
+        if char == "'" and not double:
+            single = not single
+            continue
+        if char == '"' and not single:
+            double = not double
+            continue
+        if char == "#" and not single and not double:
+            if index == 0 or line[index - 1].isspace():
+                return line[:index].rstrip()
+    return line.rstrip()
+
+
+def _without_single_quoted_text(line: str) -> str:
+    """Remove single-quoted shell text because variables do not expand there."""
+
+    result: List[str] = []
+    single = False
+    double = False
+    escaped = False
+    for char in line:
+        if escaped:
+            if not single:
+                result.append(char)
+            escaped = False
+            continue
+        if char == "\\" and not single:
+            result.append(char)
+            escaped = True
+            continue
+        if char == "'" and not double:
+            single = not single
+            continue
+        if char == '"' and not single:
+            double = not double
+        if not single:
+            result.append(char)
+    return "".join(result)
 
 
 def _normalize_shell_lines(
@@ -381,20 +430,53 @@ def checksum_line(step: StepBlock) -> int:
 
 
 def _active_step_text(step: StepBlock) -> str:
-    """Return non-comment step text for semantic shell checks."""
+    """Return executable non-comment step text for semantic shell checks."""
 
-    return "\n".join(line for _, line in step.active_lines())
+    lines = []
+    for _, line in step.active_lines():
+        code = _strip_shell_comment(line)
+        if code.strip():
+            lines.append(code)
+    return "\n".join(lines)
 
 
-def checksum_mismatch_fails_closed(text: str) -> bool:
-    """Return whether an actual/expected mismatch branch exits nonzero."""
+def checksum_output_is_observable(step: StepBlock, reference: re.Pattern) -> bool:
+    """Return whether an expanded checksum variable reaches visible output."""
 
-    for block in IF_BLOCK.finditer(text):
-        condition = block.group("condition")
-        if not CHECKSUM_COMPARISON.search(condition):
+    for _, line in logical_shell_lines(step):
+        code = _strip_shell_comment(line).strip()
+        if not OUTPUT_COMMAND.match(code):
             continue
-        if NONZERO_EXIT.search(block.group("body")):
+        if DEV_NULL_REDIRECT.search(code):
+            continue
+        expandable = _without_single_quoted_text(code)
+        if reference.search(expandable):
             return True
+    return False
+
+
+def checksum_mismatch_fails_closed(step: StepBlock) -> bool:
+    """Require a direct foreground nonzero exit in a mismatch branch."""
+
+    logical = [
+        _strip_shell_comment(line).strip()
+        for _, line in logical_shell_lines(step)
+    ]
+    for start, code in enumerate(logical):
+        if not IF_START.match(code) or not CHECKSUM_COMPARISON.search(code):
+            continue
+        depth = 1
+        for candidate in logical[start + 1 :]:
+            if IF_START.match(candidate):
+                depth += 1
+                continue
+            if FI_ONLY.fullmatch(candidate):
+                depth -= 1
+                if depth == 0:
+                    break
+                continue
+            if depth == 1 and STATIC_NONZERO_EXIT.fullmatch(candidate):
+                return True
     return False
 
 
@@ -406,14 +488,20 @@ def payload_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
         return []
 
     line = checksum_line(step)
-    actual = bool(ACTUAL_ASSIGNMENT.search(text) and ACTUAL_OUTPUT.search(text))
-    expected = bool(EXPECTED_VALUE.search(text) and EXPECTED_OUTPUT.search(text))
+    actual = bool(
+        ACTUAL_ASSIGNMENT.search(text)
+        and checksum_output_is_observable(step, ACTUAL_REFERENCE)
+    )
+    expected = bool(
+        EXPECTED_VALUE.search(text)
+        and checksum_output_is_observable(step, EXPECTED_REFERENCE)
+    )
     fragment_marker = bool(FRAGMENT_MARKER.search(text))
     fragment_size = bool(FRAGMENT_SIZE.search(text))
     fragment_checksum = bool(FRAGMENT_CHECKSUM.search(text))
     fragments = fragment_marker and fragment_size and fragment_checksum
     archive = bool(ARCHIVE_LISTING.search(text))
-    enforced = checksum_mismatch_fails_closed(text)
+    enforced = checksum_mismatch_fails_closed(step)
 
     issues: List[SafetyIssue] = []
     if not actual:
@@ -467,11 +555,12 @@ def payload_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
 def audit_fallback_masks_failure(line: str) -> bool:
     """Return whether a fallback can replace a failed audit exit status."""
 
-    fallback = AUDIT_FALLBACK.search(line)
+    code = _strip_shell_comment(line)
+    fallback = AUDIT_FALLBACK.search(code)
     if not fallback:
         return False
     command = fallback.group("fallback").strip()
-    return not BLOCKING_AUDIT_FALLBACK.match(command)
+    return STATIC_NONZERO_EXIT.fullmatch(command) is None
 
 
 def continue_on_error_masks_failure(step: StepBlock) -> bool:
