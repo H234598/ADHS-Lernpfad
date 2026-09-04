@@ -158,7 +158,14 @@ jobs:
             --max-per-workflow 100
           git -C "$status_tree" add -A -f \
             .nojekyll README.md automation/status
+          echo '=== Status der Statusbranch-Arbeitskopie ==='
+          git -C "$status_tree" status --short
+          echo '=== Staged Dateien ==='
+          git -C "$status_tree" diff --cached --name-status
+          echo '=== Staged Diffstatistik ==='
+          git -C "$status_tree" diff --cached --stat
           if git -C "$status_tree" diff --cached --quiet; then
+            echo 'Keine Statusänderung – Commit und Push entfallen.'
             echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi

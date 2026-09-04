@@ -80,6 +80,7 @@ jobs:
 
           git diff --check
           python -m compileall -q scripts tests
+          python scripts/validate_ci_mutation_safety.py
           python scripts/validate_prompt_baselines.py
           find Sync -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
           pwsh -NoProfile -Command '
