@@ -1,8 +1,8 @@
 """Tests for the GitHub Actions mutation-safety contract."""
 
-from pathlib import Path
 import tempfile
 import unittest
+from pathlib import Path
 
 from scripts.validate_ci_mutation_safety import validate_repository
 
