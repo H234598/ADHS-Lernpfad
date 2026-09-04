@@ -177,6 +177,63 @@ jobs:
             self.assertIn("CIW004", codes)
             self.assertIn("CIW005", codes)
 
+    def test_checksum_output_hidden_in_comments_is_rejected(self) -> None:
+        """Do not count checksum variable references inside shell comments."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            hidden = SAFE_WRITER.replace(
+                "          printf 'Computed payload checksum: %s\\n' "
+                '"$actual_payload_checksum"\n',
+                '          : # echo "$actual_payload_checksum"\n',
+            ).replace(
+                "          printf 'Expected payload checksum: %s\\n' "
+                '"$expected_payload_checksum"\n',
+                '          : # echo "$expected_payload_checksum"\n',
+            )
+            write_workflow(root, hidden)
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW004", codes)
+            self.assertIn("CIW005", codes)
+
+    def test_single_quoted_checksum_variables_are_rejected(self) -> None:
+        """Do not count checksum variables that the shell will not expand."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            quoted = SAFE_WRITER.replace(
+                "          printf 'Computed payload checksum: %s\\n' "
+                '"$actual_payload_checksum"\n',
+                "          echo '$actual_payload_checksum'\n",
+            ).replace(
+                "          printf 'Expected payload checksum: %s\\n' "
+                '"$expected_payload_checksum"\n',
+                "          echo '$expected_payload_checksum'\n",
+            )
+            write_workflow(root, quoted)
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW004", codes)
+            self.assertIn("CIW005", codes)
+
+    def test_checksum_output_redirected_to_dev_null_is_rejected(self) -> None:
+        """Require checksum diagnostics to remain observable."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            discarded = SAFE_WRITER.replace(
+                "          printf 'Computed payload checksum: %s\\n' "
+                '"$actual_payload_checksum"\n',
+                '          echo "$actual_payload_checksum" >/dev/null\n',
+            ).replace(
+                "          printf 'Expected payload checksum: %s\\n' "
+                '"$expected_payload_checksum"\n',
+                '          echo "$expected_payload_checksum" >/dev/null\n',
+            )
+            write_workflow(root, discarded)
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW004", codes)
+            self.assertIn("CIW005", codes)
+
     def test_printed_checksums_without_enforced_comparison_are_rejected(self) -> None:
         """Reject checksums that are merely printed but never enforced."""
 
@@ -239,6 +296,31 @@ jobs:
             codes = {issue.code for issue in validate_repository(root)}
             self.assertIn("CIW010", codes)
 
+    def test_nested_checksum_exit_does_not_prove_failure(self) -> None:
+        """Require a top-level nonzero exit in the checksum mismatch branch."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            valid = (
+                '          if [[ "$actual_payload_checksum" '
+                '!= "$expected_payload_checksum" ]]; then\n'
+                '            tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true\n'
+                '            exit 1\n'
+                '          fi\n'
+            )
+            nested = (
+                '          if [[ "$actual_payload_checksum" '
+                '!= "$expected_payload_checksum" ]]; then\n'
+                '            tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true\n'
+                '            if false; then\n'
+                '              exit 1\n'
+                '            fi\n'
+                '          fi\n'
+            )
+            write_workflow(root, SAFE_WRITER.replace(valid, nested))
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW010", codes)
+
     def test_audit_bypasses_are_rejected(self) -> None:
         """Reject shell and workflow-level attempts to soften audit failures."""
 
@@ -291,6 +373,21 @@ jobs:
                 SAFE_WRITER.replace(
                     "npm run audit:dependencies",
                     "npm run audit:dependencies || exit $AUDIT_EXIT",
+                ),
+            )
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW008", codes)
+
+    def test_backgrounded_audit_exit_does_not_prove_failure(self) -> None:
+        """Reject a nonzero audit fallback that is backgrounded by the shell."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    "npm run audit:dependencies",
+                    "npm run audit:dependencies || exit 1 &",
                 ),
             )
             codes = {issue.code for issue in validate_repository(root)}
