@@ -55,14 +55,18 @@ AUDIT_FALLBACK = re.compile(
     re.IGNORECASE,
 )
 BLOCKING_AUDIT_FALLBACK = re.compile(
-    r"^exit\s+(?:[1-9][0-9]*|\$\{?[A-Za-z_][A-Za-z0-9_]*\}?)\b",
+    r"^exit\s+[1-9][0-9]*\b",
     re.IGNORECASE,
 )
 CONTINUE_ON_ERROR = re.compile(
-    r"(?mi)^\s*continue-on-error\s*:\s*true\s*(?:#.*)?$"
+    r"(?mi)^\s*continue-on-error\s*:\s*(?P<value>[^#\r\n]+?)\s*(?:#.*)?$"
 )
 STEPS_HEADER = re.compile(r"^(?P<indent>\s*)steps\s*:\s*(?:#.*)?$")
 LIST_ITEM = re.compile(r"^(?P<indent>\s*)-\s+")
+RUN_BLOCK_HEADER = re.compile(
+    r"^(?P<indent>\s*)(?P<item>-\s+)?run\s*:\s*"
+    r"(?P<style>[|>])(?:[+-])?\s*(?:#.*)?$"
+)
 PAYLOAD_MARKER = re.compile(
     r"\.payload\.|payload\.(?:b64|tar(?:\.gz)?)|payload[_-]?checksum",
     re.IGNORECASE,
@@ -72,7 +76,8 @@ ACTUAL_ASSIGNMENT = re.compile(
     re.IGNORECASE,
 )
 ACTUAL_OUTPUT = re.compile(
-    r"(?:computed|actual)[^\n]*payload[^\n]*checksum",
+    r"\b(?:echo|printf)\b[^\n]*"
+    r"\$\{?(?:actual|computed)(?:_payload)?_?checksum\}?",
     re.IGNORECASE,
 )
 EXPECTED_VALUE = re.compile(
@@ -80,7 +85,8 @@ EXPECTED_VALUE = re.compile(
     re.IGNORECASE,
 )
 EXPECTED_OUTPUT = re.compile(
-    r"expected[^\n]*payload[^\n]*checksum",
+    r"\b(?:echo|printf)\b[^\n]*"
+    r"\$\{?expected(?:_payload)?_?checksum\}?",
     re.IGNORECASE,
 )
 FRAGMENT_MARKER = re.compile(r"\bfragment\w*\b", re.IGNORECASE)
@@ -104,9 +110,7 @@ IF_BLOCK = re.compile(
     r"\bif\b(?P<condition>.*?)\bthen\b(?P<body>.*?)\bfi\b",
     re.IGNORECASE | re.DOTALL,
 )
-NONZERO_EXIT = re.compile(
-    r"\bexit\s+(?:[1-9][0-9]*|\$\{?[A-Za-z_][A-Za-z0-9_]*\}?)\b"
-)
+NONZERO_EXIT = re.compile(r"\bexit\s+[1-9][0-9]*\b")
 SHELL_OPERATOR_END = re.compile(r"(?:\|\||&&|;)\s*$")
 
 
@@ -240,7 +244,9 @@ def _normalize_shell_lines(
         if continuation:
             stripped = stripped[:-1].rstrip()
         buffer = f"{buffer} {stripped}".strip()
-        operator_continuation = join_operators and bool(SHELL_OPERATOR_END.search(stripped))
+        operator_continuation = join_operators and bool(
+            SHELL_OPERATOR_END.search(stripped)
+        )
         if continuation or operator_continuation:
             continue
         result.append((start_line, buffer))
@@ -250,9 +256,57 @@ def _normalize_shell_lines(
     return result
 
 
-def logical_shell_lines(step: StepBlock) -> List[Tuple[int, str]]:
-    """Normalize shell continuations and split fallback commands in a step."""
+def _run_block(step: StepBlock) -> Tuple[Optional[str], List[Tuple[int, str]]]:
+    """Return block-scalar style and physical shell lines for one step."""
 
+    numbered = list(enumerate(step.lines, step.start_line))
+    for index, (number, line) in enumerate(numbered):
+        match = RUN_BLOCK_HEADER.match(line)
+        if not match:
+            continue
+        header_indent = len(match.group("indent")) + len(match.group("item") or "")
+        body: List[Tuple[int, str]] = []
+        for body_number, candidate in numbered[index + 1 :]:
+            if candidate.strip() and indentation(candidate) <= header_indent:
+                break
+            if candidate.lstrip().startswith("#"):
+                continue
+            body.append((body_number, candidate))
+        return match.group("style"), body
+    return None, []
+
+
+def _folded_shell_lines(
+    numbered_lines: Sequence[Tuple[int, str]],
+) -> List[Tuple[int, str]]:
+    """Conservatively fold YAML ``run: >`` content into logical commands."""
+
+    result: List[Tuple[int, str]] = []
+    buffer: List[str] = []
+    start_line = 1
+    for number, line in numbered_lines:
+        stripped = line.strip()
+        if not stripped:
+            if buffer:
+                result.append((start_line, " ".join(buffer)))
+                buffer = []
+            continue
+        if not buffer:
+            start_line = number
+        buffer.append(stripped)
+    if buffer:
+        result.append((start_line, " ".join(buffer)))
+    return result
+
+
+def logical_shell_lines(step: StepBlock) -> List[Tuple[int, str]]:
+    """Normalize YAML block style and shell continuations for one step."""
+
+    style, body = _run_block(step)
+    if style == ">":
+        return _folded_shell_lines(body)
+    if style == "|":
+        return _normalize_shell_lines(body, join_operators=True)
     return _normalize_shell_lines(step.active_lines(), join_operators=True)
 
 
@@ -365,35 +419,45 @@ def payload_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
     if not actual:
         issues.append(
             SafetyIssue(
-                path, line, "CIW004",
+                path,
+                line,
+                "CIW004",
                 "Payload muss die berechnete SHA-256 ausgeben.",
             )
         )
     if not expected:
         issues.append(
             SafetyIssue(
-                path, line, "CIW005",
+                path,
+                line,
+                "CIW005",
                 "Payload muss die erwartete SHA-256 ausgeben.",
             )
         )
     if not fragments:
         issues.append(
             SafetyIssue(
-                path, line, "CIW006",
+                path,
+                line,
+                "CIW006",
                 "Payload muss Größe und SHA-256 jedes Fragments ausgeben.",
             )
         )
     if not archive:
         issues.append(
             SafetyIssue(
-                path, line, "CIW007",
+                path,
+                line,
+                "CIW007",
                 "Payload-Fehler braucht eine tar -tzf-Diagnose.",
             )
         )
     if not enforced:
         issues.append(
             SafetyIssue(
-                path, line, "CIW010",
+                path,
+                line,
+                "CIW010",
                 "Prüfsummenabweichungen müssen mit Fehlercode enden.",
             )
         )
@@ -410,6 +474,15 @@ def audit_fallback_masks_failure(line: str) -> bool:
     return not BLOCKING_AUDIT_FALLBACK.match(command)
 
 
+def continue_on_error_masks_failure(step: StepBlock) -> bool:
+    """Accept only an explicit YAML ``false`` for audit continue-on-error."""
+
+    matches = list(CONTINUE_ON_ERROR.finditer(step.text))
+    if not matches:
+        return False
+    return any(match.group("value").strip().lower() != "false" for match in matches)
+
+
 def audit_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
     """Reject attempts to soften an audit failure."""
 
@@ -424,7 +497,7 @@ def audit_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
                     "Audit darf nicht per Shell-Bypass entkräftet werden.",
                 )
             )
-    if AUDIT.search(_active_step_text(step)) and CONTINUE_ON_ERROR.search(step.text):
+    if AUDIT.search(_active_step_text(step)) and continue_on_error_masks_failure(step):
         issues.append(
             SafetyIssue(
                 path,
