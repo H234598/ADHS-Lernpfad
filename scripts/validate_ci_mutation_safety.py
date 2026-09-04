@@ -106,6 +106,7 @@ AUDIT_BYPASS = re.compile(
 CONTINUE_ON_ERROR = re.compile(r"(?mi)^\s*continue-on-error\s*:\s*true\s*$")
 STEPS_HEADER = re.compile(r"^(?P<indent>\s*)steps\s*:\s*(?:#.*)?$")
 LIST_ITEM = re.compile(r"^(?P<indent>\s*)-\s+")
+RUN_MAPPING = re.compile(r"^(?:-\s*)?run\s*:\s*(?P<body>.*)$")
 SHELL_ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 PAYLOAD_MARKER = re.compile(
     r"\.payload\.|payload\.(?:b64|tar(?:\.gz)?)|payload[_-]?checksum",
@@ -145,6 +146,7 @@ NONZERO_EXIT = re.compile(
 SHELL_PREFIXES = {"if", "then", "elif", "while", "until", "do", "!", "{"}
 SHELL_WRAPPERS = {"command", "exec", "env", "time"}
 CONTROL_TOKENS = {";", "&&", "||", "|", "&"}
+BLOCK_SCALARS = {"|", "|-", "|+", ">", ">-", ">+"}
 
 
 def workflow_files(root: Path) -> list[Path]:
@@ -233,13 +235,25 @@ def workflow_step_blocks(text: str) -> list[StepBlock]:
     return blocks
 
 
+def shell_payload(raw_line: str) -> str:
+    """Return executable shell text, stripping an inline YAML ``run:`` prefix."""
+    stripped = raw_line.strip()
+    mapping = RUN_MAPPING.match(stripped)
+    if mapping is None:
+        return stripped
+    body = mapping.group("body").strip()
+    if body in BLOCK_SCALARS:
+        return ""
+    return body
+
+
 def logical_shell_lines(step: StepBlock) -> list[tuple[int, str]]:
     """Join shell continuations and operator continuations."""
     result: list[tuple[int, str]] = []
     buffer = ""
     start_line = step.start_line
     for number, raw_line in step.active_lines():
-        stripped = raw_line.strip()
+        stripped = shell_payload(raw_line)
         if not stripped:
             continue
         if not buffer:
