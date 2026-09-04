@@ -228,7 +228,14 @@ jobs:
 
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            write_workflow(root, SAFE_WRITER.replace("            exit 1\n", "            exit $CHECKSUM_EXIT\n", 1))
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    "            exit 1\n",
+                    "            exit $CHECKSUM_EXIT\n",
+                    1,
+                ),
+            )
             codes = {issue.code for issue in validate_repository(root)}
             self.assertIn("CIW010", codes)
 
