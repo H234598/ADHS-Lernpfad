@@ -26,7 +26,7 @@ permissions:
   statuses: read
 
 concurrency:
-  group: coderabbit-after-green-${{ github.event.pull_request.number || github.event.workflow_run.pull_requests[0].number || inputs.pr_number || github.run_id }}
+  group: coderabbit-after-green-${{ github.event.pull_request.number || github.event.workflow_run.pull_requests[0].number || inputs.pr_number || 'scan-open-prs' }}
   cancel-in-progress: true
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
           ref: main
           persist-credentials: false
 
-      - name: Determine pull request
+      - name: Determine pull request or scan mode
         id: pr
         shell: bash
         env:
@@ -51,21 +51,21 @@ jobs:
         run: |
           set -euo pipefail
           PR_NUMBER="${INPUT_PR:-${EVENT_PR:-${WORKFLOW_PR:-}}}"
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           if [[ -z "$PR_NUMBER" ]]; then
-            echo 'skip=true' >> "$GITHUB_OUTPUT"
-            echo 'Kein Pull Request im Ereignis; kein bezahlter Review-Request.'
-          else
-            echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-            echo 'skip=false' >> "$GITHUB_OUTPUT"
+            echo 'Kein Pull Request im Ereignis; offene Same-Repo-PRs werden auf vollständiges Grün geprüft.'
           fi
 
-      - name: Request one current-head review after all other gates are green
-        if: steps.pr.outputs.skip != 'true'
+      - name: Request current-head review only after all other gates are green
         env:
           GITHUB_TOKEN: ${{ github.token }}
           TARGET_PR: ${{ steps.pr.outputs.number }}
         run: |
           set -euo pipefail
+          EXTRA_ARGS=()
+          if [[ -n "$TARGET_PR" ]]; then
+            EXTRA_ARGS+=(--pr-number "$TARGET_PR")
+          fi
           python scripts/coderabbit_after_green.py \
             --repository "$GITHUB_REPOSITORY" \
-            --pr-number "$TARGET_PR"
+            "${EXTRA_ARGS[@]}"
