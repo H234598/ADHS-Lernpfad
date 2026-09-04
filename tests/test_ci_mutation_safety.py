@@ -158,6 +158,25 @@ jobs:
             }
             self.assertTrue(required.issubset(codes))
 
+    def test_checksum_variable_names_without_output_commands_are_rejected(self) -> None:
+        """Require actual shell output for both computed and expected checksums."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            silent = SAFE_WRITER.replace(
+                "          printf 'Computed payload checksum: %s\\n' "
+                '"$actual_payload_checksum"\n',
+                "",
+            ).replace(
+                "          printf 'Expected payload checksum: %s\\n' "
+                '"$expected_payload_checksum"\n',
+                "",
+            )
+            write_workflow(root, silent)
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW004", codes)
+            self.assertIn("CIW005", codes)
+
     def test_printed_checksums_without_enforced_comparison_are_rejected(self) -> None:
         """Reject checksums that are merely printed but never enforced."""
 
@@ -204,6 +223,15 @@ jobs:
             codes = {issue.code for issue in validate_repository(root)}
             self.assertIn("CIW010", codes)
 
+    def test_variable_checksum_exit_does_not_prove_failure(self) -> None:
+        """Reject mismatch branches whose variable exit code may evaluate to zero."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_workflow(root, SAFE_WRITER.replace("            exit 1\n", "            exit $CHECKSUM_EXIT\n", 1))
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW010", codes)
+
     def test_audit_bypasses_are_rejected(self) -> None:
         """Reject shell and workflow-level attempts to soften audit failures."""
 
@@ -245,6 +273,71 @@ jobs:
             codes = [issue.code for issue in validate_repository(root)]
             self.assertGreaterEqual(codes.count("CIW008"), 3)
             self.assertIn("CIW009", codes)
+
+    def test_variable_audit_exit_does_not_prove_failure(self) -> None:
+        """Reject audit fallbacks whose variable exit code may evaluate to zero."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    "npm run audit:dependencies",
+                    "npm run audit:dependencies || exit $AUDIT_EXIT",
+                ),
+            )
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW008", codes)
+
+    def test_folded_run_block_audit_bypass_is_rejected(self) -> None:
+        """Treat a folded YAML run block as the shell command GitHub executes."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_workflow(root, """name: Folded audit bypass
+on: workflow_dispatch
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Folded audit
+        run: >
+          npm run audit:dependencies
+          || true
+""")
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW008", codes)
+
+    def test_expression_continue_on_error_is_rejected_for_audit_step(self) -> None:
+        """Reject non-literal continue-on-error values on an audit step."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    "      - name: Apply verified payload\n",
+                    "      - name: Apply verified payload\n"
+                    "        continue-on-error: ${{ true }}\n",
+                ),
+            )
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW009", codes)
+
+    def test_literal_false_continue_on_error_remains_blocking(self) -> None:
+        """Accept explicit false because audit failures still block the step."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    "      - name: Apply verified payload\n",
+                    "      - name: Apply verified payload\n"
+                    "        continue-on-error: false\n",
+                ),
+            )
+            self.assertEqual(validate_repository(root), [])
 
     def test_explicit_nonzero_audit_fallback_remains_blocking(self) -> None:
         """Allow an explicit nonzero fallback that preserves audit failure."""
