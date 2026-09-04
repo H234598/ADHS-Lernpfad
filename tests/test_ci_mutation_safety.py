@@ -98,6 +98,28 @@ jobs:
             required = {"CIW001", "CIW002", "CIW003"}
             self.assertTrue(required.issubset(codes))
 
+    def test_continued_git_writer_commands_are_rejected(self) -> None:
+        """Detect commit and push commands split with shell continuations."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_workflow(root, """name: Continued unsafe writer
+on: workflow_dispatch
+jobs:
+  write:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          git add generated/
+          git \\
+            commit -m publish
+          git \\
+            push origin HEAD:generated
+""")
+            codes = {issue.code for issue in validate_repository(root)}
+            required = {"CIW001", "CIW002", "CIW003"}
+            self.assertTrue(required.issubset(codes))
+
     def test_each_writer_step_requires_its_own_guard_and_diagnostics(self) -> None:
         """Prevent a safe writer from masking an unsafe sibling step."""
 
@@ -159,6 +181,29 @@ jobs:
             codes = {issue.code for issue in validate_repository(root)}
             self.assertIn("CIW010", codes)
 
+    def test_reversed_checksum_failure_branch_is_rejected(self) -> None:
+        """Reject equality branches that fail while mismatches still succeed."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            valid = (
+                '          if [[ "$actual_payload_checksum" '
+                '!= "$expected_payload_checksum" ]]; then\n'
+                '            tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true\n'
+                '            exit 1\n'
+                '          fi\n'
+            )
+            reversed_branch = (
+                '          if [[ "$actual_payload_checksum" '
+                '== "$expected_payload_checksum" ]]; then\n'
+                '            exit 1\n'
+                '          fi\n'
+                '          tar -tzf "$RUNNER_TEMP/payload.tar.gz" || true\n'
+            )
+            write_workflow(root, SAFE_WRITER.replace(valid, reversed_branch))
+            codes = {issue.code for issue in validate_repository(root)}
+            self.assertIn("CIW010", codes)
+
     def test_audit_bypasses_are_rejected(self) -> None:
         """Reject shell and workflow-level attempts to soften audit failures."""
 
@@ -171,6 +216,14 @@ jobs:
                     "npm run audit:dependencies || true",
                 ),
                 "shell.yml",
+            )
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    "npm run audit:dependencies",
+                    'npm run audit:dependencies || echo "audit ignored"',
+                ),
+                "fallback.yml",
             )
             write_workflow(
                 root,
@@ -190,8 +243,25 @@ jobs:
                 "multiline.yml",
             )
             codes = [issue.code for issue in validate_repository(root)]
-            self.assertGreaterEqual(codes.count("CIW008"), 2)
+            self.assertGreaterEqual(codes.count("CIW008"), 3)
             self.assertIn("CIW009", codes)
+
+    def test_explicit_nonzero_audit_fallback_remains_blocking(self) -> None:
+        """Allow an explicit nonzero fallback that preserves audit failure."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_workflow(
+                root,
+                SAFE_WRITER.replace(
+                    "npm run audit:dependencies",
+                    "npm run audit:dependencies || exit 1",
+                ),
+            )
+            self.assertNotIn(
+                "CIW008",
+                {issue.code for issue in validate_repository(root)},
+            )
 
 
 if __name__ == "__main__":
