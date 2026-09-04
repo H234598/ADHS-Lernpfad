@@ -1,6 +1,11 @@
 """Tests for the cost-aware CodeRabbit after-green gate."""
 
+from pathlib import Path
+
 from scripts import coderabbit_after_green as after_green
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _check(
@@ -131,3 +136,83 @@ def test_workflow_run_without_pr_can_scan_open_same_repo_prs(monkeypatch) -> Non
     assert scanner is not None, "workflow_run fallback scanner fehlt"  # nosec B101
     assert scanner("H234598/ADHS-Lernpfad", "token") == 1  # nosec B101
     assert seen == [65]  # nosec B101
+
+
+def test_untrusted_request_marker_does_not_suppress_request(monkeypatch) -> None:
+    """Trust deduplication markers only when GitHub Actions authored them."""
+    head_sha = "head-a"
+    posted: list[str] = []
+    marker = f"{after_green.MARKER_PREFIX}{head_sha} -->"
+
+    monkeypatch.setattr(
+        after_green,
+        "_current_same_repo_head",
+        lambda repository, pr_number, token: head_sha,
+    )
+    monkeypatch.setattr(after_green, "_gate_reasons", lambda *args: [])
+    monkeypatch.setattr(
+        after_green,
+        "_has_current_coderabbit_review",
+        lambda *args: False,
+    )
+
+    def fake_paged(repository, suffix, token, key=None):
+        del repository, token, key
+        assert suffix.startswith("issues/65/comments")  # nosec B101
+        return [
+            {
+                "body": marker,
+                "user": {"login": "untrusted-user"},
+            }
+        ]
+
+    def fake_post(repository, pr_number, current_head, token):
+        del repository, pr_number, token
+        posted.append(current_head)
+
+    monkeypatch.setattr(after_green, "_paged", fake_paged)
+    monkeypatch.setattr(after_green, "_post_review_request", fake_post)
+
+    assert after_green.request_if_green("H234598/ADHS-Lernpfad", 65, "token")  # nosec B101
+    assert posted == [head_sha]  # nosec B101
+
+
+def test_head_change_after_gate_validation_aborts_request(monkeypatch) -> None:
+    """Re-check the PR head immediately before posting the paid review request."""
+    heads = iter(["validated-head", "new-head"])
+    posted: list[str] = []
+
+    monkeypatch.setattr(
+        after_green,
+        "_current_same_repo_head",
+        lambda repository, pr_number, token: next(heads),
+    )
+    monkeypatch.setattr(after_green, "_gate_reasons", lambda *args: [])
+    monkeypatch.setattr(
+        after_green,
+        "_has_current_coderabbit_review",
+        lambda *args: False,
+    )
+    monkeypatch.setattr(after_green, "_already_requested", lambda *args: False)
+    monkeypatch.setattr(
+        after_green,
+        "_post_review_request",
+        lambda repository, pr_number, head_sha, token: posted.append(head_sha),
+    )
+
+    assert not after_green.request_if_green(  # nosec B101
+        "H234598/ADHS-Lernpfad",
+        65,
+        "token",
+    )
+    assert posted == []  # nosec B101
+
+
+def test_after_green_workflow_serializes_all_request_paths() -> None:
+    """Serialize fallback scans and PR-specific requests in one non-cancelling group."""
+    workflow = (ROOT / ".github/workflows/coderabbit-after-green.yml").read_text(
+        encoding="utf-8"
+    )
+
+    assert "group: coderabbit-after-green\n" in workflow  # nosec B101
+    assert "cancel-in-progress: false" in workflow  # nosec B101
