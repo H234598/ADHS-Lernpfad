@@ -7,7 +7,10 @@ import argparse
 import os
 from typing import Any, Iterable
 
-from github_api import request_json
+try:
+    from .github_api import request_json
+except ImportError:  # pragma: no cover - direct script execution
+    from github_api import request_json
 
 API_ROOT = "https://api.github.com"
 USER_AGENT = "ADHS-Lernpfad-coderabbit-after-green"
