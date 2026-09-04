@@ -258,10 +258,7 @@ jobs:
                     "npm run audit:dependencies || exit 1",
                 ),
             )
-            self.assertNotIn(
-                "CIW008",
-                {issue.code for issue in validate_repository(root)},
-            )
+            self.assertEqual(validate_repository(root), [])
 
 
 if __name__ == "__main__":
