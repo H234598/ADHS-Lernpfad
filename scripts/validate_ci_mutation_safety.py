@@ -260,7 +260,7 @@ def _run_block(step: StepBlock) -> Tuple[Optional[str], List[Tuple[int, str]]]:
     """Return block-scalar style and physical shell lines for one step."""
 
     numbered = list(enumerate(step.lines, step.start_line))
-    for index, (number, line) in enumerate(numbered):
+    for index, (_, line) in enumerate(numbered):
         match = RUN_BLOCK_HEADER.match(line)
         if not match:
             continue
