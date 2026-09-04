@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
 """Request one CodeRabbit review only after every non-CodeRabbit gate is green."""
 
 from __future__ import annotations
 
 import argparse
 import os
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 try:
     from .github_api import request_json
@@ -29,7 +29,6 @@ ALLOWED_NONBLOCKING_CONCLUSIONS = {"success", "neutral", "skipped"}
 
 def _is_coderabbit_context(name: str) -> bool:
     """Return whether a check/status belongs to CodeRabbit or this requester."""
-
     normalized = name.casefold()
     return (
         "coderabbit" in normalized
@@ -40,7 +39,6 @@ def _is_coderabbit_context(name: str) -> bool:
 
 def _latest_by_name(items: Iterable[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     """Keep the newest GitHub object for every check/status context name."""
-
     latest: dict[str, dict[str, Any]] = {}
     for item in items:
         name = str(item.get("name") or item.get("context") or "")
@@ -57,7 +55,6 @@ def evaluate_green_state(
     statuses: Iterable[dict[str, Any]],
 ) -> list[str]:
     """Return reasons why CodeRabbit must not be requested yet."""
-
     reasons: list[str] = []
     latest_checks = _latest_by_name(check_runs)
     latest_statuses = _latest_by_name(statuses)
@@ -102,7 +99,6 @@ def evaluate_green_state(
 
 def _get(repository: str, suffix: str, token: str) -> Any:
     """Fetch one GitHub REST resource."""
-
     return request_json(
         f"{API_ROOT}/repos/{repository}/{suffix}",
         token,
@@ -110,9 +106,13 @@ def _get(repository: str, suffix: str, token: str) -> Any:
     )
 
 
-def _paged(repository: str, suffix: str, token: str, key: str | None = None) -> list[Any]:
+def _paged(
+    repository: str,
+    suffix: str,
+    token: str,
+    key: str | None = None,
+) -> list[Any]:
     """Fetch up to ten pages of one list endpoint."""
-
     collected: list[Any] = []
     separator = "&" if "?" in suffix else "?"
     for page in range(1, 11):
@@ -123,16 +123,79 @@ def _paged(repository: str, suffix: str, token: str, key: str | None = None) -> 
         )
         items = payload.get(key, []) if key else payload
         if not isinstance(items, list):
-            raise RuntimeError(f"Unerwartete GitHub-Antwort für {suffix}")
+            raise TypeError(f"Unerwartete GitHub-Antwort für {suffix}")
         collected.extend(items)
         if len(items) < 100:
             break
     return collected
 
 
-def _post_review_request(repository: str, pr_number: int, head_sha: str, token: str) -> None:
-    """Post the single explicit CodeRabbit request for one PR head."""
+def _current_same_repo_head(repository: str, pr_number: int, token: str) -> str | None:
+    """Return the current head SHA for an open same-repository PR."""
+    pull = _get(repository, f"pulls/{pr_number}", token)
+    if pull.get("state") != "open":
+        print("PR ist nicht offen; kein CodeRabbit-Request.")
+        return None
 
+    head = pull.get("head") or {}
+    head_sha = str(head.get("sha") or "")
+    if not head_sha:
+        raise RuntimeError("PR besitzt keinen Head-SHA")
+    if ((head.get("repo") or {}).get("full_name")) != repository:
+        print("Fork-PR: bezahlter CodeRabbit-Request bleibt manuell.")
+        return None
+    return head_sha
+
+
+def _gate_reasons(repository: str, head_sha: str, token: str) -> list[str]:
+    """Return all non-CodeRabbit reasons blocking a paid review request."""
+    check_runs = _paged(
+        repository,
+        f"commits/{head_sha}/check-runs?filter=latest",
+        token,
+        key="check_runs",
+    )
+    combined_status = _get(repository, f"commits/{head_sha}/status?per_page=100", token)
+    statuses = combined_status.get("statuses", [])
+    if not isinstance(statuses, list):
+        raise TypeError("GitHub lieferte keine Statusliste")
+    return evaluate_green_state(check_runs, statuses)
+
+
+def _has_current_coderabbit_review(
+    repository: str,
+    pr_number: int,
+    head_sha: str,
+    token: str,
+) -> bool:
+    """Return whether CodeRabbit has already reviewed this exact head."""
+    reviews = _paged(repository, f"pulls/{pr_number}/reviews", token)
+    for review in reviews:
+        login = str(((review.get("user") or {}).get("login")) or "").casefold()
+        if login.startswith("coderabbitai") and review.get("commit_id") == head_sha:
+            return True
+    return False
+
+
+def _already_requested(
+    repository: str,
+    pr_number: int,
+    head_sha: str,
+    token: str,
+) -> bool:
+    """Return whether the current head already has a request marker."""
+    marker = f"{MARKER_PREFIX}{head_sha} -->"
+    comments = _paged(repository, f"issues/{pr_number}/comments", token)
+    return any(marker in str(comment.get("body") or "") for comment in comments)
+
+
+def _post_review_request(
+    repository: str,
+    pr_number: int,
+    head_sha: str,
+    token: str,
+) -> None:
+    """Post the single explicit CodeRabbit request for one PR head."""
     marker = f"{MARKER_PREFIX}{head_sha} -->"
     body = (
         f"{marker}\n"
@@ -151,49 +214,21 @@ def _post_review_request(repository: str, pr_number: int, head_sha: str, token: 
 
 def request_if_green(repository: str, pr_number: int, token: str) -> bool:
     """Request CodeRabbit exactly once when the current same-repo head is ready."""
-
-    pull = _get(repository, f"pulls/{pr_number}", token)
-    if pull.get("state") != "open":
-        print("PR ist nicht offen; kein CodeRabbit-Request.")
+    head_sha = _current_same_repo_head(repository, pr_number, token)
+    if head_sha is None:
         return False
 
-    head = pull.get("head") or {}
-    head_sha = str(head.get("sha") or "")
-    head_repo = ((head.get("repo") or {}).get("full_name"))
-    if not head_sha:
-        raise RuntimeError("PR besitzt keinen Head-SHA")
-    if head_repo != repository:
-        print("Fork-PR: bezahlter CodeRabbit-Request bleibt manuell.")
-        return False
-
-    check_runs = _paged(
-        repository,
-        f"commits/{head_sha}/check-runs?filter=latest",
-        token,
-        key="check_runs",
-    )
-    combined_status = _get(repository, f"commits/{head_sha}/status?per_page=100", token)
-    statuses = combined_status.get("statuses", [])
-    if not isinstance(statuses, list):
-        raise RuntimeError("GitHub lieferte keine Statusliste")
-
-    reasons = evaluate_green_state(check_runs, statuses)
+    reasons = _gate_reasons(repository, head_sha, token)
     if reasons:
         print("CodeRabbit wird noch nicht angefordert:")
         for reason in reasons:
             print(f"- {reason}")
         return False
 
-    reviews = _paged(repository, f"pulls/{pr_number}/reviews", token)
-    for review in reviews:
-        login = str(((review.get("user") or {}).get("login")) or "").casefold()
-        if login.startswith("coderabbitai") and review.get("commit_id") == head_sha:
-            print("CodeRabbit hat den aktuellen Head bereits reviewed.")
-            return False
-
-    marker = f"{MARKER_PREFIX}{head_sha} -->"
-    comments = _paged(repository, f"issues/{pr_number}/comments", token)
-    if any(marker in str(comment.get("body") or "") for comment in comments):
+    if _has_current_coderabbit_review(repository, pr_number, head_sha, token):
+        print("CodeRabbit hat den aktuellen Head bereits reviewed.")
+        return False
+    if _already_requested(repository, pr_number, head_sha, token):
         print("CodeRabbit wurde für diesen Head bereits angefordert.")
         return False
 
@@ -204,7 +239,6 @@ def request_if_green(repository: str, pr_number: int, token: str) -> bool:
 
 def main() -> int:
     """CLI entry point for the after-green CodeRabbit requester."""
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", required=True)
     parser.add_argument("--pr-number", required=True, type=int)
