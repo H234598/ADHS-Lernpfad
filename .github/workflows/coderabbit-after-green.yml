@@ -26,8 +26,8 @@ permissions:
   statuses: read
 
 concurrency:
-  group: coderabbit-after-green-${{ github.event.pull_request.number || github.event.workflow_run.pull_requests[0].number || inputs.pr_number || 'scan-open-prs' }}
-  cancel-in-progress: true
+  group: coderabbit-after-green
+  cancel-in-progress: false
 
 jobs:
   request:
