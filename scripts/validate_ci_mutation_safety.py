@@ -50,8 +50,12 @@ GIT_MUTATION = re.compile(r"\bgit\b[^\n#]*(?:\bcommit\b|\bpush\b)")
 GIT_DIFF = re.compile(r"\bgit\b[^\n#]*\bdiff\b")
 GIT_STATUS = re.compile(r"\bgit\b[^\n#]*\bstatus\b")
 AUDIT = re.compile(r"\baudit(?:[:\w-]*)?\b", re.IGNORECASE)
-AUDIT_BYPASS = re.compile(
-    r"\baudit(?:[:\w-]*)?\b[^#]*(?:\|\||;)\s*(?:true|:)(?:\s|$)",
+AUDIT_FALLBACK = re.compile(
+    r"\baudit(?:[:\w-]*)?\b[^#]*(?:\|\||;)\s*(?P<fallback>.+)$",
+    re.IGNORECASE,
+)
+BLOCKING_AUDIT_FALLBACK = re.compile(
+    r"^exit\s+(?:[1-9][0-9]*|\$\{?[A-Za-z_][A-Za-z0-9_]*\}?)\b",
     re.IGNORECASE,
 )
 CONTINUE_ON_ERROR = re.compile(
@@ -90,15 +94,20 @@ FRAGMENT_CHECKSUM = re.compile(
 )
 ARCHIVE_LISTING = re.compile(r"\btar\b[^\n]*-tzf")
 CHECKSUM_COMPARISON = re.compile(
-    r"(?:\[\[?|\btest\b)[^\n]*(?:actual|computed)(?:_payload)?_?checksum"
-    r"[^\n]*(?:==|!=|-eq|-ne)[^\n]*expected(?:_payload)?_?checksum"
-    r"|(?:\[\[?|\btest\b)[^\n]*expected(?:_payload)?_?checksum"
-    r"[^\n]*(?:==|!=|-eq|-ne)[^\n]*(?:actual|computed)(?:_payload)?_?checksum",
+    r"(?:actual|computed)(?:_payload)?_?checksum"
+    r"[^;\n]*(?:!=|-ne)[^;\n]*expected(?:_payload)?_?checksum"
+    r"|expected(?:_payload)?_?checksum"
+    r"[^;\n]*(?:!=|-ne)[^;\n]*(?:actual|computed)(?:_payload)?_?checksum",
     re.IGNORECASE,
+)
+IF_BLOCK = re.compile(
+    r"\bif\b(?P<condition>.*?)\bthen\b(?P<body>.*?)\bfi\b",
+    re.IGNORECASE | re.DOTALL,
 )
 NONZERO_EXIT = re.compile(
     r"\bexit\s+(?:[1-9][0-9]*|\$\{?[A-Za-z_][A-Za-z0-9_]*\}?)\b"
 )
+SHELL_OPERATOR_END = re.compile(r"(?:\|\||&&|;)\s*$")
 
 
 def workflow_files(root: Path) -> List[Path]:
@@ -118,6 +127,70 @@ def indentation(line: str) -> int:
     return len(line) - len(line.lstrip())
 
 
+def _yaml_noise(line: str) -> bool:
+    """Return whether a YAML line is blank or comment-only."""
+
+    return not line.strip() or line.lstrip().startswith("#")
+
+
+def _step_block_end(
+    lines: Sequence[str],
+    start: int,
+    steps_indent: int,
+    item_indent: int,
+) -> int:
+    """Return the exclusive end index of one immediate step list item."""
+
+    index = start + 1
+    while index < len(lines):
+        candidate = lines[index]
+        if _yaml_noise(candidate):
+            index += 1
+            continue
+        if indentation(candidate) <= steps_indent:
+            break
+        item = LIST_ITEM.match(candidate)
+        if item and len(item.group("indent")) == item_indent:
+            break
+        index += 1
+    return index
+
+
+def _steps_section(
+    lines: Sequence[str],
+    header_index: int,
+    steps_indent: int,
+) -> Tuple[List[StepBlock], int]:
+    """Parse immediate step items following one ``steps:`` header."""
+
+    blocks: List[StepBlock] = []
+    item_indent: Optional[int] = None
+    index = header_index + 1
+    while index < len(lines):
+        line = lines[index]
+        if _yaml_noise(line):
+            index += 1
+            continue
+        if indentation(line) <= steps_indent:
+            break
+
+        item = LIST_ITEM.match(line)
+        if not item:
+            index += 1
+            continue
+        current_indent = len(item.group("indent"))
+        if item_indent is None:
+            item_indent = current_indent
+        if current_indent != item_indent:
+            index += 1
+            continue
+
+        end = _step_block_end(lines, index, steps_indent, item_indent)
+        blocks.append(StepBlock(index + 1, end, tuple(lines[index:end])))
+        index = end
+    return blocks, index
+
+
 def workflow_step_blocks(text: str) -> List[StepBlock]:
     """Extract immediate list items below every workflow ``steps:`` key."""
 
@@ -129,45 +202,12 @@ def workflow_step_blocks(text: str) -> List[StepBlock]:
         if not header:
             index += 1
             continue
-
-        steps_indent = len(header.group("indent"))
-        item_indent: Optional[int] = None
-        index += 1
-        while index < len(lines):
-            line = lines[index]
-            if not line.strip() or line.lstrip().startswith("#"):
-                index += 1
-                continue
-            if indentation(line) <= steps_indent:
-                break
-
-            item = LIST_ITEM.match(line)
-            if not item:
-                index += 1
-                continue
-            current_indent = len(item.group("indent"))
-            if item_indent is None:
-                item_indent = current_indent
-            if current_indent != item_indent:
-                index += 1
-                continue
-
-            start = index
-            index += 1
-            while index < len(lines):
-                candidate = lines[index]
-                if candidate.strip() and not candidate.lstrip().startswith("#"):
-                    if indentation(candidate) <= steps_indent:
-                        break
-                    next_item = LIST_ITEM.match(candidate)
-                    if next_item:
-                        next_indent = len(next_item.group("indent"))
-                        if next_indent == item_indent:
-                            break
-                index += 1
-            blocks.append(
-                StepBlock(start + 1, index, tuple(lines[start:index]))
-            )
+        section, index = _steps_section(
+            lines,
+            index,
+            len(header.group("indent")),
+        )
+        blocks.extend(section)
     return blocks
 
 
@@ -180,13 +220,17 @@ def staged_diff(line: str, quiet: bool) -> bool:
     return has_diff and is_staged and (has_quiet is quiet)
 
 
-def logical_shell_lines(step: StepBlock) -> List[Tuple[int, str]]:
-    """Join common shell continuations before bypass inspection."""
+def _normalize_shell_lines(
+    numbered_lines: Sequence[Tuple[int, str]],
+    *,
+    join_operators: bool,
+) -> List[Tuple[int, str]]:
+    """Join shell continuations while preserving the first physical line."""
 
     result: List[Tuple[int, str]] = []
     buffer = ""
-    start_line = step.start_line
-    for number, line in step.active_lines():
+    start_line = 1
+    for number, line in numbered_lines:
         stripped = line.strip()
         if not stripped:
             continue
@@ -196,8 +240,8 @@ def logical_shell_lines(step: StepBlock) -> List[Tuple[int, str]]:
         if continuation:
             stripped = stripped[:-1].rstrip()
         buffer = f"{buffer} {stripped}".strip()
-        ends_with_operator = bool(re.search(r"(?:\|\||&&|;)\s*$", stripped))
-        if continuation or ends_with_operator:
+        operator_continuation = join_operators and bool(SHELL_OPERATOR_END.search(stripped))
+        if continuation or operator_continuation:
             continue
         result.append((start_line, buffer))
         buffer = ""
@@ -206,25 +250,41 @@ def logical_shell_lines(step: StepBlock) -> List[Tuple[int, str]]:
     return result
 
 
+def logical_shell_lines(step: StepBlock) -> List[Tuple[int, str]]:
+    """Normalize shell continuations and split fallback commands in a step."""
+
+    return _normalize_shell_lines(step.active_lines(), join_operators=True)
+
+
+def logical_workflow_lines(text: str) -> List[Tuple[int, str]]:
+    """Normalize physical continuations for whole-workflow mutation detection."""
+
+    numbered = [
+        (number, line)
+        for number, line in enumerate(text.splitlines(), 1)
+        if not line.lstrip().startswith("#")
+    ]
+    return _normalize_shell_lines(numbered, join_operators=False)
+
+
 def writer_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
     """Validate one Git-writing workflow step."""
 
-    active = step.active_lines()
-    mutations = [number for number, line in active if GIT_MUTATION.search(line)]
+    logical = logical_shell_lines(step)
+    mutations = [number for number, line in logical if GIT_MUTATION.search(line)]
     if not mutations:
         return []
 
-    lines = [line for _, line in active]
+    lines = [line for _, line in logical]
     anchor = mutations[0]
-    has_status = False
-    has_staged_diagnostic = False
-    for line in lines:
-        concise_status = "--short" in line or "--porcelain" in line
-        diagnostic_diff = "--name-status" in line or "--stat" in line
-        if GIT_STATUS.search(line) and concise_status:
-            has_status = True
-        if staged_diff(line, False) and diagnostic_diff:
-            has_staged_diagnostic = True
+    has_status = any(
+        GIT_STATUS.search(line) and ("--short" in line or "--porcelain" in line)
+        for line in lines
+    )
+    has_staged_diagnostic = any(
+        staged_diff(line, False) and ("--name-status" in line or "--stat" in line)
+        for line in lines
+    )
 
     issues: List[SafetyIssue] = []
     if not any(staged_diff(line, True) for line in lines):
@@ -266,10 +326,28 @@ def checksum_line(step: StepBlock) -> int:
     return step.start_line
 
 
+def _active_step_text(step: StepBlock) -> str:
+    """Return non-comment step text for semantic shell checks."""
+
+    return "\n".join(line for _, line in step.active_lines())
+
+
+def checksum_mismatch_fails_closed(text: str) -> bool:
+    """Return whether an actual/expected mismatch branch exits nonzero."""
+
+    for block in IF_BLOCK.finditer(text):
+        condition = block.group("condition")
+        if not CHECKSUM_COMPARISON.search(condition):
+            continue
+        if NONZERO_EXIT.search(block.group("body")):
+            return True
+    return False
+
+
 def payload_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
     """Validate transparent and enforced payload verification."""
 
-    text = step.text
+    text = _active_step_text(step)
     if not PAYLOAD_MARKER.search(text) or "sha256sum" not in text.lower():
         return []
 
@@ -281,9 +359,7 @@ def payload_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
     fragment_checksum = bool(FRAGMENT_CHECKSUM.search(text))
     fragments = fragment_marker and fragment_size and fragment_checksum
     archive = bool(ARCHIVE_LISTING.search(text))
-    compared = bool(CHECKSUM_COMPARISON.search(text))
-    failed_closed = bool(NONZERO_EXIT.search(text))
-    enforced = compared and failed_closed
+    enforced = checksum_mismatch_fails_closed(text)
 
     issues: List[SafetyIssue] = []
     if not actual:
@@ -324,12 +400,22 @@ def payload_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
     return issues
 
 
+def audit_fallback_masks_failure(line: str) -> bool:
+    """Return whether a fallback can replace a failed audit exit status."""
+
+    fallback = AUDIT_FALLBACK.search(line)
+    if not fallback:
+        return False
+    command = fallback.group("fallback").strip()
+    return not BLOCKING_AUDIT_FALLBACK.match(command)
+
+
 def audit_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
     """Reject attempts to soften an audit failure."""
 
     issues: List[SafetyIssue] = []
     for number, line in logical_shell_lines(step):
-        if AUDIT_BYPASS.search(line):
+        if audit_fallback_masks_failure(line):
             issues.append(
                 SafetyIssue(
                     path,
@@ -338,7 +424,7 @@ def audit_issues(step: StepBlock, path: str) -> List[SafetyIssue]:
                     "Audit darf nicht per Shell-Bypass entkräftet werden.",
                 )
             )
-    if AUDIT.search(step.text) and CONTINUE_ON_ERROR.search(step.text):
+    if AUDIT.search(_active_step_text(step)) and CONTINUE_ON_ERROR.search(step.text):
         issues.append(
             SafetyIssue(
                 path,
@@ -371,19 +457,17 @@ def validate_workflow(path: Path, root: Path) -> List[SafetyIssue]:
         issues.extend(validate_step(step, relative))
         covered.update(range(step.start_line, step.end_line + 1))
 
-    for number, line in enumerate(text.splitlines(), 1):
-        uncovered = number not in covered
-        active = not line.lstrip().startswith("#")
-        mutating = bool(GIT_MUTATION.search(line))
-        if uncovered and active and mutating:
-            issues.append(
-                SafetyIssue(
-                    relative,
-                    number,
-                    "CIW011",
-                    "Git-Mutation liegt außerhalb eines analysierbaren Schritts.",
-                )
+    for number, line in logical_workflow_lines(text):
+        if number in covered or not GIT_MUTATION.search(line):
+            continue
+        issues.append(
+            SafetyIssue(
+                relative,
+                number,
+                "CIW011",
+                "Git-Mutation liegt außerhalb eines analysierbaren Schritts.",
             )
+        )
     return issues
 
 
