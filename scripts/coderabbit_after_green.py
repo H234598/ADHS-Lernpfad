@@ -183,10 +183,16 @@ def _already_requested(
     head_sha: str,
     token: str,
 ) -> bool:
-    """Return whether the current head already has a request marker."""
+    """Return whether trusted GitHub Actions already requested this exact head."""
     marker = f"{MARKER_PREFIX}{head_sha} -->"
     comments = _paged(repository, f"issues/{pr_number}/comments", token)
-    return any(marker in str(comment.get("body") or "") for comment in comments)
+    for comment in comments:
+        login = str(((comment.get("user") or {}).get("login")) or "").casefold()
+        if login != "github-actions[bot]":
+            continue
+        if marker in str(comment.get("body") or ""):
+            return True
+    return False
 
 
 def _post_review_request(
@@ -230,6 +236,14 @@ def request_if_green(repository: str, pr_number: int, token: str) -> bool:
         return False
     if _already_requested(repository, pr_number, head_sha, token):
         print(f"PR #{pr_number}: CodeRabbit wurde für diesen Head bereits angefordert.")
+        return False
+
+    current_head = _current_same_repo_head(repository, pr_number, token)
+    if current_head != head_sha:
+        print(
+            f"PR #{pr_number}: Head wechselte nach Gate-Prüfung "
+            f"von {head_sha} auf {current_head or 'nicht verfügbar'}; kein Request."
+        )
         return False
 
     _post_review_request(repository, pr_number, head_sha, token)
