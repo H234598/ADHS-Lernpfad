@@ -220,16 +220,16 @@ def request_if_green(repository: str, pr_number: int, token: str) -> bool:
 
     reasons = _gate_reasons(repository, head_sha, token)
     if reasons:
-        print("CodeRabbit wird noch nicht angefordert:")
+        print(f"PR #{pr_number}: CodeRabbit wird noch nicht angefordert:")
         for reason in reasons:
             print(f"- {reason}")
         return False
 
     if _has_current_coderabbit_review(repository, pr_number, head_sha, token):
-        print("CodeRabbit hat den aktuellen Head bereits reviewed.")
+        print(f"PR #{pr_number}: CodeRabbit hat den aktuellen Head bereits reviewed.")
         return False
     if _already_requested(repository, pr_number, head_sha, token):
-        print("CodeRabbit wurde für diesen Head bereits angefordert.")
+        print(f"PR #{pr_number}: CodeRabbit wurde für diesen Head bereits angefordert.")
         return False
 
     _post_review_request(repository, pr_number, head_sha, token)
@@ -237,16 +237,36 @@ def request_if_green(repository: str, pr_number: int, token: str) -> bool:
     return True
 
 
+def request_all_green(repository: str, token: str) -> int:
+    """Evaluate every open same-repository PR when no event PR is available."""
+    pulls = _paged(repository, "pulls?state=open&sort=updated&direction=desc", token)
+    requested = 0
+    for pull in pulls:
+        if pull.get("state") != "open":
+            continue
+        head_repo = (((pull.get("head") or {}).get("repo") or {}).get("full_name"))
+        pr_number = pull.get("number")
+        if head_repo != repository or not isinstance(pr_number, int):
+            continue
+        if request_if_green(repository, pr_number, token):
+            requested += 1
+    print(f"After-Green-Scan abgeschlossen: {requested} Review-Request(s) ausgelöst.")
+    return requested
+
+
 def main() -> int:
     """CLI entry point for the after-green CodeRabbit requester."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", required=True)
-    parser.add_argument("--pr-number", required=True, type=int)
+    parser.add_argument("--pr-number", type=int)
     args = parser.parse_args()
     token = os.environ.get("GITHUB_TOKEN", "")
     if not token:
         raise RuntimeError("GITHUB_TOKEN fehlt")
-    request_if_green(args.repository, args.pr_number, token)
+    if args.pr_number is None:
+        request_all_green(args.repository, token)
+    else:
+        request_if_green(args.repository, args.pr_number, token)
     return 0
 
 
