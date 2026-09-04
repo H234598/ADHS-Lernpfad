@@ -1,14 +1,13 @@
-#!/usr/bin/env python3
 """Enforce safe Git writers, payload checks, and blocking audits in CI."""
 
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
-from pathlib import Path
 import re
 import shlex
 import sys
+from dataclasses import dataclass
+from pathlib import Path
 from typing import NamedTuple
 
 
@@ -76,24 +75,24 @@ class GitCommand(NamedTuple):
             "--exec-path",
         }
         while index < len(self.tokens):
-            token = self.tokens[index]
-            if token == "--":
+            argument = self.tokens[index]
+            if argument == "--":
                 index += 1
                 break
-            if token in options_with_value:
+            if argument in options_with_value:
                 index += 2
                 continue
             if any(
-                token.startswith(f"{option}=")
+                argument.startswith(f"{option}=")
                 for option in options_with_value
                 if option.startswith("--")
             ):
                 index += 1
                 continue
-            if token.startswith("-"):
+            if argument.startswith("-"):
                 index += 1
                 continue
-            return token
+            return argument
         if index < len(self.tokens):
             return self.tokens[index]
         return None
@@ -179,9 +178,13 @@ def strip_shell_comment(line: str) -> str:
         if char == '"' and not single:
             double = not double
             continue
-        if char == "#" and not single and not double:
-            if index == 0 or line[index - 1].isspace():
-                return line[:index].rstrip()
+        if (
+            char == "#"
+            and not single
+            and not double
+            and (index == 0 or line[index - 1].isspace())
+        ):
+            return line[:index].rstrip()
     return line.rstrip()
 
 
