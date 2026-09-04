@@ -1,14 +1,15 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-# CodeRabbit ist für automatische Einheiten ein verpflichtendes hartes Gate.
-# Ein deterministischer Router entscheidet nur über die Anwendbarkeit; die
-# Bedeutung von Lernkarten und die Belegbarkeit geänderter Aussagen werden
-# ausdrücklich semantisch geprüft.
+# CodeRabbit ist ein verpflichtendes hartes Gate, wird aus Kostengründen aber
+# ausschließlich explizit angefordert, nachdem alle Non-CodeRabbit-Gates des
+# aktuellen PR-Heads grün sind. Automatische und inkrementelle Reviews bleiben
+# deaktiviert; .github/workflows/coderabbit-after-green.yml übernimmt das
+# deduplizierte Review-Request pro Head-SHA.
 reviews:
   request_changes_workflow: true
   auto_review:
-    enabled: true
-    drafts: true
-    auto_incremental_review: true
+    enabled: false
+    drafts: false
+    auto_incremental_review: false
     base_branches: []
   pre_merge_checks:
     override_requested_reviewers_only: true
