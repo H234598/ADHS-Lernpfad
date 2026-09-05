@@ -8,10 +8,10 @@ prerequisites:
   - 01-Grundlagen/09-Diagnostische-Kriterien-und-Differentialdiagnostik
   - 02-Vertiefung/02-Autismus-und-ADHS-Ueberlappung
 tags: [ADHS, Lernstörung, Sprachentwicklungsstörung, intellektuelle Beeinträchtigung, Differentialdiagnostik, Neuroentwicklung, Schule]
-last_reviewed: 2026-09-04
+last_reviewed: 2026-09-05
 evidence: high
 status: consensus
-references: [WHO2024, NICE2018, Barbaresi2020, MendezFreije2024, Lueke2023, vanBergen2025]
+references: [WHO2024, NICE2018, Barbaresi2020, MendezFreije2024, Lueke2023, vanBergen2025, Young2020]
 minimum_reading_minutes: 10
 maximum_reading_minutes: 20
 ---
@@ -20,7 +20,7 @@ maximum_reading_minutes: 20
 
 ## Lernziel
 
-Du kannst schlechte Schulleistung, eine umschriebene Entwicklungsstörung schulischer Fertigkeiten, eine Sprachentwicklungsstörung und eine intellektuelle Beeinträchtigung voneinander unterscheiden. Du verstehst, warum ADHS mit diesen Bedingungen häufiger gemeinsam vorkommen kann, ohne dass eine Diagnose die andere erklärt. Außerdem kannst du beschreiben, weshalb Entwicklungsgeschichte, Leistungsprofil, Sprache, allgemeines kognitives und adaptives Funktionsniveau sowie mehrere Lebensbereiche getrennt geprüft werden müssen.
+Du kannst schlechte Schulleistung, eine umschriebene Entwicklungsstörung schulischer Fertigkeiten, eine Sprachentwicklungsstörung und eine intellektuelle Beeinträchtigung voneinander unterscheiden. Du verstehst, warum ADHS mit diesen Bedingungen gemeinsam vorkommen kann, ohne dass eine Diagnose die andere erklärt. Außerdem kannst du beschreiben, weshalb Entwicklungsgeschichte, Leistungsprofil, Sprache, allgemeines kognitives und adaptives Funktionsniveau sowie mehrere Lebensbereiche getrennt geprüft werden müssen.
 
 ## 1. Schlechte Schulleistung ist ein Ergebnis, keine Diagnose
 
@@ -35,13 +35,13 @@ Ein häufiger Fehlschluss lautet: „Wenn die Aufmerksamkeit behandelt wird, mü
 
 ## 2. Lernstörungen betreffen den Erwerb bestimmter schulischer Fertigkeiten
 
-Die ICD-11 beschreibt Entwicklungsstörungen schulischer Fertigkeiten als anhaltende und deutliche Schwierigkeiten beim Erwerb von Lesen, Schreiben oder Mathematik, die nicht allein durch mangelnde Lerngelegenheit, unzureichende Beschulung, eine Sinnesbeeinträchtigung oder eine andere naheliegende Erklärung verstanden werden können.
+Die ICD-11 führt Entwicklungsstörungen schulischer Fertigkeiten als eigenständige neuroentwicklungsbezogene Diagnosen für anhaltende und deutliche Schwierigkeiten beim Erwerb schulischer Fertigkeiten. Die Einordnung verlangt eine störungsspezifische Beurteilung und darf nicht allein aus allgemeiner Schulleistung oder aus einer ADHS-Diagnose abgeleitet werden.
 
 ADHS kann schulisches Lernen auf andere Weise erschweren: Aufmerksamkeit wird nicht stabil gehalten, Arbeitsschritte gehen verloren, Aufgaben werden nicht begonnen oder beendet, Rückmeldung wird übersehen und Übungszeit schwankt. Solche Schwierigkeiten können die gemessene Leistung verschlechtern. Sie sind aber nicht automatisch eine spezifische Lernstörung.
 
-Die aktuelle ICD-11-Grenze ist deshalb besonders nützlich: Bei gemeinsamem ADHS und einer Entwicklungsstörung schulischer Fertigkeiten sollen die Lernprobleme **nicht ausschließlich** durch Aufmerksamkeits- oder Aktivitätsprobleme erklärbar sein. Beide Diagnosen können vergeben werden, wenn die Anforderungen für beide unabhängig erfüllt sind.
+Die diagnostische Grenze ist deshalb besonders nützlich: Bei gemeinsamem ADHS und einer Entwicklungsstörung schulischer Fertigkeiten müssen die Lernprobleme als eigener Befund geprüft werden, statt sie vollständig den Aufmerksamkeits- oder Aktivitätsproblemen zuzuschreiben. Beide Diagnosen können gemeinsam vorliegen, wenn ihre jeweiligen Anforderungen erfüllt sind.
 
-Eine große niederländische Zwillings- und Geschwisterstudie von van Bergen und Kolleg:innen untersuchte ADHS, Dyslexie und Dyskalkulie. Die Bedingungen traten häufiger gemeinsam auf, als bei vollständiger Unabhängigkeit zu erwarten wäre. Kinder mit einer der Bedingungen hatten etwa zwei- bis dreimal häufiger eine zweite. Dennoch hatten die meisten betroffenen Kinder nur eine der drei Bedingungen. Modellierungen sprachen für teilweise gemeinsame genetische Einflüsse, aber nicht für eine einfache Kausalkette, nach der ADHS Dyslexie oder Dyskalkulie erzeugt.
+Eine große niederländische Zwillings- und Geschwisterstudie von van Bergen und Kolleg:innen untersuchte ADHS, Dyslexie und Dyskalkulie. In den jeweiligen diagnostischen Teilstichproben lagen die Prävalenzverhältnisse für eine zweite Bedingung zwischen 2,1 und 3,1: Kinder mit ADHS hatten gegenüber Kindern ohne ADHS 2,7-mal häufiger Dyslexie und 2,1-mal häufiger Dyskalkulie; zwischen Dyslexie und Dyskalkulie lag das Verhältnis bei 3,1. Dennoch hatten 77,3 Prozent der Kinder mit mindestens einer der drei Bedingungen nur eine davon. Für die meisten Merkmalskombinationen sprachen die genetisch informierten Modelle eher für gemeinsame genetische Einflüsse als für einfache direkte Kausaleffekte zwischen den Merkmalen.
 
 > [!important] Koexistenz ist keine Kausalrichtung
 > Ein erhöhtes gemeinsames Auftreten zeigt, dass bei auffälligem Leistungsprofil genauer hingesehen werden sollte. Es beweist weder, dass ADHS die Lernstörung verursacht, noch dass eine Lernstörung ADHS verursacht.
@@ -50,7 +50,7 @@ Eine große niederländische Zwillings- und Geschwisterstudie von van Bergen und
 
 Sprache ist für fast jede schulische Aufgabe relevant. Wer lange mündliche Anweisungen, grammatisch komplexe Sätze oder neue Wörter nicht sicher versteht, kann im Unterricht scheinbar „nicht zuhören“. Wer Schwierigkeiten hat, Gedanken sprachlich zu strukturieren, braucht möglicherweise länger für Antworten oder schriftliche Aufgaben. Umgekehrt können ADHS-bezogene Unterbrechungen und Arbeitsgedächtnisprobleme die sprachliche Leistung in einer Testsituation verschlechtern.
 
-Eine **Sprachentwicklungsstörung** wird deshalb nicht aus dem Eindruck „spricht wenig“ oder „versteht Anweisungen schlecht“ abgeleitet. Beurteilt werden Entwicklung, verschiedene Sprachkomponenten, Funktionsfolgen und mögliche erklärende Bedingungen. Die ICD-11 erkennt ausdrücklich an, dass Sprachentwicklungsstörungen häufig mit anderen Neuroentwicklungsstörungen einschließlich ADHS gemeinsam vorkommen.
+Eine **Sprachentwicklungsstörung** wird deshalb nicht aus dem Eindruck „spricht wenig“ oder „versteht Anweisungen schlecht“ abgeleitet. Beurteilt werden Entwicklung, verschiedene Sprachkomponenten, Funktionsfolgen und mögliche erklärende Bedingungen. Die ICD-11 behandelt Sprachentwicklungsstörungen und ADHS als unterscheidbare neuroentwicklungsbezogene Bedingungen, die gemeinsam auftreten können; Sprachprobleme dürfen deshalb weder automatisch aus ADHS abgeleitet noch als Gegenbeweis gegen ADHS verwendet werden.
 
 Der deutschsprachige interdisziplinäre Konsens von Lüke und Kolleg:innen unterstreicht, dass eine gemeinsame Terminologie und eine funktionsbezogene Beurteilung wichtig sind. Internationale und deutschsprachige Begriffssysteme sind nicht in jedem Detail identisch; deshalb sollte in Befunden transparent stehen, welche Kriterien und Begriffe verwendet wurden.
 
@@ -118,7 +118,7 @@ Notiere anschließend, welche Information die Hypothesen unterscheiden würde: B
 
 **Konsens:** ADHS, Entwicklungsstörungen schulischer Fertigkeiten, Sprachentwicklungsstörungen und intellektuelle Entwicklungsstörungen sind unterscheidbare Bedingungen und können gemeinsam auftreten. Schlechte Schulleistung allein beweist keine von ihnen. Diagnostik muss Entwicklung, Funktion und störungsspezifische Merkmale trennen.
 
-**Wahrscheinlich:** ADHS tritt mit Dyslexie und Dyskalkulie häufiger gemeinsam auf, als bei unabhängigen Bedingungen zu erwarten wäre. Teilweise gemeinsame genetische und kognitive Einflüsse können beitragen. Sprachschwierigkeiten sind bei ADHS-Gruppen ebenfalls relevant und verdienen bei klinischem Verdacht eine eigene Beurteilung.
+**Wahrscheinlich:** ADHS tritt mit Dyslexie und Dyskalkulie häufiger gemeinsam auf, als bei unabhängigen Bedingungen zu erwarten wäre. Teilweise gemeinsame genetische Einflüsse können für die meisten der in der großen niederländischen Studie untersuchten Merkmalskombinationen beitragen. Sprachschwierigkeiten sind bei ADHS-Gruppen ebenfalls relevant und verdienen bei klinischem Verdacht eine eigene Beurteilung.
 
 **Umstritten oder begrenzt:** Exakte Koexistenzraten hängen stark von Alter, Stichprobe, Diagnosekriterien, Sprache und Testverfahren ab. Für einzelne Sprachkomponenten sind Studien heterogen. Aus überlappenden kognitiven Profilen lässt sich keine zuverlässige Individualdiagnose ableiten.
 
@@ -126,7 +126,7 @@ Notiere anschließend, welche Information die Hypothesen unterscheiden würde: B
 
 ## 9. Verbindung zu Autismus
 
-Autismus kann ebenfalls mit Sprach-, Lern- und intellektuellen Beeinträchtigungen sowie mit ADHS koexistieren. Ein Sprachproblem ist aber kein Autismusnachweis, und eine intellektuelle Beeinträchtigung ist kein notwendiger Bestandteil von Autismus. Bei komplexen Profilen müssen soziale Kommunikation, restriktive oder repetitive Merkmale, Sprache, ADHS-Kernmerkmale und kognitives beziehungsweise adaptives Funktionsniveau als getrennte Dimensionen geprüft werden.
+ADHS und Autismus können gemeinsam auftreten und müssen anhand ihrer jeweils eigenen Kernkriterien, Entwicklungsgeschichte und funktionellen Folgen beurteilt werden. Ein Sprach-, Lern- oder intellektuelles Problem entscheidet daher nicht über eine Autismusdiagnose; dafür müssen die autistischen Kernmerkmale gesondert geprüft werden. [[references/Young2020|Young et al. 2020]] beschreibt diese diagnostische Trennung und Koexistenz ausdrücklich.
 
 Eine Parkinson-Verbindung wird in dieser Einheit bewusst nicht konstruiert: Die hier behandelten Störungen sind entwicklungsbezogen; ein neu erworbener Verlust zuvor vorhandener Sprache oder schulischer Fertigkeiten verlangt eine andere medizinische beziehungsweise neurologische Abklärung.
 
@@ -149,6 +149,7 @@ Weil schlechte Mathematikleistung mehrere Ursachen haben kann. ADHS kann Übung,
 - [[references/vanBergen2025|van Bergen et al. 2025]] – große Zwillings- und Geschwisterstudie zu Koexistenz und möglichen gemeinsamen Einflüssen von ADHS, Dyslexie und Dyskalkulie.
 - [[references/MendezFreije2024|Méndez-Freije et al. 2024]] – systematische Übersicht zu Sprachleistungen bei ADHS und Entwicklungsstörung der Sprache.
 - [[references/Lueke2023|Lüke et al. 2023]] – deutschsprachiger interdisziplinärer Konsens zu Definition und Terminologie von Sprachentwicklungsstörungen.
+- [[references/Young2020|Young et al. 2020]] – Expert:innenkonsens zur getrennten Diagnostik und anerkannten Koexistenz von ADHS und Autismus.
 
 ## Merksatz
 
