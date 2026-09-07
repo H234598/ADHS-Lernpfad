@@ -35,7 +35,7 @@ Ein häufiger Fehlschluss lautet: „Wenn die Aufmerksamkeit behandelt wird, mü
 
 ## 2. Lernstörungen betreffen den Erwerb bestimmter schulischer Fertigkeiten
 
-Die ICD-11 führt Entwicklungsstörungen schulischer Fertigkeiten als eigenständige neuroentwicklungsbezogene Diagnosen für anhaltende und deutliche Schwierigkeiten beim Erwerb schulischer Fertigkeiten. Die Einordnung verlangt eine störungsspezifische Beurteilung und darf nicht allein aus allgemeiner Schulleistung oder aus einer ADHS-Diagnose abgeleitet werden.
+Die ICD-11 beschreibt Entwicklungsstörungen schulischer Fertigkeiten als anhaltende und deutliche Schwierigkeiten beim Erwerb von Lesen, Schreiben oder Mathematik, die nicht allein durch mangelnde Lerngelegenheit, unzureichende Beschulung, eine Sinnesbeeinträchtigung oder eine andere naheliegende Erklärung verstanden werden können. Die Einordnung verlangt eine störungsspezifische Beurteilung und darf nicht allein aus allgemeiner Schulleistung oder aus einer ADHS-Diagnose abgeleitet werden.
 
 ADHS kann schulisches Lernen auf andere Weise erschweren: Aufmerksamkeit wird nicht stabil gehalten, Arbeitsschritte gehen verloren, Aufgaben werden nicht begonnen oder beendet, Rückmeldung wird übersehen und Übungszeit schwankt. Solche Schwierigkeiten können die gemessene Leistung verschlechtern. Sie sind aber nicht automatisch eine spezifische Lernstörung.
 
