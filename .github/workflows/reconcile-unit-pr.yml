@@ -1,0 +1,161 @@
+name: Reconcile automated unit PR state
+
+on:
+  # zizmor: ignore[dangerous-triggers] -- Same-repo unit branch + marker gate;
+  # trusted implementation is always loaded from main and no PR-controlled code runs.
+  pull_request_target:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Bereits geschlossenen automatischen Unit-PR reconciliieren
+        required: true
+        type: number
+
+permissions:
+  contents: write
+  pull-requests: read
+  checks: read
+
+concurrency:
+  group: automation-status
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    name: Reconcile closed automated unit PR
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.base.ref == 'main' &&
+        startsWith(github.event.pull_request.head.ref, 'agent/einheit-') &&
+        contains(github.event.pull_request.body, 'adhs-daily-unit')
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out trusted reconciliation implementation from main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+
+      - name: Determine pull request
+        id: pr
+        shell: bash
+        env:
+          INPUT_PR: ${{ inputs.pr_number }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -Eeuo pipefail
+          PR_NUMBER="${INPUT_PR:-${EVENT_PR:-}}"
+          if [[ ! "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo 'Pull-Request-Nummer fehlt oder ist ungültig.' >&2
+            exit 1
+          fi
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Attach canonical automation-status worktree
+        id: status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          status_tree="$RUNNER_TEMP/automation-status-tree"
+          git fetch --depth=1 origin automation-status
+          git worktree add --detach "$status_tree" FETCH_HEAD
+          echo "tree=$status_tree" >> "$GITHUB_OUTPUT"
+          echo "AUTOMATION_STATUS_ROOT=$status_tree/automation/status" >> "$GITHUB_ENV"
+
+      - name: Evaluate closed PR against canonical run and second gates
+        id: evaluate
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TARGET_PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -Eeuo pipefail
+          mkdir -p build
+          python scripts/unit_pr_reconciliation.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --pr-number "$TARGET_PR" \
+            --status-root "$AUTOMATION_STATUS_ROOT" \
+            --evaluate \
+            --output build/unit-pr-reconciliation-evaluation.json
+          action="$(jq -r '.decision.action' build/unit-pr-reconciliation-evaluation.json)"
+          echo "action=$action" >> "$GITHUB_OUTPUT"
+
+      - name: Apply decision through the existing CAS state machine
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          python scripts/unit_pr_reconciliation.py \
+            --status-root "$AUTOMATION_STATUS_ROOT" \
+            --apply-decision build/unit-pr-reconciliation-evaluation.json \
+            --output build/unit-pr-reconciliation-result.json
+
+      - name: Validate canonical run and latest mirror
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          run_id="$(jq -r '.run_id' build/unit-pr-reconciliation-evaluation.json)"
+          run_file="$AUTOMATION_STATUS_ROOT/generator/${run_id}.json"
+          latest_file="$AUTOMATION_STATUS_ROOT/generator/latest.json"
+          python scripts/validate_runtime_status.py "$run_file"
+          python scripts/validate_runtime_status.py "$latest_file"
+          python - "$run_file" "$latest_file" <<'PY'
+          import json
+          from pathlib import Path
+          import sys
+
+          run = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          latest = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
+          keys = ("workflow", "run_id", "revision")
+          if any(run.get(key) != latest.get(key) for key in keys):
+              raise SystemExit("Laufdatei und latest.json besitzen nicht dieselbe kanonische Revision")
+          PY
+
+      - name: Persist reconciled status without force push
+        shell: bash
+        env:
+          STATUS_TREE: ${{ steps.status.outputs.tree }}
+          TARGET_PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C "$STATUS_TREE" add -A -f automation/status
+          if git -C "$STATUS_TREE" diff --cached --quiet; then
+            echo 'Kanonischer Status war bereits reconciliert; kein Commit erforderlich.'
+            exit 0
+          fi
+          git -C "$STATUS_TREE" commit -m "status: reconcile automated unit PR #${TARGET_PR}"
+          git -C "$STATUS_TREE" push origin HEAD:refs/heads/automation-status
+
+      - name: Report reconciliation result
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## Unit-PR-Reconciliation'
+            echo
+            if [[ -f build/unit-pr-reconciliation-result.json ]]; then
+              echo '```json'
+              cat build/unit-pr-reconciliation-result.json
+              echo '```'
+            elif [[ -f build/unit-pr-reconciliation-evaluation.json ]]; then
+              echo '```json'
+              cat build/unit-pr-reconciliation-evaluation.json
+              echo '```'
+            else
+              echo 'Kein Reconciliation-Bericht erzeugt.'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
