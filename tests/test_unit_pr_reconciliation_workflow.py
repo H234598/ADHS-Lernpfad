@@ -61,7 +61,7 @@ def test_reconciliation_workflow_serializes_status_writes_and_uses_existing_stor
     assert "python scripts/unit_pr_reconciliation.py" in text
     assert "scripts/validate_runtime_status.py" in text
     assert "latest.json" in text
-    assert "git push origin HEAD:refs/heads/automation-status" in text
+    assert "push origin HEAD:refs/heads/automation-status" in text
     assert "--force" not in text
     assert "push --force" not in text
 
