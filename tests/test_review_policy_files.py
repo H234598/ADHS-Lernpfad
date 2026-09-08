@@ -164,16 +164,24 @@ def test_remark_lint_sanitizes_project_specific_obsidian_syntax() -> None:
     assert "--files" in script
 
 
-def test_gate_workflows_are_valid_yaml_and_read_only() -> None:
-    for relative in (
-        ".github/workflows/remark-lint.yml",
-        ".github/workflows/coderabbit-hard-gate.yml",
-    ):
-        text = (ROOT / relative).read_text(encoding="utf-8")
-        parsed = yaml.safe_load(text)
-        assert isinstance(parsed, dict)
-        assert "jobs" in parsed
-        assert "write" not in text
+def test_gate_workflows_are_valid_yaml_and_least_privilege() -> None:
+    remark = yaml.safe_load(
+        (ROOT / ".github/workflows/remark-lint.yml").read_text(encoding="utf-8")
+    )
+    coderabbit = yaml.safe_load(
+        (ROOT / ".github/workflows/coderabbit-hard-gate.yml").read_text(encoding="utf-8")
+    )
+    assert isinstance(remark, dict) and "jobs" in remark
+    assert isinstance(coderabbit, dict) and "jobs" in coderabbit
+    assert "write" not in (ROOT / ".github/workflows/remark-lint.yml").read_text(encoding="utf-8")
+    assert coderabbit["permissions"] == {
+        "contents": "read",
+        "pull-requests": "read",
+        "issues": "read",
+        "checks": "write",
+        "statuses": "read",
+    }
+    assert "write" not in str({k: v for k, v in coderabbit["permissions"].items() if k != "checks"})
 
 
 def test_coderabbit_gate_uses_trusted_main_checkout() -> None:
