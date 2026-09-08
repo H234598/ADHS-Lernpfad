@@ -117,8 +117,10 @@ def evaluate_snapshot(
             required_checks=decision.required_checks,
             reasons=(
                 *decision.reasons,
-                "Der Merge-Commit ist nicht als Bestandteil des aktuellen main "
-                "nachgewiesen.",
+                (
+                    "Der Merge-Commit ist nicht als Bestandteil des aktuellen main "
+                    "nachgewiesen."
+                ),
             ),
         )
 
@@ -270,40 +272,40 @@ def _load_object(path: Path) -> dict[str, Any]:
 def main() -> int:
     """Evaluate, prepare, or finalize one reconciliation snapshot."""
 
-    args = _parse_args()
-    store = StatusStore(args.status_root)
-    if args.evaluate:
-        payload = evaluate_snapshot(
-            repository=args.repository,
-            pr_number=args.pr_number,
-            token=args.token,
-            store=store,
-        )
-    elif args.prepare_decision:
-        payload = _load_object(args.prepare_decision)
-        status = prepare_snapshot(snapshot=payload, store=store)
-        payload = {**payload, "result_status": status}
-    else:
-        payload = _load_object(args.finalize_cleanup)
-        status = finalize_snapshot(
-            prepared=payload,
-            store=store,
-            branch_exists=args.branch_exists,
-        )
-        payload = {**payload, "result_status": status}
+    try:
+        args = _parse_args()
+        store = StatusStore(args.status_root)
+        if args.evaluate:
+            payload = evaluate_snapshot(
+                repository=args.repository,
+                pr_number=args.pr_number,
+                token=args.token,
+                store=store,
+            )
+        elif args.prepare_decision:
+            payload = _load_object(args.prepare_decision)
+            status = prepare_snapshot(snapshot=payload, store=store)
+            payload = {**payload, "result_status": status}
+        else:
+            payload = _load_object(args.finalize_cleanup)
+            status = finalize_snapshot(
+                prepared=payload,
+                store=store,
+                branch_exists=args.branch_exists,
+            )
+            payload = {**payload, "result_status": status}
 
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    print(json.dumps(payload, ensure_ascii=False, indent=2))
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+    except RevisionConflict as exc:
+        print(f"CAS-Konflikt: {exc}")
+        return 20
     return 0
 
 
 if __name__ == "__main__":
-    try:
-        raise SystemExit(main())
-    except RevisionConflict as exc:
-        print(f"CAS-Konflikt: {exc}")
-        raise SystemExit(20) from exc
+    raise SystemExit(main())
