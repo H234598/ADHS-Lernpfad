@@ -42,7 +42,7 @@ _RULESET_TARGET = (
     / "rulesets"
     / "main-required-gates.target.json"
 )
-REQUIRED_CHECKS = tuple(required_checks(load_json(_RULESET_TARGET)))
+REQUIRED_CHECKS = required_checks(load_json(_RULESET_TARGET))
 FINAL_STATES = {"success", "blocked", "failed", "recovered"}
 UNIT_MARKER = "<!-- adhs-daily-unit -->"
 UNIT_BRANCH_RE = re.compile(r"^agent/einheit-[A-Za-z0-9._/-]+$")
@@ -95,6 +95,11 @@ def select_latest_required_checks(
             continue
         if str(run.get("head_sha") or "") != head_sha:
             continue
+        expected_integration = REQUIRED_CHECKS[name]
+        if expected_integration is not None:
+            app_id = _mapping(run.get("app")).get("id")
+            if app_id != expected_integration:
+                continue
         current = latest.get(name)
         if current is None or _creation_key(run) >= _creation_key(current):
             latest[name] = run
