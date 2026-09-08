@@ -11,6 +11,7 @@ import re
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 try:  # Package import in tests; direct script import in trusted workflows.
@@ -22,6 +23,7 @@ try:  # Package import in tests; direct script import in trusted workflows.
         make_recovery,
         read_status,
     )
+    from .ruleset_contract import load_json, required_checks
 except ImportError:  # pragma: no cover - direct command-line execution
     from automation_status import (  # type: ignore
         RevisionConflict as _RevisionConflict,
@@ -31,15 +33,16 @@ except ImportError:  # pragma: no cover - direct command-line execution
         make_recovery,
         read_status,
     )
+    from ruleset_contract import load_json, required_checks  # type: ignore
 
 
-REQUIRED_CHECKS = (
-    "Validate and build",
-    "Build all download formats",
-    "Remark lint (blocking)",
-    "CodeRabbit review gate (blocking)",
-    "Learning card policy (blocking)",
+_RULESET_TARGET = (
+    Path(__file__).resolve().parents[1]
+    / "automation"
+    / "rulesets"
+    / "main-required-gates.target.json"
 )
+REQUIRED_CHECKS = tuple(required_checks(load_json(_RULESET_TARGET)))
 FINAL_STATES = {"success", "blocked", "failed", "recovered"}
 UNIT_MARKER = "<!-- adhs-daily-unit -->"
 UNIT_BRANCH_RE = re.compile(r"^agent/einheit-[A-Za-z0-9._/-]+$")
@@ -190,8 +193,10 @@ def _closed_pr_precondition(
             merge_sha=None,
             required_checks={},
             reasons=(
-                "Der zum laufenden Generatorstatus gehörende Unit-PR wurde "
-                "ohne Merge geschlossen.",
+                (
+                    "Der zum laufenden Generatorstatus gehörende Unit-PR wurde "
+                    "ohne Merge geschlossen."
+                ),
             ),
         )
     return None
@@ -277,8 +282,10 @@ def evaluate_closed_unit_pr(
         merge_sha=merge_sha,
         required_checks=summaries,
         reasons=(
-            "PR wurde mit unverändertem Lauf-Head nach vollständig grüner "
-            "zweiter Gate-Runde gemergt.",
+            (
+                "PR wurde mit unverändertem Lauf-Head nach vollständig grüner "
+                "zweiter Gate-Runde gemergt."
+            ),
         ),
     )
 
