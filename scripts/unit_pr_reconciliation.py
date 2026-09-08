@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Reconcile externally closed automated unit pull requests.
 
 The decision layer is deliberately side-effect free. Persistence uses the
@@ -8,14 +7,14 @@ its normal CAS/revision contract instead of creating a parallel state machine.
 
 from __future__ import annotations
 
+import re
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
-import re
-from typing import Any, Callable, Iterable, Mapping
+from typing import Any
 
 try:  # Package import in tests; direct script import in trusted workflows.
     from .automation_status import (
-        RevisionConflict,
         StatusStore,
         make_artifact,
         make_error,
@@ -24,7 +23,6 @@ try:  # Package import in tests; direct script import in trusted workflows.
     )
 except ImportError:  # pragma: no cover - direct command-line execution
     from automation_status import (  # type: ignore
-        RevisionConflict,
         StatusStore,
         make_artifact,
         make_error,
@@ -121,7 +119,12 @@ def _check_summary(run: Mapping[str, Any] | None) -> dict[str, str]:
     }
 
 
-def _ignore(code: str, *, passed: bool = False, reason: str) -> ReconciliationDecision:
+def _ignore(
+    code: str,
+    *,
+    passed: bool = False,
+    reason: str,
+) -> ReconciliationDecision:
     return ReconciliationDecision(
         action="ignore",
         passed=passed,
@@ -148,6 +151,75 @@ def _matches_status(status: Mapping[str, Any], pull: Mapping[str, Any]) -> bool:
     )
 
 
+def _closed_pr_precondition(
+    status: Mapping[str, Any],
+    pull_request: Mapping[str, Any],
+) -> ReconciliationDecision | None:
+    """Return an early reconciliation decision when the snapshot is ineligible."""
+
+    state = str(status.get("status") or "")
+    if state in FINAL_STATES:
+        return _ignore(
+            "run_already_final",
+            passed=state == "success",
+            reason="Der kanonische Generatorlauf ist bereits final.",
+        )
+    if not _matches_status(status, pull_request):
+        return _ignore(
+            "pr_does_not_match_status",
+            reason=(
+                "PR-Nummer, Head, Branch, Base oder Provenienzmarker passen "
+                "nicht zum Lauf."
+            ),
+        )
+    if str(pull_request.get("state") or "").casefold() != "closed":
+        return _ignore(
+            "pr_not_closed",
+            reason="Reconciliation gilt ausschließlich für geschlossene Unit-PRs.",
+        )
+    if not (
+        bool(pull_request.get("merged"))
+        or bool(pull_request.get("merged_at"))
+    ):
+        return ReconciliationDecision(
+            action="block_closed_without_merge",
+            passed=False,
+            code="unit_pr_closed_without_merge",
+            merge_sha=None,
+            required_checks={},
+            reasons=(
+                "Der zum laufenden Generatorstatus gehörende Unit-PR wurde "
+                "ohne Merge geschlossen.",
+            ),
+        )
+    return None
+
+
+def _second_round_reasons(
+    summaries: Mapping[str, Mapping[str, str]],
+    *,
+    ready_at: datetime | None,
+) -> list[str]:
+    """Explain every missing or stale second-round gate."""
+
+    reasons: list[str] = []
+    if ready_at is None:
+        reasons.append("Zeitpunkt von Ready for review fehlt oder ist ungültig.")
+
+    for name in REQUIRED_CHECKS:
+        summary = summaries[name]
+        if summary["state"] != "success":
+            reasons.append(f"Required Check {name} ist {summary['state']}.")
+            continue
+        created_at = _timestamp(summary["created_at"])
+        if ready_at is None or created_at is None or created_at <= ready_at:
+            reasons.append(
+                f"Required Check {name} ist nicht eindeutig Teil der zweiten "
+                "Runde nach Ready for review."
+            )
+    return reasons
+
+
 def evaluate_closed_unit_pr(
     status: Mapping[str, Any],
     pull_request: Mapping[str, Any],
@@ -160,37 +232,9 @@ def evaluate_closed_unit_pr(
     ``recovery_ready_for_review_at`` timestamp. Any uncertainty is fail-closed.
     """
 
-    if str(status.get("status") or "") in FINAL_STATES:
-        return _ignore(
-            "run_already_final",
-            passed=str(status.get("status")) == "success",
-            reason="Der kanonische Generatorlauf ist bereits final.",
-        )
-
-    if not _matches_status(status, pull_request):
-        return _ignore(
-            "pr_does_not_match_status",
-            reason="PR-Nummer, Head, Branch, Base oder Provenienzmarker passen nicht zum Lauf.",
-        )
-
-    if str(pull_request.get("state") or "").casefold() != "closed":
-        return _ignore(
-            "pr_not_closed",
-            reason="Reconciliation gilt ausschließlich für geschlossene Unit-PRs.",
-        )
-
-    merged = bool(pull_request.get("merged")) or bool(pull_request.get("merged_at"))
-    if not merged:
-        return ReconciliationDecision(
-            action="block_closed_without_merge",
-            passed=False,
-            code="unit_pr_closed_without_merge",
-            merge_sha=None,
-            required_checks={},
-            reasons=(
-                "Der zum laufenden Generatorstatus gehörende Unit-PR wurde ohne Merge geschlossen.",
-            ),
-        )
+    early = _closed_pr_precondition(status, pull_request)
+    if early is not None:
+        return early
 
     merge_sha = str(pull_request.get("merge_commit_sha") or "")
     if not SHA_RE.fullmatch(merge_sha):
@@ -208,22 +252,11 @@ def evaluate_closed_unit_pr(
     metrics = _mapping(status.get("metrics"))
     ready_at = _timestamp(metrics.get("recovery_ready_for_review_at"))
     selected = select_latest_required_checks(check_runs, head_sha=head_sha)
-    summaries = {name: _check_summary(selected.get(name)) for name in REQUIRED_CHECKS}
-
-    reasons: list[str] = []
-    if ready_at is None:
-        reasons.append("Zeitpunkt von Ready for review fehlt oder ist ungültig.")
-
-    for name in REQUIRED_CHECKS:
-        summary = summaries[name]
-        if summary["state"] != "success":
-            reasons.append(f"Required Check {name} ist {summary['state']}.")
-            continue
-        created_at = _timestamp(summary["created_at"])
-        if ready_at is None or created_at is None or created_at <= ready_at:
-            reasons.append(
-                f"Required Check {name} ist nicht eindeutig Teil der zweiten Runde nach Ready for review."
-            )
+    summaries = {
+        name: _check_summary(selected.get(name))
+        for name in REQUIRED_CHECKS
+    }
+    reasons = _second_round_reasons(summaries, ready_at=ready_at)
 
     if reasons:
         return ReconciliationDecision(
@@ -242,7 +275,8 @@ def evaluate_closed_unit_pr(
         merge_sha=merge_sha,
         required_checks=summaries,
         reasons=(
-            "PR wurde mit unverändertem Lauf-Head nach vollständig grüner zweiter Gate-Runde gemergt.",
+            "PR wurde mit unverändertem Lauf-Head nach vollständig grüner "
+            "zweiter Gate-Runde gemergt.",
         ),
     )
 
@@ -258,6 +292,8 @@ def _assert_owned_revision(
     current = read_status(store.path_for(workflow, run_id))
     current_revision = int(current["revision"])
     if current_revision != int(last_written_revision):
+        from automation_status import RevisionConflict  # local to direct/test mode
+
         raise RevisionConflict(
             f"Reconciliation erwartete eigene Revision {last_written_revision}, "
             f"vorhanden {current_revision}"
@@ -282,6 +318,109 @@ def _check_artifacts(decision: ReconciliationDecision) -> list[dict[str, Any]]:
             )
         )
     return artifacts
+
+
+def _blocked_reconciliation(
+    store: StatusStore,
+    *,
+    workflow: str,
+    run_id: str,
+    decision: ReconciliationDecision,
+    expected_revision: int,
+    repository: str,
+    main_sha: str | None,
+    branch_exists: bool,
+) -> dict[str, Any]:
+    """Persist a closed-PR state that requires manual intervention."""
+
+    phase = (
+        "merge"
+        if decision.action == "block_merged_outside_policy"
+        else "cleanup"
+    )
+    message = "; ".join(decision.reasons) or (
+        "Geschlossener Unit-PR erfordert manuelle Klärung."
+    )
+    error = make_error(
+        "repository_state",
+        message,
+        phase=phase,
+        code=decision.code,
+        retryable=False,
+    )
+    recovery = make_recovery(
+        "manual_intervention",
+        "Geschlossenen Unit-PR und kanonischen Generatorstatus prüfen; "
+        "keinen neuen Inhalt erzeugen.",
+        resume_phase=phase,
+        block_next_run=True,
+        new_content_required=False,
+    )
+    artifacts: list[dict[str, Any]] = []
+    if decision.merge_sha and SHA_RE.fullmatch(decision.merge_sha):
+        artifacts.append(
+            make_artifact(
+                "commit",
+                decision.merge_sha,
+                url=(
+                    f"https://github.com/{repository}/commit/"
+                    f"{decision.merge_sha}"
+                ),
+                reusable=True,
+            )
+        )
+    metrics: dict[str, Any] = {
+        "automatic_unit_pull_request_open": False,
+        "next_generator_blocked": True,
+        "branch_still_exists": bool(branch_exists),
+    }
+    if isinstance(main_sha, str) and SHA_RE.fullmatch(main_sha):
+        metrics["current_main_commit"] = main_sha
+    return store.update(
+        workflow,
+        run_id,
+        status="blocked",
+        phase=phase,
+        expected_revision=expected_revision,
+        complete_previous_phase=False,
+        metrics=metrics,
+        artifacts=artifacts,
+        error=error,
+        recovery=recovery,
+    )
+
+
+def _validate_success_inputs(
+    decision: ReconciliationDecision,
+    *,
+    main_sha: str | None,
+    main_contains_merge: bool | None,
+) -> tuple[str, str]:
+    """Validate success evidence before the first CAS mutation."""
+
+    if decision.action != "complete_merged_run" or not decision.passed:
+        raise ValueError(
+            "Unbekannte oder inkonsistente Reconciliation-Aktion: "
+            f"{decision.action}"
+        )
+    if not decision.merge_sha or not SHA_RE.fullmatch(decision.merge_sha):
+        raise ValueError(
+            "Erfolgreiche Reconciliation benötigt einen Merge-Commit"
+        )
+    if not isinstance(main_sha, str) or not SHA_RE.fullmatch(main_sha):
+        raise ValueError(
+            "Erfolgreiche Reconciliation benötigt einen aktuellen main-Commit"
+        )
+    if main_contains_merge is False:
+        raise ValueError(
+            "Merge-Commit ist nicht als Bestandteil von main nachgewiesen"
+        )
+    if main_contains_merge is None and main_sha != decision.merge_sha:
+        raise ValueError(
+            "Merge-Commit ist ohne expliziten Ancestor-Nachweis nicht auf main "
+            "verifiziert"
+        )
+    return decision.merge_sha, main_sha
 
 
 def apply_reconciliation(
@@ -312,69 +451,28 @@ def apply_reconciliation(
         raise ValueError("Repository passt nicht zum kanonischen Lauf")
     if int(context.get("pr_number") or 0) != int(pr_number):
         raise ValueError("Pull Request passt nicht zum kanonischen Lauf")
-
     if decision.action == "ignore":
         return current
-
-    if decision.action in {"block_merged_outside_policy", "block_closed_without_merge"}:
-        phase = "merge" if decision.action == "block_merged_outside_policy" else "cleanup"
-        message = "; ".join(decision.reasons) or "Geschlossener Unit-PR erfordert manuelle Klärung."
-        error = make_error(
-            "repository_state",
-            message,
-            phase=phase,
-            code=decision.code,
-            retryable=False,
-        )
-        recovery = make_recovery(
-            "manual_intervention",
-            "Geschlossenen Unit-PR und kanonischen Generatorstatus prüfen; keinen neuen Inhalt erzeugen.",
-            resume_phase=phase,
-            block_next_run=True,
-            new_content_required=False,
-        )
-        artifacts: list[dict[str, Any]] = []
-        if decision.merge_sha and SHA_RE.fullmatch(decision.merge_sha):
-            artifacts.append(
-                make_artifact(
-                    "commit",
-                    decision.merge_sha,
-                    url=f"https://github.com/{repository}/commit/{decision.merge_sha}",
-                    reusable=True,
-                )
-            )
-        return store.update(
-            workflow,
-            run_id,
-            status="blocked",
-            phase=phase,
+    if decision.action in {
+        "block_merged_outside_policy",
+        "block_closed_without_merge",
+    }:
+        return _blocked_reconciliation(
+            store,
+            workflow=workflow,
+            run_id=run_id,
+            decision=decision,
             expected_revision=expected_revision,
-            complete_previous_phase=False,
-            metrics={
-                "automatic_unit_pull_request_open": False,
-                "next_generator_blocked": True,
-                "branch_still_exists": bool(branch_exists),
-                **(
-                    {"current_main_commit": main_sha}
-                    if isinstance(main_sha, str) and SHA_RE.fullmatch(main_sha)
-                    else {}
-                ),
-            },
-            artifacts=artifacts,
-            error=error,
-            recovery=recovery,
+            repository=repository,
+            main_sha=main_sha,
+            branch_exists=branch_exists,
         )
 
-    if decision.action != "complete_merged_run" or not decision.passed:
-        raise ValueError(f"Unbekannte oder inkonsistente Reconciliation-Aktion: {decision.action}")
-    if not decision.merge_sha or not SHA_RE.fullmatch(decision.merge_sha):
-        raise ValueError("Erfolgreiche Reconciliation benötigt einen Merge-Commit")
-    if not isinstance(main_sha, str) or not SHA_RE.fullmatch(main_sha):
-        raise ValueError("Erfolgreiche Reconciliation benötigt einen aktuellen main-Commit")
-    if main_contains_merge is False:
-        raise ValueError("Merge-Commit ist nicht als Bestandteil von main nachgewiesen")
-    if main_contains_merge is None and main_sha != decision.merge_sha:
-        raise ValueError("Merge-Commit ist ohne expliziten Ancestor-Nachweis nicht auf main verifiziert")
+    merge_sha, verified_main_sha = _validate_success_inputs(
+        decision,
+        main_sha=main_sha,
+        main_contains_merge=main_contains_merge,
+    )
 
     verified = store.update(
         workflow,
@@ -393,23 +491,26 @@ def apply_reconciliation(
     merge_artifacts = [
         make_artifact(
             "commit",
-            decision.merge_sha,
-            url=f"https://github.com/{repository}/commit/{decision.merge_sha}",
+            merge_sha,
+            url=f"https://github.com/{repository}/commit/{merge_sha}",
             reusable=True,
         ),
         make_artifact(
             "report",
-            f"main:{main_sha}",
+            f"main:{verified_main_sha}",
             url=f"https://github.com/{repository}/tree/main",
             reusable=True,
         ),
     ]
-    if main_sha != decision.merge_sha:
+    if verified_main_sha != merge_sha:
         merge_artifacts.append(
             make_artifact(
                 "report",
-                f"main-contains:{decision.merge_sha}@{main_sha}",
-                url=f"https://github.com/{repository}/compare/{decision.merge_sha}...main",
+                f"main-contains:{merge_sha}@{verified_main_sha}",
+                url=(
+                    f"https://github.com/{repository}/compare/"
+                    f"{merge_sha}...main"
+                ),
                 reusable=True,
             )
         )
@@ -420,11 +521,14 @@ def apply_reconciliation(
         status="running",
         phase="merge",
         expected_revision=_assert_owned_revision(
-            store, workflow, run_id, int(verified["revision"])
+            store,
+            workflow,
+            run_id,
+            int(verified["revision"]),
         ),
         metrics={
-            "recovery_merge_commit": decision.merge_sha,
-            "current_main_commit": main_sha,
+            "recovery_merge_commit": merge_sha,
+            "current_main_commit": verified_main_sha,
             "next_generator_blocked": True,
         },
         artifacts=merge_artifacts,
@@ -436,7 +540,10 @@ def apply_reconciliation(
         status="running",
         phase="cleanup",
         expected_revision=_assert_owned_revision(
-            store, workflow, run_id, int(merged["revision"])
+            store,
+            workflow,
+            run_id,
+            int(merged["revision"]),
         ),
         metrics={
             "automatic_unit_pull_request_open": False,
@@ -450,7 +557,7 @@ def apply_reconciliation(
     if branch_cleanup is not None and effective_branch_exists:
         try:
             effective_branch_exists = bool(branch_cleanup())
-        except Exception:  # Cleanup failure is reportable but must not undo merge.
+        except (OSError, RuntimeError, ValueError):
             effective_branch_exists = True
 
     return store.update(
@@ -459,12 +566,15 @@ def apply_reconciliation(
         status="success",
         phase="complete",
         expected_revision=_assert_owned_revision(
-            store, workflow, run_id, int(cleanup["revision"])
+            store,
+            workflow,
+            run_id,
+            int(cleanup["revision"]),
         ),
         metrics={
             "recovery_second_ci_state": "success",
             "automatic_unit_pull_request_open": False,
-            "current_main_commit": main_sha,
+            "current_main_commit": verified_main_sha,
             "branch_still_exists": effective_branch_exists,
             "recovery_cleanup_complete": True,
             "next_generator_blocked": False,
@@ -475,7 +585,7 @@ def apply_reconciliation(
     )
 
 
-if __name__ == "__main__":  # pragma: no cover - exercised by trusted Actions workflow
+if __name__ == "__main__":  # pragma: no cover - trusted Actions workflow
     from unit_pr_reconciliation_cli import main
 
     raise SystemExit(main())
