@@ -4,8 +4,18 @@ from pathlib import Path
 
 import pytest
 
-from scripts.automation_status import RevisionConflict, StatusStore, default_context, read_status
-from scripts.unit_pr_reconciliation import ReconciliationDecision, apply_reconciliation
+from scripts.automation_status import (
+    RevisionConflict,
+    StatusStore,
+    default_context,
+    read_status,
+)
+from scripts.unit_pr_reconciliation import (
+    ReconciliationDecision,
+    apply_reconciliation,
+    finalize_reconciliation,
+    prepare_reconciliation,
+)
 
 HEAD = "a" * 40
 MERGE = "b" * 40
@@ -50,17 +60,34 @@ def _green_decision() -> ReconciliationDecision:
         code="merged_after_green_second_gates",
         merge_sha=MERGE,
         required_checks={
-            "Validate and build": {"state": "success", "url": "https://example.invalid/1"},
-            "Build all download formats": {"state": "success", "url": "https://example.invalid/2"},
-            "Remark lint (blocking)": {"state": "success", "url": "https://example.invalid/3"},
-            "CodeRabbit review gate (blocking)": {"state": "success", "url": "https://example.invalid/4"},
-            "Learning card policy (blocking)": {"state": "success", "url": "https://example.invalid/5"},
+            "Validate and build": {
+                "state": "success",
+                "url": "https://example.invalid/1",
+            },
+            "Build all download formats": {
+                "state": "success",
+                "url": "https://example.invalid/2",
+            },
+            "Remark lint (blocking)": {
+                "state": "success",
+                "url": "https://example.invalid/3",
+            },
+            "CodeRabbit review gate (blocking)": {
+                "state": "success",
+                "url": "https://example.invalid/4",
+            },
+            "Learning card policy (blocking)": {
+                "state": "success",
+                "url": "https://example.invalid/5",
+            },
         },
         reasons=("second gate round green",),
     )
 
 
-def test_green_external_merge_completes_same_run_and_unblocks_next_generator(tmp_path: Path) -> None:
+def test_green_external_merge_completes_same_run_and_unblocks_next_generator(
+    tmp_path: Path,
+) -> None:
     store, running = _running_store(tmp_path)
 
     completed = apply_reconciliation(
@@ -85,14 +112,19 @@ def test_green_external_merge_completes_same_run_and_unblocks_next_generator(tmp
     assert {"verify_second_ci", "merge", "cleanup", "complete"}.issubset(
         set(completed["completed_phases"])
     )
-    artifacts = {(item["type"], item["value"]) for item in completed["artifacts"]}
+    artifacts = {
+        (item["type"], item["value"])
+        for item in completed["artifacts"]
+    }
     assert ("commit", MERGE) in artifacts
     assert ("report", f"main:{MERGE}") in artifacts
     assert completed["error"] is None
     assert completed["recovery"] is None
 
 
-def test_stale_expected_revision_aborts_before_any_reconciliation_write(tmp_path: Path) -> None:
+def test_stale_expected_revision_aborts_before_any_reconciliation_write(
+    tmp_path: Path,
+) -> None:
     store, running = _running_store(tmp_path)
     before = read_status(store.path_for("generator", RUN_ID))
 
@@ -113,14 +145,65 @@ def test_stale_expected_revision_aborts_before_any_reconciliation_write(tmp_path
     assert after == before
 
 
-def test_merged_without_green_second_gates_becomes_manual_blocker(tmp_path: Path) -> None:
+def test_persisted_cleanup_phase_resumes_without_replaying_earlier_phases(
+    tmp_path: Path,
+) -> None:
+    store, running = _running_store(tmp_path)
+    prepared = prepare_reconciliation(
+        store,
+        workflow="generator",
+        run_id=RUN_ID,
+        decision=_green_decision(),
+        expected_revision=running["revision"],
+        repository="H234598/ADHS-Lernpfad",
+        pr_number=66,
+        main_sha=MERGE,
+        main_contains_merge=True,
+        branch_exists=True,
+    )
+    assert prepared["status"] == "running"
+    assert prepared["phase"] == "cleanup"
+
+    resumed = prepare_reconciliation(
+        store,
+        workflow="generator",
+        run_id=RUN_ID,
+        decision=_green_decision(),
+        expected_revision=prepared["revision"],
+        repository="H234598/ADHS-Lernpfad",
+        pr_number=66,
+        main_sha=MERGE,
+        main_contains_merge=True,
+        branch_exists=True,
+    )
+
+    assert resumed == prepared
+    completed = finalize_reconciliation(
+        store,
+        workflow="generator",
+        run_id=RUN_ID,
+        expected_revision=resumed["revision"],
+        branch_exists=False,
+    )
+    assert completed["status"] == "success"
+    assert completed["phase"] == "complete"
+
+
+def test_merged_without_green_second_gates_becomes_manual_blocker(
+    tmp_path: Path,
+) -> None:
     store, running = _running_store(tmp_path)
     decision = ReconciliationDecision(
         action="block_merged_outside_policy",
         passed=False,
         code="merged_without_green_second_gates",
         merge_sha=MERGE,
-        required_checks={"CodeRabbit review gate (blocking)": {"state": "failure", "url": ""}},
+        required_checks={
+            "CodeRabbit review gate (blocking)": {
+                "state": "failure",
+                "url": "",
+            }
+        },
         reasons=("required gate failed",),
     )
 
