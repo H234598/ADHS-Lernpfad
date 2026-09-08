@@ -4,8 +4,9 @@ from pathlib import Path
 
 import yaml
 
-import scripts.review_gate as review_gate
-from scripts.review_gate import GATE_CHECK_NAME, GateResult, publish_gate_check
+import scripts.publish_review_gate_check as publisher
+from scripts.publish_review_gate_check import GATE_CHECK_NAME, protect_against_head_change, publish_gate_check
+from scripts.review_gate import GateResult
 
 ROOT = Path(__file__).resolve().parents[1]
 HEAD = "a" * 40
@@ -29,11 +30,11 @@ def _result(*, passed: bool = True) -> GateResult:
 def test_gate_check_is_explicitly_published_on_evaluated_pr_head(monkeypatch) -> None:
     calls: list[tuple[str, str, dict]] = []
 
-    def fake_request(url: str, token: str, *, data=None):
+    def fake_request(url: str, token: str, *, user_agent: str, method="GET", data=None):
         calls.append((url, token, data or {}))
         return {}
 
-    monkeypatch.setattr(review_gate, "_request_json", fake_request)
+    monkeypatch.setattr(publisher, "request_json", fake_request)
     publish_gate_check("H234598/ADHS-Lernpfad", "token", _result())
 
     assert len(calls) == 1
@@ -58,15 +59,27 @@ def test_coderabbit_workflow_serializes_pr_events_and_can_publish_head_check() -
         "statuses": "read",
     }
     assert workflow["concurrency"]["cancel-in-progress"] is False
-    assert "--publish-check" in text
+    assert "publish_review_gate_check.py" in text
+    assert "steps.enforce.outcome" in text
 
 
 def test_gate_rejects_stale_success_when_pr_head_changes() -> None:
     stale = _result(passed=True)
     fresh_pull = {"state": "open", "head": {"sha": "b" * 40}}
 
-    protected = review_gate.protect_against_head_change(stale, fresh_pull)
+    protected = protect_against_head_change(stale, fresh_pull, enforcement_outcome="success")
 
     assert protected.passed is False
     assert protected.head_sha == "b" * 40
     assert any("während der Auswertung geändert" in reason for reason in protected.reasons)
+
+
+def test_formal_review_enforcement_failure_forces_published_failure() -> None:
+    protected = protect_against_head_change(
+        _result(passed=True),
+        {"state": "open", "head": {"sha": HEAD}},
+        enforcement_outcome="failure",
+    )
+
+    assert protected.passed is False
+    assert any("formelle CodeRabbit-Reviewzustand" in reason for reason in protected.reasons)
