@@ -6,6 +6,8 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/reconcile-unit-pr.yml"
+ADAPTER = ROOT / "scripts/unit_pr_reconciliation_cli.py"
+RECONCILER = ROOT / "scripts/unit_pr_reconciliation.py"
 
 
 def _on(workflow: dict) -> dict:
@@ -64,10 +66,15 @@ def test_reconciliation_workflow_serializes_status_writes_and_uses_existing_stor
     assert "push --force" not in text
 
 
-def test_branch_cleanup_is_limited_to_successfully_reconciled_merged_unit_pr() -> None:
-    text = WORKFLOW.read_text(encoding="utf-8")
+def test_branch_cleanup_is_cas_ordered_inside_trusted_adapter_and_only_on_success() -> None:
+    workflow_text = WORKFLOW.read_text(encoding="utf-8")
+    adapter_text = ADAPTER.read_text(encoding="utf-8")
+    reconciler_text = RECONCILER.read_text(encoding="utf-8")
 
-    assert "complete_merged_run" in text
-    assert "git push origin --delete" in text
-    assert "block_closed_without_merge" in text
-    assert "block_merged_outside_policy" in text
+    assert "--evaluate" in workflow_text
+    assert "--apply-decision" in workflow_text
+    assert '["git", "push", "origin", "--delete", head_ref]' in adapter_text
+    assert "branch_cleanup" in reconciler_text
+    assert "complete_merged_run" in reconciler_text
+    assert "block_closed_without_merge" in reconciler_text
+    assert "block_merged_outside_policy" in reconciler_text
