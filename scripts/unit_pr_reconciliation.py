@@ -423,6 +423,35 @@ def _validate_success_inputs(
     return decision.merge_sha, main_sha
 
 
+def _resume_persisted_cleanup(
+    current: Mapping[str, Any],
+    *,
+    expected_revision: int,
+    merge_sha: str,
+    main_sha: str,
+) -> bool:
+    """Recognize a cleanup phase already persisted by an earlier attempt."""
+
+    if current.get("status") != "running" or current.get("phase") != "cleanup":
+        return False
+    current_revision = int(current.get("revision") or 0)
+    if current_revision != int(expected_revision):
+        raise _RevisionConflict(
+            f"Cleanup-Recovery erwartete Revision {expected_revision}, "
+            f"vorhanden {current_revision}"
+        )
+    metrics = _mapping(current.get("metrics"))
+    if (
+        metrics.get("recovery_merge_commit") != merge_sha
+        or metrics.get("current_main_commit") != main_sha
+        or metrics.get("recovery_second_ci_state") != "success"
+    ):
+        raise ValueError(
+            "Persistierte Cleanup-Phase gehört nicht zum verifizierten Merge"
+        )
+    return True
+
+
 def prepare_reconciliation(
     store: StatusStore,
     *,
@@ -471,6 +500,14 @@ def prepare_reconciliation(
         main_sha=main_sha,
         main_contains_merge=main_contains_merge,
     )
+    if _resume_persisted_cleanup(
+        current,
+        expected_revision=expected_revision,
+        merge_sha=merge_sha,
+        main_sha=verified_main_sha,
+    ):
+        return dict(current)
+
     verified = store.update(
         workflow,
         run_id,
