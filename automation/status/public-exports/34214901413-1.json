@@ -2,7 +2,7 @@
   "artifacts": [
     {
       "path": "build/knowledge-graph/knowledge-graph.json",
-      "recorded_at": "2026-08-05T04:54:17.132Z",
+      "recorded_at": "2026-09-08T10:20:27.499Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -11,7 +11,7 @@
     },
     {
       "path": "build/knowledge-graph/knowledge-graph.graphml",
-      "recorded_at": "2026-08-05T04:54:17.132Z",
+      "recorded_at": "2026-09-08T10:20:27.499Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -20,7 +20,7 @@
     },
     {
       "path": "build/knowledge-graph/knowledge-graph.mmd",
-      "recorded_at": "2026-08-05T04:54:17.132Z",
+      "recorded_at": "2026-09-08T10:20:27.499Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -29,7 +29,7 @@
     },
     {
       "path": "build/knowledge-graph/graph-report.json",
-      "recorded_at": "2026-08-05T04:54:17.132Z",
+      "recorded_at": "2026-09-08T10:20:27.499Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -38,7 +38,7 @@
     },
     {
       "path": "build/knowledge-graph/graph-report.md",
-      "recorded_at": "2026-08-05T04:54:17.132Z",
+      "recorded_at": "2026-09-08T10:20:27.499Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -47,7 +47,7 @@
     },
     {
       "path": "build/ADHS-Lernpfad-Gesamtdokument.md",
-      "recorded_at": "2026-08-05T04:54:23.235Z",
+      "recorded_at": "2026-09-08T10:20:34.193Z",
       "reusable": false,
       "sha256": null,
       "type": "other",
@@ -56,7 +56,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad.pdf",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.339Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -65,7 +65,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad.epub",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -74,7 +74,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad.html",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -83,7 +83,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad.tex",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -92,7 +92,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad-Gesamtdokument.md",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -101,7 +101,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad-Obsidian-Vault.zip",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -110,7 +110,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad.apkg",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -119,7 +119,7 @@
     },
     {
       "path": "build/artifacts/references.bib",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -128,7 +128,7 @@
     },
     {
       "path": "build/artifacts/references.json",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -137,7 +137,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad-Sync-Linux.zip",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -146,7 +146,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad-Sync-Android.zip",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -155,7 +155,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad-Sync-Windows.zip",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -164,7 +164,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad-Sync-macOS.zip",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -173,7 +173,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad-Sync-iOS.zip",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -182,7 +182,7 @@
     },
     {
       "path": "build/artifacts/ADHS-Lernpfad-Sync-BSD.zip",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -191,7 +191,7 @@
     },
     {
       "path": "build/artifacts/knowledge-graph.json",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -200,7 +200,7 @@
     },
     {
       "path": "build/artifacts/knowledge-graph.graphml",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -209,7 +209,7 @@
     },
     {
       "path": "build/artifacts/knowledge-graph.mmd",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -218,7 +218,7 @@
     },
     {
       "path": "build/artifacts/graph-report.md",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -227,7 +227,7 @@
     },
     {
       "path": "build/artifacts/graph-report.json",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -236,7 +236,7 @@
     },
     {
       "path": "build/artifacts/runtime-status.json",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -245,7 +245,7 @@
     },
     {
       "path": "build/artifacts/downloads.json",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
@@ -254,21 +254,12 @@
     },
     {
       "path": "build/artifacts/SHA256SUMS.txt",
-      "recorded_at": "2026-08-05T04:56:05.809Z",
+      "recorded_at": "2026-09-08T10:22:21.340Z",
       "reusable": true,
       "sha256": null,
       "type": "export",
       "url": null,
       "value": "build/artifacts/SHA256SUMS.txt"
-    },
-    {
-      "path": "site",
-      "recorded_at": "2026-08-05T04:56:50.501Z",
-      "reusable": true,
-      "sha256": null,
-      "type": "site",
-      "url": null,
-      "value": "site"
     }
   ],
   "completed_phases": [
@@ -281,61 +272,61 @@
   ],
   "context": {
     "branch": "main",
-    "commit_sha": "a4ffaf14573369ba2a2096fac67f29e44ab5db0a",
+    "commit_sha": "473ed02812879abad42a9a4bd36a2825b633ceae",
     "pr_number": null,
     "pr_url": null,
     "repository": "H234598/ADHS-Lernpfad",
     "workflow_run": {
       "attempt": 1,
-      "id": 30976429625,
-      "job_id": "build",
-      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30976429625",
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/30976429625"
+      "id": 34214901413,
+      "job_id": "export",
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/34214901413",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/34214901413"
     }
   },
-  "created_at": "2026-08-05T04:53:29.109Z",
-  "duration_seconds": 201.395,
-  "ended_at": "2026-08-05T04:56:50.504Z",
+  "created_at": "2026-09-08T10:20:23.662Z",
+  "duration_seconds": 117.75,
+  "ended_at": "2026-09-08T10:22:21.412Z",
   "error": null,
   "metrics": {
-    "chapters": 19,
-    "documents": 22,
-    "edges": 825,
+    "chapters": 21,
+    "documents": 24,
+    "edges": 965,
     "errors": 0,
     "missing_pages": 0,
     "node_types": {
-      "chapter": 19,
-      "concept": 96,
-      "document": 12,
+      "chapter": 21,
+      "concept": 120,
+      "document": 13,
       "glossary": 1,
       "intro": 1,
       "planned": 5,
-      "reference": 49,
-      "section": 31,
+      "reference": 57,
+      "section": 33,
       "technical": 22
     },
-    "nodes": 236,
+    "nodes": 273,
     "planned_pages": 5,
     "relations": {
-      "cites": 74,
-      "contains": 31,
+      "cites": 89,
+      "contains": 33,
       "planned_in": 5,
-      "prerequisite": 57,
-      "sequence": 18,
-      "tagged_with": 413,
-      "wikilink": 227
+      "prerequisite": 66,
+      "sequence": 20,
+      "tagged_with": 497,
+      "wikilink": 255
     },
-    "sources": 49,
+    "sources": 57,
     "warnings": 0
   },
   "phase": "complete",
-  "previous_status": "success",
+  "previous_status": "running",
   "recovery": null,
-  "retention_until": "2026-09-04T04:56:50.504Z",
-  "revision": 18,
-  "run_id": "30976429625-1",
+  "retention_until": "2026-10-08T10:22:21.412Z",
+  "revision": 17,
+  "run_id": "34214901413-1",
   "schema_version": "3.0.0",
   "status": "success",
-  "updated_at": "2026-08-05T04:56:50.504Z",
-  "workflow": "pages-publication"
+  "updated_at": "2026-09-08T10:22:21.412Z",
+  "workflow": "public-exports"
 }
