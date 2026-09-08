@@ -11,6 +11,7 @@ def _read(path: str) -> str:
 
 def test_merge_watcher_reconciles_nonfinal_canonical_run_before_no_open_pr_exit() -> None:
     text = _read("prompts/MERGE-AUTOMATION-PROMPT.md")
+    folded = text.casefold()
 
     assert "unit_pr_reconciliation.py" in text
     assert "Out-of-band" in text or "Nutzereingriff" in text
@@ -18,7 +19,7 @@ def test_merge_watcher_reconciles_nonfinal_canonical_run_before_no_open_pr_exit(
     assert "verify_second_ci" in text
     assert "cleanup" in text
     assert "complete" in text
-    assert "bevor" in text and "kein geeigneter PR" in text
+    assert "bevor" in folded and "kein geeigneter pr" in folded
 
 
 def test_generator_reconciles_closed_predecessor_and_does_not_generate_new_content_same_recovery_run() -> None:
