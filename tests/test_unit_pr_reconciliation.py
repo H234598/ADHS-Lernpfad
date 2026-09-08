@@ -48,7 +48,11 @@ def _pull(*, merged: bool = True) -> dict:
     }
 
 
-def _checks(*, conclusion: str = "success", created_at: str = "2026-09-08T04:10:00Z") -> list[dict]:
+def _checks(
+    *,
+    conclusion: str = "success",
+    created_at: str = "2026-09-08T04:10:00Z",
+) -> list[dict]:
     return [
         {
             "id": index,
@@ -59,8 +63,11 @@ def _checks(*, conclusion: str = "success", created_at: str = "2026-09-08T04:10:
             "created_at": created_at,
             "completed_at": "2026-09-08T04:12:30Z",
             "html_url": f"https://github.com/example/check/{index}",
+            "app": {"id": integration_id},
         }
-        for index, name in enumerate(REQUIRED_CHECKS, start=1)
+        for index, (name, integration_id) in enumerate(
+            REQUIRED_CHECKS.items(), start=1
+        )
     ]
 
 
@@ -72,6 +79,18 @@ def test_merged_matching_pr_with_green_second_gates_can_complete() -> None:
     assert decision.code == "merged_after_green_second_gates"
     assert decision.merge_sha == MERGE
     assert set(decision.required_checks) == set(REQUIRED_CHECKS)
+
+
+def test_green_check_from_wrong_integration_does_not_satisfy_gate() -> None:
+    checks = _checks()
+    checks[-1] = {**checks[-1], "app": {"id": 347564}}
+
+    decision = evaluate_closed_unit_pr(_status(), _pull(), checks)
+
+    assert decision.action == "block_merged_outside_policy"
+    assert decision.passed is False
+    assert decision.code == "merged_without_green_second_gates"
+    assert decision.required_checks[checks[-1]["name"]]["state"] == "missing"
 
 
 def test_merged_pr_with_failed_required_gate_stays_blocked() -> None:
