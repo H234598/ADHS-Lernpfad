@@ -63,3 +63,16 @@ Der Codacy-SARIF-Workflow bleibt eine zusätzliche Analyse. Sein erfolgreicher U
 ## Reproduzierbare Policyentscheidung
 
 `scripts/merge_repair_policy.py` berechnet Review- und Reparaturfristen und liefert eine maschinenlesbare Aktion. `scripts/review_gate.py` prüft den aktuellen CodeRabbit-Status, ungelöste Threads und dokumentierte Dissense. Beide Komponenten besitzen Regressionstests.
+
+## Reconciliation bei Nutzereingriff und Out-of-band-Änderungen
+
+Der persistente Generatorstatus ist Teil der Sicherheitsgrenze. Ein PR-Zustand auf GitHub und der kanonische Lauf auf `automation-status` müssen deshalb nach einem **Nutzereingriff** oder einem **Out-of-band** ausgeführten Schritt wieder zusammengeführt werden, statt einen veralteten `running`-Status zu ignorieren.
+
+- Der vertrauenswürdige Workflow `.github/workflows/reconcile-unit-pr.yml` reagiert auf `pull_request_target` mit `closed` und kann zur idempotenten Recovery zusätzlich manuell für eine konkrete PR-Nummer gestartet werden.
+- Der Workflow führt ausschließlich aus `main` geladenen Code aus, akzeptiert im Ereignispfad nur Same-Repo-Branches `agent/einheit-*` gegen `main` mit dem Marker `<!-- adhs-daily-unit -->` und schreibt ausschließlich den separaten Branch `automation-status`.
+- Ein `closed` + `merged` PR kann denselben nichtfinalen Generatorlauf nur dann zu `success / complete` führen, wenn gespeicherter Head, PR, Branch und Marker übereinstimmen, die zweite Gate-Runde nach `Ready for review` vollständig grün ist und der Merge-Commit als Bestandteil von `main` nachgewiesen wurde.
+- Die Statusfolge bleibt die normale Zustandsmaschine: `verify_second_ci` → `merge` → `cleanup` → `complete`. Jede Mutation verwendet CAS mit der aktuell erwarteten Revision; ein konkurrierender Writer bricht die Reconciliation ab, statt eine neuere Revision zu überschreiben.
+- Ein `closed` ohne Merge wird als bewusster Nutzereingriff `blocked/manual_intervention` dokumentiert und blockiert den nächsten Generatorlauf.
+- Ein bereits `merged`er PR ohne nachweislich grüne zweite Gates wird ebenfalls `blocked/manual_intervention`; der tatsächliche Merge wird nicht rückgängig gemacht, aber auch nicht nachträglich als policykonform deklariert.
+- Branchbereinigung erfolgt erst nach erfolgreichen CAS-Phasen. Ein Löschfehler macht einen bereits verifizierten Merge nicht rückgängig, wird aber im Status als verbleibender Cleanupzustand festgehalten.
+- Erst ein finaler Vorgängerstatus entsperrt den folgenden normalen Generatorlauf. Es gibt keine separate manuelle Freigabe einer bestimmten nächsten Einheitsnummer.

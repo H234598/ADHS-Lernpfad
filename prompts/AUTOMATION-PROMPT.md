@@ -305,3 +305,19 @@ Beende einen erfolgreichen Generatorlauf erst nach der PR-Zuordnungsprüfung:
 python scripts/automation_status.py finish \
   --workflow generator --run-id "$RUN_ID" --phase complete
 ```
+
+### 9.6 Reconciliation eines geschlossenen Vorgänger-PRs
+
+Ein noch laufender kanonischer Vorgänger darf nicht allein deshalb als ungeklärt stehen bleiben, weil sein automatischer Einheiten-PR inzwischen durch einen Nutzereingriff oder einen anderen vertrauenswürdigen Ablauf geschlossen wurde. Bevor neuer Inhalt entsteht, reconciliere einen im nichtfinalen `latest.json` referenzierten **geschlossenen Vorgänger** gegen GitHub.
+
+1. Lade die im kanonischen Status gespeicherte PR-Nummer ausdrücklich auch dann, wenn kein automatischer Einheiten-PR mehr offen ist.
+2. Verifiziere gespeicherten Head, Branch `agent/einheit-*`, Base `main`, Marker `<!-- adhs-daily-unit -->`, `run_id` und aktuelle Revision.
+3. Verwende für einen geschlossenen PR die vertrauenswürdige Implementierung `scripts/unit_pr_reconciliation.py` beziehungsweise den dazugehörigen `pull_request_target: closed`-Workflow. Eine Recovery schreibt ausschließlich denselben vorhandenen Generatorlauf fort.
+4. Ein bereits gemergter PR darf nur bei nachweislich vollständiger grüner zweiter Gate-Runde und nachgewiesenem Merge-Commit auf `main` über `verify_second_ci` → `merge` → `cleanup` zu `success / complete` fortgeschrieben werden.
+5. Ein Merge ohne nachweislich grüne zweite Gates oder eine Schließung ohne Merge bleibt fail-closed `blocked/manual_intervention` und blockiert neuen Inhalt.
+6. Erreicht die Reconciliation des Vorgängers `success / complete`, erzeuge in **diesem Recovery-Lauf keine neue Einheit**. Der **folgenden normalen Generatorlauf** darf anschließend die nächste Einheit auf Basis des dann finalen kanonischen Status erzeugen.
+7. Eine automatische Freigabe der nächsten Einheitsnummer entsteht ausschließlich aus dem finalen Vorgängerstatus; es gibt keine separate manuelle Freigabe von Einheit 22 oder einer späteren Einheit.
+
+### Vorgezogene oder manuell gestartete Generatorläufe
+
+Wenn der Benutzer sinngemäß verlangt, einen **Lauf vorziehen**, den täglichen Lauf jetzt zu starten oder einen wartenden Lauf sofort weiterzuführen, verwende keinen verkürzten Sonderpfad. Ein solcher Auftrag bedeutet, die **bestehende Zustandsmaschine** dieses Laufs vollständig und in derselben Reihenfolge auszuführen: Vorgängerstatus und CAS-Revision prüfen, gegebenenfalls Reconciliation durchführen, zulässige nächste Phase bestimmen, alle zugehörigen Prüfungen und Artefakte erfassen und den Lauf nur am vorgesehenen Lifecycle-Endpunkt beenden. Führe insbesondere nicht nur einen einzelnen sichtbaren GitHub-Schritt aus.
