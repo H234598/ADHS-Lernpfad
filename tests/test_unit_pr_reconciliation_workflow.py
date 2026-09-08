@@ -42,7 +42,8 @@ def test_reconciliation_workflow_is_same_repo_fail_closed_and_trusted_main_only(
     checkout = next(
         step
         for step in job["steps"]
-        if step.get("name") == "Check out trusted reconciliation implementation from main"
+        if step.get("name")
+        == "Check out trusted reconciliation implementation from main"
     )
     assert checkout["with"]["ref"] == "main"
     assert "pull_request.head.sha" not in str(checkout)
@@ -66,15 +67,23 @@ def test_reconciliation_workflow_serializes_status_writes_and_uses_existing_stor
     assert "push --force" not in text
 
 
-def test_branch_cleanup_is_cas_ordered_inside_trusted_adapter_and_only_on_success() -> None:
+def test_remote_cleanup_happens_only_after_cleanup_phase_was_persisted() -> None:
     workflow_text = WORKFLOW.read_text(encoding="utf-8")
     adapter_text = ADAPTER.read_text(encoding="utf-8")
     reconciler_text = RECONCILER.read_text(encoding="utf-8")
 
-    assert "--evaluate" in workflow_text
-    assert "--apply-decision" in workflow_text
-    assert '["git", "push", "origin", "--delete", head_ref]' in adapter_text
-    assert "branch_cleanup" in reconciler_text
+    first_persist = workflow_text.index("Persist reconciled pre-cleanup status")
+    delete_branch = workflow_text.index("Delete reconciled unit branch")
+    finalize = workflow_text.index("Finalize canonical run after cleanup attempt")
+    second_persist = workflow_text.index("Persist completed reconciliation status")
+
+    assert first_persist < delete_branch < finalize < second_persist
+    assert "--prepare-decision" in workflow_text
+    assert "--finalize-cleanup" in workflow_text
+    assert "git push origin --delete" in workflow_text
+    assert "branch_cleanup" not in adapter_text
+    assert "prepare_reconciliation" in reconciler_text
+    assert "finalize_reconciliation" in reconciler_text
     assert "complete_merged_run" in reconciler_text
     assert "block_closed_without_merge" in reconciler_text
     assert "block_merged_outside_policy" in reconciler_text
