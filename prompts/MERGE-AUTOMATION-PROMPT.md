@@ -178,3 +178,20 @@ Führe weder Ready for review noch Merge durch, wenn mindestens eine Bedingung v
 6. Ein erfolgreicher Merge genügt nicht für `success`; dokumentiere zuerst Merge-Commit, `main`-Nachweis und Branchbereinigung.
 7. Bei Fehlern schreibe Fehlerklasse, Fehlercode, Review-/CI-Fingerabdruck, Recovery-Level und nächsten sicheren Schritt. Ein ungeklärter Fehler blockiert den nächsten Generatorlauf.
 8. Falls `automation-status` nicht beschreibbar ist, gib den vollständigen Diagnoseblock aus `prompts/AUTOMATION-PROMPT.md` aus. Eine generische Scheduled-Task-Meldung genügt niemals.
+
+## 13. Reconciliation bei Nutzereingriffen und Out-of-band-Zuständen
+
+Dieser Abschnitt präzisiert insbesondere Abschnitt 1 Nummer 2: **Bevor** der Wächter wegen „kein geeigneter PR vorhanden“ beendet wird, muss er den kanonischen Generatorstatus auf `automation-status` lesen und einen dort referenzierten nichtfinalen Lauf gegen den tatsächlichen GitHub-Zustand reconciliieren. Ein geschlossener oder bereits gemergter PR verschwindet nicht dadurch aus der Zustandsmaschine, dass er nicht mehr in der Suche nach offenen PRs auftaucht.
+
+1. Ist der kanonische Generatorstatus `running`, `recovering` oder anderweitig nicht final und enthält er eine PR-Nummer, lade genau diesen PR ausdrücklich auch dann, wenn sein Zustand `closed` ist.
+2. Verifiziere `run_id`, gespeicherten Head, Head-Branch, Base `main`, Marker `<!-- adhs-daily-unit -->` und PR-Nummer. Ein fremder PR darf niemals einen Lauf abschließen.
+3. Für einen geschlossenen PR verwende die vertrauenswürdige Reconciliation-Implementierung `scripts/unit_pr_reconciliation.py`. Sie muss denselben Generatorlauf und dessen aktuelle CAS-Revision verwenden; ein paralleler Ersatzlauf ist verboten.
+4. Ist der PR `merged`, darf die Reconciliation nur dann erfolgreich abschließen, wenn die nach `Ready for review` gestartete zweite Runde der erwarteten Required Checks auf demselben gespeicherten Head nachweislich grün war und der Merge-Commit auf `main` enthalten ist. Danach wird derselbe Lauf in der normalen Reihenfolge `verify_second_ci` → `merge` → `cleanup` → `complete` fortgeschrieben und erst als `success` abgeschlossen.
+5. Ist der PR zwar gemergt, aber die zweite Gate-Runde nicht nachweislich vollständig grün, setze den Lauf fail-closed auf `blocked` mit `manual_intervention`. Ein bereits ausgeführter GitHub-Merge wird nicht nachträglich als regelkonform umetikettiert.
+6. Ist der PR ohne Merge geschlossen worden, behandle dies als Nutzereingriff: setze denselben Lauf auf `blocked/manual_intervention`, dokumentiere die Schließung und erzeuge keinen neuen Einheiten-PR.
+7. Erst wenn kein nichtfinaler kanonischer Vorgängerlauf mehr existiert, darf die normale Regel „kein geeigneter PR → Wächterlauf beenden“ greifen.
+8. Der Workflow `.github/workflows/reconcile-unit-pr.yml` reagiert zusätzlich auf `pull_request_target: closed` und führt dieselbe Reconciliation mit aus `main` geladenem vertrauenswürdigem Code aus. Sein manueller Dispatch dient ausschließlich der idempotenten Recovery bereits bestehender Driftzustände.
+
+### Vorgezogene oder manuell gestartete Läufe
+
+Wenn der Benutzer sinngemäß verlangt, einen **Lauf vorziehen**, einen Lauf jetzt zu starten, einen wartenden Lauf weiterzuführen oder einen planmäßigen Lauf sofort auszuführen, ist das **kein** Auftrag, nur den nächsten sichtbaren GitHub-Schritt auszuführen. Führe stattdessen die bestehende Zustandsmaschine für genau diesen Lauf penibel weiter: Statusrevision lesen, zulässige Phase bestimmen, Gates prüfen beziehungsweise sicher wiederholen, Status CAS-sicher fortschreiben, PR-Zustand verändern oder mergen, `main` nachweisen, Cleanup durchführen und den Lauf erst danach abschließen. Führe keinen einzelnen sichtbaren GitHub-Schritt isoliert aus und erfinde für einen vorgezogenen Lauf keinen Sonderpfad.
