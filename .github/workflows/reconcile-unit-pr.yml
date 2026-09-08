@@ -91,18 +91,16 @@ jobs:
           action="$(jq -r '.decision.action' build/unit-pr-reconciliation-evaluation.json)"
           echo "action=$action" >> "$GITHUB_OUTPUT"
 
-      - name: Apply decision through the existing CAS state machine
+      - name: Prepare decision through canonical CAS state machine
         shell: bash
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
           python scripts/unit_pr_reconciliation.py \
             --status-root "$AUTOMATION_STATUS_ROOT" \
-            --apply-decision build/unit-pr-reconciliation-evaluation.json \
-            --output build/unit-pr-reconciliation-result.json
+            --prepare-decision build/unit-pr-reconciliation-evaluation.json \
+            --output build/unit-pr-reconciliation-prepared.json
 
-      - name: Validate canonical run and latest mirror
+      - name: Validate reconciled pre-cleanup status
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -120,10 +118,13 @@ jobs:
           latest = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
           keys = ("workflow", "run_id", "revision")
           if any(run.get(key) != latest.get(key) for key in keys):
-              raise SystemExit("Laufdatei und latest.json besitzen nicht dieselbe kanonische Revision")
+              raise SystemExit(
+                  "Laufdatei und latest.json besitzen nicht dieselbe kanonische Revision"
+              )
           PY
 
-      - name: Persist reconciled status without force push
+      - name: Persist reconciled pre-cleanup status
+        id: persist_pre_cleanup
         shell: bash
         env:
           STATUS_TREE: ${{ steps.status.outputs.tree }}
@@ -134,10 +135,116 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git -C "$STATUS_TREE" add -A -f automation/status
           if git -C "$STATUS_TREE" diff --cached --quiet; then
-            echo 'Kanonischer Status war bereits reconciliert; kein Commit erforderlich.'
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'Kanonischer Status war bereits auf dem vorbereiteten Stand.'
             exit 0
           fi
-          git -C "$STATUS_TREE" commit -m "status: reconcile automated unit PR #${TARGET_PR}"
+          git -C "$STATUS_TREE" commit \
+            -m "status: prepare unit PR #${TARGET_PR} reconciliation"
+          git -C "$STATUS_TREE" push origin HEAD:refs/heads/automation-status
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Delete reconciled unit branch
+        id: cleanup
+        if: steps.evaluate.outputs.action == 'complete_merged_run'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          head_ref="$(jq -r '.head_ref' build/unit-pr-reconciliation-evaluation.json)"
+          if [[ ! "$head_ref" =~ ^agent/einheit-[A-Za-z0-9._/-]+$ ]]; then
+            echo "Ungültiger Unit-Branch für Cleanup: $head_ref" >&2
+            exit 1
+          fi
+
+          if ! git ls-remote --exit-code --heads origin "refs/heads/${head_ref}" >/dev/null 2>&1; then
+            echo 'branch_exists=false' >> "$GITHUB_OUTPUT"
+            echo 'Unit-Branch ist bereits gelöscht.'
+            exit 0
+          fi
+
+          if git push origin --delete "$head_ref"; then
+            echo 'branch_exists=false' >> "$GITHUB_OUTPUT"
+            echo 'Unit-Branch wurde gelöscht.'
+            exit 0
+          fi
+
+          echo 'Branch-Löschung fehlgeschlagen; Merge bleibt gültig.' >&2
+          if git ls-remote --exit-code --heads origin "refs/heads/${head_ref}" >/dev/null 2>&1; then
+            echo 'branch_exists=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'branch_exists=false' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify status branch ownership before finalization
+        if: steps.evaluate.outputs.action == 'complete_merged_run'
+        shell: bash
+        env:
+          STATUS_TREE: ${{ steps.status.outputs.tree }}
+        run: |
+          set -Eeuo pipefail
+          git fetch --depth=1 origin automation-status
+          remote_status_sha="$(git rev-parse FETCH_HEAD)"
+          local_status_sha="$(git -C "$STATUS_TREE" rev-parse HEAD)"
+          if [[ "$remote_status_sha" != "$local_status_sha" ]]; then
+            echo 'automation-status wurde nach dem vorbereiteten Push verändert.' >&2
+            exit 20
+          fi
+
+      - name: Finalize canonical run after cleanup attempt
+        if: steps.evaluate.outputs.action == 'complete_merged_run'
+        shell: bash
+        env:
+          BRANCH_EXISTS: ${{ steps.cleanup.outputs.branch_exists }}
+        run: |
+          set -Eeuo pipefail
+          branch_exists="${BRANCH_EXISTS:-true}"
+          python scripts/unit_pr_reconciliation.py \
+            --status-root "$AUTOMATION_STATUS_ROOT" \
+            --finalize-cleanup build/unit-pr-reconciliation-prepared.json \
+            --branch-exists "$branch_exists" \
+            --output build/unit-pr-reconciliation-final.json
+
+      - name: Validate completed reconciliation status
+        if: steps.evaluate.outputs.action == 'complete_merged_run'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          run_id="$(jq -r '.run_id' build/unit-pr-reconciliation-evaluation.json)"
+          run_file="$AUTOMATION_STATUS_ROOT/generator/${run_id}.json"
+          latest_file="$AUTOMATION_STATUS_ROOT/generator/latest.json"
+          python scripts/validate_runtime_status.py "$run_file"
+          python scripts/validate_runtime_status.py "$latest_file"
+          python - "$run_file" "$latest_file" <<'PY'
+          import json
+          from pathlib import Path
+          import sys
+
+          run = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          latest = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
+          keys = ("workflow", "run_id", "revision")
+          if any(run.get(key) != latest.get(key) for key in keys):
+              raise SystemExit(
+                  "Laufdatei und latest.json besitzen nicht dieselbe finale Revision"
+              )
+          if run.get("status") != "success" or run.get("phase") != "complete":
+              raise SystemExit("Reconciliation wurde nicht erfolgreich abgeschlossen")
+          PY
+
+      - name: Persist completed reconciliation status
+        if: steps.evaluate.outputs.action == 'complete_merged_run'
+        shell: bash
+        env:
+          STATUS_TREE: ${{ steps.status.outputs.tree }}
+          TARGET_PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -Eeuo pipefail
+          git -C "$STATUS_TREE" add -A -f automation/status
+          if git -C "$STATUS_TREE" diff --cached --quiet; then
+            echo 'Finaler kanonischer Status war bereits aktuell.'
+            exit 0
+          fi
+          git -C "$STATUS_TREE" commit \
+            -m "status: complete unit PR #${TARGET_PR} reconciliation"
           git -C "$STATUS_TREE" push origin HEAD:refs/heads/automation-status
 
       - name: Report reconciliation result
@@ -147,15 +254,17 @@ jobs:
           {
             echo '## Unit-PR-Reconciliation'
             echo
-            if [[ -f build/unit-pr-reconciliation-result.json ]]; then
-              echo '```json'
-              cat build/unit-pr-reconciliation-result.json
-              echo '```'
-            elif [[ -f build/unit-pr-reconciliation-evaluation.json ]]; then
-              echo '```json'
-              cat build/unit-pr-reconciliation-evaluation.json
-              echo '```'
-            else
-              echo 'Kein Reconciliation-Bericht erzeugt.'
-            fi
+            for report in \
+              build/unit-pr-reconciliation-final.json \
+              build/unit-pr-reconciliation-prepared.json \
+              build/unit-pr-reconciliation-evaluation.json; do
+              if [[ -f "$report" ]]; then
+                echo "### $report"
+                echo
+                echo '```json'
+                cat "$report"
+                echo '```'
+                echo
+              fi
+            done
           } >> "$GITHUB_STEP_SUMMARY"
