@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Publish the final CodeRabbit gate explicitly on the evaluated PR head."""
 
 from __future__ import annotations
@@ -23,7 +22,15 @@ def _mapping(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
-def _load_result(path: Path, *, repository: str, pr_number: int, fresh_pull: dict[str, Any]) -> GateResult:
+def _load_result(
+    path: Path,
+    *,
+    repository: str,
+    pr_number: int,
+    fresh_pull: dict[str, Any],
+) -> GateResult:
+    """Load the evaluated gate or synthesize a fail-closed missing result."""
+
     if path.exists():
         raw = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(raw, dict):
@@ -34,11 +41,13 @@ def _load_result(path: Path, *, repository: str, pr_number: int, fresh_pull: dic
             head_sha=str(raw.get("head_sha") or ""),
             coderabbit_state=str(raw.get("coderabbit_state") or "missing"),
             coderabbit_signals=[
-                {str(k): str(v) for k, v in item.items()}
+                {str(key): str(value) for key, value in item.items()}
                 for item in raw.get("coderabbit_signals", [])
                 if isinstance(item, dict)
             ],
-            unresolved_thread_ids=[str(item) for item in raw.get("unresolved_thread_ids", [])],
+            unresolved_thread_ids=[
+                str(item) for item in raw.get("unresolved_thread_ids", [])
+            ],
             disagreement_open=bool(raw.get("disagreement_open")),
             passed=bool(raw.get("passed")),
             reasons=[str(item) for item in raw.get("reasons", [])],
@@ -66,24 +75,28 @@ def protect_against_head_change(
     *,
     enforcement_outcome: str,
 ) -> GateResult:
-    """Bind a positive gate to a fresh open-PR snapshot and formal review result."""
+    """Bind a positive gate to a fresh PR snapshot and formal review result."""
 
     fresh_head = str(_mapping(fresh_pull.get("head")).get("sha") or "")
     target_head = fresh_head if SHA_RE.fullmatch(fresh_head) else result.head_sha
     reasons = list(result.reasons)
     passed = bool(result.passed)
 
-    if str(fresh_pull.get("state") or "") != "open" or target_head != result.head_sha:
+    head_changed = target_head != result.head_sha
+    if str(fresh_pull.get("state") or "") != "open" or head_changed:
         passed = False
         reasons.append(
-            "Der Pull Request wurde während der Auswertung geändert oder geschlossen; "
-            f"Ausgangs-Head: {result.head_sha}; aktueller Head: {fresh_head or '<unbekannt>'}."
+            "Der Pull Request wurde während der Auswertung geändert oder "
+            "geschlossen; "
+            f"Ausgangs-Head: {result.head_sha}; aktueller Head: "
+            f"{fresh_head or '<unbekannt>'}."
         )
 
     if enforcement_outcome != "success":
         passed = False
         reasons.append(
-            "Der formelle CodeRabbit-Reviewzustand wurde nicht erfolgreich durchgesetzt "
+            "Der formelle CodeRabbit-Reviewzustand wurde nicht erfolgreich "
+            "durchgesetzt "
             f"(Workflow-Ergebnis: {enforcement_outcome or 'missing'})."
         )
 
@@ -99,12 +112,18 @@ def publish_gate_check(repository: str, token: str, result: GateResult) -> None:
     """Publish one completed Required Check on the explicit PR-head SHA."""
 
     if not SHA_RE.fullmatch(result.head_sha):
-        raise RuntimeError("CodeRabbit-Head-Check benötigt einen vollständigen Git-SHA")
-    summary = (
-        "CodeRabbit ist für den aktuellen Head erfolgreich; alle Threads und formellen Reviewzustände sind geklärt."
-        if result.passed
-        else "; ".join(result.reasons) or "CodeRabbit review gate ist blockiert."
-    )
+        raise RuntimeError(
+            "CodeRabbit-Head-Check benötigt einen vollständigen Git-SHA"
+        )
+    if result.passed:
+        summary = (
+            "CodeRabbit ist für den aktuellen Head erfolgreich; alle Threads "
+            "und formellen Reviewzustände sind geklärt."
+        )
+    else:
+        summary = "; ".join(result.reasons) or (
+            "CodeRabbit review gate ist blockiert."
+        )
     request_json(
         f"{API}/repos/{repository}/check-runs",
         token,
@@ -124,11 +143,17 @@ def publish_gate_check(repository: str, token: str, result: GateResult) -> None:
 
 
 def _parse_args() -> argparse.Namespace:
+    """Parse arguments for explicit PR-head check publication."""
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", default=os.getenv("GITHUB_REPOSITORY"))
     parser.add_argument("--pr-number", type=int)
     parser.add_argument("--token", default=os.getenv("GITHUB_TOKEN"))
-    parser.add_argument("--report", type=Path, default=Path("build/review-gate/review-gate.json"))
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=Path("build/review-gate/review-gate.json"),
+    )
     parser.add_argument("--enforcement-outcome", default="")
     parser.add_argument(
         "--output",
@@ -142,6 +167,8 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """Publish the final formal+semantic CodeRabbit result."""
+
     args = _parse_args()
     fresh_pull = _mapping(
         request_json(
