@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reconcile externally closed automated unit pull requests.
 
-The decision layer is deliberately side-effect free.  Persistence uses the
+The decision layer is deliberately side-effect free. Persistence uses the
 existing :mod:`automation_status` store so the same generator run advances via
 its normal CAS/revision contract instead of creating a parallel state machine.
 """
@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import re
-from typing import Any, Iterable, Mapping
+from typing import Any, Callable, Iterable, Mapping
 
 try:  # Package import in tests; direct script import in trusted workflows.
     from .automation_status import (
@@ -157,7 +157,7 @@ def evaluate_closed_unit_pr(
 
     A merge is eligible for automatic completion only when the same stored PR
     head has a complete second gate round created after the recorded
-    ``recovery_ready_for_review_at`` timestamp.  Any uncertainty is fail-closed.
+    ``recovery_ready_for_review_at`` timestamp. Any uncertainty is fail-closed.
     """
 
     if str(status.get("status") or "") in FINAL_STATES:
@@ -247,10 +247,22 @@ def evaluate_closed_unit_pr(
     )
 
 
-def _current_revision(store: StatusStore, workflow: str, run_id: str) -> int:
-    """Read the persisted revision immediately before the next CAS write."""
+def _assert_owned_revision(
+    store: StatusStore,
+    workflow: str,
+    run_id: str,
+    last_written_revision: int,
+) -> int:
+    """Refuse to continue if another writer interleaved between our phases."""
 
-    return int(read_status(store.path_for(workflow, run_id))["revision"])
+    current = read_status(store.path_for(workflow, run_id))
+    current_revision = int(current["revision"])
+    if current_revision != int(last_written_revision):
+        raise RevisionConflict(
+            f"Reconciliation erwartete eigene Revision {last_written_revision}, "
+            f"vorhanden {current_revision}"
+        )
+    return current_revision
 
 
 def _check_artifacts(decision: ReconciliationDecision) -> list[dict[str, Any]]:
@@ -283,12 +295,15 @@ def apply_reconciliation(
     pr_number: int,
     main_sha: str | None,
     branch_exists: bool,
+    main_contains_merge: bool | None = None,
+    branch_cleanup: Callable[[], bool] | None = None,
 ) -> dict[str, Any]:
     """Persist one reconciliation using the canonical generator run.
 
-    The caller supplies the revision it observed before acting.  The first CAS
-    write must match that revision.  Every subsequent transition re-reads the
-    just-persisted status instead of locally incrementing a revision number.
+    The first CAS write consumes the caller's observed revision. Every
+    subsequent transition first verifies that the previous revision is still
+    exactly the revision written by this reconciliation. A concurrent writer
+    therefore aborts the chain instead of being silently overwritten.
     """
 
     current = read_status(store.path_for(workflow, run_id))
@@ -354,12 +369,14 @@ def apply_reconciliation(
         raise ValueError(f"Unbekannte oder inkonsistente Reconciliation-Aktion: {decision.action}")
     if not decision.merge_sha or not SHA_RE.fullmatch(decision.merge_sha):
         raise ValueError("Erfolgreiche Reconciliation benötigt einen Merge-Commit")
-    if main_sha != decision.merge_sha:
-        raise ValueError("Merge-Commit ist nicht als aktueller main-Commit nachgewiesen")
+    if not isinstance(main_sha, str) or not SHA_RE.fullmatch(main_sha):
+        raise ValueError("Erfolgreiche Reconciliation benötigt einen aktuellen main-Commit")
+    if main_contains_merge is False:
+        raise ValueError("Merge-Commit ist nicht als Bestandteil von main nachgewiesen")
+    if main_contains_merge is None and main_sha != decision.merge_sha:
+        raise ValueError("Merge-Commit ist ohne expliziten Ancestor-Nachweis nicht auf main verifiziert")
 
-    # 1. Second-gate verification.  The caller's observed revision is consumed
-    # exactly once here; stale writers fail before any mutation.
-    store.update(
+    verified = store.update(
         workflow,
         run_id,
         status="running",
@@ -373,7 +390,6 @@ def apply_reconciliation(
         artifacts=_check_artifacts(decision),
     )
 
-    # 2. Merge evidence.  Re-read revision immediately before this write.
     merge_artifacts = [
         make_artifact(
             "commit",
@@ -388,12 +404,24 @@ def apply_reconciliation(
             reusable=True,
         ),
     ]
-    store.update(
+    if main_sha != decision.merge_sha:
+        merge_artifacts.append(
+            make_artifact(
+                "report",
+                f"main-contains:{decision.merge_sha}@{main_sha}",
+                url=f"https://github.com/{repository}/compare/{decision.merge_sha}...main",
+                reusable=True,
+            )
+        )
+
+    merged = store.update(
         workflow,
         run_id,
         status="running",
         phase="merge",
-        expected_revision=_current_revision(store, workflow, run_id),
+        expected_revision=_assert_owned_revision(
+            store, workflow, run_id, int(verified["revision"])
+        ),
         metrics={
             "recovery_merge_commit": decision.merge_sha,
             "current_main_commit": main_sha,
@@ -402,38 +430,52 @@ def apply_reconciliation(
         artifacts=merge_artifacts,
     )
 
-    # 3. Cleanup is evidence-bearing even if a branch-delete attempt failed;
-    # repository policy explicitly says such a failure does not undo a merge.
-    store.update(
+    cleanup = store.update(
         workflow,
         run_id,
         status="running",
         phase="cleanup",
-        expected_revision=_current_revision(store, workflow, run_id),
+        expected_revision=_assert_owned_revision(
+            store, workflow, run_id, int(merged["revision"])
+        ),
         metrics={
             "automatic_unit_pull_request_open": False,
             "branch_still_exists": bool(branch_exists),
-            "recovery_cleanup_complete": True,
+            "recovery_cleanup_started": True,
             "next_generator_blocked": True,
         },
     )
 
-    # 4. Final completion releases the *next* normal generator run.  It does
-    # not create content inside this reconciliation execution.
+    effective_branch_exists = bool(branch_exists)
+    if branch_cleanup is not None and effective_branch_exists:
+        try:
+            effective_branch_exists = bool(branch_cleanup())
+        except Exception:  # Cleanup failure is reportable but must not undo merge.
+            effective_branch_exists = True
+
     return store.update(
         workflow,
         run_id,
         status="success",
         phase="complete",
-        expected_revision=_current_revision(store, workflow, run_id),
+        expected_revision=_assert_owned_revision(
+            store, workflow, run_id, int(cleanup["revision"])
+        ),
         metrics={
             "recovery_second_ci_state": "success",
             "automatic_unit_pull_request_open": False,
             "current_main_commit": main_sha,
-            "branch_still_exists": bool(branch_exists),
+            "branch_still_exists": effective_branch_exists,
+            "recovery_cleanup_complete": True,
             "next_generator_blocked": False,
             "new_content_required": False,
         },
         error=None,
         recovery=None,
     )
+
+
+if __name__ == "__main__":  # pragma: no cover - exercised by trusted Actions workflow
+    from unit_pr_reconciliation_cli import main
+
+    raise SystemExit(main())
