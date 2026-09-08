@@ -1,0 +1,71 @@
+name: Request CodeRabbit after green
+
+on:
+  # Trusted main implementation only; PR content is read through the GitHub API.
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_run:
+    workflows:
+      - Validate compendium
+      - Remark lint
+      - Codacy Security Scan
+      - Learning card policy
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull-Request-Nummer
+        required: true
+        type: number
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+  checks: read
+  statuses: read
+
+concurrency:
+  group: coderabbit-after-green
+  cancel-in-progress: false
+
+jobs:
+  request:
+    name: Request CodeRabbit after green
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout trusted requester from main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Determine pull request or scan mode
+        id: pr
+        shell: bash
+        env:
+          INPUT_PR: ${{ inputs.pr_number }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+          WORKFLOW_PR: ${{ github.event.workflow_run.pull_requests[0].number }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER="${INPUT_PR:-${EVENT_PR:-${WORKFLOW_PR:-}}}"
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          if [[ -z "$PR_NUMBER" ]]; then
+            echo 'Kein Pull Request im Ereignis; offene Same-Repo-PRs werden auf vollständiges Grün geprüft.'
+          fi
+
+      - name: Request current-head review only after all other gates are green
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TARGET_PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          EXTRA_ARGS=()
+          if [[ -n "$TARGET_PR" ]]; then
+            EXTRA_ARGS+=(--pr-number "$TARGET_PR")
+          fi
+          python scripts/coderabbit_after_green.py \
+            --repository "$GITHUB_REPOSITORY" \
+            "${EXTRA_ARGS[@]}"
