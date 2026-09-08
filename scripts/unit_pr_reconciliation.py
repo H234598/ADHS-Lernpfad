@@ -15,6 +15,7 @@ from typing import Any
 
 try:  # Package import in tests; direct script import in trusted workflows.
     from .automation_status import (
+        RevisionConflict as _RevisionConflict,
         StatusStore,
         make_artifact,
         make_error,
@@ -23,6 +24,7 @@ try:  # Package import in tests; direct script import in trusted workflows.
     )
 except ImportError:  # pragma: no cover - direct command-line execution
     from automation_status import (  # type: ignore
+        RevisionConflict as _RevisionConflict,
         StatusStore,
         make_artifact,
         make_error,
@@ -292,9 +294,7 @@ def _assert_owned_revision(
     current = read_status(store.path_for(workflow, run_id))
     current_revision = int(current["revision"])
     if current_revision != int(last_written_revision):
-        from automation_status import RevisionConflict  # local to direct/test mode
-
-        raise RevisionConflict(
+        raise _RevisionConflict(
             f"Reconciliation erwartete eigene Revision {last_written_revision}, "
             f"vorhanden {current_revision}"
         )
@@ -423,7 +423,7 @@ def _validate_success_inputs(
     return decision.merge_sha, main_sha
 
 
-def apply_reconciliation(
+def prepare_reconciliation(
     store: StatusStore,
     *,
     workflow: str,
@@ -435,14 +435,12 @@ def apply_reconciliation(
     main_sha: str | None,
     branch_exists: bool,
     main_contains_merge: bool | None = None,
-    branch_cleanup: Callable[[], bool] | None = None,
 ) -> dict[str, Any]:
-    """Persist one reconciliation using the canonical generator run.
+    """Persist reconciliation through ``cleanup`` without remote branch deletion.
 
-    The first CAS write consumes the caller's observed revision. Every
-    subsequent transition first verifies that the previous revision is still
-    exactly the revision written by this reconciliation. A concurrent writer
-    therefore aborts the chain instead of being silently overwritten.
+    Successful external side effects are deliberately deferred until this
+    pre-cleanup state has itself been pushed to the remote automation-status
+    branch by the trusted workflow.
     """
 
     current = read_status(store.path_for(workflow, run_id))
@@ -473,7 +471,6 @@ def apply_reconciliation(
         main_sha=main_sha,
         main_contains_merge=main_contains_merge,
     )
-
     verified = store.update(
         workflow,
         run_id,
@@ -533,8 +530,7 @@ def apply_reconciliation(
         },
         artifacts=merge_artifacts,
     )
-
-    cleanup = store.update(
+    return store.update(
         workflow,
         run_id,
         status="running",
@@ -549,9 +545,85 @@ def apply_reconciliation(
             "automatic_unit_pull_request_open": False,
             "branch_still_exists": bool(branch_exists),
             "recovery_cleanup_started": True,
+            "recovery_cleanup_complete": False,
             "next_generator_blocked": True,
         },
     )
+
+
+def finalize_reconciliation(
+    store: StatusStore,
+    *,
+    workflow: str,
+    run_id: str,
+    expected_revision: int,
+    branch_exists: bool,
+) -> dict[str, Any]:
+    """Finalize a remotely persisted cleanup phase after the cleanup attempt."""
+
+    current = read_status(store.path_for(workflow, run_id))
+    if current.get("status") != "running" or current.get("phase") != "cleanup":
+        raise ValueError(
+            "Cleanup-Finalisierung benötigt einen laufenden Status in Phase cleanup"
+        )
+    metrics = _mapping(current.get("metrics"))
+    main_sha = str(metrics.get("current_main_commit") or "")
+    if not SHA_RE.fullmatch(main_sha):
+        raise ValueError("Cleanup-Finalisierung benötigt einen main-Nachweis")
+    return store.update(
+        workflow,
+        run_id,
+        status="success",
+        phase="complete",
+        expected_revision=expected_revision,
+        metrics={
+            "recovery_second_ci_state": "success",
+            "automatic_unit_pull_request_open": False,
+            "branch_still_exists": bool(branch_exists),
+            "recovery_cleanup_complete": True,
+            "next_generator_blocked": False,
+            "new_content_required": False,
+        },
+        error=None,
+        recovery=None,
+    )
+
+
+def apply_reconciliation(
+    store: StatusStore,
+    *,
+    workflow: str,
+    run_id: str,
+    decision: ReconciliationDecision,
+    expected_revision: int,
+    repository: str,
+    pr_number: int,
+    main_sha: str | None,
+    branch_exists: bool,
+    main_contains_merge: bool | None = None,
+    branch_cleanup: Callable[[], bool] | None = None,
+) -> dict[str, Any]:
+    """Convenience wrapper for in-process/test reconciliation.
+
+    Production workflow execution uses :func:`prepare_reconciliation`, pushes
+    the cleanup phase remotely, performs branch cleanup, and only then invokes
+    :func:`finalize_reconciliation`.
+    """
+
+    prepared = prepare_reconciliation(
+        store,
+        workflow=workflow,
+        run_id=run_id,
+        decision=decision,
+        expected_revision=expected_revision,
+        repository=repository,
+        pr_number=pr_number,
+        main_sha=main_sha,
+        branch_exists=branch_exists,
+        main_contains_merge=main_contains_merge,
+    )
+    if prepared.get("status") != "running" or prepared.get("phase") != "cleanup":
+        return prepared
 
     effective_branch_exists = bool(branch_exists)
     if branch_cleanup is not None and effective_branch_exists:
@@ -559,29 +631,12 @@ def apply_reconciliation(
             effective_branch_exists = bool(branch_cleanup())
         except (OSError, RuntimeError, ValueError):
             effective_branch_exists = True
-
-    return store.update(
-        workflow,
-        run_id,
-        status="success",
-        phase="complete",
-        expected_revision=_assert_owned_revision(
-            store,
-            workflow,
-            run_id,
-            int(cleanup["revision"]),
-        ),
-        metrics={
-            "recovery_second_ci_state": "success",
-            "automatic_unit_pull_request_open": False,
-            "current_main_commit": verified_main_sha,
-            "branch_still_exists": effective_branch_exists,
-            "recovery_cleanup_complete": True,
-            "next_generator_blocked": False,
-            "new_content_required": False,
-        },
-        error=None,
-        recovery=None,
+    return finalize_reconciliation(
+        store,
+        workflow=workflow,
+        run_id=run_id,
+        expected_revision=int(prepared["revision"]),
+        branch_exists=effective_branch_exists,
     )
 
 
