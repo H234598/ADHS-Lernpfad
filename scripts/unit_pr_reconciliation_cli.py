@@ -15,8 +15,9 @@ from automation_status import RevisionConflict, StatusStore, read_status
 from github_api import request_json
 from unit_pr_reconciliation import (
     ReconciliationDecision,
-    apply_reconciliation,
     evaluate_closed_unit_pr,
+    finalize_reconciliation,
+    prepare_reconciliation,
 )
 
 API = "https://api.github.com"
@@ -82,8 +83,7 @@ def _main_proof(
 
 
 def _load_latest(store: StatusStore) -> dict[str, Any]:
-    path = store.latest_path("generator")
-    return read_status(path)
+    return read_status(store.latest_path("generator"))
 
 
 def evaluate_snapshot(
@@ -179,34 +179,17 @@ def _branch_exists(head_ref: str) -> bool:
     return result.returncode == 0
 
 
-def _cleanup_branch(head_ref: str) -> bool:
-    """Delete a merged unit branch and return whether it still exists."""
-
-    if not head_ref.startswith("agent/einheit-"):
-        return True
-    delete = subprocess.run(  # nosec B603 -- fixed command + validated ref prefix
-        ["git", "push", "origin", "--delete", head_ref],
-        check=False,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-    if delete.returncode == 0:
-        return False
-    return _branch_exists(head_ref)
-
-
-def apply_snapshot(
+def prepare_snapshot(
     *,
     snapshot: Mapping[str, Any],
     store: StatusStore,
 ) -> dict[str, Any]:
-    """Apply one previously evaluated snapshot through the canonical store."""
+    """Advance the canonical run only through its persisted cleanup phase."""
 
     decision = _decision(snapshot)
     head_ref = str(snapshot.get("head_ref") or "")
-    initial_branch_exists = _branch_exists(head_ref)
-
-    return apply_reconciliation(
+    branch_exists = _branch_exists(head_ref)
+    return prepare_reconciliation(
         store,
         workflow="generator",
         run_id=str(snapshot["run_id"]),
@@ -216,9 +199,37 @@ def apply_snapshot(
         pr_number=int(snapshot["pr_number"]),
         main_sha=str(snapshot.get("main_sha") or "") or None,
         main_contains_merge=bool(snapshot.get("main_contains_merge")),
-        branch_exists=initial_branch_exists,
-        branch_cleanup=lambda: _cleanup_branch(head_ref),
+        branch_exists=branch_exists,
     )
+
+
+def finalize_snapshot(
+    *,
+    prepared: Mapping[str, Any],
+    store: StatusStore,
+    branch_exists: bool,
+) -> dict[str, Any]:
+    """Finalize a cleanup phase already persisted to the remote status branch."""
+
+    result_status = _mapping(prepared.get("result_status"))
+    if not result_status:
+        raise RuntimeError("Vorbereiteter Reconciliation-Bericht enthält keinen Status")
+    return finalize_reconciliation(
+        store,
+        workflow="generator",
+        run_id=str(prepared["run_id"]),
+        expected_revision=int(result_status["revision"]),
+        branch_exists=branch_exists,
+    )
+
+
+def _bool(value: str) -> bool:
+    normalized = value.casefold()
+    if normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    raise argparse.ArgumentTypeError("boolean muss true oder false sein")
 
 
 def _parse_args() -> argparse.Namespace:
@@ -229,25 +240,35 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--pr-number", type=int)
     parser.add_argument("--token", default=os.getenv("GITHUB_TOKEN"))
     parser.add_argument("--status-root", type=Path, required=True)
-    parser.add_argument("--evaluate", action="store_true")
-    parser.add_argument("--apply-decision", type=Path)
+    modes = parser.add_mutually_exclusive_group(required=True)
+    modes.add_argument("--evaluate", action="store_true")
+    modes.add_argument("--prepare-decision", type=Path)
+    modes.add_argument("--finalize-cleanup", type=Path)
+    parser.add_argument("--branch-exists", type=_bool)
     parser.add_argument(
         "--output",
         type=Path,
         default=Path("build/unit-pr-reconciliation.json"),
     )
     args = parser.parse_args()
-    if bool(args.evaluate) == bool(args.apply_decision):
-        parser.error("genau eines von --evaluate oder --apply-decision ist erforderlich")
     if args.evaluate and (
         not args.repository or not args.pr_number or not args.token
     ):
         parser.error("--evaluate benötigt repository, pr-number und token")
+    if args.finalize_cleanup and args.branch_exists is None:
+        parser.error("--finalize-cleanup benötigt --branch-exists")
     return args
 
 
+def _load_object(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise RuntimeError("Reconciliation-Snapshot muss ein JSON-Objekt sein")
+    return payload
+
+
 def main() -> int:
-    """Evaluate or apply one reconciliation snapshot."""
+    """Evaluate, prepare, or finalize one reconciliation snapshot."""
 
     args = _parse_args()
     store = StatusStore(args.status_root)
@@ -258,11 +279,17 @@ def main() -> int:
             token=args.token,
             store=store,
         )
+    elif args.prepare_decision:
+        payload = _load_object(args.prepare_decision)
+        status = prepare_snapshot(snapshot=payload, store=store)
+        payload = {**payload, "result_status": status}
     else:
-        payload = json.loads(args.apply_decision.read_text(encoding="utf-8"))
-        if not isinstance(payload, dict):
-            raise RuntimeError("Reconciliation-Snapshot muss ein JSON-Objekt sein")
-        status = apply_snapshot(snapshot=payload, store=store)
+        payload = _load_object(args.finalize_cleanup)
+        status = finalize_snapshot(
+            prepared=payload,
+            store=store,
+            branch_exists=args.branch_exists,
+        )
         payload = {**payload, "result_status": status}
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
