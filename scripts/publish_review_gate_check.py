@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict, replace
 import json
 import os
-from pathlib import Path
 import re
+from dataclasses import asdict, replace
+from pathlib import Path
 from typing import Any
 
 from github_api import request_json
