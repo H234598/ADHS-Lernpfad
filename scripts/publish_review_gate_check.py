@@ -22,7 +22,7 @@ def _mapping(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
-def _load_result(
+def load_result(
     path: Path,
     *,
     repository: str,
@@ -185,7 +185,7 @@ def main() -> int:
             user_agent="ADHS-Lernpfad-coderabbit-head-check",
         )
     )
-    result = _load_result(
+    result = load_result(
         args.report,
         repository=args.repository,
         pr_number=args.pr_number,
