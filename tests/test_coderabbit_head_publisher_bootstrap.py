@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import json
 from pathlib import Path
 import sys
@@ -11,14 +12,14 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-import publish_review_gate_check as publisher
-from publish_review_gate_check import (
-    GATE_CHECK_NAME,
-    _load_result,
-    protect_against_head_change,
-    publish_gate_check,
-)
-from review_gate import GateResult
+publisher = importlib.import_module("publish_review_gate_check")
+review_gate = importlib.import_module("review_gate")
+
+GATE_CHECK_NAME = publisher.GATE_CHECK_NAME
+_load_result = publisher._load_result
+protect_against_head_change = publisher.protect_against_head_change
+publish_gate_check = publisher.publish_gate_check
+GateResult = review_gate.GateResult
 
 HEAD = "a" * 40
 
