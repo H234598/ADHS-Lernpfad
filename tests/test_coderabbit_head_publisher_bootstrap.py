@@ -1,4 +1,8 @@
+"""Bootstrap contract tests for the explicit CodeRabbit head-check publisher."""
+
 from __future__ import annotations
+
+import unittest
 
 import scripts.publish_review_gate_check as publisher
 from scripts.publish_review_gate_check import (
@@ -12,6 +16,7 @@ HEAD = "a" * 40
 
 
 def _result(*, passed: bool = True) -> GateResult:
+    """Build the smallest representative CodeRabbit gate result."""
     return GateResult(
         repository="H234598/ADHS-Lernpfad",
         pull_request=67,
@@ -26,44 +31,54 @@ def _result(*, passed: bool = True) -> GateResult:
     )
 
 
-def test_publisher_posts_required_check_on_explicit_pr_head(monkeypatch) -> None:
-    calls: list[tuple[str, str, dict]] = []
+class HeadPublisherBootstrapTests(unittest.TestCase):
+    """Protect the publisher behavior needed to bootstrap PR #67."""
 
-    def fake_request(
-        url: str,
-        token: str,
-        *,
-        user_agent: str,
-        method: str = "GET",
-        data=None,
-    ):
-        calls.append((url, method, data or {}))
-        return {}
+    def test_publisher_posts_required_check_on_explicit_pr_head(self) -> None:
+        """Publish exactly one successful required check on the evaluated head."""
+        calls: list[tuple[str, str, dict]] = []
 
-    monkeypatch.setattr(publisher, "request_json", fake_request)
+        def fake_request(url: str, _token: str, **kwargs):
+            calls.append((url, str(kwargs.get("method", "GET")), kwargs.get("data") or {}))
+            return {}
 
-    publish_gate_check("H234598/ADHS-Lernpfad", "token", _result())
+        original = publisher.request_json
+        publisher.request_json = fake_request
+        try:
+            publish_gate_check("H234598/ADHS-Lernpfad", "token", _result())
+        finally:
+            publisher.request_json = original
 
-    assert len(calls) == 1
-    url, method, payload = calls[0]
-    assert url.endswith("/repos/H234598/ADHS-Lernpfad/check-runs")
-    assert method == "POST"
-    assert payload["name"] == GATE_CHECK_NAME == "CodeRabbit review gate (blocking)"
-    assert payload["head_sha"] == HEAD
-    assert payload["status"] == "completed"
-    assert payload["conclusion"] == "success"
+        self.assertEqual(len(calls), 1)
+        url, method, payload = calls[0]
+        self.assertTrue(url.endswith("/repos/H234598/ADHS-Lernpfad/check-runs"))
+        self.assertEqual(method, "POST")
+        self.assertEqual(
+            payload["name"],
+            GATE_CHECK_NAME,
+        )
+        self.assertEqual(GATE_CHECK_NAME, "CodeRabbit review gate (blocking)")
+        self.assertEqual(payload["head_sha"], HEAD)
+        self.assertEqual(payload["status"], "completed")
+        self.assertEqual(payload["conclusion"], "success")
+
+    def test_publisher_rejects_stale_success_after_head_change(self) -> None:
+        """Fail closed when the pull-request head changes during evaluation."""
+        protected = protect_against_head_change(
+            _result(passed=True),
+            {"state": "open", "head": {"sha": "b" * 40}},
+            enforcement_outcome="success",
+        )
+
+        self.assertFalse(protected.passed)
+        self.assertEqual(protected.head_sha, "b" * 40)
+        self.assertTrue(
+            any(
+                "während der Auswertung geändert" in reason
+                for reason in protected.reasons
+            )
+        )
 
 
-def test_publisher_rejects_stale_success_after_head_change() -> None:
-    protected = protect_against_head_change(
-        _result(passed=True),
-        {"state": "open", "head": {"sha": "b" * 40}},
-        enforcement_outcome="success",
-    )
-
-    assert protected.passed is False
-    assert protected.head_sha == "b" * 40
-    assert any(
-        "während der Auswertung geändert" in reason
-        for reason in protected.reasons
-    )
+if __name__ == "__main__":
+    unittest.main()
