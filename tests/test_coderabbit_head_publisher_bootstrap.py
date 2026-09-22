@@ -2,15 +2,23 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+import sys
+import tempfile
 import unittest
 
-import scripts.publish_review_gate_check as publisher
-from scripts.publish_review_gate_check import (
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import publish_review_gate_check as publisher
+from publish_review_gate_check import (
     GATE_CHECK_NAME,
+    _load_result,
     protect_against_head_change,
     publish_gate_check,
 )
-from scripts.review_gate import GateResult
+from review_gate import GateResult
 
 HEAD = "a" * 40
 
@@ -53,10 +61,7 @@ class HeadPublisherBootstrapTests(unittest.TestCase):
         url, method, payload = calls[0]
         self.assertTrue(url.endswith("/repos/H234598/ADHS-Lernpfad/check-runs"))
         self.assertEqual(method, "POST")
-        self.assertEqual(
-            payload["name"],
-            GATE_CHECK_NAME,
-        )
+        self.assertEqual(payload["name"], GATE_CHECK_NAME)
         self.assertEqual(GATE_CHECK_NAME, "CodeRabbit review gate (blocking)")
         self.assertEqual(payload["head_sha"], HEAD)
         self.assertEqual(payload["status"], "completed")
@@ -78,6 +83,75 @@ class HeadPublisherBootstrapTests(unittest.TestCase):
                 for reason in protected.reasons
             )
         )
+
+    def test_publisher_fails_closed_when_fresh_head_is_invalid(self) -> None:
+        """Treat an unresolved current PR head as unknown, never unchanged."""
+        protected = protect_against_head_change(
+            _result(passed=True),
+            {"state": "open", "head": {"sha": "not-a-sha"}},
+            enforcement_outcome="success",
+        )
+
+        self.assertFalse(protected.passed)
+        self.assertTrue(
+            any(
+                "während der Auswertung geändert" in reason
+                for reason in protected.reasons
+            )
+        )
+
+    def test_report_identity_must_match_requested_pull_request(self) -> None:
+        """Reject a persisted gate report that belongs to another PR."""
+        raw = {
+            "repository": "H234598/ADHS-Lernpfad",
+            "pull_request": 999,
+            "head_sha": HEAD,
+            "coderabbit_state": "success",
+            "coderabbit_signals": [],
+            "unresolved_thread_ids": [],
+            "disagreement_open": False,
+            "passed": True,
+            "reasons": [],
+            "checked_at": "2026-09-23T00:00:00Z",
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "review-gate.json"
+            path.write_text(json.dumps(raw), encoding="utf-8")
+            with self.assertRaisesRegex(RuntimeError, "gehört nicht"):
+                _load_result(
+                    path,
+                    repository="H234598/ADHS-Lernpfad",
+                    pr_number=67,
+                    fresh_pull={"head": {"sha": HEAD}},
+                )
+
+    def test_report_passed_accepts_only_json_boolean_true(self) -> None:
+        """Never treat truthy strings in persisted trust data as success."""
+        raw = {
+            "repository": "H234598/ADHS-Lernpfad",
+            "pull_request": 67,
+            "head_sha": HEAD,
+            "coderabbit_state": "success",
+            "coderabbit_signals": [],
+            "unresolved_thread_ids": [],
+            "disagreement_open": False,
+            "passed": "false",
+            "reasons": [],
+            "checked_at": "2026-09-23T00:00:00Z",
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "review-gate.json"
+            path.write_text(json.dumps(raw), encoding="utf-8")
+            loaded = _load_result(
+                path,
+                repository="H234598/ADHS-Lernpfad",
+                pr_number=67,
+                fresh_pull={"head": {"sha": HEAD}},
+            )
+
+        self.assertFalse(loaded.passed)
+        self.assertEqual(loaded.repository, "H234598/ADHS-Lernpfad")
+        self.assertEqual(loaded.pull_request, 67)
 
 
 if __name__ == "__main__":
