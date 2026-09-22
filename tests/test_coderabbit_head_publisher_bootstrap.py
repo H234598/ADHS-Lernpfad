@@ -16,7 +16,7 @@ publisher = importlib.import_module("publish_review_gate_check")
 review_gate = importlib.import_module("review_gate")
 
 GATE_CHECK_NAME = publisher.GATE_CHECK_NAME
-_load_result = getattr(publisher, "_load_result")
+load_result = publisher.load_result
 protect_against_head_change = publisher.protect_against_head_change
 publish_gate_check = publisher.publish_gate_check
 GateResult = review_gate.GateResult
@@ -119,7 +119,7 @@ class HeadPublisherBootstrapTests(unittest.TestCase):
             path = Path(tmp) / "review-gate.json"
             path.write_text(json.dumps(raw), encoding="utf-8")
             with self.assertRaisesRegex(RuntimeError, "gehört nicht"):
-                _load_result(
+                load_result(
                     path,
                     repository="H234598/ADHS-Lernpfad",
                     pr_number=67,
@@ -143,7 +143,7 @@ class HeadPublisherBootstrapTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "review-gate.json"
             path.write_text(json.dumps(raw), encoding="utf-8")
-            loaded = _load_result(
+            loaded = load_result(
                 path,
                 repository="H234598/ADHS-Lernpfad",
                 pr_number=67,
