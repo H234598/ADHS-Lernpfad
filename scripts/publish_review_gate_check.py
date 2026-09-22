@@ -35,9 +35,16 @@ def _load_result(
         raw = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(raw, dict):
             raise RuntimeError("CodeRabbit-Gatebericht muss ein JSON-Objekt sein")
+        if (
+            str(raw.get("repository") or "") != repository
+            or raw.get("pull_request") != pr_number
+        ):
+            raise RuntimeError(
+                "CodeRabbit-Gatebericht gehört nicht zu diesem Pull Request"
+            )
         return GateResult(
-            repository=str(raw.get("repository") or repository),
-            pull_request=int(raw.get("pull_request") or pr_number),
+            repository=repository,
+            pull_request=pr_number,
             head_sha=str(raw.get("head_sha") or ""),
             coderabbit_state=str(raw.get("coderabbit_state") or "missing"),
             coderabbit_signals=[
@@ -49,7 +56,7 @@ def _load_result(
                 str(item) for item in raw.get("unresolved_thread_ids", [])
             ],
             disagreement_open=bool(raw.get("disagreement_open")),
-            passed=bool(raw.get("passed")),
+            passed=raw.get("passed") is True,
             reasons=[str(item) for item in raw.get("reasons", [])],
             checked_at=str(raw.get("checked_at") or ""),
         )
@@ -78,11 +85,12 @@ def protect_against_head_change(
     """Bind a positive gate to a fresh PR snapshot and formal review result."""
 
     fresh_head = str(_mapping(fresh_pull.get("head")).get("sha") or "")
-    target_head = fresh_head if SHA_RE.fullmatch(fresh_head) else result.head_sha
+    head_known = bool(SHA_RE.fullmatch(fresh_head))
+    target_head = fresh_head if head_known else result.head_sha
     reasons = list(result.reasons)
     passed = bool(result.passed)
 
-    head_changed = target_head != result.head_sha
+    head_changed = not head_known or target_head != result.head_sha
     if str(fresh_pull.get("state") or "") != "open" or head_changed:
         passed = False
         reasons.append(
