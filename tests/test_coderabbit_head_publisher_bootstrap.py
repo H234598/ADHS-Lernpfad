@@ -43,6 +43,24 @@ def _result(*, passed: bool = True) -> GateResult:
 class HeadPublisherBootstrapTests(unittest.TestCase):
     """Protect the publisher behavior needed to bootstrap PR #67."""
 
+    def test_workflow_bootstraps_trusted_publisher_without_reintroducing_deadlock(self) -> None:
+        """Activate publication only when the trusted main checkout contains it."""
+        workflow = (
+            ROOT / ".github/workflows/coderabbit-hard-gate.yml"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("checks: write", workflow)
+        self.assertIn("id: publisher", workflow)
+        self.assertIn("scripts/publish_review_gate_check.py", workflow)
+        self.assertIn("available=true", workflow)
+        self.assertIn("available=false", workflow)
+        self.assertIn(
+            "steps.publisher.outputs.available == 'true'",
+            workflow,
+        )
+        self.assertIn("id: enforce", workflow)
+        self.assertIn("steps.enforce.outcome", workflow)
+
     def test_publisher_posts_required_check_on_explicit_pr_head(self) -> None:
         """Publish exactly one successful required check on the evaluated head."""
         calls: list[tuple[str, str, dict]] = []
