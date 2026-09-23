@@ -128,7 +128,7 @@ class HeadPublisherBootstrapTests(unittest.TestCase):
 
     def test_report_pull_request_requires_exact_integer_type(self) -> None:
         """Reject booleans and floats masquerading as the requested PR number."""
-        for invalid_pr in (True, 67.0):
+        for invalid_pr in (True, 1.0):
             with self.subTest(pull_request=invalid_pr):
                 raw = {
                     "repository": "H234598/ADHS-Lernpfad",
@@ -149,7 +149,7 @@ class HeadPublisherBootstrapTests(unittest.TestCase):
                         load_result(
                             path,
                             repository="H234598/ADHS-Lernpfad",
-                            pr_number=67,
+                            pr_number=1,
                             fresh_pull={"head": {"sha": HEAD}},
                         )
 
