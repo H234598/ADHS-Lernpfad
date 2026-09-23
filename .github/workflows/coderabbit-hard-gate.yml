@@ -1,7 +1,7 @@
 name: CodeRabbit hard gate
 
 on:
-  # zizmor: ignore[dangerous-triggers] -- Ausführung bleibt auf main; nur read-Rechte, kein PR-Code wird ausgeführt.
+  # zizmor: ignore[dangerous-triggers] -- Ausführung bleibt auf main; kein PR-Code wird ausgeführt.
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
   pull_request_review:
@@ -25,7 +25,7 @@ permissions:
   contents: read
   pull-requests: read
   issues: read
-  checks: read
+  checks: write
   statuses: read
 
 concurrency:
@@ -44,6 +44,18 @@ jobs:
         with:
           ref: main
           persist-credentials: false
+
+      - name: Detect trusted head-check publisher
+        id: publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f scripts/publish_review_gate_check.py ]]; then
+            echo 'available=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'available=false' >> "$GITHUB_OUTPUT"
+            echo 'Trusted head-check publisher ist noch nicht auf main; Bootstrap verwendet den Job-Check.'
+          fi
 
       - name: Determine pull request
         id: pr
@@ -75,6 +87,7 @@ jobs:
             --pr-number "$TARGET_PR"
 
       - name: Enforce current CodeRabbit review state
+        id: enforce
         if: steps.pr.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -83,6 +96,18 @@ jobs:
           python scripts/coderabbit_review_state.py \
             --repository "$GITHUB_REPOSITORY" \
             --pr-number "$TARGET_PR"
+
+      - name: Publish final current-head CodeRabbit gate
+        if: always() && steps.pr.outputs.skip != 'true' && steps.publisher.outputs.available == 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TARGET_PR: ${{ steps.pr.outputs.number }}
+          ENFORCEMENT_OUTCOME: ${{ steps.enforce.outcome }}
+        run: |
+          python scripts/publish_review_gate_check.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --pr-number "$TARGET_PR" \
+            --enforcement-outcome "$ENFORCEMENT_OUTCOME"
 
       - name: Upload review-gate report
         if: always() && steps.pr.outputs.skip != 'true'
