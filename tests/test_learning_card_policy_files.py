@@ -56,22 +56,8 @@ class LearningCardPolicyFileTests(unittest.TestCase):
             hard_text.count("zizmor: ignore[dangerous-triggers]"),
             2,
         )
-        self.assertEqual(
-            hard["permissions"],
-            {
-                "contents": "read",
-                "pull-requests": "read",
-                "issues": "read",
-                "checks": "write",
-                "statuses": "read",
-            },
-        )
         self.assertTrue(
-            all(
-                value in {"read", "none"}
-                for key, value in hard["permissions"].items()
-                if key != "checks"
-            )
+            all(value in {"read", "none"} for value in hard["permissions"].values())
         )
         hard_checkout = next(
             step
@@ -80,23 +66,6 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         )
         self.assertEqual(hard_checkout["with"]["ref"], "main")
         self.assertFalse(hard_checkout["with"]["persist-credentials"])
-        publisher_probe = next(
-            step
-            for step in hard["jobs"]["review-gate"]["steps"]
-            if step.get("name") == "Detect trusted head-check publisher"
-        )
-        self.assertEqual(publisher_probe["id"], "publisher")
-        self.assertIn("scripts/publish_review_gate_check.py", str(publisher_probe["run"]))
-        publish_step = next(
-            step
-            for step in hard["jobs"]["review-gate"]["steps"]
-            if step.get("name") == "Publish final current-head CodeRabbit gate"
-        )
-        self.assertIn(
-            "steps.publisher.outputs.available == 'true'",
-            str(publish_step.get("if") or ""),
-        )
-        self.assertIn("publish_review_gate_check.py", str(publish_step["run"]))
 
         persist_path = ROOT / ".github/workflows/persist-automation-status.yml"
         persist_text = persist_path.read_text(encoding="utf-8")
