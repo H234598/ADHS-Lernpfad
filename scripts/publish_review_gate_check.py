@@ -35,9 +35,12 @@ def load_result(
         raw = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(raw, dict):
             raise RuntimeError("CodeRabbit-Gatebericht muss ein JSON-Objekt sein")
+        report_pr = raw.get("pull_request")
         if (
             str(raw.get("repository") or "") != repository
-            or raw.get("pull_request") != pr_number
+            or not isinstance(report_pr, int)
+            or isinstance(report_pr, bool)
+            or report_pr != pr_number
         ):
             raise RuntimeError(
                 "CodeRabbit-Gatebericht gehört nicht zu diesem Pull Request"
