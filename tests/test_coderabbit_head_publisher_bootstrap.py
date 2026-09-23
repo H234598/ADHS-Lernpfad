@@ -126,6 +126,33 @@ class HeadPublisherBootstrapTests(unittest.TestCase):
                     fresh_pull={"head": {"sha": HEAD}},
                 )
 
+    def test_report_pull_request_requires_exact_integer_type(self) -> None:
+        """Reject booleans and floats masquerading as the requested PR number."""
+        for invalid_pr in (True, 67.0):
+            with self.subTest(pull_request=invalid_pr):
+                raw = {
+                    "repository": "H234598/ADHS-Lernpfad",
+                    "pull_request": invalid_pr,
+                    "head_sha": HEAD,
+                    "coderabbit_state": "success",
+                    "coderabbit_signals": [],
+                    "unresolved_thread_ids": [],
+                    "disagreement_open": False,
+                    "passed": True,
+                    "reasons": [],
+                    "checked_at": "2026-09-23T00:00:00Z",
+                }
+                with tempfile.TemporaryDirectory() as tmp:
+                    path = Path(tmp) / "review-gate.json"
+                    path.write_text(json.dumps(raw), encoding="utf-8")
+                    with self.assertRaisesRegex(RuntimeError, "gehört nicht"):
+                        load_result(
+                            path,
+                            repository="H234598/ADHS-Lernpfad",
+                            pr_number=67,
+                            fresh_pull={"head": {"sha": HEAD}},
+                        )
+
     def test_report_passed_accepts_only_json_boolean_true(self) -> None:
         """Never treat truthy strings in persisted trust data as success."""
         raw = {
