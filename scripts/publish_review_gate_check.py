@@ -159,7 +159,7 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", default=os.getenv("GITHUB_REPOSITORY"))
     parser.add_argument("--pr-number", type=int)
-    parser.add_argument("--token", default=os.getenv("GITHUB_TOKEN"))
+    parser.set_defaults(token=os.getenv("GITHUB_TOKEN"))
     parser.add_argument(
         "--report",
         type=Path,
