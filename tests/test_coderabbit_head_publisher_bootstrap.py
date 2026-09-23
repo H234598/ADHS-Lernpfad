@@ -43,6 +43,18 @@ def _result(*, passed: bool = True) -> GateResult:
 class HeadPublisherBootstrapTests(unittest.TestCase):
     """Protect the publisher behavior needed to bootstrap PR #67."""
 
+    def test_publisher_token_is_environment_only(self) -> None:
+        """Do not expose GitHub tokens through a process-list-visible CLI option."""
+        source = (
+            ROOT / "scripts/publish_review_gate_check.py"
+        ).read_text(encoding="utf-8")
+
+        self.assertNotIn('parser.add_argument("--token"', source)
+        self.assertIn(
+            'parser.set_defaults(token=os.getenv("GITHUB_TOKEN"))',
+            source,
+        )
+
     def test_publisher_posts_required_check_on_explicit_pr_head(self) -> None:
         """Publish exactly one successful required check on the evaluated head."""
         calls: list[tuple[str, str, dict]] = []
