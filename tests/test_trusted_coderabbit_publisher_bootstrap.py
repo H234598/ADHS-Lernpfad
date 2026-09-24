@@ -50,6 +50,7 @@ class TrustedCodeRabbitPublisherBootstrapTests(unittest.TestCase):
             ["CodeRabbit hard gate"],
         )
         self.assertEqual(trigger["workflow_run"]["types"], ["completed"])
+        self.assertNotIn("workflow_dispatch", trigger)
 
         job = workflow["jobs"]["publish"]
         checkout = next(
@@ -67,6 +68,30 @@ class TrustedCodeRabbitPublisherBootstrapTests(unittest.TestCase):
         self.assertIn("coderabbit_review_state.py", run_text)
         self.assertIn("--block-dismissed", run_text)
         self.assertIn("publish_review_gate_check.py", run_text)
+        determine = next(
+            step
+            for step in job["steps"]
+            if step.get("name") == "Determine pull request"
+        )
+        determine_env = determine.get("env", {})
+        self.assertEqual(
+            determine_env["HEAD_REPOSITORY"],
+            "${{ github.event.workflow_run.head_repository.full_name }}",
+        )
+        self.assertEqual(
+            determine_env["HEAD_BRANCH"],
+            "${{ github.event.workflow_run.head_branch }}",
+        )
+        self.assertEqual(
+            determine_env["HEAD_SHA"],
+            "${{ github.event.workflow_run.head_sha }}",
+        )
+        determine_run = str(determine.get("run") or "")
+        self.assertIn("/pulls?state=open&head=", determine_run)
+        self.assertIn("/pulls/$PR_NUMBER", determine_run)
+        self.assertIn("head_repository", determine_run)
+        self.assertIn("head_branch", determine_run)
+        self.assertIn("head_sha", determine_run)
 
 
 if __name__ == "__main__":
