@@ -193,8 +193,11 @@ def main() -> int:
     if args.block_dismissed and state == "dismissed":
         reasons = [
             *reasons,
-            "CodeRabbit-Review wurde verworfen; ein bereits grüner Head-Check "
-            "muss bis zu einem neuen formellen Review fail-closed bleiben.",
+            (
+                "CodeRabbit-Review wurde verworfen; ein bereits grüner "
+                "Head-Check muss bis zu einem neuen formellen Review "
+                "fail-closed bleiben."
+            ),
         ]
     _write_report(
         args.output_dir,
