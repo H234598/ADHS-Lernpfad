@@ -178,17 +178,18 @@ def test_gate_workflows_are_valid_yaml_and_least_privilege() -> None:
         "contents": "read",
         "pull-requests": "read",
         "issues": "read",
-        "checks": "write",
+        "checks": "read",
         "statuses": "read",
     }
-    assert "write" not in str({k: v for k, v in coderabbit["permissions"].items() if k != "checks"})
+    assert all(value in {"read", "none"} for value in coderabbit["permissions"].values())
 
 
 def test_coderabbit_gate_uses_trusted_main_checkout() -> None:
     workflow = (ROOT / ".github/workflows/coderabbit-hard-gate.yml").read_text(
         encoding="utf-8"
     )
-    assert "CodeRabbit review gate (blocking)" in workflow
+    assert "CodeRabbit review evaluation" in workflow
+    assert "publish_review_gate_check.py" not in workflow
     assert "ref: main" in workflow
     assert "persist-credentials: false" in workflow
     assert "pull_request_target" in workflow
