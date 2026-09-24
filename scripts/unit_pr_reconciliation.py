@@ -440,7 +440,6 @@ def _resume_persisted_cleanup(
     *,
     expected_revision: int,
     merge_sha: str,
-    main_sha: str,
 ) -> bool:
     """Recognize a cleanup phase already persisted by an earlier attempt."""
 
@@ -453,9 +452,10 @@ def _resume_persisted_cleanup(
             f"vorhanden {current_revision}"
         )
     metrics = _mapping(current.get("metrics"))
+    persisted_main_sha = str(metrics.get("current_main_commit") or "")
     if (
         metrics.get("recovery_merge_commit") != merge_sha
-        or metrics.get("current_main_commit") != main_sha
+        or not SHA_RE.fullmatch(persisted_main_sha)
         or metrics.get("recovery_second_ci_state") != "success"
     ):
         raise ValueError(
@@ -516,7 +516,6 @@ def prepare_reconciliation(
         current,
         expected_revision=expected_revision,
         merge_sha=merge_sha,
-        main_sha=verified_main_sha,
     ):
         return dict(current)
 
