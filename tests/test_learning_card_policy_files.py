@@ -62,7 +62,7 @@ class LearningCardPolicyFileTests(unittest.TestCase):
                 "contents": "read",
                 "pull-requests": "read",
                 "issues": "read",
-                "checks": "write",
+                "checks": "read",
                 "statuses": "read",
             },
         )
@@ -73,7 +73,8 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         )
         self.assertEqual(hard_checkout["with"]["ref"], "main")
         self.assertFalse(hard_checkout["with"]["persist-credentials"])
-        self.assertIn("publish_review_gate_check.py", hard_text)
+        self.assertNotIn("publish_review_gate_check.py", hard_text)
+        self.assertEqual(hard["jobs"]["review-gate"]["name"], "CodeRabbit review evaluation")
         self.assertFalse(hard["concurrency"]["cancel-in-progress"])
 
         persist_path = ROOT / ".github/workflows/persist-automation-status.yml"
