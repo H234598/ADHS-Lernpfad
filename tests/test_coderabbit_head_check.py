@@ -46,7 +46,7 @@ def test_gate_check_is_explicitly_published_on_evaluated_pr_head(monkeypatch) ->
     assert payload["conclusion"] == "success"
 
 
-def test_coderabbit_workflow_serializes_pr_events_and_can_publish_head_check() -> None:
+def test_coderabbit_workflow_is_read_only_evaluator_for_trusted_publisher() -> None:
     path = ROOT / ".github/workflows/coderabbit-hard-gate.yml"
     text = path.read_text(encoding="utf-8")
     workflow = yaml.safe_load(text)
@@ -55,23 +55,19 @@ def test_coderabbit_workflow_serializes_pr_events_and_can_publish_head_check() -
         "contents": "read",
         "pull-requests": "read",
         "issues": "read",
-        "checks": "write",
+        "checks": "read",
         "statuses": "read",
     }
     assert workflow["concurrency"]["cancel-in-progress"] is False
-    publish_step = next(
-        step
-        for step in workflow["jobs"]["review-gate"]["steps"]
-        if step.get("name") == "Publish final current-head CodeRabbit gate"
+    job = workflow["jobs"]["review-gate"]
+    assert job["name"] == "CodeRabbit review evaluation"
+    steps = job["steps"]
+    assert not any(
+        step.get("name") == "Publish final current-head CodeRabbit gate"
+        for step in steps
     )
-    publish_run = str(publish_step.get("run") or "")
-    assert "publish_review_gate_check.py" in publish_run
-    assert "coderabbit_review_state.py" in publish_run
-    assert "--block-dismissed" in publish_run
-    assert publish_run.index("coderabbit_review_state.py") < publish_run.index(
-        "publish_review_gate_check.py"
-    )
-    assert publish_step["env"]["INITIAL_ENFORCEMENT_OUTCOME"] == "${{ steps.enforce.outcome }}"
+    assert "publish_review_gate_check.py" not in text
+    assert "--block-dismissed" not in text
 
 
 def test_gate_rejects_stale_success_when_pr_head_changes() -> None:
