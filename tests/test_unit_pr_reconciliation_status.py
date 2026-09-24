@@ -193,6 +193,7 @@ def test_persisted_cleanup_phase_resumes_without_replaying_earlier_phases(
 def test_persisted_cleanup_resume_survives_main_advancing(
     tmp_path: Path,
 ) -> None:
+    """Resume persisted cleanup even after main advances past the merge."""
     store, running = _running_store(tmp_path)
     prepared = prepare_reconciliation(
         store,
