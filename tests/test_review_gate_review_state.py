@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 from pathlib import Path
 import sys
 import unittest
@@ -7,8 +8,10 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-import coderabbit_review_state as review_state_module
-from coderabbit_review_state import evaluate_coderabbit_review_state
+review_state_module = importlib.import_module("coderabbit_review_state")
+evaluate_coderabbit_review_state = (
+    review_state_module.evaluate_coderabbit_review_state
+)
 
 
 def review(
@@ -18,6 +21,7 @@ def review(
     author: str = "coderabbitai[bot]",
     review_id: int = 1,
 ) -> dict[str, object]:
+    """Build the smallest representative pull-request review payload."""
     return {
         "id": review_id,
         "state": state,
@@ -109,6 +113,7 @@ class CodeRabbitReviewStateTests(unittest.TestCase):
                 self.assertEqual(reasons, [])
 
     def test_publication_recheck_can_fail_closed_on_dismissed_review(self) -> None:
+        """Treat a dismissed review as blocking during final publication."""
         self.assertTrue(hasattr(review_state_module, "review_state_blocks"))
         blocker = getattr(review_state_module, "review_state_blocks", None)
         if blocker is None:
