@@ -6,6 +6,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/reconcile-unit-pr.yml"
+PERSIST_WORKFLOW = ROOT / ".github/workflows/persist-automation-status.yml"
 ADAPTER = ROOT / "scripts/unit_pr_reconciliation_cli.py"
 RECONCILER = ROOT / "scripts/unit_pr_reconciliation.py"
 
@@ -56,6 +57,12 @@ def test_reconciliation_workflow_serializes_status_writes_and_uses_existing_stor
 
     assert workflow["concurrency"]["group"] == "automation-status"
     assert workflow["concurrency"]["cancel-in-progress"] is False
+    assert workflow["concurrency"]["queue"] == "max"
+
+    persist = yaml.safe_load(PERSIST_WORKFLOW.read_text(encoding="utf-8"))
+    assert persist["concurrency"]["group"] == "automation-status"
+    assert persist["concurrency"]["cancel-in-progress"] is False
+    assert persist["concurrency"]["queue"] == "max"
     assert "git fetch --depth=1 origin automation-status" in text
     assert "git worktree add" in text
     assert "AUTOMATION_STATUS_ROOT" in text

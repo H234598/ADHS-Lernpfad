@@ -7,6 +7,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import coderabbit_review_state as review_state_module
 from coderabbit_review_state import evaluate_coderabbit_review_state
 
 
@@ -106,6 +107,16 @@ class CodeRabbitReviewStateTests(unittest.TestCase):
                 state, reasons = evaluate_coderabbit_review_state(reviews)
                 self.assertEqual(state, expected)
                 self.assertEqual(reasons, [])
+
+    def test_publication_recheck_can_fail_closed_on_dismissed_review(self) -> None:
+        self.assertTrue(hasattr(review_state_module, "review_state_blocks"))
+        blocker = getattr(review_state_module, "review_state_blocks", None)
+        if blocker is None:
+            return
+        self.assertFalse(blocker("dismissed"))
+        self.assertTrue(blocker("dismissed", block_dismissed=True))
+        self.assertTrue(blocker("changes_requested", block_dismissed=True))
+        self.assertFalse(blocker("approved", block_dismissed=True))
 
     def test_dismissed_review_does_not_keep_obsolete_request_changes(self) -> None:
         state, reasons = evaluate_coderabbit_review_state(

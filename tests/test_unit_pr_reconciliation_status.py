@@ -19,6 +19,7 @@ from scripts.unit_pr_reconciliation import (
 
 HEAD = "a" * 40
 MERGE = "b" * 40
+NEXT_MAIN = "c" * 40
 RUN_ID = "generator-reconcile-1"
 
 
@@ -187,6 +188,41 @@ def test_persisted_cleanup_phase_resumes_without_replaying_earlier_phases(
     )
     assert completed["status"] == "success"
     assert completed["phase"] == "complete"
+
+
+def test_persisted_cleanup_resume_survives_main_advancing(
+    tmp_path: Path,
+) -> None:
+    store, running = _running_store(tmp_path)
+    prepared = prepare_reconciliation(
+        store,
+        workflow="generator",
+        run_id=RUN_ID,
+        decision=_green_decision(),
+        expected_revision=running["revision"],
+        repository="H234598/ADHS-Lernpfad",
+        pr_number=66,
+        main_sha=MERGE,
+        main_contains_merge=True,
+        branch_exists=True,
+    )
+
+    resumed = prepare_reconciliation(
+        store,
+        workflow="generator",
+        run_id=RUN_ID,
+        decision=_green_decision(),
+        expected_revision=prepared["revision"],
+        repository="H234598/ADHS-Lernpfad",
+        pr_number=66,
+        main_sha=NEXT_MAIN,
+        main_contains_merge=True,
+        branch_exists=True,
+    )
+
+    assert resumed == prepared
+    assert resumed["metrics"]["recovery_merge_commit"] == MERGE
+    assert resumed["metrics"]["current_main_commit"] == MERGE
 
 
 def test_merged_without_green_second_gates_becomes_manual_blocker(

@@ -59,8 +59,19 @@ def test_coderabbit_workflow_serializes_pr_events_and_can_publish_head_check() -
         "statuses": "read",
     }
     assert workflow["concurrency"]["cancel-in-progress"] is False
-    assert "publish_review_gate_check.py" in text
-    assert "steps.enforce.outcome" in text
+    publish_step = next(
+        step
+        for step in workflow["jobs"]["review-gate"]["steps"]
+        if step.get("name") == "Publish final current-head CodeRabbit gate"
+    )
+    publish_run = str(publish_step.get("run") or "")
+    assert "publish_review_gate_check.py" in publish_run
+    assert "coderabbit_review_state.py" in publish_run
+    assert "--block-dismissed" in publish_run
+    assert publish_run.index("coderabbit_review_state.py") < publish_run.index(
+        "publish_review_gate_check.py"
+    )
+    assert publish_step["env"]["INITIAL_ENFORCEMENT_OUTCOME"] == "${{ steps.enforce.outcome }}"
 
 
 def test_gate_rejects_stale_success_when_pr_head_changes() -> None:
