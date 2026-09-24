@@ -47,6 +47,7 @@ def test_gate_check_is_explicitly_published_on_evaluated_pr_head(monkeypatch) ->
 
 
 def test_coderabbit_workflow_is_read_only_evaluator_for_trusted_publisher() -> None:
+    """Keep PR-controlled review evaluation read-only and non-required."""
     path = ROOT / ".github/workflows/coderabbit-hard-gate.yml"
     text = path.read_text(encoding="utf-8")
     workflow = yaml.safe_load(text)
