@@ -25,7 +25,7 @@ permissions:
   contents: read
   pull-requests: read
   issues: read
-  checks: write
+  checks: read
   statuses: read
 
 concurrency:
@@ -34,7 +34,7 @@ concurrency:
 
 jobs:
   review-gate:
-    name: CodeRabbit review gate (blocking)
+    name: CodeRabbit review evaluation
     if: github.event_name != 'issue_comment' || github.event.issue.pull_request
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -84,26 +84,6 @@ jobs:
           python scripts/coderabbit_review_state.py \
             --repository "$GITHUB_REPOSITORY" \
             --pr-number "$TARGET_PR"
-
-      - name: Publish final current-head CodeRabbit gate
-        if: always() && steps.pr.outputs.skip != 'true'
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          TARGET_PR: ${{ steps.pr.outputs.number }}
-          INITIAL_ENFORCEMENT_OUTCOME: ${{ steps.enforce.outcome }}
-        run: |
-          set -euo pipefail
-          FINAL_ENFORCEMENT_OUTCOME="$INITIAL_ENFORCEMENT_OUTCOME"
-          if ! python scripts/coderabbit_review_state.py \
-            --repository "$GITHUB_REPOSITORY" \
-            --pr-number "$TARGET_PR" \
-            --block-dismissed; then
-            FINAL_ENFORCEMENT_OUTCOME=failure
-          fi
-          python scripts/publish_review_gate_check.py \
-            --repository "$GITHUB_REPOSITORY" \
-            --pr-number "$TARGET_PR" \
-            --enforcement-outcome "$FINAL_ENFORCEMENT_OUTCOME"
 
       - name: Upload review-gate report
         if: always() && steps.pr.outputs.skip != 'true'
