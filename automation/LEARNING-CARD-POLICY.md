@@ -16,7 +16,8 @@ updates:
   - "2026-09-03: Aggregator veröffentlicht seinen Check explizit auf dem ausgewerteten PR-Head; Checks-Write ist auf diese Publikation begrenzt."
   - "2026-09-03: Rulesetmigration mit lokalem Exklusivlock und zweitem Live-Snapshot unmittelbar vor PUT gehärtet."
   - "2026-09-03: manual-merge-required als Deklaration von vertrauenswürdiger Human-Freigabe getrennt; sensible PRs bleiben bis zum expliziten workflow_dispatch fail-closed."
-date: 2026-09-03
+  - "2026-09-08: CodeRabbit-Reviewtransport von fachlichen Subgate-Diagnosen getrennt und Gate-Ereignisse pro PR serialisiert."
+date: 2026-09-08
 created: 2026-08-12T20:22:24+02:00
 ---
 
@@ -192,6 +193,20 @@ Alle wissenschaftlichen Subgates müssen bestehen; zusätzlich gelten Deklaratio
 - speichert JSON- und Markdownberichte als Artefakt.
 
 Der publizierte Check wird erst nach erneuter Prüfung von Head, Body, vollständigem Dateiscope und – bei semantischem Scope – nochmals frisch geladenen Check-Runs erzeugt. Bei einem Snapshotwechsel wird fail-closed ein blockierendes Ergebnis auf dem nun aktuellen Head veröffentlicht; ein veralteter Erfolg wird nicht übernommen.
+
+## Review-Gate-Transportdiagnose und Eventserialisierung
+
+`content_scope` und `claim_source_entailment` bleiben fail-closed an den formellen `CodeRabbit review gate (blocking)` gekoppelt. Ein fehlender, ausstehender, abgebrochener oder fehlgeschlagener Review-Gate-Check darf deshalb weiterhin keinen grünen Aggregator erzeugen.
+
+Die Diagnose unterscheidet nun aber zwischen **fachlichem Befund** und **Reviewtransport/Formalgate**:
+
+- `review_gate_state` enthält den expliziten Zustand des formellen CodeRabbit-Gates;
+- ist dieser Zustand nicht `success`, bleiben die semantischen Subgates blockierend, werden im Bericht aber ausdrücklich als „durch das CodeRabbit-Review-Gate blockiert“ und **nicht** als zwei unabhängige fachliche Fehler beschrieben;
+- ein tatsächlicher semantischer CodeRabbit-Befund bleibt über den Reviewbericht und die Custom-Checks nachvollziehbar und wird dadurch nicht abgeschwächt.
+
+Die Workflow-Concurrency für CodeRabbit- und Learning-Card-Auswertungen ist pro PR serialisiert (`cancel-in-progress: false`). Mehrere dicht aufeinanderfolgende `ready_for_review`-, Review-, Kommentar- oder `workflow_run`-Ereignisse dürfen damit einen bereits laufenden Required Check nicht mehr als letzten Zustand `cancelled` hinterlassen. Jede spätere Auswertung prüft weiterhin frisch den aktuellen PR-Head; Serialisierung ist keine Erlaubnis, einen veralteten Erfolg zu übernehmen.
+
+Der `CodeRabbit review gate (blocking)` publiziert sein endgültiges Ergebnis nach der semantischen Gate-Auswertung **und** der formellen Reviewzustandsprüfung explizit auf den frisch überprüften `pull_request.head.sha`. Ein Headwechsel oder fehlgeschlagener formeller Reviewzustand erzwingt eine rote Publikation auf dem aktuellen Head.
 
 ## Ruleset-Zielvertrag
 

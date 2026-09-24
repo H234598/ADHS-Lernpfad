@@ -1,7 +1,7 @@
 name: CodeRabbit hard gate
 
 on:
-  # zizmor: ignore[dangerous-triggers] -- Ausführung bleibt auf main; nur read-Rechte, kein PR-Code wird ausgeführt.
+  # zizmor: ignore[dangerous-triggers] -- Ausführung bleibt auf main; kein PR-Code wird ausgeführt.
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
   pull_request_review:
@@ -30,11 +30,11 @@ permissions:
 
 concurrency:
   group: coderabbit-gate-${{ github.event.pull_request.number || github.event.issue.number || github.event.workflow_run.pull_requests[0].number || inputs.pr_number || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   review-gate:
-    name: CodeRabbit review gate (blocking)
+    name: CodeRabbit review evaluation
     if: github.event_name != 'issue_comment' || github.event.issue.pull_request
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -75,6 +75,7 @@ jobs:
             --pr-number "$TARGET_PR"
 
       - name: Enforce current CodeRabbit review state
+        id: enforce
         if: steps.pr.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}

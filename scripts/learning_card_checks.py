@@ -34,6 +34,7 @@ class PolicyDecision:
     required_checks: dict[str, dict[str, str]]
     manual_merge_required: bool
     reasons: tuple[str, ...]
+    review_gate_state: str = "not_applicable"
 
 
 def _creation_key(run: dict[str, Any]) -> tuple[str, int]:
@@ -151,6 +152,7 @@ def evaluate_policy(
             required_checks={},
             manual_merge_required=scope.manual_merge_required,
             reasons=tuple(reasons),
+            review_gate_state="not_applicable",
         )
 
     selected = select_latest_check_runs(
@@ -168,11 +170,16 @@ def evaluate_policy(
         "claim_source_entailment": review,
         "complete_build": complete,
     }
-    reasons.extend(
-        f"Subgate {name} ist {state}."
-        for name, state in subgates.items()
-        if state != "success"
-    )
+
+    if review != "success":
+        reasons.append(
+            "Die semantischen Subgates content_scope und claim_source_entailment "
+            f"sind durch das CodeRabbit-Review-Gate blockiert ({review}) und wurden "
+            "nicht als eigenständige fachliche Fehler bewertet."
+        )
+    if complete != "success":
+        reasons.append(f"Subgate complete_build ist {complete}.")
+
     return PolicyDecision(
         head_sha=head_sha,
         passed=(
@@ -186,4 +193,5 @@ def evaluate_policy(
         },
         manual_merge_required=scope.manual_merge_required,
         reasons=tuple(reasons),
+        review_gate_state=review,
     )

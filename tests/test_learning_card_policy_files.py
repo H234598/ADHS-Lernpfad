@@ -56,8 +56,15 @@ class LearningCardPolicyFileTests(unittest.TestCase):
             hard_text.count("zizmor: ignore[dangerous-triggers]"),
             2,
         )
-        self.assertTrue(
-            all(value in {"read", "none"} for value in hard["permissions"].values())
+        self.assertEqual(
+            hard["permissions"],
+            {
+                "contents": "read",
+                "pull-requests": "read",
+                "issues": "read",
+                "checks": "read",
+                "statuses": "read",
+            },
         )
         hard_checkout = next(
             step
@@ -66,6 +73,9 @@ class LearningCardPolicyFileTests(unittest.TestCase):
         )
         self.assertEqual(hard_checkout["with"]["ref"], "main")
         self.assertFalse(hard_checkout["with"]["persist-credentials"])
+        self.assertNotIn("publish_review_gate_check.py", hard_text)
+        self.assertEqual(hard["jobs"]["review-gate"]["name"], "CodeRabbit review evaluation")
+        self.assertFalse(hard["concurrency"]["cancel-in-progress"])
 
         persist_path = ROOT / ".github/workflows/persist-automation-status.yml"
         persist_text = persist_path.read_text(encoding="utf-8")
