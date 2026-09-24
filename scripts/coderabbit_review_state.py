@@ -102,11 +102,32 @@ def _reviews(repository: str, number: int, token: str) -> list[dict[str, Any]]:
         page += 1
 
 
-def _write_report(output_dir: Path, report: ReviewStateReport) -> None:
+def review_state_blocks(
+    state: str,
+    *,
+    block_dismissed: bool = False,
+) -> bool:
+    """Return whether a formal review state must fail the current gate."""
+
+    normalized = str(state or "").strip().casefold()
+    return normalized == "changes_requested" or (
+        block_dismissed and normalized == "dismissed"
+    )
+
+
+def _write_report(
+    output_dir: Path,
+    report: ReviewStateReport,
+    *,
+    block_dismissed: bool = False,
+) -> None:
     """JSON- und Markdownbericht für den formellen Reviewzustand schreiben."""
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    passed = report.state != "changes_requested"
+    passed = not review_state_blocks(
+        report.state,
+        block_dismissed=block_dismissed,
+    )
     payload = {
         "repository": report.repository,
         "pull_request": report.number,
@@ -147,8 +168,9 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", default=os.getenv("GITHUB_REPOSITORY"))
     parser.add_argument("--pr-number", type=int)
-    parser.add_argument("--token", default=os.getenv("GITHUB_TOKEN"))
+    parser.set_defaults(token=os.getenv("GITHUB_TOKEN"))
     parser.add_argument("--output-dir", type=Path, default=Path("build/review-gate"))
+    parser.add_argument("--block-dismissed", action="store_true")
     args = parser.parse_args()
     if not args.repository or not args.token or not args.pr_number:
         parser.error("repository, token und pr-number sind erforderlich")
@@ -168,6 +190,15 @@ def main() -> int:
     state, reasons = evaluate_coderabbit_review_state(
         _reviews(args.repository, args.pr_number, args.token)
     )
+    if args.block_dismissed and state == "dismissed":
+        reasons = [
+            *reasons,
+            (
+                "CodeRabbit-Review wurde verworfen; ein bereits grüner "
+                "Head-Check muss bis zu einem neuen formellen Review "
+                "fail-closed bleiben."
+            ),
+        ]
     _write_report(
         args.output_dir,
         ReviewStateReport(
@@ -177,9 +208,13 @@ def main() -> int:
             state=state,
             reasons=tuple(reasons),
         ),
+        block_dismissed=args.block_dismissed,
     )
     print((args.output_dir / "coderabbit-review-state.md").read_text(encoding="utf-8"))
-    return 1 if state == "changes_requested" else 0
+    return 1 if review_state_blocks(
+        state,
+        block_dismissed=args.block_dismissed,
+    ) else 0
 
 
 if __name__ == "__main__":
