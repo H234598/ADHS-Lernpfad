@@ -2,7 +2,7 @@
   "artifacts": [
     {
       "path": "build/knowledge-graph/knowledge-graph.json",
-      "recorded_at": "2026-08-12T12:49:20.053Z",
+      "recorded_at": "2026-09-24T00:16:38.544Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -11,7 +11,7 @@
     },
     {
       "path": "build/knowledge-graph/knowledge-graph.graphml",
-      "recorded_at": "2026-08-12T12:49:20.053Z",
+      "recorded_at": "2026-09-24T00:16:38.544Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -20,7 +20,7 @@
     },
     {
       "path": "build/knowledge-graph/knowledge-graph.mmd",
-      "recorded_at": "2026-08-12T12:49:20.053Z",
+      "recorded_at": "2026-09-24T00:16:38.544Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -29,7 +29,7 @@
     },
     {
       "path": "build/knowledge-graph/graph-report.json",
-      "recorded_at": "2026-08-12T12:49:20.053Z",
+      "recorded_at": "2026-09-24T00:16:38.544Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -38,7 +38,7 @@
     },
     {
       "path": "build/knowledge-graph/graph-report.md",
-      "recorded_at": "2026-08-12T12:49:20.053Z",
+      "recorded_at": "2026-09-24T00:16:38.544Z",
       "reusable": true,
       "sha256": null,
       "type": "graph",
@@ -47,7 +47,7 @@
     },
     {
       "path": "build/ADHS-Lernpfad-Gesamtdokument.md",
-      "recorded_at": "2026-08-12T12:49:26.357Z",
+      "recorded_at": "2026-09-24T00:16:45.566Z",
       "reusable": false,
       "sha256": null,
       "type": "other",
@@ -56,7 +56,7 @@
     },
     {
       "path": "site",
-      "recorded_at": "2026-08-12T12:50:13.493Z",
+      "recorded_at": "2026-09-24T00:17:41.041Z",
       "reusable": true,
       "sha256": null,
       "type": "site",
@@ -74,61 +74,61 @@
   ],
   "context": {
     "branch": "main",
-    "commit_sha": "db908011ba0d16fd0c3b0508fc84edab57d4e0a1",
+    "commit_sha": "0420966c181681158a704aea18d6161aefc38bdb",
     "pr_number": null,
     "pr_url": null,
     "repository": "H234598/ADHS-Lernpfad",
     "workflow_run": {
       "attempt": 1,
-      "id": 31598225555,
+      "id": 35937606117,
       "job_id": "validate",
-      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31598225555",
-      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/31598225555"
+      "logs_url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/35937606117",
+      "url": "https://github.com/H234598/ADHS-Lernpfad/actions/runs/35937606117"
     }
   },
-  "created_at": "2026-08-12T12:48:36.494Z",
-  "duration_seconds": 97.001,
-  "ended_at": "2026-08-12T12:50:13.495Z",
+  "created_at": "2026-09-24T00:15:52.527Z",
+  "duration_seconds": 108.516,
+  "ended_at": "2026-09-24T00:17:41.043Z",
   "error": null,
   "metrics": {
-    "chapters": 19,
-    "documents": 22,
-    "edges": 825,
+    "chapters": 21,
+    "documents": 24,
+    "edges": 965,
     "errors": 0,
     "missing_pages": 0,
     "node_types": {
-      "chapter": 19,
-      "concept": 96,
-      "document": 12,
+      "chapter": 21,
+      "concept": 120,
+      "document": 13,
       "glossary": 1,
       "intro": 1,
       "planned": 5,
-      "reference": 49,
-      "section": 31,
+      "reference": 57,
+      "section": 33,
       "technical": 22
     },
-    "nodes": 236,
+    "nodes": 273,
     "planned_pages": 5,
     "relations": {
-      "cites": 74,
-      "contains": 31,
+      "cites": 89,
+      "contains": 33,
       "planned_in": 5,
-      "prerequisite": 57,
-      "sequence": 18,
-      "tagged_with": 413,
-      "wikilink": 227
+      "prerequisite": 66,
+      "sequence": 20,
+      "tagged_with": 497,
+      "wikilink": 255
     },
-    "sources": 49,
+    "sources": 57,
     "warnings": 0
   },
   "phase": "complete",
   "previous_status": "success",
   "recovery": null,
-  "retention_until": "2026-09-11T12:50:13.495Z",
+  "retention_until": "2026-10-24T00:17:41.043Z",
   "revision": 16,
-  "run_id": "31598225555-1",
+  "run_id": "35937606117-1",
   "schema_version": "3.0.0",
   "status": "success",
-  "updated_at": "2026-08-12T12:50:13.495Z",
+  "updated_at": "2026-09-24T00:17:41.043Z",
   "workflow": "validate-graph-and-build"
 }
