@@ -51,22 +51,11 @@ jobs:
         run: |
           set -Eeuo pipefail
           case "$SOURCE_WORKFLOW" in
-            'Validate compendium')
-              pattern='validation-and-graph-diagnostics-*'
-              ;;
-            'Build exports')
-              pattern='export-diagnostics-*'
-              ;;
-            'Publish documentation')
-              pattern='pages-graph-diagnostics-*'
-              ;;
-            'Validate runtime status')
-              pattern='runtime-status-sample'
-              ;;
-            *)
-              echo "Nicht freigegebener Quellworkflow: $SOURCE_WORKFLOW" >&2
-              exit 1
-              ;;
+            'Validate compendium') pattern='validation-and-graph-diagnostics-*' ;;
+            'Build exports') pattern='export-diagnostics-*' ;;
+            'Publish documentation') pattern='pages-graph-diagnostics-*' ;;
+            'Validate runtime status') pattern='runtime-status-sample' ;;
+            *) echo "Nicht freigegebener Quellworkflow: $SOURCE_WORKFLOW" >&2; exit 1 ;;
           esac
           echo "pattern=$pattern" >> "$GITHUB_OUTPUT"
 
@@ -119,13 +108,9 @@ jobs:
             --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | contains(\"${marker}\"))) | .id" | head -n1)"
           jq -Rs '{body: .}' build/pr-comment.md > build/pr-comment.json
           if [[ -n "$comment_id" ]]; then
-            gh api --method PATCH \
-              "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" \
-              --input build/pr-comment.json
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${comment_id}" --input build/pr-comment.json
           else
-            gh api --method POST \
-              "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
-              --input build/pr-comment.json
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --input build/pr-comment.json
           fi
 
       - name: Update append-oriented orphan branch
@@ -158,7 +143,14 @@ jobs:
             --max-per-workflow 100
           git -C "$status_tree" add -A -f \
             .nojekyll README.md automation/status
+          echo '=== Status der Statusbranch-Arbeitskopie ==='
+          git -C "$status_tree" status --short
+          echo '=== Staged Dateien ==='
+          git -C "$status_tree" diff --cached --name-status
+          echo '=== Staged Diffstatistik ==='
+          git -C "$status_tree" diff --cached --stat
           if git -C "$status_tree" diff --cached --quiet; then
+            echo 'Keine Statusänderung – Commit und Push entfallen.'
             echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi

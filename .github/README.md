@@ -5,6 +5,7 @@
 - `validate.yml`: stabiles Pflichtgate `Validate and build` für Python- und Browsertests, Quellen, strukturierte Bibliografie, Obsidian-Links, Graphschema, Runtime-Status, Wortgrenzen, Anki und MkDocs.
 - `remark-lint.yml`: reproduzierbares Pflichtgate `Remark lint (blocking)` für die gegenüber `main` geänderten Markdown-Dateien; installiert ausschließlich das versionierte Lockfile, prüft hohe und kritische npm-Sicherheitsbefunde und behandelt jede Lintmeldung als Fehler.
 - `coderabbit-hard-gate.yml`: vertrauenswürdiges Pflichtgate `CodeRabbit review gate (blocking)` für ein aktuelles erfolgreiches CodeRabbit-Signal, vollständig gelöste Threads und das Fehlen ungeklärter Agent-CodeRabbit-Dissense.
+- `coderabbit-after-green.yml`: kostenbewusster Requester, der CodeRabbit für einen Head-SHA exakt einmal und erst dann anfordert, wenn sämtliche Non-CodeRabbit-Checks und Statuskontexte grün sind.
 - `runtime-status-check.yml`: fokussierter Vertragscheck für Statusschema, CLI und atomare Aktualisierungen.
 - `persist-automation-status.yml`: validiert Diagnoseartefakte ausschließlich mit vertrauenswürdigem Code von `main` und persistiert sie auf dem orphan Branch `automation-status`.
 - `export.yml`: erzeugt nach Änderungen an `main` alle Dokument-, Literatur-, Graph-, Berichts- und Statusartefakte samt Manifest und Prüfsummen.
@@ -18,6 +19,9 @@ Die Workflows verwenden aktuelle GitHub-Actions-Majors mit Node-24-Runtime. Depe
 
 - minimale, explizite `GITHUB_TOKEN`-Berechtigungen;
 - `pull_request_target` führt ausschließlich die auf `main` liegende vertrauenswürdige Gate-Implementierung aus und checkt keinen untrusted PR-Code aus;
+- CodeRabbit-Auto-Review, Draft-Review und Auto-Incremental-Review sind deaktiviert; bezahlte Reviews werden ausschließlich durch den After-Green-Requester ausgelöst;
+- der CodeRabbit-Requester dedupliziert pro aktuellem Head-SHA und fordert bei einem Fix-Commit erst nach erneut vollständig grünen Non-CodeRabbit-Gates einen weiteren Review an;
+- Fork-PRs erhalten aus Kosten- und Vertrauensgründen keinen automatischen bezahlten CodeRabbit-Request;
 - das CodeRabbit-Gate zählt seinen eigenen Check nicht als externes CodeRabbit-Signal;
 - ein dokumentierter Dissens bleibt auch nach späteren Head-Commits blockierend, bis er passend zum ursprünglichen Marker aufgelöst wird;
 - feste Runner-Version `ubuntu-24.04`;
@@ -43,6 +47,25 @@ Die Workflows verwenden aktuelle GitHub-Actions-Majors mit Node-24-Runtime. Depe
 - die sichtbare vollständige Zitation muss den strukturierten `citation`-Feldern entsprechen;
 - der PDF-Export verwendet Pandoc, CiteProc und LuaLaTeX mit freien DejaVu-Schriften;
 - Pages-Deployments werden nicht während einer laufenden Veröffentlichung abgebrochen.
+
+## Variante B für schreibende Workflows
+
+`scripts/validate_ci_mutation_safety.py` ist ein blockierender, ausschließlich mit der Python-Standardbibliothek arbeitender Vertragscheck und läuft direkt in `Validate and build`. Er verändert keine Berechtigungen und macht keinen read-only Workflow schreibend. Jeder einzelne Workflow-Schritt mit einem tatsächlich ausführbaren `git commit` oder `git push` muss vollständig enthalten:
+
+- `git status --short` oder `--porcelain` **vor** dem No-op-Guard;
+- einen staged `--name-status`- oder `--stat`-Diff **vor** dem No-op-Guard;
+- einen staged No-op-Guard mit `git diff --cached --quiet` oder `git diff --staged --quiet` **vor** dem ersten Commit/Push;
+- bei fragmentierten Payloads explizite Ist-/Soll-SHA-256-Ausgaben, Fragmentgrößen und Fragmentprüfsummen sowie eine bestmögliche `tar -tzf`-Diagnose im Fehlerfall;
+- einen tatsächlichen Ist-/Soll-Prüfsummenvergleich, der bei Abweichung mit einem von null verschiedenen Exitcode endet;
+- weiterhin blockierende Audits: weder `|| true`, `|| exit 0`, mehrzeilige Shell-Bypässe noch `continue-on-error: true` sind für Audit-Schritte zulässig.
+
+Der Parser bewertet ausführbare Shell-Kommandos statt bloßer Texttreffer: Ausgaben wie `echo "git commit"` sind kein Writer, während über Backslash fortgesetzte `git`-Kommandos weiterhin erkannt werden. Kommentierte Checksum-/Diagnosezeilen zählen nicht als Sicherheitsnachweis. Die Regeln sind durch synthetische Positiv-, Negativ- und Zwei-Writer-Tests abgesichert.
+
+## CodeRabbit-Kostenregel
+
+`.coderabbit.yaml` deaktiviert automatische, Draft- und inkrementelle Reviews. `coderabbit-after-green.yml` beobachtet die abgeschlossenen Non-CodeRabbit-Workflows und prüft anschließend den **aktuellen PR-Head**. Mindestens `Validate and build`, `Build all download formats`, `Remark lint (blocking)`, `Learning card policy (blocking)`, `Codacy Security Scan` und der Status `qlty check` müssen erfolgreich sein; zusätzlich darf kein weiterer beobachteter Non-CodeRabbit-Check rot oder noch laufend sein.
+
+Erst dann wird ein Kommentar mit `@coderabbitai review` und einem Head-SHA-Marker erzeugt. Existiert für denselben Head bereits ein CodeRabbit-Review oder ein solcher Request-Marker, wird nichts erneut ausgelöst. Nach einem Fix-Commit beginnt der Prozess für den neuen SHA wieder bei den kostenlosen/anderen Gates.
 
 ## Laufstatus und Graphdiagnose
 
